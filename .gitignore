@@ -3,6 +3,13 @@
 
 #Visual C++ cache files
 **/.vs
+*.idb
+*.pdb
+*.log
+*.tlog
+*.exp
+*.iobj
+*.ipdb
 
 # Compiled Object files
 *.slo
@@ -27,7 +34,7 @@
 *.lai
 *.la
 *.a
-*.lib
+**/Engine.lib
 
 # Executables
 *.exe
@@ -36,4 +43,3 @@
 *.opendb
 *.db
 *.suo
-/Engine/.vs/Engine/v15/ipch/AutoPCH/ENGINE-d216752f
