@@ -2,7 +2,7 @@
 *.d
 
 #Visual C++ cache files
-.vs/**
+**/.vs
 
 # Compiled Object files
 *.slo
@@ -36,3 +36,4 @@
 *.opendb
 *.db
 *.suo
+/Engine/.vs/Engine/v15/ipch/AutoPCH/ENGINE-d216752f
