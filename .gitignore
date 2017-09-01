@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+#Visual C++ cache files
+.vs/**
+
 # Compiled Object files
 *.slo
 *.lo
