@@ -43,3 +43,7 @@
 *.opendb
 *.db
 *.suo
+
+# unwanted files
+**/zip-directories
+/Engine/Engine/audio/song2.wav
