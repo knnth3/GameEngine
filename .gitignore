@@ -48,3 +48,6 @@
 # unwanted files
 **/zip-directories
 /Engine/Engine/audio/song2.wav
+
+# Exceptions
+!**/Runtime Dlls/*.dll
