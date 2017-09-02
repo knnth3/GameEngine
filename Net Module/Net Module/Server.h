@@ -29,6 +29,7 @@ namespace Net
 		DLL_EXPORT Address GetAddress(std::string username);
 		DLL_EXPORT void Send(int ID, ProgramData& info);
 		DLL_EXPORT bool Recieve(int ID, ProgramData& info);
+		DLL_EXPORT void GetConnectedUsers(std::vector<std::string>& usernames);
 		DLL_EXPORT void Close();
 
 	private:

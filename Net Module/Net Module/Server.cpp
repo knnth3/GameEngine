@@ -74,6 +74,14 @@ namespace Net
 		return false;
 	}
 
+	void Server::GetConnectedUsers(std::vector<std::string>& usernames)
+	{
+		for each(auto user in m_connections)
+		{
+			usernames.push_back(user.first);
+		}
+	}
+
 	void Server::Close()
 	{
 		if (m_isInit)

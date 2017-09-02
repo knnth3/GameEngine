@@ -16,45 +16,51 @@
 //+Uses map<index, queue> for quick indexing, insert, and extract
 //+ID can be obtained from m_connections with username
 //Transciever queue
-typedef std::map<uint32_t, PDQueue> DataBase;
 
-class Server
+namespace Net
 {
-public:
-	DLL_EXPORT Server(int port);
-	DLL_EXPORT bool Initialize();
-	DLL_EXPORT Address GetAddress(std::string username);
-	DLL_EXPORT void Send(int ID, ProgramData& info);
-	DLL_EXPORT bool Recieve(int ID, ProgramData& info);
-	DLL_EXPORT void Close();
+	typedef std::map<uint32_t, PDQueue> DataBase;
 
-private:
-	void Update();
-	void CreateNode(std::shared_ptr<Address>& address);
-	//Function used to Connect peer(Completely customizable)
-	//although nothing will be sent/recieved if a node is not created.
-	ConnectionType ConnectPeer(std::shared_ptr<Address>& address, ProgramData& packet);
-	uint32_t GenerateKey(unsigned int seed);
-	bool IsValid(uint16_t ID);
-	bool IsAddressQueried(std::shared_ptr<Address>& address);
+	class Server
+	{
+	public:
+		DLL_EXPORT Server(int port);
+		DLL_EXPORT bool Initialize();
+		DLL_EXPORT Address GetAddress(std::string username);
+		DLL_EXPORT void Send(int ID, ProgramData& info);
+		DLL_EXPORT bool Recieve(int ID, ProgramData& info);
+		DLL_EXPORT void GetConnectedUsers(std::vector<std::string>& usernames);
+		DLL_EXPORT void Close();
 
-	std::vector<std::unique_ptr<Node>> m_ActiveNodes;
-	std::unique_ptr<Transciever> m_transciever;
-	std::unique_ptr<IPAuthenticator> m_ConnectionTimers;
+	private:
+		void Update();
+		void CreateNode(std::shared_ptr<Address>& address);
+		//Function used to Connect peer(Completely customizable)
+		//although nothing will be sent/recieved if a node is not created.
+		ConnectionType ConnectPeer(std::shared_ptr<Address>& address, ProgramData& packet);
+		uint32_t GenerateKey(unsigned int seed);
+		bool IsValid(uint16_t ID);
+		bool IsAddressQueried(std::shared_ptr<Address>& address);
 
-	// IDs of all connected mapped to username;
-	std::map<std::string, std::shared_ptr<Address>> m_connections;
+		std::vector<std::unique_ptr<Node>> m_ActiveNodes;
+		std::unique_ptr<Transciever> m_transciever;
+		std::unique_ptr<IPAuthenticator> m_ConnectionTimers;
 
-	//Stores data sent from the program that is to be sent to given peer
-	std::shared_ptr<DataBase> m_database;
+		// IDs of all connected mapped to username;
+		std::map<std::string, std::shared_ptr<Address>> m_connections;
 
-	//Stores packets that have been sent/recieved
-	std::shared_ptr<TDataBase> m_recievedDB;
-	TQueue m_sendingQueue;
+		//Stores data sent from the program that is to be sent to given peer
+		std::shared_ptr<DataBase> m_database;
 
-	std::atomic<bool> m_closeThread;
-	std::future<void> m_asyncThread;
+		//Stores packets that have been sent/recieved
+		std::shared_ptr<TDataBase> m_recievedDB;
+		TQueue m_sendingQueue;
 
-	bool m_isInit;
-};
+		std::atomic<bool> m_closeThread;
+		std::future<void> m_asyncThread;
 
+		bool m_isInit;
+	};
+
+
+}

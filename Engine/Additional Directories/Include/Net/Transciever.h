@@ -11,49 +11,54 @@
 //+Outgoing packets are put into a single queue that the transciever sends out
 
 
-enum class ConnectionType
+namespace Net
 {
-	NewConnect,
-	Success,
-	Failed
-};
 
-class Server;
+	enum class ConnectionType
+	{
+		NewConnect,
+		Success,
+		Failed
+	};
 
-typedef std::unique_ptr<UDPSocket> Socket;
-typedef std::shared_ptr<std::queue<EPacket>> TQueue;
-typedef std::map<uint32_t, TQueue> TDataBase;
-typedef std::function<ConnectionType(std::shared_ptr<Address>&, ProgramData)> AddFunc;
+	class Server;
 
-class Transciever
-{
-public:
-	//Simple interface where user only needs to deal with the update/close function.
-	//+SetConnectionFunc must be called(unless another way of opening a Node is available)
-	DLL_EXPORT Transciever(unsigned short port);
-	DLL_EXPORT bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
-	//Has to return an integer based off of result. Everything else will be ignored.
-	// 0 = failed
-	// 1 = success (new)
-	// 2 = success (established)
-	DLL_EXPORT void SetConnectionFunc(AddFunc connectionFunc);
-	DLL_EXPORT void Update();
-	DLL_EXPORT void Close();
+	typedef std::unique_ptr<UDPSocket> Socket;
+	typedef std::shared_ptr<std::queue<EPacket>> TQueue;
+	typedef std::map<uint32_t, TQueue> TDataBase;
+	typedef std::function<ConnectionType(std::shared_ptr<Address>&, ProgramData)> AddFunc;
 
-private:
-	void RecievePacket();
-	void SendPacket();
+	class Transciever
+	{
+	public:
+		//Simple interface where user only needs to deal with the update/close function.
+		//+SetConnectionFunc must be called(unless another way of opening a Node is available)
+		DLL_EXPORT Transciever(unsigned short port);
+		DLL_EXPORT bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
+		//Has to return an integer based off of result. Everything else will be ignored.
+		// 0 = failed
+		// 1 = success (new)
+		// 2 = success (established)
+		DLL_EXPORT void SetConnectionFunc(AddFunc connectionFunc);
+		DLL_EXPORT void Update();
+		DLL_EXPORT void Close();
 
-	bool isValid();
-	std::shared_ptr<EPacket> GetPacket();
-	void PlacePacket(std::shared_ptr<Address>& addr, EPacket& packet);
-	ConnectionType ConnectPeer(std::shared_ptr<Address>& addr, ProgramData& packet);
+	private:
+		void RecievePacket();
+		void SendPacket();
 
-	unsigned short m_port;
-	//Completely cusomizable "user connected" function
-	AddFunc m_ConnectionFunc;
-	Socket m_socket;
-	std::shared_ptr<TDataBase> m_recievedDB;
-	TQueue m_sendingDB;
-};
+		bool isValid();
+		std::shared_ptr<EPacket> GetPacket();
+		void PlacePacket(std::shared_ptr<Address>& addr, EPacket& packet);
+		ConnectionType ConnectPeer(std::shared_ptr<Address>& addr, ProgramData& packet);
 
+		unsigned short m_port;
+		//Completely cusomizable "user connected" function
+		AddFunc m_ConnectionFunc;
+		Socket m_socket;
+		std::shared_ptr<TDataBase> m_recievedDB;
+		TQueue m_sendingDB;
+	};
+
+
+}

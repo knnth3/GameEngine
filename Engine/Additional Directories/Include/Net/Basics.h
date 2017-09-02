@@ -4,10 +4,14 @@
 #include <memory>
 #include <queue>
 
-typedef std::shared_ptr<std::queue<EPacket>> TQueue;
-
-enum queueType
+namespace Net
 {
-	inqueue = 0,
-	outqueue = 1
-};
+
+	typedef std::shared_ptr<std::queue<EPacket>> TQueue;
+
+	enum queueType
+	{
+		inqueue = 0,
+		outqueue = 1
+	};
+}
