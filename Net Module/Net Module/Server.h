@@ -2,7 +2,7 @@
 #include <chrono>
 #include <atomic>
 #include <future>
-#include "Helper.h"
+#include "NetModule.h"
 #include "Basics.h"
 #include "Address.h"
 #include "IPAuthenticator.h"

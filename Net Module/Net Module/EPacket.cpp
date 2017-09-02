@@ -1,5 +1,5 @@
 #include "EPacket.h"
-#include "Helper.h"
+#include "NetModule.h"
 
 namespace Net
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Address.h"
-#include "Helper.h"
+#include "NetModule.h"
 #include <memory>
 
 //Author:Eric Marquez

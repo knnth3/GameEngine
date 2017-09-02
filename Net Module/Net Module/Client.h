@@ -2,7 +2,7 @@
 #include <chrono>
 #include <atomic>
 #include <future>
-#include "Helper.h"
+#include "NetModule.h"
 #include "UDPSocket.h"
 #include "EPacket.h"
 #include "Node.h"

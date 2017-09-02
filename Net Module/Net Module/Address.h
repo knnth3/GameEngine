@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <bitset>
-#include "helper.h"
+#include "NetModule.h"
 
 namespace Net
 {
