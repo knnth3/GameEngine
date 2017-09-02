@@ -13,62 +13,67 @@
 //up to 32 packets behind.
 //+Once a packet is sent back, the most up to date version of the bitfield will also go.
 
-struct AckData
+namespace Net
 {
-	//Most recent package recieved
-	uint32_t Acknowledged = 0;
 
-	//Previous packages recieved up to 32 behind
-	uint32_t bitfield = 0;
-};
-
-typedef unsigned char byte;
-typedef std::vector<byte> edata;
-typedef std::shared_ptr<edata> ProgramData;
-//Program data queue
-typedef std::shared_ptr<std::vector<std::queue<ProgramData>>> PDQueue;
-
-typedef std::shared_ptr<Address> AddressPtr;
-
-class Node
-{
-public:
-	Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
-
-	void Update();
-
-	AckData GetLocalPackageData() const;
-	void ConnectRecieveQueue(TQueue& recieve);
-	void ConnectSendQueue(TQueue& send);
-private:
-
-	enum Error
+	struct AckData
 	{
-		UnknownInvalid,
-		KnownInvalid,
-		SendingQueueNull,
-		RecieveQueueNull
+		//Most recent package recieved
+		uint32_t Acknowledged = 0;
+
+		//Previous packages recieved up to 32 behind
+		uint32_t bitfield = 0;
 	};
 
-	bool SendPacket();
-	bool RecievePacket();
+	typedef unsigned char byte;
+	typedef std::vector<byte> edata;
+	typedef std::shared_ptr<edata> ProgramData;
+	//Program data queue
+	typedef std::shared_ptr<std::vector<std::queue<ProgramData>>> PDQueue;
 
-	//Look at ErrorType for values
-	std::bitset<8> IsNodeValid();
-	TQueue m_recievingQueue;
-	TQueue m_sendingQueue;
-	PDQueue m_dataQueue;
-	AddressPtr m_connectionAddress;
+	typedef std::shared_ptr<Address> AddressPtr;
 
-	void IncrementLocal();
-	void PollRecievedData(EPacket* sequence);
+	class Node
+	{
+	public:
+		DLL_EXPORT Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
 
-	//Ack = Acknowledged
-	AckData m_LocalAckData;
-	uint32_t m_RemoteAckData = 0;
+		DLL_EXPORT void Update();
 
-	// CSP = Current sequence position
-	uint32_t m_LocalCSP = 0;
-	uint32_t m_RemoteCSP = 0;
-};
+		DLL_EXPORT AckData GetLocalPackageData() const;
+		DLL_EXPORT void ConnectRecieveQueue(TQueue& recieve);
+		DLL_EXPORT void ConnectSendQueue(TQueue& send);
+	private:
 
+		enum Error
+		{
+			UnknownInvalid,
+			KnownInvalid,
+			SendingQueueNull,
+			RecieveQueueNull
+		};
+
+		bool SendPacket();
+		bool RecievePacket();
+
+		//Look at ErrorType for values
+		std::bitset<8> IsNodeValid();
+		TQueue m_recievingQueue;
+		TQueue m_sendingQueue;
+		PDQueue m_dataQueue;
+		AddressPtr m_connectionAddress;
+
+		void IncrementLocal();
+		void PollRecievedData(EPacket* sequence);
+
+		//Ack = Acknowledged
+		AckData m_LocalAckData;
+		uint32_t m_RemoteAckData = 0;
+
+		// CSP = Current sequence position
+		uint32_t m_LocalCSP = 0;
+		uint32_t m_RemoteCSP = 0;
+	};
+
+
+}

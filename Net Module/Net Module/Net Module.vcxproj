@@ -151,7 +151,6 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="EPacket.cpp" />
     <ClCompile Include="IPAuthenticator.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Transciever.cpp" />
@@ -166,6 +165,7 @@
     <ClInclude Include="IPAuthenticator.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="Transciever.h" />
     <ClInclude Include="UDPSocket.h" />
   </ItemGroup>

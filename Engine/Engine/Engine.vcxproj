@@ -108,7 +108,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SOILx64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SOILx64.lib;Net Module.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,7 +141,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SOILx64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SOILx64.lib;Net Module.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -156,6 +156,7 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Primitives.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SpriteBatch.h" />

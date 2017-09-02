@@ -8,17 +8,21 @@
 //+acts as the fundamental connection to serve under either a server or client
 
 
-class UDPSocket
+namespace Net
 {
-public:
+	class UDPSocket
+	{
+	public:
 
-	bool Open(unsigned short port);
-	void Close();
-	int Send(const std::shared_ptr<Address>& destination, const void * data, int size);
-	int Receive(std::shared_ptr<Address>& sender, void * data, int max_size);
+		bool Open(unsigned short port);
+		void Close();
+		int Send(const std::shared_ptr<Address>& destination, const void * data, int size);
+		int Receive(std::shared_ptr<Address>& sender, void * data, int max_size);
 
-private:
+	private:
 
-	SOCKET m_handle;
-};
+		SOCKET m_handle;
+	};
 
+
+}

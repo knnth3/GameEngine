@@ -3,6 +3,7 @@
 
 #Visual C++ cache files
 **/.vs
+**/x64
 *.idb
 *.pdb
 *.log
