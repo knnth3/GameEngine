@@ -4,7 +4,6 @@
 namespace Net
 {
 
-
 	EPacket::EPacket(std::shared_ptr<Address>& addr, uint32_t sequence, uint32_t acknowledged)
 	{
 		m_addr = addr;

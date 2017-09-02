@@ -15,25 +15,25 @@ namespace Net
 	struct EPacket
 	{
 	public:
-		EPacket(std::shared_ptr<Address>& addr, uint32_t sequence, uint32_t acknowledged);
-		EPacket(edata rawData);
+		NET_API EPacket(std::shared_ptr<Address>& addr, uint32_t sequence, uint32_t acknowledged);
+		NET_API EPacket(edata rawData);
 
-		bool AddData(const void* data, int size);
-		void AddBitfield(uint32_t bitfield);
+		NET_API bool AddData(const void* data, int size);
+		NET_API void AddBitfield(uint32_t bitfield);
 
-		std::shared_ptr<Address> GetAddress()const;
-		ProgramData& GetBuffer();
-		uint32_t GetSequence();
-		uint32_t GetAcknowledged();
-		uint32_t GetBitfield();
+		NET_API std::shared_ptr<Address> GetAddress()const;
+		NET_API ProgramData& GetBuffer();
+		NET_API uint32_t GetSequence();
+		NET_API uint32_t GetAcknowledged();
+		NET_API uint32_t GetBitfield();
 
-		ProgramData data();
+		NET_API ProgramData data();
 
 	private:
-		void AddProperty(ProgramData& packet, uint32_t value);
-		void AddPacketData(ProgramData& packet, ProgramData& data);
-		void GrabProperty(uint32_t& value, int& count, edata& data);
-		void GrabData(ProgramData& data, edata& raw);
+		NET_API void AddProperty(ProgramData& packet, uint32_t value);
+		NET_API void AddPacketData(ProgramData& packet, ProgramData& data);
+		NET_API void GrabProperty(uint32_t& value, int& count, edata& data);
+		NET_API void GrabData(ProgramData& data, edata& raw);
 
 		std::shared_ptr<Address> m_addr;
 		uint32_t m_sequence = 0;

@@ -14,10 +14,10 @@ namespace Net
 	{
 	public:
 
-		bool Open(unsigned short port);
-		void Close();
-		int Send(const std::shared_ptr<Address>& destination, const void * data, int size);
-		int Receive(std::shared_ptr<Address>& sender, void * data, int max_size);
+		NET_API bool Open(unsigned short port);
+		NET_API void Close();
+		NET_API int Send(const std::shared_ptr<Address>& destination, const void * data, int size);
+		NET_API int Receive(std::shared_ptr<Address>& sender, void * data, int max_size);
 
 	private:
 

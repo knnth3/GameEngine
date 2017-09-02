@@ -33,24 +33,24 @@ namespace Net
 	public:
 		//Simple interface where user only needs to deal with the update/close function.
 		//+SetConnectionFunc must be called(unless another way of opening a Node is available)
-		Transciever(unsigned short port);
-		bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
+		NET_API Transciever(unsigned short port);
+		NET_API bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
 		//Has to return an integer based off of result. Everything else will be ignored.
 		// 0 = failed
 		// 1 = success (new)
 		// 2 = success (established)
-		void SetConnectionFunc(AddFunc connectionFunc);
-		void Update();
-		void Close();
+		NET_API void SetConnectionFunc(AddFunc connectionFunc);
+		NET_API void Update();
+		NET_API void Close();
 
 	private:
-		void RecievePacket();
-		void SendPacket();
+		NET_API void RecievePacket();
+		NET_API void SendPacket();
 
-		bool isValid();
-		std::shared_ptr<EPacket> GetPacket();
-		void PlacePacket(std::shared_ptr<Address>& addr, EPacket& packet);
-		ConnectionType ConnectPeer(std::shared_ptr<Address>& addr, ProgramData& packet);
+		NET_API bool isValid();
+		NET_API std::shared_ptr<EPacket> GetPacket();
+		NET_API void PlacePacket(std::shared_ptr<Address>& addr, EPacket& packet);
+		NET_API ConnectionType ConnectPeer(std::shared_ptr<Address>& addr, ProgramData& packet);
 
 		unsigned short m_port;
 		//Completely cusomizable "user connected" function

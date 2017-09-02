@@ -36,13 +36,13 @@ namespace Net
 	class Node
 	{
 	public:
-		Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
+		NET_API Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
 
-		void Update();
+		NET_API void Update();
 
-		AckData GetLocalPackageData() const;
-		void ConnectRecieveQueue(TQueue& recieve);
-		void ConnectSendQueue(TQueue& send);
+		NET_API AckData GetLocalPackageData() const;
+		NET_API void ConnectRecieveQueue(TQueue& recieve);
+		NET_API void ConnectSendQueue(TQueue& send);
 	private:
 
 		enum Error
@@ -53,11 +53,11 @@ namespace Net
 			RecieveQueueNull
 		};
 
-		bool SendPacket();
-		bool RecievePacket();
+		NET_API bool SendPacket();
+		NET_API bool RecievePacket();
 
 		//Look at ErrorType for values
-		std::bitset<8> IsNodeValid();
+		NET_API std::bitset<8> IsNodeValid();
 		TQueue m_recievingQueue;
 		TQueue m_sendingQueue;
 		PDQueue m_dataQueue;

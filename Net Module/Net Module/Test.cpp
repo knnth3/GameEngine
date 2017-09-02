@@ -1,4 +1,6 @@
 #include "Test.h"
+#include "Client.h"
+#include "Server.h"
 
 void Net::TestFunc()
 {
@@ -41,5 +43,4 @@ void Net::TestFunc()
 		break;
 	}
 	}
-	system("pause");
 }

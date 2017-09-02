@@ -14,12 +14,12 @@ namespace Net
 	class IPAuthenticator
 	{
 	public:
-		IPAuthenticator();
-		~IPAuthenticator();
-		bool IsTimedOut(Identification IP);
+		NET_API IPAuthenticator();
+		NET_API ~IPAuthenticator();
+		NET_API bool IsTimedOut(Identification IP);
 	private:
 
-		void CountdownTimeouts();
+		NET_API void CountdownTimeouts();
 		float m_timeoutTime = 1.f * 60.f;
 		std::chrono::high_resolution_clock::time_point t1;
 		std::chrono::high_resolution_clock::time_point t2;
