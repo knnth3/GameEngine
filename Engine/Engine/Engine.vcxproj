@@ -156,7 +156,6 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
-    <ClCompile Include="Server.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
@@ -176,7 +175,6 @@
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Primitives.h" />
-    <ClInclude Include="Server.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SpriteBatch.h" />
