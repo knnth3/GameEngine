@@ -2,7 +2,7 @@
 #include "Client.h"
 #include "Server.h"
 
-void Net::TestFunc()
+void Net::Tester::TestNet()
 {
 	int a = 0;
 	std::cin >> a;

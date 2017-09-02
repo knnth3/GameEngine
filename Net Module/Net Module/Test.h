@@ -4,5 +4,9 @@
 
 namespace Net
 {
-	NET_API void TestFunc();
+	class Tester
+	{
+	public:
+		NET_API void TestNet();
+	};
 }
