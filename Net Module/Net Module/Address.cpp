@@ -5,18 +5,18 @@ namespace Net
 {
 
 
-	Address::Address(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned short port, uint16_t id)
+	Address::Address(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned short port, Identification id)
 	{
 		unsigned int address = EncodeAddress(a, b, c, d);
 		init(address, port, id);
 	}
 
-	Address::Address(unsigned int address, unsigned short port, uint16_t id)
+	Address::Address(unsigned int address, unsigned short port, Identification id)
 	{
 		init(address, port, id);
 	}
 
-	Address::Address(std::string address, unsigned short port, uint16_t id)
+	Address::Address(std::string address, unsigned short port, Identification id)
 	{
 		size_t pos = 0;
 		std::string breakpoint = ".";
@@ -56,7 +56,7 @@ namespace Net
 		return false;
 	}
 
-	bool Address::AssignID(uint32_t id)
+	bool Address::AssignID(Identification id)
 	{
 		if (m_ID == 0)
 		{
@@ -86,7 +86,7 @@ namespace Net
 		return m_port;
 	}
 
-	uint16_t Address::GetID()
+	Identification Address::GetID()
 	{
 		return m_ID;
 	}
@@ -101,7 +101,7 @@ namespace Net
 		return (a << 24) | (b << 16) | (c << 8) | d;
 	}
 
-	void Address::init(unsigned int address, unsigned short port, uint16_t id)
+	void Address::init(unsigned int address, unsigned short port, Identification id)
 	{
 		m_address = address;
 		m_port = port;

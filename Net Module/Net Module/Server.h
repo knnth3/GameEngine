@@ -19,18 +19,18 @@
 
 namespace Net
 {
-	typedef std::map<uint32_t, PDQueue> DataBase;
+	typedef std::map<Identification, PDQueue> DataBase;
 
 	class Server
 	{
 	public:
-		DLL_EXPORT Server(int port);
-		DLL_EXPORT bool Initialize();
-		DLL_EXPORT Address GetAddress(std::string username);
-		DLL_EXPORT void Send(int ID, ProgramData& info);
-		DLL_EXPORT bool Recieve(int ID, ProgramData& info);
-		DLL_EXPORT void GetConnectedUsers(std::vector<std::string>& usernames);
-		DLL_EXPORT void Close();
+		NET_API Server(int port);
+		NET_API bool Initialize();
+		NET_API Identification GetID(std::string username);
+		NET_API void Send(Identification ID, std::vector<byte> data);
+		NET_API std::vector<byte> Recieve(Identification ID);
+		NET_API void GetConnectedUsers(std::vector<std::string>& usernames);
+		NET_API void Close();
 
 	private:
 		void Update();
@@ -38,8 +38,8 @@ namespace Net
 		//Function used to Connect peer(Completely customizable)
 		//although nothing will be sent/recieved if a node is not created.
 		ConnectionType ConnectPeer(std::shared_ptr<Address>& address, ProgramData& packet);
-		uint32_t GenerateKey(unsigned int seed);
-		bool IsValid(uint16_t ID);
+		Identification GenerateKey(Identification seed);
+		bool IsValid(Identification ID);
 		bool IsAddressQueried(std::shared_ptr<Address>& address);
 
 		std::vector<std::unique_ptr<Node>> m_ActiveNodes;

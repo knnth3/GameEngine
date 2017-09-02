@@ -13,17 +13,17 @@ namespace Net
 	class Client
 	{
 	public:
-		DLL_EXPORT Client(std::string address, unsigned short port);
-		DLL_EXPORT void Close();
-		DLL_EXPORT bool Initialize();
-		DLL_EXPORT void Send(std::string s);
-		DLL_EXPORT void Send(edata data);
-		DLL_EXPORT edata Recive();
+		NET_API Client(std::string address, unsigned short port);
+		NET_API void Close();
+		NET_API bool Initialize();
+		NET_API void Send(std::string s);
+		NET_API void Send(edata data);
+		NET_API edata Recive();
 	private:
 		void Update();
 		ConnectionType ConnectClient(std::shared_ptr<Address>& address, ProgramData& data);
 		void Login(std::string s);
-		uint32_t GenerateKey(uint32_t seed);
+		Identification GenerateKey(Identification seed);
 
 		PDQueue m_Queue;
 		TQueue m_sendingDB;

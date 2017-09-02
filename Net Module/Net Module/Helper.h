@@ -2,8 +2,17 @@
 
 #include <iostream>
 
+//Typedefs
+typedef uint16_t Identification;
 
-#define DLL_EXPORT __declspec(dllexport)
+
+//Export Macro
+#ifdef NetModule_EXPORTS
+#define NET_API __declspec(dllexport)
+#else
+#define NET_API __declspec(dllimport)
+#endif
+
 
 // platform detection
 #define PLATFORM_WINDOWS  1

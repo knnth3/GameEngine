@@ -113,7 +113,7 @@ namespace Net
 	{
 		//Check to see if the packet recieved is to initiate connection.
 		ConnectionType result = ConnectPeer(addr, packet.GetBuffer());
-		uint16_t ID = addr->GetID();
+		Identification ID = addr->GetID();
 		switch (result)
 		{
 		case ConnectionType::NewConnect:

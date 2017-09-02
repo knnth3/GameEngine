@@ -46,32 +46,32 @@ namespace Net
 		}
 	}
 
-	Address Server::GetAddress(std::string username)
+	Identification Server::GetID(std::string username)
 	{
-		//For user purpose
-		return *m_connections[username];
+		return m_connections[username]->GetID();
 	}
 
-	void Server::Send(int ID, ProgramData & info)
+	void Server::Send(Identification ID, std::vector<byte> data)
 	{
 		if (IsValid(ID))
 		{
-			m_database->at(ID)->at(outqueue).push(info);
+			ProgramData d = std::make_shared<edata>(data);
+			m_database->at(ID)->at(outqueue).push(d);
 		}
 	}
 
-	bool Server::Recieve(int ID, ProgramData & info)
+	std::vector<byte> Server::Recieve(Identification ID)
 	{
+		edata data;
 		if (IsValid(ID))
 		{
 			if (!m_database->at(ID)->at(inqueue).empty())
 			{
-				info = m_database->at(ID)->at(inqueue).front();
+				data = *(m_database->at(ID)->at(inqueue).front()).get();
 				m_database->at(ID)->at(inqueue).pop();
-				return true;
 			}
 		}
-		return false;
+		return data;
 	}
 
 	void Server::GetConnectedUsers(std::vector<std::string>& usernames)
@@ -102,7 +102,7 @@ namespace Net
 	void Server::CreateNode(std::shared_ptr<Address>& address)
 	{
 		//Create threads here for optimal work
-		uint32_t id = address->GetID();
+		Identification id = address->GetID();
 		m_database->emplace(id, std::make_shared<std::vector<std::queue<ProgramData>>>());
 		m_recievedDB->emplace(id, std::make_shared<std::queue<EPacket>>());
 		m_ActiveNodes.emplace_back
@@ -130,8 +130,8 @@ namespace Net
 				printf("Invalid packet recieved.\n");
 				return ConnectionType::Failed;
 			}
-			uint32_t key = 0;
-			uint32_t seed = 0;
+			Identification key = 0;
+			Identification seed = 0;
 			memcpy(&key, data->data(), 4);
 			for (size_t x = 4; x < data->size(); x++)
 			{
@@ -139,18 +139,17 @@ namespace Net
 				seed |= data->at(x);
 			}
 
-			uint32_t value = htonl(GenerateKey(seed));
+			Identification value = htons(GenerateKey(seed));
 			if (value == key)
 			{
-				address->AssignID(ntohl(key));
+				address->AssignID(ntohs(key));
 				std::string username = std::string(data->begin() + 4, data->end());
 				address->AssignName(username);
 				m_connections[username] = address;
 				CreateNode(address);
 
 				edata data = { 'H','e','y','!',' ','Y','o','u',' ','L','o','g','g','e','d',' ','i','n','!','\n' };
-				ProgramData loginData = std::make_shared<edata>(data);
-				Send(m_connections[username]->GetID(), loginData);
+				Send(m_connections[username]->GetID(), data);
 			}
 			else
 			{
@@ -161,12 +160,12 @@ namespace Net
 		return ConnectionType::NewConnect;
 	}
 
-	uint32_t Server::GenerateKey(unsigned int seed)
+	Identification Server::GenerateKey(Identification seed)
 	{
 		return ((((seed / 2) + 5724) % 100001) >> 8);
 	}
 
-	bool Server::IsValid(uint16_t ID)
+	bool Server::IsValid(Identification ID)
 	{
 		if (m_database->find(ID) == m_database->end())
 		{

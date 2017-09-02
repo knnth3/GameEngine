@@ -22,7 +22,7 @@ namespace Net
 
 	}
 
-	bool IPAuthenticator::IsTimedOut(uint32_t IP)
+	bool IPAuthenticator::IsTimedOut(Identification IP)
 	{
 		if (m_attemptsLeft.find(IP) == m_attemptsLeft.end())
 		{

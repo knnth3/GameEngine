@@ -36,13 +36,13 @@ namespace Net
 	class Node
 	{
 	public:
-		DLL_EXPORT Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
+		Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr);
 
-		DLL_EXPORT void Update();
+		void Update();
 
-		DLL_EXPORT AckData GetLocalPackageData() const;
-		DLL_EXPORT void ConnectRecieveQueue(TQueue& recieve);
-		DLL_EXPORT void ConnectSendQueue(TQueue& send);
+		AckData GetLocalPackageData() const;
+		void ConnectRecieveQueue(TQueue& recieve);
+		void ConnectSendQueue(TQueue& send);
 	private:
 
 		enum Error

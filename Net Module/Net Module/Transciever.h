@@ -33,15 +33,15 @@ namespace Net
 	public:
 		//Simple interface where user only needs to deal with the update/close function.
 		//+SetConnectionFunc must be called(unless another way of opening a Node is available)
-		DLL_EXPORT Transciever(unsigned short port);
-		DLL_EXPORT bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
+		Transciever(unsigned short port);
+		bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
 		//Has to return an integer based off of result. Everything else will be ignored.
 		// 0 = failed
 		// 1 = success (new)
 		// 2 = success (established)
-		DLL_EXPORT void SetConnectionFunc(AddFunc connectionFunc);
-		DLL_EXPORT void Update();
-		DLL_EXPORT void Close();
+		void SetConnectionFunc(AddFunc connectionFunc);
+		void Update();
+		void Close();
 
 	private:
 		void RecievePacket();

@@ -15,19 +15,19 @@ namespace Net
 	struct EPacket
 	{
 	public:
-		DLL_EXPORT EPacket(std::shared_ptr<Address>& addr, uint32_t sequence, uint32_t acknowledged);
-		DLL_EXPORT EPacket(edata rawData);
+		EPacket(std::shared_ptr<Address>& addr, uint32_t sequence, uint32_t acknowledged);
+		EPacket(edata rawData);
 
-		DLL_EXPORT bool AddData(const void* data, int size);
-		DLL_EXPORT void AddBitfield(uint32_t bitfield);
+		bool AddData(const void* data, int size);
+		void AddBitfield(uint32_t bitfield);
 
-		DLL_EXPORT std::shared_ptr<Address> GetAddress()const;
-		DLL_EXPORT ProgramData& GetBuffer();
-		DLL_EXPORT uint32_t GetSequence();
-		DLL_EXPORT uint32_t GetAcknowledged();
-		DLL_EXPORT uint32_t GetBitfield();
+		std::shared_ptr<Address> GetAddress()const;
+		ProgramData& GetBuffer();
+		uint32_t GetSequence();
+		uint32_t GetAcknowledged();
+		uint32_t GetBitfield();
 
-		DLL_EXPORT ProgramData data();
+		ProgramData data();
 
 	private:
 		void AddProperty(ProgramData& packet, uint32_t value);

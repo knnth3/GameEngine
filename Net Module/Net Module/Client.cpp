@@ -108,15 +108,15 @@ namespace Net
 	void Client::Login(std::string username)
 	{
 		ProgramData data = std::make_shared<edata>();
-		data->resize(sizeof(uint32_t) + username.size());
-		uint32_t seed = 0;
+		data->resize(sizeof(Identification) + username.size());
+		Identification seed = 0;
 		for (size_t x = 0; x < username.size(); x++)
 		{
 			seed <<= 8;
 			seed |= username.at(x);
 		}
-		uint32_t key = htonl(GenerateKey(seed));
-		std::memcpy(data->data(), &key, sizeof(uint32_t));
+		Identification key = htons(GenerateKey(seed));
+		std::memcpy(data->data(), &key, sizeof(Identification));
 		std::memcpy(data->data() + 4, username.c_str(), username.size());
 		m_Queue->at(outqueue).push(data);
 	}
@@ -154,7 +154,7 @@ namespace Net
 		return d;
 	}
 
-	uint32_t Client::GenerateKey(uint32_t seed)
+	Identification Client::GenerateKey(Identification seed)
 	{
 		return ((((seed / 2) + 5724) % 100001) >> 8);
 	}
