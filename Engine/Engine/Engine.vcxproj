@@ -180,6 +180,7 @@
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SpriteBatch.h" />
+    <ClInclude Include="Testing.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="WindowApp.h" />
     <ClInclude Include="Xdata.h" />
