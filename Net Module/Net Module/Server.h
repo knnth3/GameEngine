@@ -26,12 +26,11 @@ namespace Net
 	public:
 		NET_API Server(int port);
 		NET_API bool Initialize();
-		NET_API Identification GetID(std::string username);
-		NET_API void Send(Identification ID, std::vector<byte> data);
+		NET_API Identification GetID(const char* name);
+		NET_API void Send(Identification ID, const char* data);
 		NET_API std::vector<byte> Recieve(Identification ID);
 		NET_API size_t GetNumOfUsers();
-		NET_API std::vector<std::string> GetNewUsernames();
-		NET_API void GetConnectedUsers(std::vector<std::string>& usernames);
+		NET_API bool GetNewUsername(char* name, uint32_t size);
 		NET_API void Close();
 
 	private:
@@ -45,6 +44,7 @@ namespace Net
 		NET_API bool IsAddressQueried(std::shared_ptr<Address>& address);
 		NET_API void AddNewUsername(std::string name);
 		NET_API bool AccessNewUsernames(std::string& nameToChangeTo, std::string& nameToLookFor);
+		NET_API void Send(Identification ID, std::vector<byte> data);
 
 		std::vector<std::unique_ptr<Node>> m_ActiveNodes;
 		std::unique_ptr<Transciever> m_transciever;

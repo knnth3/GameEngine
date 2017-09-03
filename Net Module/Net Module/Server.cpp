@@ -46,12 +46,28 @@ namespace Net
 		}
 	}
 
-	Identification Server::GetID(std::string username)
+	Identification Server::GetID(const char* name)
 	{
-		return m_connections[username]->GetID();
+		std::string user(name);
+		return m_connections[user]->GetID();
 	}
 
-	void Server::Send(Identification ID, std::vector<byte> data)
+	void Server::Send(Identification ID, const char* data)
+	{
+		if (IsValid(ID))
+		{
+			std::string strdata(data);
+			//printf("msg: %s\n", strdata.c_str());
+			edata info(strdata.begin(), strdata.end());
+
+			std::string msg(info.begin(), info.end());
+
+			ProgramData d = std::make_shared<edata>(info);
+			m_database->at(ID)->at(outqueue).push(d);
+		}
+	}
+
+	void Server::Send( Identification ID, std::vector<byte> data)
 	{
 		if (IsValid(ID))
 		{
@@ -79,25 +95,21 @@ namespace Net
 		return m_connections.size();
 	}
 
-	std::vector<std::string> Server::GetNewUsernames()
+	NET_API bool Server::GetNewUsername(char * name, uint32_t size)
 	{
-		std::vector<std::string> usernames;
 		std::string query = "";
 		std::string command = "!get";
-		while (AccessNewUsernames(query, command))
+		AccessNewUsernames(query, command);
+		if (query.size() > 1)
 		{
-			usernames.push_back(query);
+			if (query.size() <= size)
+			{
+				memcpy(name, query.data(), size);
+				name[query.size()] = '\0';
+				return true;
+			}
 		}
-
-		return usernames;
-	}
-
-	void Server::GetConnectedUsers(std::vector<std::string>& usernames)
-	{
-		for each(auto user in m_connections)
-		{
-			usernames.push_back(user.first);
-		}
+		return false;
 	}
 
 	void Server::Close()
@@ -243,6 +255,7 @@ namespace Net
 				if (m_newUsernames[it].compare("") != 0)
 				{
 					nameToChangeTo = m_newUsernames[it];
+					printf("Found %s: %s\n", nameToLookFor.c_str(), nameToChangeTo.c_str());
 					m_newUsernames[it] = "";
 					return true;
 				}
@@ -250,13 +263,24 @@ namespace Net
 		}
 		else
 		{
+			size_t pos = 0;
 			for (size_t it = 0; it < m_newUsernames.size(); it++)
 			{
 				if (m_newUsernames[it] == nameToLookFor)
 				{
-					m_newUsernames[it] = nameToChangeTo;
-					return true;
+					pos = it;
+					break;
 				}
+			}
+			if (pos >= m_newUsernames.size())
+			{
+				m_newUsernames.push_back(nameToChangeTo);
+				return true;
+			}
+			else
+			{
+				m_newUsernames.at(pos) = nameToChangeTo;
+				return true;
 			}
 		}
 		return false;
