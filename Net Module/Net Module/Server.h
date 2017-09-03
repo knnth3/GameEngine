@@ -2,6 +2,7 @@
 #include <chrono>
 #include <atomic>
 #include <future>
+#include <mutex>
 #include "NetModule.h"
 #include "Basics.h"
 #include "IPAuthenticator.h"
@@ -28,6 +29,8 @@ namespace Net
 		NET_API Identification GetID(std::string username);
 		NET_API void Send(Identification ID, std::vector<byte> data);
 		NET_API std::vector<byte> Recieve(Identification ID);
+		NET_API size_t GetNumOfUsers();
+		NET_API std::vector<std::string> GetNewUsernames();
 		NET_API void GetConnectedUsers(std::vector<std::string>& usernames);
 		NET_API void Close();
 
@@ -40,6 +43,8 @@ namespace Net
 		NET_API Identification GenerateKey(Identification seed);
 		NET_API bool IsValid(Identification ID);
 		NET_API bool IsAddressQueried(std::shared_ptr<Address>& address);
+		NET_API void AddNewUsername(std::string name);
+		NET_API bool AccessNewUsernames(std::string& nameToChangeTo, std::string& nameToLookFor);
 
 		std::vector<std::unique_ptr<Node>> m_ActiveNodes;
 		std::unique_ptr<Transciever> m_transciever;
@@ -47,6 +52,7 @@ namespace Net
 		
 		// IDs of all connected mapped to username;
 		std::map<std::string, std::shared_ptr<Address>> m_connections;
+		std::vector<std::string> m_newUsernames;
 		
 		//Stores data sent from the program that is to be sent to given peer
 		std::shared_ptr<DataBase> m_database;
@@ -57,6 +63,7 @@ namespace Net
 		
 		std::atomic<bool> m_closeThread;
 		std::future<void> m_asyncThread;
+		std::mutex m_Lock;
 		
 		bool m_isInit;
 	};

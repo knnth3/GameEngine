@@ -6,6 +6,7 @@ void Net::Tester::TestNet()
 {
 	int a = 0;
 	std::cin >> a;
+	std::cin.ignore();
 	switch (a)
 	{
 	case 1:
@@ -21,7 +22,12 @@ void Net::Tester::TestNet()
 	}
 	case 2:
 	{
-		Client c("127.0.0.1", 1234);
+		printf("Enter the IP of who you want to connect to: ");
+		std::string addr = "";
+		addr.resize(1000);
+		std::cin.getline(&addr[0], 1000);
+		std::string address = std::string(addr.c_str());
+		Client c(address, 1234);
 		bool result = c.Initialize();
 		while (result)
 		{

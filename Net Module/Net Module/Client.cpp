@@ -85,12 +85,10 @@ namespace Net
 		int result = 0;
 		if (!m_loggedIn)
 		{
-			edata ldata = { 'H','e','y','!',' ','Y','o','u',' ','L','o','g','g','e','d',' ','i','n','!','\n' };
-			std::string recieved(data->begin(), data->end());
-			std::string login(ldata.begin(), ldata.end());
-			if (login.compare(recieved) == 0)
+			if (data->at(0) == '!')
 			{
-				printf("Client: %s", recieved.c_str());
+				std::string recieved(data->begin() + 1, data->end());
+				printf("Client: %s\n", recieved.c_str());
 				m_loggedIn = true;
 				m_recievedDB->emplace(0, std::make_shared<std::queue<EPacket>>());
 				m_ClientNode->ConnectRecieveQueue(m_recievedDB->at(0));
@@ -108,22 +106,15 @@ namespace Net
 	void Client::Login(std::string username)
 	{
 		Identification key = htons(GenerateKey(CONNECTION_KEY));
-		Send(std::to_string(key) + "|" + username);
+		Send('!' + std::to_string(key) + "|" + username);
 	}
 
 	void Client::Send(std::string str)
 	{
-		if (m_loggedIn)
-		{
-			ProgramData data = std::make_shared<edata>();
-			data->resize(str.size());
-			std::memcpy(data->data(), str.c_str(), str.size());
-			m_Queue->at(outqueue).push(data);
-		}
-		else
-		{
-			printf("Client: Not Connected! Packet not sent.\n");
-		}
+		ProgramData data = std::make_shared<edata>();
+		data->resize(str.size());
+		std::memcpy(data->data(), str.c_str(), str.size());
+		m_Queue->at(outqueue).push(data);
 	}
 
 	void Client::Send(edata data)

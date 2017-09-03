@@ -118,6 +118,7 @@ namespace Net
 		{
 		case ConnectionType::NewConnect:
 			break;
+
 		case ConnectionType::Success:
 			if (m_recievedDB->find(ID) != m_recievedDB->end())
 			{
@@ -127,6 +128,7 @@ namespace Net
 		case ConnectionType::Failed:
 			printf("Authentication failed for user IP:%s \n", addr->GetAddressString().c_str());
 			break;
+
 		default:
 			printf("ID# %i sent an invalid packet! Packet will be discarded.\n", ID);
 			break;

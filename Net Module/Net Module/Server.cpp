@@ -74,6 +74,24 @@ namespace Net
 		return data;
 	}
 
+	size_t Server::GetNumOfUsers()
+	{
+		return m_connections.size();
+	}
+
+	std::vector<std::string> Server::GetNewUsernames()
+	{
+		std::vector<std::string> usernames;
+		std::string query = "";
+		std::string command = "!get";
+		while (AccessNewUsernames(query, command))
+		{
+			usernames.push_back(query);
+		}
+
+		return usernames;
+	}
+
 	void Server::GetConnectedUsers(std::vector<std::string>& usernames)
 	{
 		for each(auto user in m_connections)
@@ -125,7 +143,7 @@ namespace Net
 		}
 		if (!m_ConnectionTimers->IsTimedOut(address->GetAddress()))
 		{
-			if (!data->empty())
+			if (!data->empty() && data->at(0) == '!')
 			{
 				//Identification process
 				std::string username;
@@ -134,7 +152,7 @@ namespace Net
 				Identification derivedkey = htons(GenerateKey(CONNECTION_KEY));
 
 				bool keyObtained = false;
-				for (auto x = data->begin(); x < data->end(); x++)
+				for (auto x = data->begin() + 1; x < data->end(); x++)
 				{
 					char c = *x;
 					if (!(c == '|'))
@@ -146,14 +164,13 @@ namespace Net
 					}
 					else
 					{
-						value.push_back('\n');
 						keyObtained = true;
 					}
 				}
 
 				key = static_cast<Identification>(std::stoi(value));
 
-				printf("Key: %u, Value: %s, Username: %s, derivedKey: %u", key, value, username, derivedkey);
+				printf("Key: %u, Value: %s, Username: %s, derivedKey: %u\n", key, value.c_str(), username.c_str(), derivedkey);
 
 				//create connection if valid
 				if (key == derivedkey)
@@ -161,11 +178,16 @@ namespace Net
 					address->AssignID(ntohs(key));
 					address->AssignName(username);
 					m_connections[username] = address;
+					AddNewUsername(username);
 					CreateNode(address);
 
-					std::string msg = "Hey, you logged in!";
-					edata data = std::vector<byte>(msg.begin(), msg.end());
-					Send(m_connections[username]->GetID(), data);
+					std::string msg = "!Hey, you logged in!";
+					edata loginData = std::vector<byte>(msg.begin(), msg.end());
+					Send(m_connections[username]->GetID(), loginData);
+
+					msg = "L|" + username;
+					loginData = std::vector<byte>(msg.begin(), msg.end());
+					data = std::make_shared<edata>(loginData);
 				}
 				else
 				{
@@ -203,5 +225,43 @@ namespace Net
 		}
 		return false;
 	}
+
+	void Server::AddNewUsername(std::string name)
+	{
+		std::string empty = "";
+		AccessNewUsernames(name, empty);
+	}
+
+	bool Server::AccessNewUsernames(std::string& nameToChangeTo, std::string& nameToLookFor)
+	{
+		std::lock_guard<std::mutex> guard(m_Lock);
+
+		if (nameToLookFor.compare("!get") == 0)
+		{
+			for(size_t it = 0; it < m_newUsernames.size(); it++)
+			{
+				if (m_newUsernames[it].compare("") != 0)
+				{
+					nameToChangeTo = m_newUsernames[it];
+					m_newUsernames[it] = "";
+					return true;
+				}
+			}
+		}
+		else
+		{
+			for (size_t it = 0; it < m_newUsernames.size(); it++)
+			{
+				if (m_newUsernames[it] == nameToLookFor)
+				{
+					m_newUsernames[it] = nameToChangeTo;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
 
 }
