@@ -66,4 +66,7 @@ inline void ShutdownSockets()
 #endif
 }
 
+
+//Constants
 #define CLIENT_PORT 57232
+#define CONNECTION_KEY (Identification)5274

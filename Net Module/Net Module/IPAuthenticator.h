@@ -6,8 +6,6 @@
 #include <atomic>
 #include <future>
 
-#define CONNECTION_KEY (Identification)5274
-
 namespace Net
 {
 

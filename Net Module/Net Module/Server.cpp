@@ -125,36 +125,53 @@ namespace Net
 		}
 		if (!m_ConnectionTimers->IsTimedOut(address->GetAddress()))
 		{
-			if (data->size() <= 6)
+			if (!data->empty())
 			{
-				printf("Invalid packet recieved.\n");
-				return ConnectionType::Failed;
-			}
-			Identification key = 0;
-			Identification seed = 0;
-			memcpy(&key, data->data(), 4);
-			for (size_t x = 4; x < data->size(); x++)
-			{
-				seed <<= 8;
-				seed |= data->at(x);
-			}
+				//Identification process
+				std::string username;
+				std::string value;
+				Identification key = 0;
+				Identification derivedkey = htons(GenerateKey(CONNECTION_KEY));
 
-			Identification value = htons(GenerateKey(seed));
-			if (value == key)
-			{
-				address->AssignID(ntohs(key));
-				std::string username = std::string(data->begin() + 4, data->end());
-				address->AssignName(username);
-				m_connections[username] = address;
-				CreateNode(address);
+				bool keyObtained = false;
+				for (auto x = data->begin(); x < data->end(); x++)
+				{
+					char c = *x;
+					if (!(c == '|'))
+					{
+						if (!keyObtained)
+							value.push_back(c);
+						else
+							username.push_back(c);
+					}
+					else
+					{
+						value.push_back('\n');
+						keyObtained = true;
+					}
+				}
 
-				edata data = { 'H','e','y','!',' ','Y','o','u',' ','L','o','g','g','e','d',' ','i','n','!','\n' };
-				Send(m_connections[username]->GetID(), data);
-			}
-			else
-			{
-				printf("Login failed, Invalid Key!\n");
-				return ConnectionType::Failed;
+				key = static_cast<Identification>(std::stoi(value));
+
+				printf("Key: %u, Value: %s, Username: %s, derivedKey: %u", key, value, username, derivedkey);
+
+				//create connection if valid
+				if (key == derivedkey)
+				{
+					address->AssignID(ntohs(key));
+					address->AssignName(username);
+					m_connections[username] = address;
+					CreateNode(address);
+
+					std::string msg = "Hey, you logged in!";
+					edata data = std::vector<byte>(msg.begin(), msg.end());
+					Send(m_connections[username]->GetID(), data);
+				}
+				else
+				{
+					printf("Login failed, Invalid Key!\n");
+					return ConnectionType::Failed;
+				}
 			}
 		}
 		return ConnectionType::NewConnect;
