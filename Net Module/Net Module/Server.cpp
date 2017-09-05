@@ -160,6 +160,7 @@ namespace Net
 
 	ConnectionType Server::ConnectPeer(std::shared_ptr<Address>& address, ProgramData& data)
 	{
+		static uint32_t newID = 1;
 		if (IsAddressQueried(address))
 		{
 			return ConnectionType::Success;
@@ -198,7 +199,7 @@ namespace Net
 				//create connection if valid
 				if (key == derivedkey)
 				{
-					address->AssignID(ntohs(key));
+					address->AssignID(newID++);
 					address->AssignName(username);
 					m_connections[username] = address;
 					AddNewUsername(username);
