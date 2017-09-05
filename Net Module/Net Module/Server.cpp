@@ -76,18 +76,23 @@ namespace Net
 		}
 	}
 
-	std::vector<byte> Server::Recieve(Identification ID)
+	void Server::Recieve(Identification ID, char* data, uint32_t maxSize)
 	{
-		edata data;
+		edata info;
 		if (IsValid(ID))
 		{
 			if (!m_database->at(ID)->at(inqueue).empty())
 			{
-				data = *(m_database->at(ID)->at(inqueue).front()).get();
+				info = *(m_database->at(ID)->at(inqueue).front()).get();
 				m_database->at(ID)->at(inqueue).pop();
 			}
 		}
-		return data;
+		std::string cmd(info.begin(), info.end());
+		if (maxSize >= cmd.length())
+		{
+			memcpy(data, cmd.c_str(), maxSize);
+		}
+
 	}
 
 	size_t Server::GetNumOfUsers()

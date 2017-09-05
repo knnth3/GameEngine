@@ -11,12 +11,11 @@ namespace Net
 	class Client
 	{
 	public:
-		NET_API Client(std::string address, unsigned short port);
+		NET_API Client(const char* address, unsigned short port);
 		NET_API void Close();
 		NET_API bool Initialize();
-		NET_API void Send(std::string s);
-		NET_API void Send(edata data);
-		NET_API edata Recive();
+		NET_API void Send(const char* data);
+		NET_API void Recive(char* data, uint32_t maxSize);
 	private:
 		NET_API void Update();
 		NET_API ConnectionType ConnectClient(std::shared_ptr<Address>& address, ProgramData& data);

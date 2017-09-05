@@ -7,7 +7,7 @@ namespace Net
 
 	using namespace std::placeholders;
 
-	Client::Client(std::string address, unsigned short port)
+	Client::Client(const char* address, unsigned short port)
 	{
 		InitializeSockets();
 		m_ServerAddress = std::make_shared<Address>(address, port, 0);
@@ -106,33 +106,33 @@ namespace Net
 	void Client::Login(std::string username)
 	{
 		Identification key = htons(GenerateKey(CONNECTION_KEY));
-		Send('!' + std::to_string(key) + "|" + username);
+		std::string cmd = '!' + std::to_string(key) + "|" + username;
+		Send(cmd.c_str());
 	}
 
-	void Client::Send(std::string str)
+	void Client::Send(const char* data)
 	{
-		ProgramData data = std::make_shared<edata>();
-		data->resize(str.size());
-		std::memcpy(data->data(), str.c_str(), str.size());
-		m_Queue->at(outqueue).push(data);
+		std::string strdata(data);
+		edata info(strdata.begin(), strdata.end());
+		ProgramData packet = std::make_shared<edata>(info);
+		m_Queue->at(outqueue).push(packet);
 	}
 
-	void Client::Send(edata data)
+	void Client::Recive(char* data, uint32_t maxSize)
 	{
-		ProgramData sending = std::make_shared<edata>(data);
-		m_Queue->at(outqueue).push(sending);
-	}
-
-	edata Client::Recive()
-	{
-		edata d;
+		edata info;
 		if (!m_Queue->at(inqueue).empty())
 		{
 			ProgramData data = m_Queue->at(inqueue).front();
 			m_Queue->at(inqueue).pop();
-			return *data.get();
+			info = *data.get();
 		}
-		return d;
+
+		std::string cmd(info.begin(), info.end());
+		if (maxSize >= cmd.length())
+		{
+			memcpy(data, cmd.c_str(), maxSize);
+		}
 	}
 
 	Identification Client::GenerateKey(Identification seed)

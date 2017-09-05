@@ -27,7 +27,7 @@ void Net::Tester::TestNet()
 		addr.resize(1000);
 		std::cin.getline(&addr[0], 1000);
 		std::string address = std::string(addr.c_str());
-		Client c(address, 1234);
+		Client c(address.c_str(), 1234);
 		bool result = c.Initialize();
 		while (result)
 		{
@@ -37,13 +37,11 @@ void Net::Tester::TestNet()
 			std::string data = std::string(a.c_str());
 			if (data.size() != 0)
 			{
-				c.Send(data);
+				c.Send(data.c_str());
 			}
-			edata datas = c.Recive();
-			if (!datas.empty())
-			{
-				std::cout << "got a download\n";
-			}
+			std::string cmd;
+			cmd.resize(100);
+			c.Recive(&cmd[0], 100);
 		}
 		c.Close();
 		break;

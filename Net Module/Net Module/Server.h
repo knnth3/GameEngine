@@ -28,7 +28,7 @@ namespace Net
 		NET_API bool Initialize();
 		NET_API Identification GetID(const char* name);
 		NET_API void Send(Identification ID, const char* data);
-		NET_API std::vector<byte> Recieve(Identification ID);
+		NET_API void Recieve(Identification ID, char* data, uint32_t maxSize);
 		NET_API size_t GetNumOfUsers();
 		NET_API bool GetNewUsername(char* name, uint32_t size);
 		NET_API void Close();
