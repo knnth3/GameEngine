@@ -80,8 +80,8 @@ namespace Net
 				//Extract data to and send to server
 				ProgramData data = packet.GetBuffer();
 				m_dataQueue->at(inqueue).push(data);
-				std::string datatest(data->begin(), data->end());
-				printf("%s: %s\n", m_connectionAddress->GetName().c_str(), datatest.c_str());
+				//std::string datatest(data->begin(), data->end());
+				//printf("%s: %s\n", m_connectionAddress->GetName().c_str(), datatest.c_str());
 				return true;
 			}
 		}

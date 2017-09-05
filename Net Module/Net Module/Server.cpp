@@ -57,11 +57,7 @@ namespace Net
 		if (IsValid(ID))
 		{
 			std::string strdata(data);
-			//printf("msg: %s\n", strdata.c_str());
 			edata info(strdata.begin(), strdata.end());
-
-			std::string msg(info.begin(), info.end());
-
 			ProgramData d = std::make_shared<edata>(info);
 			m_database->at(ID)->at(outqueue).push(d);
 		}
@@ -76,7 +72,7 @@ namespace Net
 		}
 	}
 
-	void Server::Recieve(Identification ID, char* data, uint32_t maxSize)
+	bool Server::Recieve(Identification ID, char* data, uint32_t maxSize)
 	{
 		edata info;
 		if (IsValid(ID))
@@ -87,11 +83,19 @@ namespace Net
 				m_database->at(ID)->at(inqueue).pop();
 			}
 		}
-		std::string cmd(info.begin(), info.end());
-		if (maxSize >= cmd.length())
+		std::string strdata(info.begin(), info.end());
+		uint32_t len = static_cast<uint32_t>(strdata.length());
+		if (strdata.empty())
 		{
-			memcpy(data, cmd.c_str(), maxSize);
+			return false;
 		}
+
+		if (maxSize >= len)
+		{
+			memcpy(data, strdata.c_str(), len);
+			return true;
+		}
+		return false;
 
 	}
 

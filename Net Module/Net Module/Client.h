@@ -15,7 +15,7 @@ namespace Net
 		NET_API void Close();
 		NET_API bool Initialize();
 		NET_API void Send(const char* data);
-		NET_API void Recive(char* data, uint32_t maxSize);
+		NET_API bool Recieve(char* data, uint32_t maxSize);
 	private:
 		NET_API void Update();
 		NET_API ConnectionType ConnectClient(std::shared_ptr<Address>& address, ProgramData& data);

@@ -41,7 +41,7 @@ void Net::Tester::TestNet()
 			}
 			std::string cmd;
 			cmd.resize(100);
-			c.Recive(&cmd[0], 100);
+			c.Recieve(&cmd[0], 100);
 		}
 		c.Close();
 		break;

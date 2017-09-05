@@ -118,7 +118,7 @@ namespace Net
 		m_Queue->at(outqueue).push(packet);
 	}
 
-	void Client::Recive(char* data, uint32_t maxSize)
+	bool Client::Recieve(char* data, uint32_t maxSize)
 	{
 		edata info;
 		if (!m_Queue->at(inqueue).empty())
@@ -128,11 +128,19 @@ namespace Net
 			info = *data.get();
 		}
 
-		std::string cmd(info.begin(), info.end());
-		if (maxSize >= cmd.length())
+		std::string strdata(info.begin(), info.end());
+		uint32_t len = static_cast<uint32_t>(strdata.length());
+		if (strdata.empty())
 		{
-			memcpy(data, cmd.c_str(), maxSize);
+			return false;
 		}
+
+		if (maxSize >= len)
+		{
+			memcpy(data, strdata.c_str(), len);
+			return true;
+		}
+		return false;
 	}
 
 	Identification Client::GenerateKey(Identification seed)
