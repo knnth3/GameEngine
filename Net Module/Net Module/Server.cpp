@@ -49,7 +49,9 @@ namespace Net
 	Identification Server::GetID(const char* name)
 	{
 		std::string user(name);
-		return m_connections[user]->GetID();
+		if(m_connections.find(user) != m_connections.end())
+			return m_connections[user]->GetID();
+		return 0;
 	}
 
 	void Server::Send(Identification ID, const char* data)
