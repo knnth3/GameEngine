@@ -170,19 +170,47 @@ namespace Lime
 
     std::shared_ptr<ModelData> ModelLoader::CreateTriangle2()
     {
-        std::shared_ptr<ModelData> m_Data = std::make_shared<ModelData>();
-        m_Data->m_Verticies =
-        {
-            { glm::vec3(-1,-1,0),glm::vec3(1,0,0), glm::vec3(0,0,0) },
-            { glm::vec3(0,-1,0),glm::vec3(0,1,0), glm::vec3(0,0,0) },
-            { glm::vec3(-0.5f,0,0),glm::vec3(0,0,1), glm::vec3(0,0,0) }
-        };
-        m_Data->m_Indicies =
-        {
-            0,1,2
-        };
-        m_Data->m_ObjectID = AssignID();
-        return m_Data;
+		std::shared_ptr<ModelData> m_Data = std::make_shared<ModelData>();
+		m_Data->m_ObjectID = AssignID();
+		srand((unsigned int)time(NULL));
+		float rndmR = (rand() % 101) / 100.0f;
+		float rndmG = (rand() % 101) / 100.0f;
+		float rndmB = (rand() % 101) / 100.0f;
+		glm::vec3 color = glm::vec3(rndmR, rndmG, rndmB);
+
+		float width = 1;
+		float height = 1;
+
+		float halfWidth = width / 2;
+		int vertexCount = 0;
+		for (size_t side = 0; side < 2; side++)
+		{
+			std::vector<Vertex> lib;
+			switch (side)
+			{
+			case 0:
+				lib = CreateCubeSide(0, height, glm::vec3(1, 0, 0), color);
+				break;
+			case 1:
+				lib = CreateCubeSide(0, height, glm::vec3(-1, 0, 0), color);
+				break;
+			default:
+				break;
+			}
+			if (lib.size() != 0)
+			{
+				m_Data->m_Indicies.push_back(vertexCount + 0);
+				m_Data->m_Indicies.push_back(vertexCount + 1);
+				m_Data->m_Indicies.push_back(vertexCount + 2);
+				m_Data->m_Indicies.push_back(vertexCount + 3);
+				m_Data->m_Indicies.push_back(vertexCount + 0);
+				m_Data->m_Indicies.push_back(vertexCount + 2);
+				m_Data->m_Verticies.insert(m_Data->m_Verticies.end(), lib.begin(), lib.end());
+				vertexCount += 4;
+			}
+		}
+
+		return m_Data;
     }
 
     std::shared_ptr<ModelData> ModelLoader::CreateCircle(float radius, float width, unsigned int tesselation, glm::vec3 color)

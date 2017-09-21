@@ -1,18 +1,19 @@
 #pragma once
-#include "Primitives.h"
 
 namespace Lime
 {
-    class Xdata
-    {
-    public:
-        DLL_EXPORT Xdata(const bool intersects, const float distance);
+	class Xdata
+	{
+	public:
 
-        DLL_EXPORT bool DoesIntersect();
-        DLL_EXPORT float GetDistance();
-    private:
-        bool m_Intersects;
-        float m_Distance;
-    };
+		Xdata(const bool intersects, const float distance);
+
+		bool DoesIntersect();
+
+		float GetDistance();
+
+	private:
+		bool m_Intersects;
+		float m_Distance;
+	};
 }
-

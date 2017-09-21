@@ -18,36 +18,11 @@ typedef std::vector<byte> BUFFER;
 
 namespace Lime
 {
-    enum class TransferType
-    {
-        Null,
-        Server_To_Client_Push,
-        Server_To_Client_Pull,
-        Client_To_Server_Push,
-        Client_To_Server_Pull,
-    };
-
-    enum class PacketType
-    {
-        Null,
-        Establish_Connection,
-        Message,
-        PushData,
-        PullData
-    };
-
-    struct Packet
-    {
-		UINT ID;
-        BUFFER Data;
-    };
-
-    struct IPv4
-    {
-        std::string port = "1234";
-        std::string address = "127.0.0.1";
-    };
-
+	struct Vertex2
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+	};
 
     struct Vertex
     {
