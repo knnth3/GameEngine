@@ -20,6 +20,13 @@ namespace Lime
 {
 	struct Vertex2
 	{
+		Vertex2() {}
+		Vertex2(float x, float y, float z, float r, float g, float b, float a) 
+		{
+			position = { x,y,z };
+			color = { r,g,b,a };
+		}
+
 		glm::vec3 position;
 		glm::vec4 color;
 	};

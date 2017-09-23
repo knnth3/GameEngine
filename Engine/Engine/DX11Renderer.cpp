@@ -55,6 +55,8 @@ HRESULT Lime::DX11Renderer::Initialize()
 
 	CreateShaders();
 	CreateBuffers();
+	CreateConstBuffers();
+	CreateRenderStates();
 
 	return result;
 }
@@ -74,48 +76,75 @@ void Lime::DX11Renderer::Close()
 	vertLayout->Release();
 	depthStencilView->Release();
 	depthStencilBuffer->Release();
+	m_ObjConstBuffer->Release();
+	WireFrame->Release();
 }
 
 void Lime::DX11Renderer::Render()
 {
+
 	//Test Code
-	red += colormodr * 0.00005f;
-	green += colormodg * 0.00002f;
-	blue += colormodb * 0.00001f;
 
-	if (red >= 1.0f || red <= 0.0f)
-		colormodr *= -1;
-	if (green >= 1.0f || green <= 0.0f)
-		colormodg *= -1;
-	if (blue >= 1.0f || blue <= 0.0f)
-		colormodb *= -1;
+	//Keep the cubes rotating
+	rot += .0005f;
+	if (rot > 6.28f)
+		rot = 0.0f;
 
+	//Reset cube1World
+	cube1World = XMMatrixIdentity();
+	//Define cube1's world space matrix
+	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	Rotation = XMMatrixRotationAxis(rotaxis, rot);
+	Translation = XMMatrixTranslation(0.0f, 0.0f, 4.0f);
+
+	//Set cube1's world space using the transformations
+	cube1World = Translation * Rotation;
+
+	//Reset cube2World
+	cube2World = XMMatrixIdentity();
+
+	//Define cube2's world space matrix
+	Rotation = XMMatrixRotationAxis(rotaxis, -rot);
+	Scale = XMMatrixScaling(1.3f, 1.3f, 1.3f);
+
+	//Set cube2's world space matrix
+	cube2World = Rotation * Scale;
 
 	//Clear our backbuffer to the updated color
-	const float bgColor[4] = { red, green, blue, 1.0f };
+	const float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	m_dx11Context->ClearRenderTargetView(renderTargetView, bgColor);
 	m_dx11Context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	m_dx11Context->DrawIndexed(6, 0, 0);
+	//Set the WVP matrix and send it to the constant buffer in effect file
+	m_ObjBuffer.WVP = XMMatrixTranspose(cube1World * m_camera->GetViewMatrix() * m_camera->GetProjectionMatrix());
+	m_dx11Context->UpdateSubresource(m_ObjConstBuffer, 0, NULL, &m_ObjBuffer, 0, 0);
+	m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+
+	//Draw the first cube
+	m_dx11Context->RSSetState(WireFrame);
+	m_dx11Context->DrawIndexed(36, 0, 0);
+
+	m_ObjBuffer.WVP = XMMatrixTranspose(cube2World * m_camera->GetViewMatrix() * m_camera->GetProjectionMatrix());
+	m_dx11Context->UpdateSubresource(m_ObjConstBuffer, 0, NULL, &m_ObjBuffer, 0, 0);
+	m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+
+	//Draw the second cube
+	m_dx11Context->RSSetState(NULL);
+	m_dx11Context->DrawIndexed(36, 0, 0);
+
 	//Present the backbuffer to the screen
 	SwapChain->Present(0, 0);
+}
+
+void Lime::DX11Renderer::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
+{
+	m_camera = ptr;
 }
 
 HRESULT Lime::DX11Renderer::CreateBuffers()
 {
 	HRESULT result;
-	Vertex2 v[] =
-	{
-		{ glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ glm::vec3(-0.5f,  0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ glm::vec3(0.5f,  0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ glm::vec3(0.5f,  -0.5f, 0.5f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) }
-	};
-	DWORD indices[] = {
-		0, 1, 2,
-		0, 2, 3,
-	};
 
 	//Describe our Depth/Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -218,6 +247,32 @@ HRESULT Lime::DX11Renderer::CreateShaders()
 	m_dx11Context->VSSetShader(VS, 0, 0);
 	m_dx11Context->PSSetShader(PS, 0, 0);
 
+	return result;
+}
+
+HRESULT Lime::DX11Renderer::CreateConstBuffers()
+{
+	HRESULT result;
+	D3D11_BUFFER_DESC cbbd;
+	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
+	cbbd.Usage = D3D11_USAGE_DEFAULT;
+	cbbd.ByteWidth = sizeof(m_ObjBuffer);
+	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbbd.CPUAccessFlags = 0;
+	cbbd.MiscFlags = 0;
+	result = m_dx11device->CreateBuffer(&cbbd, NULL, &m_ObjConstBuffer);
+
+	return result;
+}
+
+HRESULT Lime::DX11Renderer::CreateRenderStates()
+{
+	HRESULT result;
+	D3D11_RASTERIZER_DESC wfdesc;
+	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
+	wfdesc.FillMode = D3D11_FILL_WIREFRAME;
+	wfdesc.CullMode = D3D11_CULL_NONE;
+	result = m_dx11device->CreateRasterizerState(&wfdesc, &WireFrame);
 	return result;
 }
 

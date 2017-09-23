@@ -83,6 +83,7 @@ Lime::DX11WindowApp::~DX11WindowApp()
 bool Lime::DX11WindowApp::Run()
 {
 	MSG msg = {0};
+	ZeroMemory(&msg, sizeof(MSG));
 	bool running = true;
 
 	// Handle the windows messages.
