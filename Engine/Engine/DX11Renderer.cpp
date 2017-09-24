@@ -1,5 +1,5 @@
 #include "DX11Renderer.h"
-
+#include <chrono>
 
 Lime::DX11Renderer::DX11Renderer(HWND window,  int width, int height)
 {
@@ -78,6 +78,12 @@ void Lime::DX11Renderer::Close()
 	depthStencilBuffer->Release();
 	m_ObjConstBuffer->Release();
 	WireFrame->Release();
+}
+
+void Lime::DX11Renderer::AddModel(Vertex2* verts, UINT vertLen, DWORD* ind, UINT indLen)
+{
+	v = std::vector<Vertex2>(verts, verts + vertLen);
+	indices = std::vector<DWORD>(ind, ind + indLen);
 }
 
 void Lime::DX11Renderer::Render()
@@ -163,7 +169,7 @@ HRESULT Lime::DX11Renderer::CreateBuffers()
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex2) * ARRAYSIZE(v);
+	vertexBufferDesc.ByteWidth = sizeof(Vertex2) * (UINT)v.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -171,20 +177,20 @@ HRESULT Lime::DX11Renderer::CreateBuffers()
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * ARRAYSIZE(indices);
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (UINT)indices.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
-	vertexBufferData.pSysMem = v;
+	vertexBufferData.pSysMem = v.data();
 	result = m_dx11device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
 	CheckSuccess(result);
 
 	D3D11_SUBRESOURCE_DATA indexBufferData;
 	ZeroMemory(&indexBufferData, sizeof(indexBufferData));
-	indexBufferData.pSysMem = indices;
+	indexBufferData.pSysMem = indices.data();
 	m_dx11device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 
 	UINT stride = sizeof(Vertex2);
