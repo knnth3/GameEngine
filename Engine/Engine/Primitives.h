@@ -18,19 +18,6 @@ typedef std::vector<byte> BUFFER;
 
 namespace Lime
 {
-	struct Vertex2
-	{
-		Vertex2() {}
-		Vertex2(float x, float y, float z, float r, float g, float b, float a) 
-		{
-			position = { x,y,z };
-			color = { r,g,b,a };
-		}
-
-		glm::vec3 position;
-		glm::vec4 color;
-	};
-
     struct Vertex
     {
         glm::vec3 position;
@@ -38,27 +25,65 @@ namespace Lime
         glm::vec3 normal;
     };
 
+	struct Vertex2
+	{
+		DLL_EXPORT Vertex2(Vertex v);
+		DLL_EXPORT Vertex2() = default;
+		DLL_EXPORT Vertex2(float x, float y, float z, float r, float g, float b, float a, float u, float v);
+
+		glm::vec3 position;
+		glm::vec4 color;
+		glm::vec2 uv;
+	};
+
     struct ModelData
     {
-        ModelData() :
-            m_Verticies(0),
-            m_Indicies(0)
-        {
-        }
-        GLsizeiptr VertexBufferSize() const
-        {
-            return m_Verticies.size() * sizeof(Vertex);
-        }
-        GLsizeiptr IndexBufferSize() const
-        {
-            return m_Indicies.size();
-        }
+		DLL_EXPORT ModelData();
+		DLL_EXPORT size_t VertexBufferSize();
+		DLL_EXPORT size_t IndexBufferSize();
+
         unsigned int m_ObjectID = 0;
         std::vector<Vertex> m_Verticies;
         std::vector<GLshort> m_Indicies;
 
 
     };
+
+	struct ModelData2
+	{
+		DLL_EXPORT ModelData2();
+		DLL_EXPORT size_t VertexBufferSize();
+		DLL_EXPORT size_t IndexBufferSize();
+
+		unsigned int m_ObjectID = 0;
+		std::vector<Vertex2> m_Verticies;
+		std::vector<uint32_t> m_Indicies;
+
+
+	};
+
+	struct Model2
+	{
+		DLL_EXPORT Model2();
+		DLL_EXPORT void Scale(const float x, const float y, const float z);
+		DLL_EXPORT void Translate(const float x, const float y, const float z);
+		//In Radians
+		DLL_EXPORT void Rotate(float x, float y, float z);
+		DLL_EXPORT void RotateAtOrigin(float x, float y, float z);
+		DLL_EXPORT void Color(float r, float g, float b);
+		DLL_EXPORT glm::vec3 GetPosition()const;
+		DLL_EXPORT glm::mat4 GetLocalToWorld();
+		std::shared_ptr<ModelData2> m_Data;
+	private:
+		void CreateLocalToWorld();
+		glm::mat4 m_outRotation;
+		glm::mat4 m_inRotation;
+		glm::mat4 m_scale;
+		glm::mat4 m_translation;
+		glm::mat4 m_localToWorld;
+		glm::vec3 m_Position;
+	};
+
 
     struct Model
     {

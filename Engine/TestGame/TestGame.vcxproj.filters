@@ -19,4 +19,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\images.png">
+      <Filter>Resource Files</Filter>
+    </ImageContentTask>
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <glm\glm.hpp>
-#include <glm/gtx/transform.hpp>
+#include <glm\gtx\transform.hpp>
 #include "Primitives.h"
 
 namespace Lime

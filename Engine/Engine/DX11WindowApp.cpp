@@ -104,12 +104,12 @@ const HWND Lime::DX11WindowApp::GetHWND()
 	return m_hwnd;
 }
 
-unsigned int Lime::DX11WindowApp::GetWindowWidth() const
+unsigned int Lime::DX11WindowApp::Width() const
 {
 	return m_width;
 }
 
-unsigned int Lime::DX11WindowApp::GetWindowHeight() const
+unsigned int Lime::DX11WindowApp::Height() const
 {
 	return m_height;
 }

@@ -3,7 +3,7 @@
 #include <glm\glm.hpp>
 #include <SDL2\SDL.h>
 #include "Camera.h"
-#include <glm/gtx/transform.hpp>
+#include <glm\gtx/transform.hpp>
 
 namespace Lime
 {

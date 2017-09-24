@@ -1,6 +1,6 @@
 #include "SpriteBatch.h"
 #include <iostream>
-#include <glm/gtx/transform.hpp>
+#include <glm\gtx\transform.hpp>
 #include <iostream>
 
 

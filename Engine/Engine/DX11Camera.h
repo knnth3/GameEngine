@@ -10,10 +10,10 @@ namespace Lime
 	public:
 		DLL_EXPORT DX11Camera(int width, int height);
 		DLL_EXPORT ~DX11Camera();
-		DLL_EXPORT XMMATRIX GetWorldMaxrix();
-		DLL_EXPORT XMMATRIX GetViewMatrix();
-		DLL_EXPORT XMMATRIX GetProjectionMatrix();
-		DLL_EXPORT XMMATRIX GetWVPnMatrix();
+		DLL_EXPORT glm::mat4 GetWorldMaxrix();
+		DLL_EXPORT glm::mat4 GetViewMatrix();
+		DLL_EXPORT glm::mat4 GetProjectionMatrix();
+		DLL_EXPORT glm::mat4 GetWVPnMatrix();
 	private:
 		int m_width;
 		int m_height;
@@ -22,11 +22,11 @@ namespace Lime
 		float m_aspectRatio;
 		float m_nearPlane;
 		float m_farPlane;
-		XMMATRIX m_projection;
-		XMMATRIX m_view;
-		XMVECTOR m_position;
-		XMVECTOR m_targetPos;
-		XMVECTOR m_UpDirection;
+		glm::mat4 m_projection;
+		glm::mat4 m_view;
+		glm::vec3 m_position;
+		glm::vec3 m_targetPos;
+		glm::vec3 m_UpDirection;
 	};
 }
 

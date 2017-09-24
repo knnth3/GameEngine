@@ -13,7 +13,6 @@
 #define CheckSuccess(hresult) \
 	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
 
-
 namespace Lime
 {
 	class DX11Renderer
@@ -21,20 +20,23 @@ namespace Lime
 	public:
 		DLL_EXPORT DX11Renderer(HWND window, int width, int height);
 		DLL_EXPORT ~DX11Renderer();
-
-		DLL_EXPORT HRESULT Initialize();
-		DLL_EXPORT void Close();
-		DLL_EXPORT void AddModel(Vertex2* verts, UINT vertLen,  DWORD* ind, UINT indLen);
-		DLL_EXPORT void Render();
+		DLL_EXPORT void AddModel(std::shared_ptr<Model2>& model);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
-	private:
-		std::vector<glm::vec3> m_verticies;
+		DLL_EXPORT void LoadShaderFromFile(std::wstring filename);
+		DLL_EXPORT void Draw();
+		void Close();
+		HRESULT Initialize();
 		HRESULT CreateBuffers();
 		HRESULT CreateShaders();
 		HRESULT CreateConstBuffers();
 		HRESULT CreateRenderStates();
+		HRESULT CreateDepthStencil();
+		void CreateViewport();
+		XMMATRIX GlmToXM(glm::mat4 matrix);
 		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, 
 			LPCSTR profile, ID3DBlob** blob);
+		bool m_hasBuffers;
+		std::vector<glm::vec3> m_verticies;
 		unsigned int m_width, m_height;
 		HWND m_window;
 		HINSTANCE m_hInstance;
@@ -52,6 +54,8 @@ namespace Lime
 		ID3D11VertexShader* VS;
 		ID3D11PixelShader* PS;
 		ID3D11InputLayout* vertLayout;
+		std::vector<ID3D11ShaderResourceView*> m_textures;
+		std::vector<ID3D11SamplerState*> m_samplerStates;
 		std::vector<ID3D11VertexShader*> m_vertexShaders;
 		std::vector<ID3D11PixelShader*> m_pixelShaders;
 		ID3D11DepthStencilView* depthStencilView;
@@ -63,18 +67,8 @@ namespace Lime
 			XMMATRIX WVP;
 		};
 		ConstBuffer m_ObjBuffer;
+		std::vector<std::shared_ptr<Model2>> m_models;
 
-		//Temp
-		std::vector<Vertex2> v;
-		std::vector<DWORD> indices;
-
-		XMMATRIX cube1World;
-		XMMATRIX cube2World;
-
-		XMMATRIX Rotation;
-		XMMATRIX Scale;
-		XMMATRIX Translation;
-		float rot = 0.01f;
 	};
 
 

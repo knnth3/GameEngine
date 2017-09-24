@@ -18,8 +18,8 @@ namespace Lime
 		//Returns false on close
 		DLL_EXPORT bool Run();
 		DLL_EXPORT const HWND GetHWND();
-		DLL_EXPORT unsigned int GetWindowWidth()const;
-		DLL_EXPORT unsigned int GetWindowHeight()const;
+		DLL_EXPORT unsigned int Width()const;
+		DLL_EXPORT unsigned int Height()const;
 	private:
 		unsigned int m_width;
 		unsigned int m_height;
