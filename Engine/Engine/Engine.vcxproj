@@ -162,8 +162,9 @@ copy "$(ProjectDir)shaders\*.*" "$(TargetDir)shaders\"</Command>
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collider_Plane.cpp" />
     <ClCompile Include="Collider_Sphere.cpp" />
+    <ClCompile Include="DX11App.cpp" />
     <ClCompile Include="DX11Camera.cpp" />
-    <ClCompile Include="DX11Renderer.cpp" />
+    <ClCompile Include="DX11Graphics.cpp" />
     <ClCompile Include="DX11WindowApp.cpp" />
     <ClCompile Include="Game3D.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -183,8 +184,9 @@ copy "$(ProjectDir)shaders\*.*" "$(TargetDir)shaders\"</Command>
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Collider_Plane.h" />
     <ClInclude Include="Collider_Sphere.h" />
+    <ClInclude Include="DX11App.h" />
     <ClInclude Include="DX11Camera.h" />
-    <ClInclude Include="DX11Renderer.h" />
+    <ClInclude Include="DX11Graphics.h" />
     <ClInclude Include="DX11WindowApp.h" />
     <ClInclude Include="Game3D.h" />
     <ClInclude Include="InputManager.h" />

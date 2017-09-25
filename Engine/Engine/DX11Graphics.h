@@ -15,15 +15,17 @@
 
 namespace Lime
 {
-	class DX11Renderer
+	class DX11Graphics
 	{
 	public:
-		DLL_EXPORT DX11Renderer(HWND window, int width, int height);
-		DLL_EXPORT ~DX11Renderer();
+		DLL_EXPORT DX11Graphics(HWND window, int width, int height);
+		DLL_EXPORT ~DX11Graphics();
 		DLL_EXPORT void AddModel(std::shared_ptr<Model2>& model);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
-		DLL_EXPORT void LoadShaderFromFile(std::wstring filename);
+		DLL_EXPORT void LoadTextureFromFile(std::wstring filename);
 		DLL_EXPORT void Draw();
+	private:
+
 		void Close();
 		HRESULT Initialize();
 		HRESULT CreateBuffers();
@@ -68,7 +70,13 @@ namespace Lime
 		};
 		ConstBuffer m_ObjBuffer;
 		std::vector<std::shared_ptr<Model2>> m_models;
-
+		float red = 0.0f;
+		float green = 0.0f;
+		float blue = 0.0f;
+		int colormodr = 1;
+		int colormodg = 1;
+		int colormodb = 1;
+		bool hasConsBuffers = false;
 	};
 
 

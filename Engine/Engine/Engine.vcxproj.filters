@@ -63,13 +63,16 @@
     <ClCompile Include="DX11WindowApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DX11Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Primitives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,10 +128,13 @@
     <ClInclude Include="Xdata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Renderer.h">
+    <ClInclude Include="DX11Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Camera.h">
+    <ClInclude Include="DX11App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,66 +1,80 @@
 #include "DX11WindowApp.h"
+#include "DirectXMath.h"
 
 
 
-Lime::DX11WindowApp::DX11WindowApp(LPCWSTR AppName)
+Lime::DX11WindowApp::DX11WindowApp(LPCWSTR AppName, std::unique_ptr<DX11App> app)
 {
 	m_appName = AppName;
-	WNDCLASSEX wc = {0};
-	DEVMODE dmScreenSettings = {0};
+	WNDCLASSEX wc = { 0 };
 	m_hinstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(NULL));
 	m_width = 800;
 	m_height = 600;
+	app.swap(m_application);
+	app = nullptr;
+}
 
-	ZeroMemory(&wc, sizeof(WNDCLASSEX));
-	// Setup the windows class with default settings.
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = m_hinstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	wc.lpszClassName = m_appName;
+int Lime::DX11WindowApp::Initialize()
+{
+	if (m_application == nullptr)
+		return 1;
 
-	// Register the window class.
-	RegisterClassEx(&wc);
+	if (!DirectX::XMVerifyCPUSupport())
+		return 1;
 
-	// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-	if (FULL_SCREEN)
-	{
-		// If full screen set the screen to maximum size of the users desktop and 32bit.
-		//memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-		m_width = GetSystemMetrics(SM_CXSCREEN);
-		m_height = GetSystemMetrics(SM_CYSCREEN);
-		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsWidth = (unsigned long)m_width;
-		dmScreenSettings.dmPelsHeight = (unsigned long)m_height;
-		dmScreenSettings.dmBitsPerPel = 32;
-		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+	HRESULT hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
+	if (FAILED(hr))
+		return 1;
 
-		// Change the display settings to full screen.
-		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
-	}
+	// Register class and create window
+	WNDCLASSEX wcex = { 0 };
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = m_hinstance;
+	wcex.hIcon = NULL;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = nullptr;
+	wcex.lpszClassName = m_appName;
+	wcex.hIconSm = NULL;
+	if (!RegisterClassEx(&wcex))
+		return 1;
 
-	// Create the window with the screen settings and get the handle to it.
-	RECT wr = { 0, 0, (long)m_width, (long)m_height };    // set the size, but not the position
-	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
-	m_hwnd = CreateWindowEx(NULL,
-		m_appName,    // name of the window class
-		m_appName,   // title of the window
-		WS_OVERLAPPEDWINDOW,    // window style
-		300,    // x-position of the window
-		300,    // y-position of the window
-		wr.right - wr.left,    // width of the window
-		wr.bottom - wr.top,    // height of the window
-		NULL,    // we have no parent window, NULL
-		NULL,    // we aren't using menus, NULL
-		m_hinstance,    // application handle
-		NULL);    // used with multiple windows, NULL
+	RECT rc;
+	rc.top = 0;
+	rc.left = 0;
+	rc.right = static_cast<LONG>(m_width);
+	rc.bottom = static_cast<LONG>(m_height);
+	m_application->SetSize(m_width, m_height);
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	// Bring the window up on the screen and set it as main focus.
+	m_hwnd = CreateWindowEx(
+		0, 
+		m_appName, 
+		m_appName, 
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 
+		CW_USEDEFAULT, 
+		rc.right - rc.left, rc.bottom - rc.top, 
+		nullptr, 
+		nullptr, 
+		m_hinstance,
+		nullptr);
+	// TODO: Change to CreateWindowEx(WS_EX_TOPMOST, L"Direct3D_Win32_Game3WindowClass", L"Direct3D Win32 Game3", WS_POPUP,
+	// to default to fullscreen.
+
+	if (!m_hwnd)
+		return 1;
+
 	ShowWindow(m_hwnd, SW_SHOW);
-	return;
+
+	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_application.get()));
+	m_application->Init(m_hwnd);
+	return 0;
 }
 
 Lime::DX11WindowApp::~DX11WindowApp()
@@ -82,52 +96,186 @@ Lime::DX11WindowApp::~DX11WindowApp()
 
 bool Lime::DX11WindowApp::Run()
 {
-	MSG msg = {0};
-	ZeroMemory(&msg, sizeof(MSG));
-	bool running = true;
-
-	// Handle the windows messages.
-	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	MSG msg = {};
+	while (WM_QUIT != msg.message)
 	{
-		if (msg.message == WM_QUIT)
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			running = false;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		else
+		{
+			m_application->Tick();
+		}
 	}
-	return running;
-}
 
-const HWND Lime::DX11WindowApp::GetHWND()
-{
-	return m_hwnd;
-}
+	m_application.reset();
 
-unsigned int Lime::DX11WindowApp::Width() const
-{
-	return m_width;
-}
+	CoUninitialize();
 
-unsigned int Lime::DX11WindowApp::Height() const
-{
-	return m_height;
+	return (int)msg.wParam;
 }
 
 LRESULT Lime::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	// sort through and find what code to run for the message given
+	PAINTSTRUCT ps;
+	HDC hdc;
+
+	static bool s_in_sizemove = false;
+	static bool s_in_suspend = false;
+	static bool s_minimized = false;
+	static bool s_fullscreen = false;
+	// TODO: Set s_fullscreen to true if defaulting to fullscreen.
+
+	auto app = reinterpret_cast<DX11App*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
 	switch (message)
 	{
-		// this message is read when the window is closed
-	case WM_DESTROY:
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		EndPaint(hWnd, &ps);
+		break;
+
+	case WM_MOVE:
+		if (app)
+		{
+			app->OnWindowMoved();
+		}
+		break;
+
+	case WM_SIZE:
+		if (wParam == SIZE_MINIMIZED)
+		{
+			if (!s_minimized)
+			{
+				s_minimized = true;
+				if (!s_in_suspend && app)
+					app->OnSuspending();
+				s_in_suspend = true;
+			}
+		}
+		else if (s_minimized)
+		{
+			s_minimized = false;
+			if (s_in_suspend && app)
+				app->OnResuming();
+			s_in_suspend = false;
+		}
+		else if (!s_in_sizemove && app)
+		{
+			app->OnWindowSizeChanged(LOWORD(lParam), HIWORD(lParam));
+		}
+		break;
+
+	case WM_ENTERSIZEMOVE:
+		s_in_sizemove = true;
+		break;
+
+	case WM_EXITSIZEMOVE:
+		s_in_sizemove = false;
+		if (app)
+		{
+			RECT rc;
+			GetClientRect(hWnd, &rc);
+
+			app->OnWindowSizeChanged(rc.right - rc.left, rc.bottom - rc.top);
+		}
+		break;
+
+	case WM_GETMINMAXINFO:
 	{
-		// close the application entirely
+		auto info = reinterpret_cast<MINMAXINFO*>(lParam);
+		info->ptMinTrackSize.x = 320;
+		info->ptMinTrackSize.y = 200;
+	}
+	break;
+
+	case WM_ACTIVATEAPP:
+		if (app)
+		{
+			if (wParam)
+			{
+				app->OnActivated();
+			}
+			else
+			{
+				app->OnDeactivated();
+			}
+		}
+		break;
+
+	case WM_POWERBROADCAST:
+		switch (wParam)
+		{
+		case PBT_APMQUERYSUSPEND:
+			if (!s_in_suspend && app)
+				app->OnSuspending();
+			s_in_suspend = true;
+			return TRUE;
+
+		case PBT_APMRESUMESUSPEND:
+			if (!s_minimized)
+			{
+				if (s_in_suspend && app)
+					app->OnResuming();
+				s_in_suspend = false;
+			}
+			return TRUE;
+		}
+		break;
+
+	case WM_DESTROY:
 		PostQuitMessage(0);
-		return 0;
-	} break;
+		break;
+
+	case WM_SYSKEYDOWN:
+		if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
+		{
+			// Implements the classic ALT+ENTER fullscreen toggle
+			if (s_fullscreen)
+			{
+				SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+				SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
+
+				int width = 800;
+				int height = 600;
+				if (app)
+				{
+					app->GetDefaultSize(width, height);
+					RECT rc;
+					rc.top = 0;
+					rc.left = 0;
+					rc.right = static_cast<LONG>(width);
+					rc.bottom = static_cast<LONG>(height);
+					AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+					width = rc.right - rc.left;
+					height = rc.bottom - rc.top;
+				}
+
+				ShowWindow(hWnd, SW_SHOWNORMAL);
+
+				SetWindowPos(hWnd, HWND_TOP, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
+			}
+			else
+			{
+				SetWindowLongPtr(hWnd, GWL_STYLE, 0);
+				SetWindowLongPtr(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST);
+
+				SetWindowPos(hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+				ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+			}
+
+			s_fullscreen = !s_fullscreen;
+		}
+		break;
+
+	case WM_MENUCHAR:
+		// A menu is active and the user presses a key that does not correspond
+		// to any mnemonic or accelerator key. Ignore so we don't produce an error beep.
+		return MAKELRESULT(0, MNC_CLOSE);
 	}
 
-	// Handle any messages the switch statement didn't
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }

@@ -15,15 +15,17 @@
 
 namespace Lime
 {
-	class DX11Renderer
+	class DX11Graphics
 	{
 	public:
-		DLL_EXPORT DX11Renderer(HWND window, int width, int height);
-		DLL_EXPORT ~DX11Renderer();
+		DLL_EXPORT DX11Graphics(HWND window, int width, int height);
+		DLL_EXPORT ~DX11Graphics();
 		DLL_EXPORT void AddModel(std::shared_ptr<Model2>& model);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
-		DLL_EXPORT void LoadShaderFromFile(std::wstring filename);
+		DLL_EXPORT void LoadTextureFromFile(std::wstring filename);
 		DLL_EXPORT void Draw();
+	private:
+
 		void Close();
 		HRESULT Initialize();
 		HRESULT CreateBuffers();

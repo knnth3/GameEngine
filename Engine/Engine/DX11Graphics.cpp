@@ -1,11 +1,11 @@
-#include "DX11Renderer.h"
+#include "DX11Graphics.h"
 #include <dxtex\DirectXTex.h>
 #include <chrono>
 #include <wchar.h>
 #include <stdlib.h>
 #include <stdlib.h>
 
-Lime::DX11Renderer::DX11Renderer(HWND window,  int width, int height)
+Lime::DX11Graphics::DX11Graphics(HWND window,  int width, int height)
 {
 	m_width = width;
 	m_height = height;
@@ -19,12 +19,12 @@ Lime::DX11Renderer::DX11Renderer(HWND window,  int width, int height)
 }
 
 
-Lime::DX11Renderer::~DX11Renderer()
+Lime::DX11Graphics::~DX11Graphics()
 {
 	Close();
 }
 
-HRESULT Lime::DX11Renderer::Initialize()
+HRESULT Lime::DX11Graphics::Initialize()
 {
 	HRESULT result;
 	DXGI_MODE_DESC bufferDesc = {0};
@@ -70,7 +70,7 @@ HRESULT Lime::DX11Renderer::Initialize()
 	return result;
 }
 
-void Lime::DX11Renderer::Close()
+void Lime::DX11Graphics::Close()
 {
 	SwapChain->Release();
 	m_dx11device->Release();
@@ -106,20 +106,31 @@ void Lime::DX11Renderer::Close()
 	}
 }
 
-void Lime::DX11Renderer::AddModel(std::shared_ptr<Model2>& model)
+void Lime::DX11Graphics::AddModel(std::shared_ptr<Model2>& model)
 {
 	m_models.push_back(model);
 	CreateBuffers();
 	m_hasBuffers = true;
 }
 
-void Lime::DX11Renderer::Draw()
+void Lime::DX11Graphics::Draw()
 {
 	if (m_hasBuffers && m_camera != nullptr)
 	{
+		//Update the colors of our scene
+		red += colormodr * 0.00005f;
+		green += colormodg * 0.00002f;
+		blue += colormodb * 0.00001f;
+
+		if (red >= 1.0f || red <= 0.0f)
+			colormodr *= -1;
+		if (green >= 1.0f || green <= 0.0f)
+			colormodg *= -1;
+		if (blue >= 1.0f || blue <= 0.0f)
+			colormodb *= -1;
 
 		//Clear our backbuffer to the updated color
-		const float bgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		const float bgColor[4] = { red, green, blue, 1.0f };
 
 		m_dx11Context->ClearRenderTargetView(renderTargetView, bgColor);
 		m_dx11Context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -130,8 +141,11 @@ void Lime::DX11Renderer::Draw()
 		XMMATRIX proj = GlmToXM(m_camera->GetProjectionMatrix());
 		XMMATRIX worldViewProj = XMMatrixTranspose(world*view*proj);
 		m_ObjBuffer.WVP = worldViewProj;
-		m_dx11Context->UpdateSubresource(m_ObjConstBuffer, 0, NULL, &m_ObjBuffer, 0, 0);
-		m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+		if (hasConsBuffers)
+		{
+			m_dx11Context->UpdateSubresource(m_ObjConstBuffer, 0, NULL, &m_ObjBuffer, 0, 0);
+			m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+		}
 
 		//Can be set to null if no state wanted
 		//m_dx11Context->RSSetState(WireFrame);
@@ -148,17 +162,16 @@ void Lime::DX11Renderer::Draw()
 	}
 }
 
-void Lime::DX11Renderer::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
+void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
 {
 	m_camera = ptr;
 }
 
-void Lime::DX11Renderer::LoadShaderFromFile(std::wstring filename)
+void Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
 {
 	wchar_t ext[_MAX_EXT];
 	errno_t err = _wsplitpath_s(filename.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
 	HRESULT result;
-	TexMetadata info;
 	ScratchImage image;
 	if (_wcsicmp(ext, L".dds") == 0)
 	{
@@ -189,7 +202,7 @@ void Lime::DX11Renderer::LoadShaderFromFile(std::wstring filename)
 }
 
 
-HRESULT Lime::DX11Renderer::CreateBuffers()
+HRESULT Lime::DX11Graphics::CreateBuffers()
 {
 	HRESULT result;
 
@@ -221,23 +234,11 @@ HRESULT Lime::DX11Renderer::CreateBuffers()
 	m_dx11Context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	m_dx11Context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-	};
-
-	m_dx11device->CreateInputLayout(layout, ARRAYSIZE(layout), vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(), &vertLayout);
-
-	m_dx11Context->IASetInputLayout(vertLayout);
-
 	m_dx11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	return result;
 }
 
-HRESULT Lime::DX11Renderer::CreateShaders()
+HRESULT Lime::DX11Graphics::CreateShaders()
 {
 	HRESULT result;
 	ID3DBlob* shaderBlob = nullptr;
@@ -259,10 +260,22 @@ HRESULT Lime::DX11Renderer::CreateShaders()
 	m_dx11Context->VSSetShader(VS, 0, 0);
 	m_dx11Context->PSSetShader(PS, 0, 0);
 
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+	};
+
+	m_dx11device->CreateInputLayout(layout, ARRAYSIZE(layout), vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(), &vertLayout);
+
+	m_dx11Context->IASetInputLayout(vertLayout);
+
 	return result;
 }
 
-HRESULT Lime::DX11Renderer::CreateConstBuffers()
+HRESULT Lime::DX11Graphics::CreateConstBuffers()
 {
 	HRESULT result;
 	D3D11_BUFFER_DESC cbbd = { 0 };
@@ -273,11 +286,11 @@ HRESULT Lime::DX11Renderer::CreateConstBuffers()
 	cbbd.MiscFlags = 0;
 	result = m_dx11device->CreateBuffer(&cbbd, NULL, &m_ObjConstBuffer);
 	CheckSuccess(result);
-
+	hasConsBuffers = true;
 	return result;
 }
 
-HRESULT Lime::DX11Renderer::CreateRenderStates()
+HRESULT Lime::DX11Graphics::CreateRenderStates()
 {
 	HRESULT result;
 	D3D11_RASTERIZER_DESC wfdesc = {};
@@ -289,7 +302,7 @@ HRESULT Lime::DX11Renderer::CreateRenderStates()
 	return result;
 }
 
-HRESULT Lime::DX11Renderer::CreateDepthStencil()
+HRESULT Lime::DX11Graphics::CreateDepthStencil()
 {
 	HRESULT result;
 	//Describe our Depth/Stencil Buffer
@@ -317,7 +330,7 @@ HRESULT Lime::DX11Renderer::CreateDepthStencil()
 	return result;
 }
 
-void Lime::DX11Renderer::CreateViewport()
+void Lime::DX11Graphics::CreateViewport()
 {
 	D3D11_VIEWPORT viewport = { 0 };
 
@@ -332,14 +345,14 @@ void Lime::DX11Renderer::CreateViewport()
 	m_dx11Context->RSSetViewports(1, &viewport);
 }
 
-XMMATRIX Lime::DX11Renderer::GlmToXM(glm::mat4 matrix)
+XMMATRIX Lime::DX11Graphics::GlmToXM(glm::mat4 matrix)
 {
 	glm::mat4* c = &matrix;
 	XMMATRIX* cast = reinterpret_cast<XMMATRIX*>(c);
 	return *cast;
 }
 
-HRESULT Lime::DX11Renderer::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)
+HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)
 {
 	if (!srcFile || !entryPoint || !profile || !blob)
 		return E_INVALIDARG;
