@@ -128,6 +128,18 @@ void Game::Update(float elapsed)
 
 	model->Rotate(rot, rot, rot);
 	model->RotateAtOrigin(rot, rot, rot);
+
+	//Update the colors of our scene
+	red += colormodr * 0.00005f;
+	green += colormodg * 0.00002f;
+	blue += colormodb * 0.00001f;
+
+	if (red >= 1.0f || red <= 0.0f)
+		colormodr *= -1;
+	if (green >= 1.0f || green <= 0.0f)
+		colormodg *= -1;
+	if (blue >= 1.0f || blue <= 0.0f)
+		colormodb *= -1;
 }
 
 void Game::Render()
@@ -139,4 +151,17 @@ void Game::Render()
 
 void Game::Clear()
 {
+	//Clear our backbuffer to the updated color
+	auto context = m_graphicsDevice->GetDeviceContext();
+	auto rtv = m_graphicsDevice->GetRenderTargetView();
+	auto depthStencil = m_graphicsDevice->GetDepthStencilView();
+
+	const float bgColor[4] = { red, green, blue, 1.0f };
+
+	context->ClearRenderTargetView(rtv, bgColor);
+	context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	context->OMSetRenderTargets(1, &rtv, depthStencil);
+
+	auto viewport = m_graphicsDevice->GetScreenViewport();
+	context->RSSetViewports(1, &viewport);
 }

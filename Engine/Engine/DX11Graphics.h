@@ -24,6 +24,10 @@ namespace Lime
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
 		DLL_EXPORT void LoadTextureFromFile(std::wstring filename);
 		DLL_EXPORT void Draw();
+		DLL_EXPORT ID3D11DeviceContext* GetDeviceContext() const;
+		DLL_EXPORT ID3D11RenderTargetView* GetRenderTargetView() const;
+		DLL_EXPORT ID3D11DepthStencilView* GetDepthStencilView() const;
+		DLL_EXPORT D3D11_VIEWPORT GetScreenViewport() const;
 	private:
 
 		void Close();
@@ -43,8 +47,6 @@ namespace Lime
 		HWND m_window;
 		HINSTANCE m_hInstance;
 		IDXGISwapChain* SwapChain;
-		ID3D11Device* m_dx11device;
-		ID3D11DeviceContext* m_dx11Context;
 		ID3D11RenderTargetView* renderTargetView;
 		ID3D11Buffer* m_ObjConstBuffer;
 		ID3D11Buffer* m_indexBuffer;
@@ -64,18 +66,15 @@ namespace Lime
 		ID3D11Texture2D* depthStencilBuffer;
 		std::shared_ptr<DX11Camera> m_camera;
 		ID3D11RasterizerState* WireFrame;
+		ID3D11Device* m_dx11device;
+		ID3D11DeviceContext* m_dx11Context;
+		D3D11_VIEWPORT viewport;
 		struct ConstBuffer
 		{
 			XMMATRIX WVP;
 		};
 		ConstBuffer m_ObjBuffer;
 		std::vector<std::shared_ptr<Model2>> m_models;
-		float red = 0.0f;
-		float green = 0.0f;
-		float blue = 0.0f;
-		int colormodr = 1;
-		int colormodg = 1;
-		int colormodb = 1;
 		bool hasConsBuffers = false;
 	};
 

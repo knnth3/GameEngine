@@ -117,24 +117,6 @@ void Lime::DX11Graphics::Draw()
 {
 	if (m_hasBuffers && m_camera != nullptr)
 	{
-		//Update the colors of our scene
-		red += colormodr * 0.00005f;
-		green += colormodg * 0.00002f;
-		blue += colormodb * 0.00001f;
-
-		if (red >= 1.0f || red <= 0.0f)
-			colormodr *= -1;
-		if (green >= 1.0f || green <= 0.0f)
-			colormodg *= -1;
-		if (blue >= 1.0f || blue <= 0.0f)
-			colormodb *= -1;
-
-		//Clear our backbuffer to the updated color
-		const float bgColor[4] = { red, green, blue, 1.0f };
-
-		m_dx11Context->ClearRenderTargetView(renderTargetView, bgColor);
-		m_dx11Context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
 		//Set the WVP matrix and send it to the constant buffer in effect file
 		XMMATRIX world = GlmToXM(m_models[0]->GetLocalToWorld());
 		XMMATRIX view = GlmToXM(m_camera->GetViewMatrix());
@@ -160,6 +142,26 @@ void Lime::DX11Graphics::Draw()
 		//Present the backbuffer to the screen
 		SwapChain->Present(0, 0);
 	}
+}
+
+ID3D11DeviceContext * Lime::DX11Graphics::GetDeviceContext() const
+{
+	return m_dx11Context;
+}
+
+ID3D11RenderTargetView * Lime::DX11Graphics::GetRenderTargetView() const
+{
+	return renderTargetView;
+}
+
+ID3D11DepthStencilView * Lime::DX11Graphics::GetDepthStencilView() const
+{
+	return depthStencilView;
+}
+
+D3D11_VIEWPORT Lime::DX11Graphics::GetScreenViewport() const
+{
+	return viewport;
 }
 
 void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
@@ -332,8 +334,7 @@ HRESULT Lime::DX11Graphics::CreateDepthStencil()
 
 void Lime::DX11Graphics::CreateViewport()
 {
-	D3D11_VIEWPORT viewport = { 0 };
-
+	viewport = { 0 };
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
