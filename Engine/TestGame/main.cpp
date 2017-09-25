@@ -2,6 +2,7 @@
 #include <Lime\DX11Renderer.h>
 #include <chrono>
 #include "Game.h"
+#include <iterator>
 
 using namespace Lime;
 int main()

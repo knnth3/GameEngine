@@ -6,7 +6,7 @@ Lime::DX11Camera::DX11Camera(int width, int height)
 {
 	m_width = width;
 	m_height = height;
-	m_fov = 3.14f / 2.0f;
+	m_fov = 0.25f* 3.14f;
 	m_aspectRatio = (float)m_width / m_height;
 	m_farPlane = 1000.0f;
 	m_nearPlane = 1.0f;
@@ -40,4 +40,16 @@ glm::mat4 Lime::DX11Camera::GetProjectionMatrix()
 glm::mat4 Lime::DX11Camera::GetWVPnMatrix()
 {
 	return GetViewMatrix() * GetProjectionMatrix();
+}
+
+glm::vec3 Lime::DX11Camera::GetPosition()
+{
+	return m_position;
+}
+
+void Lime::DX11Camera::SetAspectRatio(const UINT width, const UINT height)
+{
+	m_width = width;
+	m_height = height;
+	m_projection = glm::perspectiveFovLH(m_fov, (float)width, (float)height, m_nearPlane, m_farPlane);
 }

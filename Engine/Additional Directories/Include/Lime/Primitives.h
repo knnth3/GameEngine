@@ -29,10 +29,9 @@ namespace Lime
 	{
 		DLL_EXPORT Vertex2(Vertex v);
 		DLL_EXPORT Vertex2() = default;
-		DLL_EXPORT Vertex2(float x, float y, float z, float r, float g, float b, float a, float u, float v);
+		DLL_EXPORT Vertex2(float x, float y, float z, float u, float v);
 
 		glm::vec3 position;
-		glm::vec4 color;
 		glm::vec2 uv;
 	};
 
@@ -71,8 +70,11 @@ namespace Lime
 		DLL_EXPORT void Rotate(float x, float y, float z);
 		DLL_EXPORT void RotateAtOrigin(float x, float y, float z);
 		DLL_EXPORT void Color(float r, float g, float b);
+		DLL_EXPORT void Color(float r, float g, float b, float a);
+		DLL_EXPORT void SetOpacity(float alpha);
 		DLL_EXPORT glm::vec3 GetPosition()const;
 		DLL_EXPORT glm::mat4 GetLocalToWorld();
+		DLL_EXPORT glm::vec4 GetColor();
 		std::shared_ptr<ModelData2> m_Data;
 	private:
 		void CreateLocalToWorld();
@@ -82,6 +84,7 @@ namespace Lime
 		glm::mat4 m_translation;
 		glm::mat4 m_localToWorld;
 		glm::vec3 m_Position;
+		glm::vec4 m_color;
 	};
 
 

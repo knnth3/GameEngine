@@ -1,28 +1,27 @@
 cbuffer ConstBuffer
 {
-	float4x4 WVP;
+	matrix worldMatrix;
+	matrix viewMatrix;
+	matrix projectionMatrix;
+	//float4x4 WVP;
 };
 
 struct VSOutput
 {
-	float4 Pos : SV_POSITION;
-	float4 Color : COLOR;
-	float2 TexCoord  : TEXCOORD;
+	float4 pos : SV_POSITION;
+	float2 texCoord  : TEXCOORD;
 	bool useColor : USECOLOR;
 };
 
-VSOutput main( float4 pos : POSITION, float4 color : COLOR, float2 inTexCoord : TEXCOORD)
+VSOutput main( float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
 {
 	VSOutput output;
-	output.Pos = mul(pos, WVP);
-	output.Color = color;
-	output.TexCoord = inTexCoord;
-	if (color.r == 1.0f && color.b == 1.0f && color.b == 1.0f)
-	{
-		output.useColor = false;
-	}
-	else
-		output.useColor = true;
+	pos.w = 1.0f;
+	output.pos = mul(pos, worldMatrix);
+	output.pos = mul(output.pos, viewMatrix);
+	output.pos = mul(output.pos, projectionMatrix);
+	output.texCoord = inTexCoord;
+	output.useColor = false;
 
 	return output;
 }

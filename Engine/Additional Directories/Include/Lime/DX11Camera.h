@@ -14,6 +14,8 @@ namespace Lime
 		DLL_EXPORT glm::mat4 GetViewMatrix();
 		DLL_EXPORT glm::mat4 GetProjectionMatrix();
 		DLL_EXPORT glm::mat4 GetWVPnMatrix();
+		DLL_EXPORT glm::vec3 GetPosition();
+		DLL_EXPORT void SetAspectRatio(const UINT width, const UINT height);
 	private:
 		int m_width;
 		int m_height;

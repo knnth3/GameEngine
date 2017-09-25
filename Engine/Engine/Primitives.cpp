@@ -21,7 +21,8 @@ m_Position(),
 m_scale(),
 m_translation(),
 m_outRotation(),
-m_inRotation()
+m_inRotation(),
+m_color(1.0f)
 {
 	m_Data = std::make_shared<ModelData2>();
 }
@@ -80,10 +81,17 @@ void Lime::Model2::RotateAtOrigin(float x, float y, float z)
 
 void Lime::Model2::Color(float r, float g, float b)
 {
-	for (int i = 0; i < m_Data->m_Verticies.size(); i++)
-	{
-		m_Data->m_Verticies.at(i).color = glm::vec4(r, g, b, 1.0f);
-	}
+	m_color = glm::vec4(r, g, b, 1.0f);
+}
+
+void Lime::Model2::Color(float r, float g, float b, float a)
+{
+	m_color = glm::vec4(r, g, b, a);
+}
+
+void Lime::Model2::SetOpacity(float alpha)
+{
+	m_color.a = alpha;
 }
 
 glm::vec3 Lime::Model2::GetPosition() const
@@ -97,6 +105,11 @@ glm::mat4 Lime::Model2::GetLocalToWorld()
 	return m_localToWorld;
 }
 
+glm::vec4 Lime::Model2::GetColor()
+{
+	return m_color;
+}
+
 void Lime::Model2::CreateLocalToWorld()
 {
 	m_translation = glm::translate(glm::mat4(), glm::vec3(m_Position.x, m_Position.y, m_Position.z));
@@ -105,14 +118,12 @@ void Lime::Model2::CreateLocalToWorld()
 
 Lime::Vertex2::Vertex2(Vertex v)
 {
-	color = glm::vec4(v.color, 1.0f);
 	position = v.position;
 }
 
-Lime::Vertex2::Vertex2(float x, float y, float z, float r, float g, float b, float a, float u, float v)
+Lime::Vertex2::Vertex2(float x, float y, float z, float u, float v)
 {
 	position = { x,y,z };
-	color = { r,g,b,a };
 	uv = { u,v };
 }
 
