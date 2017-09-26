@@ -18,6 +18,7 @@ typedef std::vector<byte> BUFFER;
 
 namespace Lime
 {
+
     struct Vertex
     {
         glm::vec3 position;
@@ -50,14 +51,19 @@ namespace Lime
 
 	struct ModelData2
 	{
+	public:
 		DLL_EXPORT ModelData2();
 		DLL_EXPORT size_t VertexBufferSize();
 		DLL_EXPORT size_t IndexBufferSize();
 
+		std::string renderType = "Triangle";
 		unsigned int m_ObjectID = 0;
+		unsigned int m_VertOffset = 0;
+		unsigned int m_IndiciOffset = 0;
 		std::vector<Vertex2> m_Verticies;
 		std::vector<uint32_t> m_Indicies;
-
+	private:
+		static const unsigned int GetNewID();
 
 	};
 
@@ -180,4 +186,5 @@ namespace Lime
         glm::vec3 m_Rotation;
         glm::vec3 m_Position;
     };
+
 }

@@ -131,6 +131,7 @@ Lime::ModelData2::ModelData2() :
 	m_Verticies(),
 	m_Indicies()
 {
+	m_ObjectID = ModelData2::GetNewID();
 }
 size_t Lime::ModelData2::VertexBufferSize()
 {
@@ -140,4 +141,10 @@ size_t Lime::ModelData2::VertexBufferSize()
 size_t Lime::ModelData2::IndexBufferSize()
 {
 	return m_Indicies.size();
+}
+
+const unsigned int Lime::ModelData2::GetNewID()
+{
+	static unsigned int GlobalIDs = 0;
+	return GlobalIDs++;
 }

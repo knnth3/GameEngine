@@ -5,6 +5,7 @@
 #include <comdef.h>
 #include <map>
 #include "DX11Camera.h"
+#include "TextController.h"
 #include "Primitives.h"
 #include "D3Dcompiler.h"
 
@@ -22,8 +23,10 @@ namespace Lime
 		DLL_EXPORT DX11Graphics(const HWND window, const UINT width, const UINT height);
 		DLL_EXPORT ~DX11Graphics();
 		DLL_EXPORT void AddModel(std::shared_ptr<Model2>& model);
+		DLL_EXPORT void CreateTextObject(std::string text , std::shared_ptr<TextController>& controller);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
 		DLL_EXPORT void LoadTextureFromFile(std::wstring filename);
+		DLL_EXPORT HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
 		DLL_EXPORT void Draw();
 		DLL_EXPORT ID3D11DeviceContext* GetDeviceContext() const;
 		DLL_EXPORT ID3D11RenderTargetView* GetRenderTargetView() const;
@@ -35,7 +38,6 @@ namespace Lime
 		void Close();
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		HRESULT CreateBuffers();
-		HRESULT CreateShaders();
 		HRESULT CreateConstBuffers();
 		HRESULT CreateRenderStates();
 		HRESULT CreateDepthStencil(const UINT width, const UINT height);
@@ -53,18 +55,13 @@ namespace Lime
 		ID3D11RenderTargetView* renderTargetView;
 		ID3D11Buffer* m_ObjConstBuffer;
 		ID3D11Buffer* m_transparentBuffer;
+		ID3D11Buffer* m_textBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		ID3D11Buffer* m_vertexBuffer;
-		LPCWSTR m_psPath;
-		LPCWSTR m_vsPath;
-		ID3DBlob *vsBlob = nullptr;
-		ID3DBlob *psBlob = nullptr;
-		ID3D11VertexShader* VS;
-		ID3D11PixelShader* PS;
-		ID3D11InputLayout* vertLayout;
 		std::vector<ID3D11ShaderResourceView*> m_textures;
 		std::vector<ID3D11SamplerState*> m_samplerStates;
 		std::vector<ID3D11VertexShader*> m_vertexShaders;
+		std::vector<ID3D11InputLayout*> m_vertLayouts;
 		std::vector<ID3D11PixelShader*> m_pixelShaders;
 		ID3D11DepthStencilView* m_depthStencilView;
 		ID3D11DepthStencilState* m_depthStencilState;
@@ -74,6 +71,10 @@ namespace Lime
 		ID3D11Device* m_dx11device;
 		ID3D11DeviceContext* m_dx11Context;
 		D3D11_VIEWPORT viewport;
+		struct TextBuffer
+		{
+			glm::vec4 PosAscii;
+		};
 		struct MatrixBuffer
 		{
 			glm::mat4 world;
@@ -85,6 +86,9 @@ namespace Lime
 			glm::vec4 colorBlend;
 		};
 		std::vector<std::shared_ptr<Model2>> m_models;
+		ModelData2 m_modelLib;
+		std::shared_ptr<Model2> m_textModel;
+		std::vector<TextInfo> m_text;
 		bool hasConsBuffers = false;
 		ID3D11BlendState* Transparency;
 		ID3D11BlendState* TransparencyBack;

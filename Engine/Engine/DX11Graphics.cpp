@@ -8,8 +8,6 @@
 Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height)
 {
 	m_hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(NULL));
-	m_vsPath = L"shaders/VertexShader.hlsl";
-	m_psPath = L"shaders/PixelShader.hlsl";
 	m_bufferCount = 3;
 	m_hasBuffers = false;
 	HRESULT result = Initialize(window, width, height);
@@ -51,13 +49,12 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	//Set our Render Target
 	m_dx11Context->OMSetRenderTargets(1, &renderTargetView, NULL);
-
-	CreateShaders();
 	CreateConstBuffers();
 	CreateRenderStates();
 	CreateDepthStencil(width, height);
 	CreateViewport(width, height);
 	CreateBlendState();
+
 	return result;
 }
 
@@ -71,18 +68,35 @@ void Lime::DX11Graphics::Close()
 	{
 		m_vertexBuffer->Release();
 		m_indexBuffer->Release();
-		vertLayout->Release();
 	}
 	depthStencilBuffer->Release();
 	m_depthStencilState->Release();
 	m_depthStencilView->Release();
-	VS->Release();
-	PS->Release();
-	vsBlob->Release();
-	psBlob->Release();
 	m_ObjConstBuffer->Release();
 	m_transparentBuffer->Release();
+	m_textBuffer->Release();
 	WireFrame->Release();
+	if (!m_vertexShaders.empty())
+	{
+		for (size_t it = 0; it < m_vertexShaders.size(); it++)
+		{
+			m_vertexShaders[it]->Release();
+		}
+	}
+	if (!m_pixelShaders.empty())
+	{
+		for (size_t it = 0; it < m_pixelShaders.size(); it++)
+		{
+			m_pixelShaders[it]->Release();
+		}
+	}
+	if (!m_vertLayouts.empty())
+	{
+		for (size_t it = 0; it < m_vertLayouts.size(); it++)
+		{
+			m_vertLayouts[it]->Release();
+		}
+	}
 	if (!m_samplerStates.empty())
 	{
 		for (size_t it = 0; it < m_samplerStates.size(); it++)
@@ -104,24 +118,73 @@ void Lime::DX11Graphics::Close()
 
 void Lime::DX11Graphics::AddModel(std::shared_ptr<Model2>& model)
 {
-	m_models.push_back(model);
-	CreateBuffers();
+	if (model->m_Data->renderType.compare("Triangle") == 0)
+		m_models.push_back(model);
+
+	static int VertCountOffset = 0;
+	static int IndCountOffset = 0;
+	static std::vector<UINT> cachedIDs;
+	bool similar = false;
+	for (auto const& id : cachedIDs)
+	{
+		if (id == model->m_Data->m_ObjectID)
+		{
+			similar = true;
+		}
+	}
+	if (!similar)
+	{
+		cachedIDs.push_back(model->m_Data->m_ObjectID);
+		model->m_Data->m_VertOffset = VertCountOffset;
+		model->m_Data->m_IndiciOffset = IndCountOffset;
+		VertCountOffset += (int)model->m_Data->m_Verticies.size();
+		IndCountOffset += (int)model->m_Data->m_Indicies.size();
+
+		m_modelLib.m_Verticies.insert(
+			m_modelLib.m_Verticies.end(),
+			std::make_move_iterator(model->m_Data->m_Verticies.begin()),
+			std::make_move_iterator(model->m_Data->m_Verticies.end())
+		);
+		m_modelLib.m_Indicies.insert(
+			m_modelLib.m_Indicies.end(),
+			std::make_move_iterator(model->m_Data->m_Indicies.begin()),
+			std::make_move_iterator(model->m_Data->m_Indicies.end())
+		);
+		CreateBuffers();
+	}
+	m_hasBuffers = true;
+}
+
+void Lime::DX11Graphics::CreateTextObject(std::string text, std::shared_ptr<TextController>& controller)
+{
+	static bool isFirst = true;
+	m_text.emplace_back(text);
+	m_text.back().GetController(controller);
+	if (isFirst)
+	{
+		std::shared_ptr<Model2> data = nullptr;
+		m_text.back().GetData(data);
+		AddModel(data);
+	}
 	m_hasBuffers = true;
 }
 
 void Lime::DX11Graphics::Draw()
 {
+	m_dx11Context->VSSetShader(m_vertexShaders[0], 0, 0);
+	m_dx11Context->PSSetShader(m_pixelShaders[0], 0, 0);
+	m_dx11Context->IASetInputLayout(m_vertLayouts[0]);
 	if (m_hasBuffers && m_camera != nullptr)
 	{
 		std::multimap<float, std::shared_ptr<Model2>> tOrdering;
-		for (auto const& model: m_models)
+		for (auto model = 0; model < m_models.size(); model++)
 		{
-			glm::vec4 p(model->GetPosition(), 1.0f);
-			glm::vec4 res = model->GetLocalToWorld() * p;
+			glm::vec4 p(m_models[model]->GetPosition(), 1.0f);
+			glm::vec4 res = m_models[model]->GetLocalToWorld() * p;
 			glm::vec4 toCameraSpace = m_camera->GetProjectionMatrix() * res;
 			//Uses the z plane for comparison since camera is static
 			float len2 = toCameraSpace.z;
-			tOrdering.insert(std::pair<float, std::shared_ptr<Model2>>(len2, model));
+			tOrdering.insert(std::pair<float, std::shared_ptr<Model2>>(len2, m_models[model]));
 		}
 		for (auto model = tOrdering.rbegin(); model != tOrdering.rend(); ++model)
 		{
@@ -157,12 +220,68 @@ void Lime::DX11Graphics::Draw()
 				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[0]);
 				m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[0]);
 			}
+			UINT size = model->second->m_Data->m_Indicies.size();
+			UINT vertOff = model->second->m_Data->m_VertOffset;
+			UINT indOff = model->second->m_Data->m_IndiciOffset;
 			m_dx11Context->RSSetState(CCWcullMode);
-			m_dx11Context->DrawIndexed(36, 0, 0);
+			m_dx11Context->DrawIndexed(size, indOff, vertOff);
 			m_dx11Context->RSSetState(CWcullMode);
-			m_dx11Context->DrawIndexed(36, 0, 0);
+			m_dx11Context->DrawIndexed(size, indOff, vertOff);
 		}
+		m_dx11Context->RSSetState(NULL);
+		m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
+		m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
+		m_dx11Context->IASetInputLayout(m_vertLayouts[1]);
+		m_dx11Context->PSSetShaderResources(0, 1, &m_textures[1]);
+		m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[1]);
+		for (auto it = 0; it < m_text.size(); it++)
+		{
+			std::shared_ptr<Model2> data = nullptr;
+			m_text[it].GetData(data);
+			for (auto x = 0; x < m_text[it].GetText().size(); x++)
+			{
+				HRESULT result;
+				D3D11_MAPPED_SUBRESOURCE mappedResource;
+				TextBuffer* dataPtr;
+				MatrixBuffer* dataPtr2;
+				TransparentBuffer* dataPtr3;
+				result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				CheckSuccess(result);
 
+				dataPtr2 = (MatrixBuffer*)mappedResource.pData;
+				dataPtr2->world = glm::transpose(data->GetLocalToWorld());
+				dataPtr2->view = glm::transpose(m_camera->GetViewMatrix());
+				dataPtr2->projection = glm::transpose(m_camera->GetProjectionMatrix());
+				m_dx11Context->Unmap(m_ObjConstBuffer, 0);
+				m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+
+				result = m_dx11Context->Map(m_textBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				CheckSuccess(result);
+
+				dataPtr = (TextBuffer*)mappedResource.pData;
+				float val1 = (float)x;
+				float val2 = m_text[it].UpdateMiddlePos();
+				float val3 = 0.0f;
+				float val4 = (int)m_text[it].GetText().at(x);
+				dataPtr->PosAscii = glm::vec4(val1, val2, val3, val4);
+				m_dx11Context->Unmap(m_textBuffer, 0);
+				m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
+
+				result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				CheckSuccess(result);
+
+				dataPtr3 = (TransparentBuffer*)mappedResource.pData;
+				dataPtr3->colorBlend = data->GetColor();
+				m_dx11Context->Unmap(m_transparentBuffer, 0);
+				m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+
+				UINT size = data->m_Data->m_Indicies.size();
+				UINT vertOff = data->m_Data->m_VertOffset;
+				UINT indOff = data->m_Data->m_IndiciOffset;
+				m_dx11Context->DrawIndexed(size, indOff, vertOff);
+			}
+
+		}
 		//Present the backbuffer to the screen
 		SwapChain->Present(0, 0);
 	}
@@ -251,25 +370,25 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex2) * (UINT)m_models[0]->m_Data->m_Verticies.size();
+	vertexBufferDesc.ByteWidth = sizeof(Vertex2) * (UINT)m_modelLib.m_Verticies.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 
 	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * (UINT)m_models[0]->m_Data->m_Indicies.size();
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (UINT)m_modelLib.m_Indicies.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-	vertexBufferData.pSysMem = m_models[0]->m_Data->m_Verticies.data();
+	vertexBufferData.pSysMem = m_modelLib.m_Verticies.data();
 	result = m_dx11device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
 	CheckSuccess(result);
 
 	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-	indexBufferData.pSysMem = m_models[0]->m_Data->m_Indicies.data();
+	indexBufferData.pSysMem = m_modelLib.m_Indicies.data();
 	m_dx11device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 
 	UINT stride = sizeof(Vertex2);
@@ -281,39 +400,36 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 	return result;
 }
 
-HRESULT Lime::DX11Graphics::CreateShaders()
+HRESULT Lime::DX11Graphics::CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize)
 {
 	HRESULT result;
-	ID3DBlob* shaderBlob = nullptr;
-	ID3DBlob* errorBlob = nullptr;
+	ID3DBlob *vsBlob = nullptr;
+	ID3DBlob *psBlob = nullptr;
+	ID3D11VertexShader* VS = nullptr;
+	ID3D11PixelShader* PS = nullptr;
+	ID3D11InputLayout* vertLayout = nullptr;
 
-
-	result = CompileShader(m_vsPath, "main", "vs_5_0", &vsBlob);
+	result = CompileShader(vsPath, "main", "vs_5_0", &vsBlob);
 	CheckSuccess(result);
 
-	result = CompileShader(m_psPath, "main", "ps_5_0", &psBlob);
+	result = CompileShader(psPath, "main", "ps_5_0", &psBlob);
 	CheckSuccess(result);
 
 	result = m_dx11device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
 	CheckSuccess(result);
+	m_vertexShaders.push_back(VS);
 
 	result = m_dx11device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
 	CheckSuccess(result);
+	m_pixelShaders.push_back(PS);
 
-	m_dx11Context->VSSetShader(VS, 0, 0);
-	m_dx11Context->PSSetShader(PS, 0, 0);
-
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-	};
-
-	result = m_dx11device->CreateInputLayout(layout, ARRAYSIZE(layout), vsBlob->GetBufferPointer(),
+	result = m_dx11device->CreateInputLayout(layout, layoutSize, vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(), &vertLayout);
 	CheckSuccess(result);
+	m_vertLayouts.push_back(vertLayout);
 
-	m_dx11Context->IASetInputLayout(vertLayout);
+	vsBlob->Release();
+	psBlob->Release();
 
 	return result;
 }
@@ -339,6 +455,16 @@ HRESULT Lime::DX11Graphics::CreateConstBuffers()
 	tbd.MiscFlags = 0;
 	tbd.StructureByteStride = 0;
 	result = m_dx11device->CreateBuffer(&tbd, NULL, &m_transparentBuffer);
+	CheckSuccess(result);
+
+	D3D11_BUFFER_DESC txtbd = { 0 };
+	txtbd.Usage = D3D11_USAGE_DYNAMIC;
+	txtbd.ByteWidth = sizeof(TextBuffer);
+	txtbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	txtbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	txtbd.MiscFlags = 0;
+	txtbd.StructureByteStride = 0;
+	result = m_dx11device->CreateBuffer(&txtbd, NULL, &m_textBuffer);
 	CheckSuccess(result);
 
 	hasConsBuffers = true;

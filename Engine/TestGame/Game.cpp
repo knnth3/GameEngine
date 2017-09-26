@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#include <Windows.h>
 
 Game::Game() :
 	DX11App()
@@ -8,6 +8,27 @@ Game::Game() :
 
 void Game::Initialize()
 {
+	char c = 'B';
+	int letter = (c - 31) + 5;
+	int posy;
+	int posx = letter % 20;
+	if (posx == 0)
+	{
+		posx = letter;
+		posy = letter / 20;
+	}
+	else
+	{
+		posy = (letter / 20) + 1;
+	}
+	float xLen = 0.05f;
+	float yLen = 0.2f;
+	float row = (float)posx;
+	float collumn = (float)posy;
+	float maxX = xLen*row;
+	float maxY = yLen*collumn;
+	float minX = maxX - xLen;
+	float minY = maxY - yLen;
 	int width, height;
 	model = std::make_shared<Model2>();
 	model2 = std::make_shared<Model2>();
@@ -16,8 +37,8 @@ void Game::Initialize()
 		// Front Face
 		Vertex2(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
 		Vertex2(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex2(1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-		Vertex2(1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+		Vertex2(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
+		Vertex2(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
 
 		// Back Face
 		Vertex2(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
@@ -78,10 +99,25 @@ void Game::Initialize()
 	model->Color(1.0f, 0.0f, 1.0f, 0.5f);
 	model->SetOpacity(0.5f);
 	model->Translate(3.0f, 0.0f, -3.0f);
+	LPCWSTR m_vsPath = L"shaders/VertexShader.hlsl";
+	LPCWSTR m_psPath = L"shaders/PixelShader.hlsl";
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+	};
+	m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
+	m_vsPath = L"shaders/FontVertexShader.hlsl";
+	m_psPath = L"shaders/FontPixelShader.hlsl";
+	m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
 	m_graphicsDevice->AddModel(model);
 	m_graphicsDevice->AddModel(model2);
+	std::shared_ptr<Lime::TextController> controller = nullptr;
+	m_graphicsDevice->CreateTextObject("Hello World!", controller);
+	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
+	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
 	m_graphicsDevice->LoadTextureFromFile(L"images.dds");
-
+	m_graphicsDevice->LoadTextureFromFile(L"SpriteSheetx200.dds");
 	GetDefaultSize(width, height);
 	auto camera = std::make_shared<Lime::DX11Camera>(width, height);
 	m_graphicsDevice->AttatchCamera(camera);
@@ -130,7 +166,7 @@ void Game::Update(float elapsed)
 	rot += 9.8 / 20.0f * elapsed;
 	if (rot > 6.28f)
 		rot = 0.0f;
-	model2->Rotate(0.0f, -rot, 0.0f);
+	//model2->Rotate(0.0f, -rot, 0.0f);
 	model->RotateAtOrigin(0.0f, rot, 0.0f);
 
 	//Update the colors of our scene

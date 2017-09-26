@@ -15,6 +15,7 @@ struct VSOutput
 
 VSOutput main( float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
 {
+
 	VSOutput output;
 	pos.w = 1.0f;
 	output.pos = mul(pos, worldMatrix);

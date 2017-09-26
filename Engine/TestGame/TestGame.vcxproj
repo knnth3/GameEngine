@@ -172,11 +172,24 @@
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="textures\images.png">
-      <GeneratePremultipliedAlpha Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GeneratePremultipliedAlpha>
+      <GeneratePremultipliedAlpha Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GeneratePremultipliedAlpha>
+      <GeneratePremultipliedAlpha Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GeneratePremultipliedAlpha>
     </ImageContentTask>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\SpriteSheet.tga">
+      <GeneratePremultipliedAlpha Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GeneratePremultipliedAlpha>
+      <GeneratePremultipliedAlpha Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GeneratePremultipliedAlpha>
+    </ImageContentTask>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\SpriteSheetx200.tga" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\SpriteSheetx200RomanItal.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
