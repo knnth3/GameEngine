@@ -99,21 +99,12 @@ void Game::Initialize()
 	model->Color(1.0f, 0.0f, 1.0f, 0.5f);
 	model->SetOpacity(0.5f);
 	model->Translate(3.0f, 0.0f, -3.0f);
-	LPCWSTR m_vsPath = L"shaders/VertexShader.hlsl";
-	LPCWSTR m_psPath = L"shaders/PixelShader.hlsl";
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
-	};
-	m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
-	m_vsPath = L"shaders/FontVertexShader.hlsl";
-	m_psPath = L"shaders/FontPixelShader.hlsl";
-	m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
+	//LPCWSTR m_psPath = L"shaders/FontPixelShader.hlsl";
+	//m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
 	m_graphicsDevice->AddModel(model);
 	m_graphicsDevice->AddModel(model2);
 	std::shared_ptr<Lime::TextController> controller = nullptr;
-	m_graphicsDevice->CreateTextObject("Hello World!", controller);
+	m_graphicsDevice->DrawText("Hello World!", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
 	m_graphicsDevice->LoadTextureFromFile(L"images.dds");

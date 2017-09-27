@@ -14,6 +14,7 @@ typedef std::vector<byte> BUFFER;
 
 #define MAX_TRANSFER_RATE 1024*16
 #define DLL_EXPORT __declspec(dllexport)
+#undef DrawText
 
 
 namespace Lime

@@ -31,7 +31,6 @@ namespace Lime
 		DLL_EXPORT float UpdateMiddlePos();
 	private:
 		static void LoadModel(void* self);
-		TextInfo();
 
 		float middleX = 0.0f;
 		float middleY = 0.0f;

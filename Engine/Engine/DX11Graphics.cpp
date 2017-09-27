@@ -49,6 +49,22 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	//Set our Render Target
 	m_dx11Context->OMSetRenderTargets(1, &renderTargetView, NULL);
+	LPCWSTR m_vsPath = L"shaders/VertexShader.hlsl";
+	LPCWSTR m_psPath = L"shaders/PixelShader.hlsl";
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+	};
+	CreateShaders(m_vsPath, m_psPath, layout, 2);
+
+	RECT tex;
+	tex.top = 0;
+	tex.left = 0;
+	tex.right = 1;
+	tex.bottom = 1;
+	HDC handle = (HDC)m_dx11Context;
+
 	CreateConstBuffers();
 	CreateRenderStates();
 	CreateDepthStencil(width, height);
@@ -155,7 +171,7 @@ void Lime::DX11Graphics::AddModel(std::shared_ptr<Model2>& model)
 	m_hasBuffers = true;
 }
 
-void Lime::DX11Graphics::CreateTextObject(std::string text, std::shared_ptr<TextController>& controller)
+void Lime::DX11Graphics::DrawText(std::string text, std::shared_ptr<TextController>& controller)
 {
 	static bool isFirst = true;
 	m_text.emplace_back(text);
@@ -227,60 +243,6 @@ void Lime::DX11Graphics::Draw()
 			m_dx11Context->DrawIndexed(size, indOff, vertOff);
 			m_dx11Context->RSSetState(CWcullMode);
 			m_dx11Context->DrawIndexed(size, indOff, vertOff);
-		}
-		m_dx11Context->RSSetState(NULL);
-		m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
-		m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
-		m_dx11Context->IASetInputLayout(m_vertLayouts[1]);
-		m_dx11Context->PSSetShaderResources(0, 1, &m_textures[1]);
-		m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[1]);
-		for (auto it = 0; it < m_text.size(); it++)
-		{
-			std::shared_ptr<Model2> data = nullptr;
-			m_text[it].GetData(data);
-			for (auto x = 0; x < m_text[it].GetText().size(); x++)
-			{
-				HRESULT result;
-				D3D11_MAPPED_SUBRESOURCE mappedResource;
-				TextBuffer* dataPtr;
-				MatrixBuffer* dataPtr2;
-				TransparentBuffer* dataPtr3;
-				result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				CheckSuccess(result);
-
-				dataPtr2 = (MatrixBuffer*)mappedResource.pData;
-				dataPtr2->world = glm::transpose(data->GetLocalToWorld());
-				dataPtr2->view = glm::transpose(m_camera->GetViewMatrix());
-				dataPtr2->projection = glm::transpose(m_camera->GetProjectionMatrix());
-				m_dx11Context->Unmap(m_ObjConstBuffer, 0);
-				m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
-
-				result = m_dx11Context->Map(m_textBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				CheckSuccess(result);
-
-				dataPtr = (TextBuffer*)mappedResource.pData;
-				float val1 = (float)x;
-				float val2 = m_text[it].UpdateMiddlePos();
-				float val3 = 0.0f;
-				float val4 = (int)m_text[it].GetText().at(x);
-				dataPtr->PosAscii = glm::vec4(val1, val2, val3, val4);
-				m_dx11Context->Unmap(m_textBuffer, 0);
-				m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
-
-				result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				CheckSuccess(result);
-
-				dataPtr3 = (TransparentBuffer*)mappedResource.pData;
-				dataPtr3->colorBlend = data->GetColor();
-				m_dx11Context->Unmap(m_transparentBuffer, 0);
-				m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
-
-				UINT size = data->m_Data->m_Indicies.size();
-				UINT vertOff = data->m_Data->m_VertOffset;
-				UINT indOff = data->m_Data->m_IndiciOffset;
-				m_dx11Context->DrawIndexed(size, indOff, vertOff);
-			}
-
 		}
 		//Present the backbuffer to the screen
 		SwapChain->Present(0, 0);

@@ -23,7 +23,7 @@ namespace Lime
 		DLL_EXPORT DX11Graphics(const HWND window, const UINT width, const UINT height);
 		DLL_EXPORT ~DX11Graphics();
 		DLL_EXPORT void AddModel(std::shared_ptr<Model2>& model);
-		DLL_EXPORT void CreateTextObject(std::string text , std::shared_ptr<TextController>& controller);
+		DLL_EXPORT void DrawText(std::string text , std::shared_ptr<TextController>& controller);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
 		DLL_EXPORT void LoadTextureFromFile(std::wstring filename);
 		DLL_EXPORT HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);

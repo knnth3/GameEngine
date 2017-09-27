@@ -4,6 +4,8 @@ Lime::TextInfo::TextInfo(std::string str) :
 	TextInfo()
 {
 	SetText(str);
+	data = std::make_shared<Model2>();
+	controller = std::make_shared<TextController>(this);
 }
 
 void Lime::TextInfo::GetController(std::shared_ptr<TextController>& ptr) const
@@ -19,6 +21,7 @@ void Lime::TextInfo::GetData(std::shared_ptr<Model2>& ptr) const
 void Lime::TextInfo::SetText(std::string str)
 {
 	text = str;
+	TextInfo::LoadModel(this);
 }
 
 const std::string Lime::TextInfo::GetText() const
@@ -40,36 +43,23 @@ void Lime::TextInfo::LoadModel(void * self)
 {
 	static bool isFirst = true;
 	static auto data = std::make_shared<ModelData2>();
-	if (isFirst)
+	data->renderType = "Text";
+	data->m_Verticies =
 	{
-		data->renderType = "Text";
-		data->m_Verticies =
-		{
-			// Front Face
-			Vertex2(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-			Vertex2(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-			Vertex2( 1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
-			Vertex2( 1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
-		};
+		// Front Face
+		Vertex2(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
+		Vertex2(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
+		Vertex2(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
+		Vertex2(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
+	};
 
-		data->m_Indicies = {
-			// Front Face
-			0,  1,  2,
-			0,  2,  3,
-		};
-		isFirst = false;
-	}
-
-
+	data->m_Indicies = {
+		// Front Face
+		0,  1,  2,
+		0,  2,  3,
+	};
 	TextInfo* thisObject = reinterpret_cast<TextInfo*>(self);
 	thisObject->data->m_Data = data;
-}
-
-Lime::TextInfo::TextInfo()
-{
-	data = std::make_shared<Model2>();
-	TextInfo::LoadModel(this);
-	controller = std::make_shared<TextController>(this);
 }
 
 Lime::TextController::TextController(TextInfo* i)
