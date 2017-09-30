@@ -57,6 +57,10 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	};
 	CreateShaders(m_vsPath, m_psPath, layout, 2);
+	m_vsPath = L"shaders/FontVertexShader.hlsl";
+	m_psPath = L"shaders/FontPixelShader.hlsl";
+	CreateShaders(m_vsPath, m_psPath, layout, 2);
+	LoadTextureFromFile(L"white.dds");
 
 	RECT tex;
 	tex.top = 0;
@@ -132,14 +136,102 @@ void Lime::DX11Graphics::Close()
 	CWcullMode->Release();
 }
 
-void Lime::DX11Graphics::AddModel(std::shared_ptr<Model2>& model)
+void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model2> model)
 {
-	if (model->m_Data->renderType.compare("Triangle") == 0)
-		m_models.push_back(model);
+	m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
+	m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
+	m_dx11Context->IASetInputLayout(m_vertLayouts[1]);
+	m_dx11Context->RSSetState(NULL);
+	for (auto x = 0; x < text.size(); x++)
+	{
+		HRESULT result;
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		TextBuffer* dataPtr;
+		MatrixBuffer* dataPtr2;
+		TransparentBuffer* dataPtr3;
+		result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CheckSuccess(result);
 
+		dataPtr2 = (MatrixBuffer*)mappedResource.pData;
+		dataPtr2->world = glm::transpose(model->GetLocalToWorld());
+		dataPtr2->view = glm::transpose(m_camera->GetViewMatrix());
+		dataPtr2->projection = glm::transpose(m_camera->GetProjectionMatrix());
+		m_dx11Context->Unmap(m_ObjConstBuffer, 0);
+		m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+
+		result = m_dx11Context->Map(m_textBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CheckSuccess(result);
+
+		dataPtr = (TextBuffer*)mappedResource.pData;
+		float currentElement = (float)x;
+		float character = (int)text.at(x);
+		dataPtr->PosAscii = glm::vec4(currentElement, character, 0.0f, 0.0f);
+		m_dx11Context->Unmap(m_textBuffer, 0);
+		m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
+
+		result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CheckSuccess(result);
+
+		dataPtr3 = (TransparentBuffer*)mappedResource.pData;
+		dataPtr3->colorBlend = model->GetColor();
+		m_dx11Context->Unmap(m_transparentBuffer, 0);
+		m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+
+		UINT size = model->m_Data->m_Indicies.size();
+		UINT vertOff = model->m_Data->m_VertOffset;
+		UINT indOff = model->m_Data->m_IndiciOffset;
+		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+	}
+}
+
+void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model2> model)
+{
+	m_dx11Context->VSSetShader(m_vertexShaders[0], 0, 0);
+	m_dx11Context->PSSetShader(m_pixelShaders[0], 0, 0);
+	m_dx11Context->IASetInputLayout(m_vertLayouts[0]);
+	HRESULT result;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	MatrixBuffer* dataPtr;
+	TransparentBuffer* dataPtr2;
+	result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	CheckSuccess(result);
+
+	dataPtr = (MatrixBuffer*)mappedResource.pData;
+	dataPtr->world = glm::transpose(model->GetLocalToWorld());
+	dataPtr->view = glm::transpose(m_camera->GetViewMatrix());
+	dataPtr->projection = glm::transpose(m_camera->GetProjectionMatrix());
+	m_dx11Context->Unmap(m_ObjConstBuffer, 0);
+	m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+
+	result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	CheckSuccess(result);
+
+	dataPtr2 = (TransparentBuffer*)mappedResource.pData;
+	dataPtr2->colorBlend = model->GetColor();
+	m_dx11Context->Unmap(m_transparentBuffer, 0);
+	m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+	UINT size = model->m_Data->m_Indicies.size();
+	UINT vertOff = model->m_Data->m_VertOffset;
+	UINT indOff = model->m_Data->m_IndiciOffset;
+	if (m_isWireframe)
+	{
+		m_dx11Context->RSSetState(WireFrame);
+		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+	}
+	else
+	{
+		m_dx11Context->RSSetState(CCWcullMode);
+		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		m_dx11Context->RSSetState(CWcullMode);
+		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+	}
+}
+
+void Lime::DX11Graphics::DrawModel(std::shared_ptr<Model2>& model)
+{
+	m_models.push_back(model);
 	static int VertCountOffset = 0;
 	static int IndCountOffset = 0;
-	static std::vector<UINT> cachedIDs;
 	bool similar = false;
 	for (auto const& id : cachedIDs)
 	{
@@ -166,30 +258,29 @@ void Lime::DX11Graphics::AddModel(std::shared_ptr<Model2>& model)
 			std::make_move_iterator(model->m_Data->m_Indicies.begin()),
 			std::make_move_iterator(model->m_Data->m_Indicies.end())
 		);
-		CreateBuffers();
 	}
 	m_hasBuffers = true;
 }
 
 void Lime::DX11Graphics::DrawText(std::string text, std::shared_ptr<TextController>& controller)
 {
-	static bool isFirst = true;
-	m_text.emplace_back(text);
-	m_text.back().GetController(controller);
-	if (isFirst)
-	{
-		std::shared_ptr<Model2> data = nullptr;
-		m_text.back().GetData(data);
-		AddModel(data);
-	}
+	static Texture tex = LoadTextureFromFile(L"SpriteSheetx200.dds");
+	auto ctrler = std::make_shared<TextController>(text);
+	ctrler->GetInfo()->GetData()->SetTexture(tex);
+	auto mesh = ctrler->GetInfo()->GetData();
+	DrawModel(mesh);
+	controller = ctrler;
 	m_hasBuffers = true;
 }
 
 void Lime::DX11Graphics::Draw()
 {
-	m_dx11Context->VSSetShader(m_vertexShaders[0], 0, 0);
-	m_dx11Context->PSSetShader(m_pixelShaders[0], 0, 0);
-	m_dx11Context->IASetInputLayout(m_vertLayouts[0]);
+	static bool hasEntered = false;
+	if (!hasEntered)
+	{
+		CreateBuffers();
+		hasEntered = true;
+	}
 	if (m_hasBuffers && m_camera != nullptr)
 	{
 		std::multimap<float, std::shared_ptr<Model2>> tOrdering;
@@ -204,47 +295,20 @@ void Lime::DX11Graphics::Draw()
 		}
 		for (auto model = tOrdering.rbegin(); model != tOrdering.rend(); ++model)
 		{
-			if (hasConsBuffers)
+			std::string type = model->second->m_Data->renderType;
+			Texture tex = model->second->GetTexture();
+			if (type.compare("Text") == 0)
 			{
-				HRESULT result;
-				D3D11_MAPPED_SUBRESOURCE mappedResource;
-				MatrixBuffer* dataPtr;
-				TransparentBuffer* dataPtr2;
-				result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				CheckSuccess(result);
-
-				dataPtr = (MatrixBuffer*)mappedResource.pData;
-				dataPtr->world = glm::transpose(model->second->GetLocalToWorld());
-				dataPtr->view = glm::transpose(m_camera->GetViewMatrix());
-				dataPtr->projection = glm::transpose(m_camera->GetProjectionMatrix());
-				m_dx11Context->Unmap(m_ObjConstBuffer, 0);
-				m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
-
-				result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				CheckSuccess(result);
-
-				dataPtr2 = (TransparentBuffer*)mappedResource.pData;
-				dataPtr2->colorBlend = model->second->GetColor();
-				m_dx11Context->Unmap(m_transparentBuffer, 0);
-				m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[tex]);
+				auto ptr = reinterpret_cast<TextInfo*>(model->second->m_ptr);
+				RenderText(ptr->GetText(), model->second);
 			}
-
-			//Can be set to null if no state wanted
-			//m_dx11Context->RSSetState(WireFrame);
-			if (!m_textures.empty() && !m_samplerStates.empty())
+			else if (type.compare("Mesh") == 0)
 			{
-				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[0]);
-				m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[0]);
+				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[tex]);
+				RenderMesh(model->second);
 			}
-			UINT size = model->second->m_Data->m_Indicies.size();
-			UINT vertOff = model->second->m_Data->m_VertOffset;
-			UINT indOff = model->second->m_Data->m_IndiciOffset;
-			m_dx11Context->RSSetState(CCWcullMode);
-			m_dx11Context->DrawIndexed(size, indOff, vertOff);
-			m_dx11Context->RSSetState(CWcullMode);
-			m_dx11Context->DrawIndexed(size, indOff, vertOff);
 		}
-		//Present the backbuffer to the screen
 		SwapChain->Present(0, 0);
 	}
 }
@@ -286,15 +350,30 @@ void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
 	m_camera->SetAspectRatio(width, height);
 }
 
+void Lime::DX11Graphics::Wireframe(bool statemnent)
+{
+	m_isWireframe = statemnent;
+}
+
+void Lime::DX11Graphics::Reset()
+{
+	m_models.clear();
+	cachedIDs.clear();
+	m_modelLib.m_Verticies.clear();
+	m_modelLib.m_Indicies.clear();
+}
+
 void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
 {
 	m_camera = ptr;
 }
 
-void Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
+Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
 {
+	Texture tex;
 	wchar_t ext[_MAX_EXT];
-	errno_t err = _wsplitpath_s(filename.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
+	wchar_t fname[_MAX_FNAME];
+	errno_t err = _wsplitpath_s(filename.c_str(), nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
 	HRESULT result;
 	ScratchImage image;
 	if (_wcsicmp(ext, L".dds") == 0)
@@ -308,21 +387,28 @@ void Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
 		result = CreateShaderResourceView(m_dx11device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pResource);
 		CheckSuccess(result);
 
+		tex = m_textures.size();
 		m_textures.push_back(pResource);
-		ID3D11SamplerState* state;
-		D3D11_SAMPLER_DESC sampDesc;
-		ZeroMemory(&sampDesc, sizeof(sampDesc));
-		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-		sampDesc.MinLOD = 0;
-		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		result = m_dx11device->CreateSamplerState(&sampDesc, &state);
-		m_samplerStates.push_back(state);
+		if (m_samplerStates.empty())
+		{
+			ID3D11SamplerState* state;
+			D3D11_SAMPLER_DESC sampDesc;
+			ZeroMemory(&sampDesc, sizeof(sampDesc));
+			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+			sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+			sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+			sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+			sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+			sampDesc.MinLOD = 0;
+			sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+			result = m_dx11device->CreateSamplerState(&sampDesc, &state);
+			CheckSuccess(result);
+
+			m_samplerStates.push_back(state);
+			m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[0]);
+		}
 	}
-	CheckSuccess(result);
+	return tex;
 }
 
 

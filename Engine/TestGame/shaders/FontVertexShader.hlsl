@@ -15,14 +15,11 @@ struct VSOutput
 {
 	float4 pos : SV_POSITION;
 	float2 texCoord  : TEXCOORD;
-	bool useColor : USECOLOR;
 };
 
-VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
+float4 GetCharUVCoords(int char)
 {
-	int posInSequence = ascii.x;
-	int c = (int)ascii.w;
-	int letter = (c - 31) + 5;
+	int letter = (char - 31) + 5;
 	int posy;
 	int posx = letter % 20;
 	if (posx == 0)
@@ -40,31 +37,33 @@ VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
 	float collumn = (float)posy;
 	float maxX = xLen*row;
 	float maxY = yLen*collumn;
-	float minX = maxX - xLen;
-	float minY = maxY - yLen;
+	return float4(maxX, maxY, maxX - xLen, maxY - yLen);
+}
+
+VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
+{
+	int posInSequence = ascii.x;
+	float4 uv = GetCharUVCoords((int)ascii.y);
 
 	if (inTexCoord.x == 0.0f)
-		inTexCoord.x = minX;
+		inTexCoord.x = uv.z;
 	else
-		inTexCoord.x = maxX;
+		inTexCoord.x = uv.x;
 
 	if (inTexCoord.y == 0.0f)
-		inTexCoord.y = minY;
+		inTexCoord.y = uv.w;
 	else
-		inTexCoord.y = maxY;
+		inTexCoord.y = uv.y;
 
-	pos.x *= 0.6f;
-
-	pos.x = pos.x + (posInSequence * 1.2f) - ascii.y;
+	//Increase pos for next char in string.
+	pos.x += (posInSequence * 1.2f);
+	pos.y -= 1.0f;
+	pos.w = 1.0f;
 
 	VSOutput output;
-	pos.w = 1.0f;
 	output.pos = mul(pos, worldMatrix);
 	output.pos = mul(output.pos, viewMatrix);
 	output.pos = mul(output.pos, projectionMatrix);
-	output.pos.z = 0.0f;
 	output.texCoord = inTexCoord;
-	output.useColor = false;
-
 	return output;
 }

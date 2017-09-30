@@ -158,4 +158,9 @@
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\white.png">
+      <Filter>Resource Files</Filter>
+    </ImageContentTask>
+  </ItemGroup>
 </Project>

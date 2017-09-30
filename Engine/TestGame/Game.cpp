@@ -8,28 +8,13 @@ Game::Game() :
 
 void Game::Initialize()
 {
-	char c = 'B';
-	int letter = (c - 31) + 5;
-	int posy;
-	int posx = letter % 20;
-	if (posx == 0)
-	{
-		posx = letter;
-		posy = letter / 20;
-	}
-	else
-	{
-		posy = (letter / 20) + 1;
-	}
-	float xLen = 0.05f;
-	float yLen = 0.2f;
-	float row = (float)posx;
-	float collumn = (float)posy;
-	float maxX = xLen*row;
-	float maxY = yLen*collumn;
-	float minX = maxX - xLen;
-	float minY = maxY - yLen;
 	int width, height;
+	GetDefaultSize(width, height);
+	auto camera = std::make_shared<Lime::DX11Camera>(width, height);
+	m_graphicsDevice->AttatchCamera(camera);
+	start = std::chrono::system_clock::now();
+	end = start;
+
 	model = std::make_shared<Model2>();
 	model2 = std::make_shared<Model2>();
 	model->m_Data->m_Verticies =
@@ -99,29 +84,31 @@ void Game::Initialize()
 	model->Color(1.0f, 0.0f, 1.0f, 0.5f);
 	model->SetOpacity(0.5f);
 	model->Translate(3.0f, 0.0f, -3.0f);
-	//LPCWSTR m_psPath = L"shaders/FontPixelShader.hlsl";
-	//m_graphicsDevice->CreateShaders(m_vsPath, m_psPath, layout, 2);
-	m_graphicsDevice->AddModel(model);
-	m_graphicsDevice->AddModel(model2);
-	std::shared_ptr<Lime::TextController> controller = nullptr;
-	m_graphicsDevice->DrawText("Hello World!", controller);
+	Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
+	model->SetTexture(tex);
+	model2->SetTexture(tex);
+	m_graphicsDevice->DrawModel(model);
+	m_graphicsDevice->DrawModel(model2);
+	m_graphicsDevice->DrawText("Loading...", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
-	m_graphicsDevice->LoadTextureFromFile(L"images.dds");
-	m_graphicsDevice->LoadTextureFromFile(L"SpriteSheetx200.dds");
-	GetDefaultSize(width, height);
-	auto camera = std::make_shared<Lime::DX11Camera>(width, height);
-	m_graphicsDevice->AttatchCamera(camera);
-
-	start = std::chrono::system_clock::now();
-	end = start;
+	controller->Color(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	//m_graphicsDevice->Wireframe(true);
 }
 
 void Game::Tick()
 {
+	static int count = 0;
+	count++;
 	end = std::chrono::system_clock::now();
 	std::chrono::duration<float> time = end - start;
 	start = end;
+	if (count >= 1000)
+	{
+		int fps = 1.0f / time.count();
+		controller->SetText("Fps: " + std::to_string(fps));
+		count = 0;
+	}
 	Update(time.count());
 
 	Render();

@@ -1,27 +1,23 @@
 #include "TextController.h"
 
-Lime::TextInfo::TextInfo(std::string str) :
-	TextInfo()
+Lime::TextInfo::TextInfo(std::string str)
 {
-	SetText(str);
 	data = std::make_shared<Model2>();
-	controller = std::make_shared<TextController>(this);
+	data->m_ptr = this;
+	TextInfo::LoadModel(data->m_Data);
+	SetText(str);
 }
 
-void Lime::TextInfo::GetController(std::shared_ptr<TextController>& ptr) const
+const std::shared_ptr<Lime::Model2>& Lime::TextInfo::GetData()
 {
-	ptr = controller;
-}
-
-void Lime::TextInfo::GetData(std::shared_ptr<Model2>& ptr) const
-{
-	ptr = data;
+	return data;
 }
 
 void Lime::TextInfo::SetText(std::string str)
 {
 	text = str;
-	TextInfo::LoadModel(this);
+	float offset = GetTextOffset();
+	data->SetOffset(offset);
 }
 
 const std::string Lime::TextInfo::GetText() const
@@ -29,9 +25,9 @@ const std::string Lime::TextInfo::GetText() const
 	return text;
 }
 
-float Lime::TextInfo::UpdateMiddlePos()
+float Lime::TextInfo::GetTextOffset()
 {
-	int textLen = text.length();
+	int textLen = text.length() - 1;
 	float totalWidth = 1.2 * textLen;
 	float totalHeight = 2.0f;
 	float middleX = totalWidth / 2.0f;
@@ -39,56 +35,57 @@ float Lime::TextInfo::UpdateMiddlePos()
 	return middleX;
 }
 
-void Lime::TextInfo::LoadModel(void * self)
+void Lime::TextInfo::LoadModel(std::shared_ptr<ModelData2>& info)
 {
 	static bool isFirst = true;
 	static auto data = std::make_shared<ModelData2>();
-	data->renderType = "Text";
-	data->m_Verticies =
+	if (isFirst)
 	{
-		// Front Face
-		Vertex2(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex2(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex2(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
-		Vertex2(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
-	};
+		data->renderType = "Text";
+		data->m_Verticies =
+		{
+			// Front Face
+			Vertex2(-0.6f, -1.0f, -1.0f, 0.0f, 1.0f),
+			Vertex2(-0.6f,  1.0f, -1.0f, 0.0f, 0.0f),
+			Vertex2(0.6f,  1.0f, -1.0f,  1.0f, 0.0f),
+			Vertex2(0.6f, -1.0f, -1.0f,  1.0f, 1.0f),
+		};
 
-	data->m_Indicies = {
-		// Front Face
-		0,  1,  2,
-		0,  2,  3,
-	};
-	TextInfo* thisObject = reinterpret_cast<TextInfo*>(self);
-	thisObject->data->m_Data = data;
+		data->m_Indicies = {
+			// Front Face
+			0,  1,  2,
+			0,  2,  3,
+		};
+	}
+	info = data;
 }
 
-Lime::TextController::TextController(TextInfo* i)
+Lime::TextController::TextController(std::string str)
 {
-	info = i;
+	info = std::make_shared<TextInfo>(str);
 }
 
 void Lime::TextController::Color(glm::vec4 color)
 {
-	std::shared_ptr<Model2> data = nullptr;
-	info->GetData(data);
-	data->Color(color.r, color.g, color.b);
+	info->data->Color(color.r, color.g, color.b, color.a);
 }
 
 void Lime::TextController::Position(glm::vec3 position)
 {
-	std::shared_ptr<Model2> data = nullptr;
-	info->GetData(data);
-	data->Translate(position.x, position.y, position.z);
+	info->data->Translate(position);
 }
 
 void Lime::TextController::Scale(glm::vec3 scale)
 {
-	std::shared_ptr<Model2> data = nullptr;
-	info->GetData(data);
-	data->Scale(scale.x, scale.y, scale.z);
+	info->data->Scale(scale.x, scale.y, scale.z);
 }
 
 void Lime::TextController::SetText(std::string text)
 {
 	info->SetText(text);
+}
+
+const std::shared_ptr<Lime::TextInfo>& Lime::TextController::GetInfo()
+{
+	return info;
 }

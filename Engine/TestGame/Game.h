@@ -29,6 +29,7 @@ private:
 	std::chrono::system_clock::time_point end;
 	std::shared_ptr<Model2> model;
 	std::shared_ptr<Model2> model2;
+	std::shared_ptr<Lime::TextController> controller;
 	float rot = 0.0f;
 	float red = 0.0f;
 	float green = 0.0f;

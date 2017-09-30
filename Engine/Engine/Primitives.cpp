@@ -17,19 +17,27 @@ size_t Lime::ModelData::IndexBufferSize()
 }
 
 Lime::Model2::Model2() :
-m_Position(),
-m_scale(),
-m_translation(),
-m_outRotation(),
-m_inRotation(),
-m_color(1.0f)
+	m_offset(),
+	m_Position(),
+	m_scaleMatrix(),
+	m_translation(),
+	m_outRotation(),
+	m_inRotation(),
+	m_color(1.0f),
+	m_resource(0)
 {
+	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_offset = glm::vec3(0.0f, 0.0f, 0.0f);
 	m_Data = std::make_shared<ModelData2>();
 }
 
 void Lime::Model2::Scale(const float x, const float y, const float z)
 {
-	m_scale = glm::scale(glm::vec3(x,y,z));
+	m_scale = glm::vec3(x, y, z);
+	m_offset.x *= m_scale.x;
+	m_offset.y *= m_scale.y;
+	m_offset.z *= m_scale.z;
+	m_scaleMatrix = glm::scale(m_scale);
 }
 
 void Lime::Model2::Translate(const float x, const float y, const float z)
@@ -37,6 +45,11 @@ void Lime::Model2::Translate(const float x, const float y, const float z)
 	m_Position.x = x;
 	m_Position.y = y;
 	m_Position.z = z;
+}
+
+void Lime::Model2::Translate(glm::vec3 pos)
+{
+	m_Position = pos;
 }
 
 void Lime::Model2::Rotate(float x, float y, float z)
@@ -94,9 +107,19 @@ void Lime::Model2::SetOpacity(float alpha)
 	m_color.a = alpha;
 }
 
+void Lime::Model2::SetOffset(float offset)
+{
+	m_offset = glm::vec3(offset * m_scale.x,0.0f, 0.0f);
+}
+
+void Lime::Model2::SetTexture(Texture tex)
+{
+	m_resource = tex;
+}
+
 glm::vec3 Lime::Model2::GetPosition() const
 {
-	return m_Position;
+	return m_Position - m_offset;
 }
 
 glm::mat4 Lime::Model2::GetLocalToWorld()
@@ -110,10 +133,16 @@ glm::vec4 Lime::Model2::GetColor()
 	return m_color;
 }
 
+Texture Lime::Model2::GetTexture()
+{
+	return m_resource;
+}
+
 void Lime::Model2::CreateLocalToWorld()
 {
-	m_translation = glm::translate(glm::mat4(), glm::vec3(m_Position.x, m_Position.y, m_Position.z));
-	m_localToWorld = m_inRotation * m_translation * m_outRotation * m_scale;
+	glm::vec3 pos = m_Position - m_offset;
+	m_translation = glm::translate(glm::mat4(), glm::vec3(pos.x, pos.y, pos.z));
+	m_localToWorld = m_inRotation * m_translation * m_outRotation * m_scaleMatrix;
 }
 
 Lime::Vertex2::Vertex2(Vertex v)
