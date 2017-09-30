@@ -9,19 +9,19 @@ namespace Lime
 		friend class TextController;
 	public:
 		DLL_EXPORT TextInfo(std::string str);
-		DLL_EXPORT const std::shared_ptr<Model2>& GetData();
+		DLL_EXPORT const std::shared_ptr<Model3D>& GetData();
 		DLL_EXPORT void SetText(std::string text);
 		DLL_EXPORT const std::string GetText() const;
 		DLL_EXPORT float GetTextOffset();
 
 	private:
-		static void LoadModel(std::shared_ptr<ModelData2>& info);
+		static void LoadModel(std::shared_ptr<ModelData>& info);
 
 	protected:
 		float middleX = 0.0f;
 		float middleY = 0.0f;
 		std::string text;
-		std::shared_ptr<Model2> data;
+		std::shared_ptr<Model3D> data;
 	};
 
 	class TextController

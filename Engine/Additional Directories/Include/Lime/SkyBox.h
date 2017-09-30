@@ -24,7 +24,7 @@ namespace Lime
         GLuint m_VboID;
         GLuint m_IabID;
         GLuint m_Texture;
-        Model m_SkyBox;
+        Model3D m_SkyBox;
         std::shared_ptr<Camera> m_Camera;
         ShaderProgram m_ShaderProgram;
     };

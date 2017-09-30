@@ -14,7 +14,7 @@ namespace Lime
     public:
         DLL_EXPORT void Initialize(std::shared_ptr<Camera> camera, std::shared_ptr<ShaderProgram> shaders);
         DLL_EXPORT void Begin();
-        DLL_EXPORT void Draw(Model& model);
+        DLL_EXPORT void Draw(Model3D& model);
         DLL_EXPORT void End();
         DLL_EXPORT void Close();
     private:
@@ -35,7 +35,7 @@ namespace Lime
         GLsizeiptr m_IndexBatchSize = 0;
         std::shared_ptr<ShaderProgram> m_ShaderProgram = nullptr;
         std::map<unsigned int, std::shared_ptr<ModelData>> m_ModelDataBank;
-        std::vector<std::shared_ptr<std::vector<glm::mat4>>> m_MatrixBank;
+        std::vector<glm::mat4> m_MatrixBank;
         std::map<unsigned int, GLsizeiptr> m_OffsetofBank;
         std::vector<unsigned int> m_ObjectsToPrint;
         std::shared_ptr<Camera> m_Camera;

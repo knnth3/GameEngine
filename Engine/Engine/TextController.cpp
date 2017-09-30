@@ -2,13 +2,13 @@
 
 Lime::TextInfo::TextInfo(std::string str)
 {
-	data = std::make_shared<Model2>();
+	data = std::make_shared<Model3D>();
 	data->m_ptr = this;
 	TextInfo::LoadModel(data->m_Data);
 	SetText(str);
 }
 
-const std::shared_ptr<Lime::Model2>& Lime::TextInfo::GetData()
+const std::shared_ptr<Lime::Model3D>& Lime::TextInfo::GetData()
 {
 	return data;
 }
@@ -27,28 +27,28 @@ const std::string Lime::TextInfo::GetText() const
 
 float Lime::TextInfo::GetTextOffset()
 {
-	int textLen = text.length() - 1;
-	float totalWidth = 1.2 * textLen;
+	int textLen = (int)text.length() - 1;
+	float totalWidth = 1.2f * textLen;
 	float totalHeight = 2.0f;
 	float middleX = totalWidth / 2.0f;
 	float middleY = totalHeight / 2.0f;
 	return middleX;
 }
 
-void Lime::TextInfo::LoadModel(std::shared_ptr<ModelData2>& info)
+void Lime::TextInfo::LoadModel(std::shared_ptr<ModelData>& info)
 {
 	static bool isFirst = true;
-	static auto data = std::make_shared<ModelData2>();
+	static auto data = std::make_shared<ModelData>();
 	if (isFirst)
 	{
 		data->renderType = "Text";
 		data->m_Verticies =
 		{
 			// Front Face
-			Vertex2(-0.6f, -1.0f, -1.0f, 0.0f, 1.0f),
-			Vertex2(-0.6f,  1.0f, -1.0f, 0.0f, 0.0f),
-			Vertex2(0.6f,  1.0f, -1.0f,  1.0f, 0.0f),
-			Vertex2(0.6f, -1.0f, -1.0f,  1.0f, 1.0f),
+			Vertex(-0.6f, -1.0f, -1.0f, 0.0f, 1.0f),
+			Vertex(-0.6f,  1.0f, -1.0f, 0.0f, 0.0f),
+			Vertex(0.6f,  1.0f, -1.0f,  1.0f, 0.0f),
+			Vertex(0.6f, -1.0f, -1.0f,  1.0f, 1.0f),
 		};
 
 		data->m_Indicies = {

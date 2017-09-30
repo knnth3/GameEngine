@@ -19,40 +19,27 @@ typedef uint16_t Texture;
 
 namespace Lime
 {
-    struct Vertex
-    {
-        glm::vec3 position;
-        glm::vec3 color;
-        glm::vec3 normal;
-    };
-
-	struct Vertex2
+	struct MatrixBuffer
 	{
-		DLL_EXPORT Vertex2(Vertex v);
-		DLL_EXPORT Vertex2() = default;
-		DLL_EXPORT Vertex2(float x, float y, float z, float u, float v);
-
-		glm::vec3 position;
-		glm::vec2 uv;
+		glm::mat4 world;
+		glm::mat4 view;
+		glm::mat4 projection;
 	};
 
-    struct ModelData
+    struct Vertex
     {
-		DLL_EXPORT ModelData();
-		DLL_EXPORT size_t VertexBufferSize();
-		DLL_EXPORT size_t IndexBufferSize();
+		DLL_EXPORT Vertex() = default;
+		DLL_EXPORT Vertex(float x, float y, float z, float u, float v);
 
-        unsigned int m_ObjectID = 0;
-        std::vector<Vertex> m_Verticies;
-        std::vector<GLshort> m_Indicies;
-
-
+        glm::vec3 position;
+		glm::vec2 uv;
+		glm::vec3 normal;
     };
 
-	struct ModelData2
+	struct ModelData
 	{
 	public:
-		DLL_EXPORT ModelData2();
+		DLL_EXPORT ModelData();
 		DLL_EXPORT size_t VertexBufferSize();
 		DLL_EXPORT size_t IndexBufferSize();
 
@@ -60,16 +47,16 @@ namespace Lime
 		unsigned int m_ObjectID = 0;
 		unsigned int m_VertOffset = 0;
 		unsigned int m_IndiciOffset = 0;
-		std::vector<Vertex2> m_Verticies;
+		std::vector<Vertex> m_Verticies;
 		std::vector<uint32_t> m_Indicies;
 	private:
 		static const unsigned int GetNewID();
 
 	};
 
-	struct Model2
+	struct Model3D
 	{
-		DLL_EXPORT Model2();
+		DLL_EXPORT Model3D();
 		DLL_EXPORT void Scale(const float x, const float y, const float z);
 		DLL_EXPORT void Translate(const float x, const float y, const float z);
 		DLL_EXPORT void Translate(glm::vec3 pos);
@@ -85,7 +72,7 @@ namespace Lime
 		DLL_EXPORT glm::mat4 GetLocalToWorld();
 		DLL_EXPORT glm::vec4 GetColor();
 		DLL_EXPORT Texture GetTexture();
-		std::shared_ptr<ModelData2> m_Data;
+		std::shared_ptr<ModelData> m_Data;
 		void * m_ptr;
 	private:
 		void CreateLocalToWorld();
@@ -98,101 +85,7 @@ namespace Lime
 		glm::vec3 m_offset;
 		glm::vec3 m_scale;
 		glm::vec4 m_color;
-		uint16_t m_resource;
+		uint16_t m_texture;
 	};
-
-
-    struct Model
-    {
-        Model() :
-            m_Data(0),
-            m_Position(0, 0, 0),
-            m_Rotation(0, 0, 0)
-        {
-            m_Matrices = std::make_shared<std::vector<glm::mat4>>();
-            m_Matrices->resize(2);
-        }
-        std::shared_ptr<std::vector<glm::mat4>> GetMatrices()
-        {
-            m_Matrices->at(0) = glm::translate(glm::mat4(), glm::vec3(m_Position.x, m_Position.y, m_Position.z));
-            glm::mat4 rotX = glm::rotate(glm::mat4(), m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-            glm::mat4 rotY = glm::rotate(rotX, m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-            glm::mat4 rotFinal = glm::rotate(rotY, m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-            m_Matrices->at(1) = rotFinal;
-            return m_Matrices;
-        }
-
-        glm::vec3 GetPosition()const
-        {
-            return m_Position;
-        }
-
-        glm::vec3 GetRotation()const
-        {
-            return m_Rotation;
-        }
-
-        void Translate(const float x, const float y, const float z)
-        {
-            m_Position.x = x;
-            m_Position.y = y;
-            m_Position.z = z;
-        }
-        void SetRotation(float x, float y, float z)
-        {
-            float circle = 3.1415f * 2.0f;
-
-            m_Rotation.x = x;
-            m_Rotation.y = y;
-            m_Rotation.z = z;
-
-            if (m_Rotation.x >= circle)
-                m_Rotation.x = circle;
-
-            if (m_Rotation.y >= circle)
-                m_Rotation.y = circle;
-
-            if (m_Rotation.z >= circle)
-                m_Rotation.z = circle;
-        }
-        void RotateX(const float angleInRad)
-        {
-            float circle = 3.1415f * 2.0f;
-            m_Rotation.x += angleInRad;
-
-            if (m_Rotation.x >= circle)
-                m_Rotation.x = circle;
-        }
-        void RotateY(const float angleInRad)
-        {
-            float circle = 3.1415f * 2.0f;
-            m_Rotation.y += angleInRad;
-
-            if (m_Rotation.y >= circle)
-                m_Rotation.y = circle;
-        }
-        void RotateZ(const float angleInRad)
-        {
-            float circle = 3.1415f * 2.0f;
-            m_Rotation.z += angleInRad;
-
-            if (m_Rotation.z >= circle)
-                m_Rotation.z = circle;
-        }
-        void SetColor(float r, float g, float b)
-        {
-            for (int i = 0; i < m_Data->m_Verticies.size(); i++)
-            {
-                m_Data->m_Verticies.at(i).color = glm::vec3(r, g, b);
-            }
-        }
-        std::shared_ptr<ModelData> m_Data;
-    private:
-        //First matrix is Translation
-        //Second matrix is Rotation
-        std::shared_ptr<std::vector<glm::mat4>> m_Matrices;
-        glm::vec3 m_Rotation;
-        glm::vec3 m_Position;
-    };
 
 }

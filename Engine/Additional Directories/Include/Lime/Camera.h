@@ -12,7 +12,7 @@ namespace Lime
     public:
         DLL_EXPORT Camera();
         DLL_EXPORT void Initialize(std::shared_ptr<unsigned int>& windowWidth, std::shared_ptr<unsigned int>& windowHeight);
-        DLL_EXPORT void AttachToModel(std::shared_ptr<Model>& model);
+        DLL_EXPORT void AttachToModel(std::shared_ptr<Model3D>& model);
         DLL_EXPORT void SetViewDistance(float near, float far);
         DLL_EXPORT void SetFOV(float fov);
         DLL_EXPORT void Update();
@@ -56,7 +56,7 @@ namespace Lime
         glm::mat4 m_ProjectionMatrix;
         std::shared_ptr<unsigned int> m_WindowWidth;
         std::shared_ptr<unsigned int> m_WindowHeight;
-        std::shared_ptr<Model> m_Model;
+        std::shared_ptr<Model3D> m_Model;
     };
 
 

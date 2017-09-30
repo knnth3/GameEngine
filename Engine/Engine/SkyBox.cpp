@@ -24,7 +24,9 @@ namespace Lime
         );
 
         //unsigned char* img = SOIL_load_image(fileName.c_str(), 0, 0, 0, SOIL_LOAD_RGB);
-        m_SkyBox.m_Data = ModelLoader::LoadCubeMapCube(m_Camera->GetFarPlane() / 2);
+		//Might need far plane for this
+		//Using tempVar until implemented
+        m_SkyBox.m_Data = ModelLoader::LoadModel("Cubemap", 0);
         MoveDataToBuffer();
         return 0;
     }
@@ -32,7 +34,8 @@ namespace Lime
     void SkyBox::Draw()
     {
         m_ShaderProgram.Use();
-        glm::mat4 modelMatrix = m_SkyBox.GetMatrices()->at(0) * m_SkyBox.GetMatrices()->at(1);
+		//Might need to separate rotation matrix from worldMatrix
+        glm::mat4 modelMatrix = m_SkyBox.GetLocalToWorld();
         m_ShaderProgram.Load4vMatrix(m_Camera->GetViewMatrix(), "view");
         m_ShaderProgram.Load4vMatrix(m_Camera->GetProjectiomMatrix(), "projection");
         m_ShaderProgram.Load4vMatrix(modelMatrix, "model");
@@ -76,7 +79,7 @@ namespace Lime
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 
         //Adds attrib for Colors
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 
         //Adds attrib for Normal Vectors
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));

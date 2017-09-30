@@ -29,7 +29,7 @@ namespace Lime
         CreateViewMatrix(true);
     }
 
-    void Camera::AttachToModel(std::shared_ptr<Model>& model)
+    void Camera::AttachToModel(std::shared_ptr<Model3D>& model)
     {
         m_Model = model;
     }

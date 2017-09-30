@@ -136,7 +136,7 @@ void Lime::DX11Graphics::Close()
 	CWcullMode->Release();
 }
 
-void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model2> model)
+void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model3D> model)
 {
 	m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
 	m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
@@ -164,7 +164,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model2> mo
 
 		dataPtr = (TextBuffer*)mappedResource.pData;
 		float currentElement = (float)x;
-		float character = (int)text.at(x);
+		float character = (float)text.at(x);
 		dataPtr->PosAscii = glm::vec4(currentElement, character, 0.0f, 0.0f);
 		m_dx11Context->Unmap(m_textBuffer, 0);
 		m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
@@ -177,14 +177,14 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model2> mo
 		m_dx11Context->Unmap(m_transparentBuffer, 0);
 		m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 
-		UINT size = model->m_Data->m_Indicies.size();
+		UINT size = (UINT)model->m_Data->m_Indicies.size();
 		UINT vertOff = model->m_Data->m_VertOffset;
 		UINT indOff = model->m_Data->m_IndiciOffset;
 		m_dx11Context->DrawIndexed(size, indOff, vertOff);
 	}
 }
 
-void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model2> model)
+void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model3D> model)
 {
 	m_dx11Context->VSSetShader(m_vertexShaders[0], 0, 0);
 	m_dx11Context->PSSetShader(m_pixelShaders[0], 0, 0);
@@ -210,7 +210,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model2> model)
 	dataPtr2->colorBlend = model->GetColor();
 	m_dx11Context->Unmap(m_transparentBuffer, 0);
 	m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
-	UINT size = model->m_Data->m_Indicies.size();
+	UINT size = (UINT)model->m_Data->m_Indicies.size();
 	UINT vertOff = model->m_Data->m_VertOffset;
 	UINT indOff = model->m_Data->m_IndiciOffset;
 	if (m_isWireframe)
@@ -227,7 +227,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model2> model)
 	}
 }
 
-void Lime::DX11Graphics::DrawModel(std::shared_ptr<Model2>& model)
+void Lime::DX11Graphics::DrawModel(std::shared_ptr<Model3D>& model)
 {
 	m_models.push_back(model);
 	static int VertCountOffset = 0;
@@ -283,7 +283,7 @@ void Lime::DX11Graphics::Draw()
 	}
 	if (m_hasBuffers && m_camera != nullptr)
 	{
-		std::multimap<float, std::shared_ptr<Model2>> tOrdering;
+		std::multimap<float, std::shared_ptr<Model3D>> tOrdering;
 		for (auto model = 0; model < m_models.size(); model++)
 		{
 			glm::vec4 p(m_models[model]->GetPosition(), 1.0f);
@@ -291,7 +291,7 @@ void Lime::DX11Graphics::Draw()
 			glm::vec4 toCameraSpace = m_camera->GetProjectionMatrix() * res;
 			//Uses the z plane for comparison since camera is static
 			float len2 = toCameraSpace.z;
-			tOrdering.insert(std::pair<float, std::shared_ptr<Model2>>(len2, m_models[model]));
+			tOrdering.insert(std::pair<float, std::shared_ptr<Model3D>>(len2, m_models[model]));
 		}
 		for (auto model = tOrdering.rbegin(); model != tOrdering.rend(); ++model)
 		{
@@ -387,7 +387,7 @@ Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
 		result = CreateShaderResourceView(m_dx11device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pResource);
 		CheckSuccess(result);
 
-		tex = m_textures.size();
+		tex = (Texture)m_textures.size();
 		m_textures.push_back(pResource);
 		if (m_samplerStates.empty())
 		{
@@ -418,7 +418,7 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex2) * (UINT)m_modelLib.m_Verticies.size();
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * (UINT)m_modelLib.m_Verticies.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -439,7 +439,7 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 	indexBufferData.pSysMem = m_modelLib.m_Indicies.data();
 	m_dx11device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 
-	UINT stride = sizeof(Vertex2);
+	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	m_dx11Context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	m_dx11Context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -471,7 +471,7 @@ HRESULT Lime::DX11Graphics::CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_
 	CheckSuccess(result);
 	m_pixelShaders.push_back(PS);
 
-	result = m_dx11device->CreateInputLayout(layout, layoutSize, vsBlob->GetBufferPointer(),
+	result = m_dx11device->CreateInputLayout(layout, (UINT)layoutSize, vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(), &vertLayout);
 	CheckSuccess(result);
 	m_vertLayouts.push_back(vertLayout);

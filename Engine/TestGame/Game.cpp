@@ -15,45 +15,34 @@ void Game::Initialize()
 	start = std::chrono::system_clock::now();
 	end = start;
 
-	model = std::make_shared<Model2>();
-	model2 = std::make_shared<Model2>();
+	model = std::make_shared<Model3D>();
+	model2 = std::make_shared<Model3D>();
 	model->m_Data->m_Verticies =
 	{
-		// Front Face
-		Vertex2(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex2(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex2(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
-		Vertex2(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
-
-		// Back Face
-		Vertex2(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
-		Vertex2(1.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-		Vertex2(1.0f,  1.0f, 1.0f, 0.0f, 0.0f),
-		Vertex2(-1.0f,  1.0f, 1.0f, 1.0f, 0.0f),
-
-		// Top Face
-		Vertex2(-1.0f, 1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex2(-1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex2(1.0f, 1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex2(1.0f, 1.0f, -1.0f, 1.0f, 1.0f),
-
-		// Bottom Face
-		Vertex2(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-		Vertex2(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex2(1.0f, -1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex2(-1.0f, -1.0f,  1.0f, 1.0f, 0.0f),
-
-		// Left Face
-		Vertex2(-1.0f, -1.0f,  1.0f, 0.0f, 1.0f),
-		Vertex2(-1.0f,  1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex2(-1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-		Vertex2(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-
-		// Right Face
-		Vertex2(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex2(1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex2(1.0f,  1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex2(1.0f, -1.0f,  1.0f, 1.0f, 1.0f),
+		Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
+		Vertex(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
+		Vertex(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
+		Vertex(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
+		Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
+		Vertex(1.0f, -1.0f, 1.0f, 0.0f, 1.0f),
+		Vertex(1.0f,  1.0f, 1.0f, 0.0f, 0.0f),
+		Vertex(-1.0f,  1.0f, 1.0f, 1.0f, 0.0f),
+		Vertex(-1.0f, 1.0f, -1.0f, 0.0f, 1.0f),
+		Vertex(-1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
+		Vertex(1.0f, 1.0f,  1.0f, 1.0f, 0.0f),
+		Vertex(1.0f, 1.0f, -1.0f, 1.0f, 1.0f),
+		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+		Vertex(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
+		Vertex(1.0f, -1.0f,  1.0f, 0.0f, 0.0f),
+		Vertex(-1.0f, -1.0f,  1.0f, 1.0f, 0.0f),
+		Vertex(-1.0f, -1.0f,  1.0f, 0.0f, 1.0f),
+		Vertex(-1.0f,  1.0f,  1.0f, 0.0f, 0.0f),
+		Vertex(-1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
+		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+		Vertex(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
+		Vertex(1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
+		Vertex(1.0f,  1.0f,  1.0f, 1.0f, 0.0f),
+		Vertex(1.0f, -1.0f,  1.0f, 1.0f, 1.0f),
 	};
 	model->m_Data->m_Indicies = {
 		// Front Face

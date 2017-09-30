@@ -36,7 +36,7 @@ namespace Lime
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 
         //Adds attrib for Colors
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 
         //Adds attrib for Normal Vectors
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
@@ -47,7 +47,7 @@ namespace Lime
 
     void SpriteBatch::LoadModelUniforms(const unsigned int nOfObject)
     {
-        glm::mat4 modelMatrix = m_MatrixBank[nOfObject]->at(0) * m_MatrixBank[nOfObject]->at(1);
+        glm::mat4 modelMatrix = m_MatrixBank[nOfObject];
         m_ShaderProgram->Load4vMatrix(modelMatrix, "modelMatrix");
 
         glm::mat4 fullTransformMatrix = m_Camera->GetProjectiomMatrix() * m_Camera->GetViewMatrix() * modelMatrix;
@@ -98,13 +98,13 @@ namespace Lime
         m_VertexSize = 0;
     }
 
-    void SpriteBatch::Draw(Model& model)
+    void SpriteBatch::Draw(Model3D& model)
     {
         //Checks to see if the model pointers arent set to 0
         //If not, pointer adress is copied to memory bank;
         if (model.m_Data != nullptr)
         {
-            m_MatrixBank.push_back(model.GetMatrices());
+            m_MatrixBank.push_back(model.GetLocalToWorld());
             m_ObjectsToPrint.push_back(model.m_Data->m_ObjectID);
             m_VertexBatchSize += model.m_Data->VertexBufferSize();
             m_VertexSize += model.m_Data->m_Verticies.size();

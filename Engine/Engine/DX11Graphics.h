@@ -22,12 +22,6 @@ namespace Lime
 	{
 		glm::vec4 PosAscii;
 	};
-	struct MatrixBuffer
-	{
-		glm::mat4 world;
-		glm::mat4 view;
-		glm::mat4 projection;
-	};
 	struct TransparentBuffer
 	{
 		glm::vec4 colorBlend;
@@ -38,7 +32,7 @@ namespace Lime
 	public:
 		DLL_EXPORT DX11Graphics(const HWND window, const UINT width, const UINT height);
 		DLL_EXPORT ~DX11Graphics();
-		DLL_EXPORT void DrawModel(std::shared_ptr<Model2>& model);
+		DLL_EXPORT void DrawModel(std::shared_ptr<Model3D>& model);
 		DLL_EXPORT void DrawText(std::string text , std::shared_ptr<TextController>& controller);
 		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
 		DLL_EXPORT Texture LoadTextureFromFile(std::wstring filename);
@@ -54,8 +48,8 @@ namespace Lime
 	private:
 
 		void Close();
-		void RenderText(std::string text, std::shared_ptr<Model2> model);
-		void RenderMesh(std::shared_ptr<Model2> model);
+		void RenderText(std::string text, std::shared_ptr<Model3D> model);
+		void RenderMesh(std::shared_ptr<Model3D> model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		HRESULT CreateBuffers();
 		HRESULT CreateConstBuffers();
@@ -92,8 +86,8 @@ namespace Lime
 		ID3D11Device* m_dx11device;
 		ID3D11DeviceContext* m_dx11Context;
 		D3D11_VIEWPORT viewport;
-		std::vector<std::shared_ptr<Model2>> m_models;
-		ModelData2 m_modelLib;
+		std::vector<std::shared_ptr<Model3D>> m_models;
+		ModelData m_modelLib;
 		std::vector<UINT> cachedIDs;
 		bool hasConsBuffers = false;
 		ID3D11BlendState* Transparency;

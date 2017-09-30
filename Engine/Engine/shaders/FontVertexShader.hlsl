@@ -19,9 +19,9 @@ struct VSOutput
 
 float4 GetCharUVCoords(int char)
 {
-	int letter = (char - 31) + 5;
-	int posy;
-	int posx = letter % 20;
+	uint letter = (char - 31) + 5;
+	uint posy;
+	uint posx = letter % 20;
 	if (posx == 0)
 	{
 		posx = letter;

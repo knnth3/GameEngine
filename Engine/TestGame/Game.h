@@ -27,8 +27,8 @@ private:
 	//Testing
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
-	std::shared_ptr<Model2> model;
-	std::shared_ptr<Model2> model2;
+	std::shared_ptr<Model3D> model;
+	std::shared_ptr<Model3D> model2;
 	std::shared_ptr<Lime::TextController> controller;
 	float rot = 0.0f;
 	float red = 0.0f;
