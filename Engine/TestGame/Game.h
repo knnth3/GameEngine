@@ -1,5 +1,6 @@
 #pragma once
 #include <Lime\DX11App.h>
+#include <Lime\InputManager.h>
 #include <chrono>
 
 using namespace Lime;
@@ -25,11 +26,13 @@ private:
 	void Clear();
 
 	//Testing
+	std::shared_ptr<Lime::Camera> m_camera;
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
 	std::shared_ptr<Model3D> model;
 	std::shared_ptr<Model3D> model2;
 	std::shared_ptr<Lime::TextController> controller;
+	float camRot = 0.0f;
 	float rot = 0.0f;
 	float red = 0.0f;
 	float green = 0.0f;

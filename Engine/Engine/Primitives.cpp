@@ -130,10 +130,11 @@ void Lime::Model3D::CreateLocalToWorld()
 	m_localToWorld = m_inRotation * m_translation * m_outRotation * m_scaleMatrix;
 }
 
-Lime::Vertex::Vertex(float x, float y, float z, float u, float v)
+Lime::Vertex::Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz)
 {
-	position = { x,y,z };
-	uv = { u,v };
+	m_position = { x,y,z };
+	m_uv = { u,v };
+	m_normal = { nx, ny, nz };
 }
 
 Lime::ModelData::ModelData() :
@@ -157,4 +158,31 @@ const unsigned int Lime::ModelData::GetNewID()
 {
 	static unsigned int GlobalIDs = 0;
 	return GlobalIDs++;
+}
+
+void Lime::DiffuseLight::SetDirection(const glm::vec3 dir)
+{
+	m_direction = dir;
+}
+
+void Lime::DiffuseLight::SetColor(const glm::vec4 color)
+{
+	m_color = color;
+}
+
+const glm::vec3 Lime::DiffuseLight::GetDirection() const
+{
+	return m_direction;
+}
+
+const glm::vec4 Lime::DiffuseLight::GetColor() const
+{
+	return m_color;
+}
+
+Lime::Vertex::Vertex(glm::vec3 pos, glm::vec2 uv, glm::vec3 normal)
+{
+	m_position = pos;
+	m_uv = uv;
+	m_normal = normal;
 }

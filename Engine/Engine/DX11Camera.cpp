@@ -53,3 +53,15 @@ void Lime::DX11Camera::SetAspectRatio(const UINT width, const UINT height)
 	m_height = height;
 	m_projection = glm::perspectiveFovLH(m_fov, (float)width, (float)height, m_nearPlane, m_farPlane);
 }
+
+void Lime::DX11Camera::SetPosition(float x, float y, float z)
+{
+	m_position.x = x;
+	m_position.y = y;
+	m_position.z = z;
+}
+
+glm::vec3 Lime::DX11Camera::GetUpDirection()
+{
+	return m_UpDirection;
+}

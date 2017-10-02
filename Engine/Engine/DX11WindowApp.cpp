@@ -1,5 +1,6 @@
 #include "DX11WindowApp.h"
 #include "DirectXMath.h"
+#include "Windowsx.h"
 
 
 
@@ -30,7 +31,7 @@ int Lime::DX11WindowApp::Initialize()
 	WNDCLASSEX wcex = { 0 };
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WindowProc;
+	wcex.lpfnWndProc = WinProc::WindowProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = m_hinstance;
@@ -74,6 +75,7 @@ int Lime::DX11WindowApp::Initialize()
 
 	SetWindowLongPtr(m_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_application.get()));
 	m_application->Init(m_hwnd);
+
 	return 0;
 }
 
@@ -117,8 +119,9 @@ bool Lime::DX11WindowApp::Run()
 	return (int)msg.wParam;
 }
 
-LRESULT Lime::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	bool isCharUp = false;
 	PAINTSTRUCT ps;
 	HDC hdc;
 
@@ -229,6 +232,52 @@ LRESULT Lime::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 
+	case WM_KEYDOWN:
+		app->KeyDown((unsigned int)wParam);
+		break;
+
+	case WM_KEYUP:
+		app->KeyUp((unsigned int)wParam);
+		break;
+
+	case WM_CHAR:
+		//Implement to check button pressed character
+		break;
+
+	case WM_LBUTTONDOWN:
+		switch (wParam)
+		{
+		case MK_RBUTTON:
+		case MK_MBUTTON:
+		case MK_LBUTTON:
+			app->KeyDown((unsigned int)wParam);
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case WM_LBUTTONUP:
+		switch (wParam)
+		{
+		case MK_RBUTTON:
+		case MK_MBUTTON:
+		case MK_LBUTTON:
+			app->KeyUp((unsigned int)wParam);
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case WM_MOUSEMOVE:
+	{
+		short xPos = GET_X_LPARAM(lParam);
+		short yPos = GET_Y_LPARAM(lParam);
+		app->SetMouseCoords(xPos, yPos);
+	}
+		break;
+
 	case WM_SYSKEYDOWN:
 		if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
 		{
@@ -238,8 +287,8 @@ LRESULT Lime::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 				SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
 
-				int width = 800;
-				int height = 600;
+				UINT width = 800;
+				UINT height = 600;
 				if (app)
 				{
 					app->GetDefaultSize(width, height);

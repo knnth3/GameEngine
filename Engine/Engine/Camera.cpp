@@ -1,207 +1,184 @@
 #include "Camera.h"
+#include <glm\gtx\vector_angle.hpp>
 
 namespace Lime
 {
 
-    const float PI = 3.1415927f;
+	void Camera::Initialize(UINT windowWidth, UINT windowHeight)
+	{
+		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		m_info.m_upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
+		SetResolution(windowWidth, windowHeight);
+		CreateProjectionMatrix();
+	}
 
-    Camera::Camera() :
-        m_Position(0.0f, 1.0f, 0.0f),
-        m_Rotation(0.0f, 0.0f, 0.0f),
-        m_Model(nullptr)
-    {
-    }
+	void Camera::AttachToModel(std::shared_ptr<Model3D>& model)
+	{
+		m_info.m_model = model;
+	}
 
-    void Camera::Initialize(std::shared_ptr<unsigned int>& windowWidth, std::shared_ptr<unsigned int>& windowHeight)
-    {
-        if (windowWidth != nullptr && windowHeight != nullptr)
-        {
-            m_WindowWidth = windowWidth;
-            m_WindowHeight = windowHeight;
-        }
-        else
-        {
-            m_WindowWidth = std::make_shared<unsigned int>(800);
-            m_WindowHeight = std::make_shared<unsigned int>(600);
-        }
-        m_AspectRatio = ((float)*m_WindowWidth) / *m_WindowHeight;
-        CreateProjectionMatrix(true);
-        CreateViewMatrix(true);
-    }
+	void Camera::SetViewDistance(float near, float far)
+	{
+		m_info.m_nearPlane = near;
+		m_info.m_farPlane = far;
+	}
 
-    void Camera::AttachToModel(std::shared_ptr<Model3D>& model)
-    {
-        m_Model = model;
-    }
+	void Camera::SetFOV(float fov)
+	{
+		m_info.m_fov = fov;
+	}
 
-    void Camera::SetViewDistance(float near, float far)
-    {
-        m_NearPlane = near;
-        m_FarPlane = far;
-    }
+	void Camera::Move(float x, float y, float z)
+	{
+		float speed = 5.0f;
+		m_info.m_position.x += x / speed;
+		m_info.m_position.y += y / speed;
+		m_info.m_position.z += z / speed;
+	}
 
-    void Camera::SetFOV(float fov)
-    {
-        m_FOV = fov;
-    }
+	void Camera::SetPosition(glm::vec3 position)
+	{
+		m_info.m_position = position;
+	}
 
-    void Camera::Update()
-    {
-        float horis = CalculateHorisDistance();
-        float vert = CalculateVertDistance();
-        CalculatePosition(horis, vert);
-        RefreshAspectRatio();
-        CreateProjectionMatrix();
-        CreateViewMatrix();
-    }
+	void Camera::Rotate(float x, float y, float z)
+	{
+		float circle = (2.0f*PI);
+		float xLimitUp = (PI/2);
+		float xLimitDown = -(PI/2);
 
-    void Camera::Move(float x, float y, float z)
-    {
-        float speed = 5.0f;
-        m_Position.x += x / speed;
-        m_Position.y += y / speed;
-        m_Position.z += z / speed;
-    }
+		m_info.m_angleAroundPlayer += x;
+		m_info.m_rotation.x += y;
 
-    void Camera::SetPosition(glm::vec3 position)
-    {
-        m_Position = position;
-    }
+		if (m_info.m_rotation.x > xLimitUp)
+			m_info.m_rotation.x = xLimitUp;
 
-    void Camera::Rotate(float x, float y, float z)
-    {
-        float circle = (2.0f*PI);
-        float xLimitUp = (PI * 7.0f) / 16.0f;
-        float xLimitDown = PI / 16.0f;
-        m_Rotation.x += x;
-        m_AngleAroundPlayer += y;
+		if (m_info.m_rotation.x < xLimitDown)
+			m_info.m_rotation.x = xLimitDown;
 
-        if (m_Rotation.x > xLimitUp)
-            m_Rotation.x = xLimitUp;
+		if (m_info.m_angleAroundPlayer >= circle)
+			m_info.m_angleAroundPlayer -= circle;
+	}
 
-        if (m_Rotation.x < xLimitDown)
-            m_Rotation.x = xLimitDown;
+	void Camera::SetRotation(glm::vec3 rotation)
+	{
+		float circle = (2.0f*PI);
+		if (rotation.x >= circle)
+			rotation.x -= circle;
 
-        if (m_AngleAroundPlayer >= circle)
-            m_AngleAroundPlayer -= circle;
+		if (rotation.y >= circle)
+			rotation.y -= circle;
 
-    }
+		if (rotation.z >= circle)
+			rotation.z -= circle;
+		m_info.m_rotation = rotation;
+	}
 
-    void Camera::SetRotation(glm::vec3 rotation)
-    {
-        float circle = (2.0f*PI);
-        if (rotation.x >= circle)
-            rotation.x -= circle;
-
-        if (rotation.y >= circle)
-            rotation.y -= circle;
-
-        if (rotation.z >= circle)
-            rotation.z -= circle;
-        m_Rotation = rotation;
-    }
-
-    void Camera::RefreshAspectRatio()
-    {
-        if (*m_WindowWidth != m_PrevWindowWidth || *m_WindowHeight != m_PrevWindowHeight)
-        {
-            m_AspectRatio = ((float)*m_WindowWidth) / *m_WindowHeight;
-        }
-        m_PrevWindowWidth = *m_WindowWidth;
-        m_PrevWindowHeight = *m_WindowHeight;
+	void Camera::SetResolution(UINT width, UINT height)
+	{
+        m_info.m_xResolution = width;
+        m_info.m_yResolution = height;
+		m_info.m_aspectRatio = ((float)m_info.m_xResolution) / m_info.m_yResolution;
     }
 
     void Camera::ZoomIn(float x)
     {
-        m_DistanceFromObject += x;
-        if (m_DistanceFromObject < 1.5f)
-            m_DistanceFromObject = 1.5f;
-        else if (m_DistanceFromObject > 9.0f)
-            m_DistanceFromObject = 9.0f;
+		m_info.m_distanceFromObject += x;
+        if (m_info.m_distanceFromObject < 1.5f)
+			m_info.m_distanceFromObject = 1.5f;
+        else if (m_info.m_distanceFromObject > 9.0f)
+			m_info.m_distanceFromObject = 9.0f;
     }
 
-    void Camera::AddPitch(float p)
-    {
-        m_Rotation.x += p;
-    }
+	void Camera::AddPitch(float pitch)
+	{
+		m_info.m_rotation.x += pitch;
+	}
 
-    void Camera::AddYaw(float yaw)
-    {
-        m_AngleAroundPlayer += yaw;
-    }
+	void Camera::AddYaw(float yaw)
+	{
+		m_info.m_angleAroundPlayer += yaw;
+	}
 
     glm::vec3 Camera::GetPosition()
     {
-        return m_Position;
+        return m_info.m_position;
     }
 
     glm::mat4 Camera::GetViewMatrix()
     {
-        return m_ViewMatrix;
+		float horis = CalculateHorisDistance();
+		float vert = CalculateVertDistance();
+		CalculatePosition(horis, vert);
+		CreateViewMatrix();
+		//m_info.m_view = glm::view(m_info.m_position + m_info.m_model->GetPosition(), m_info.m_model->GetPosition(), m_info.m_upDirection);
+        return m_info.m_view;
     }
 
-    glm::mat4 Camera::GetProjectiomMatrix()
+    glm::mat4 Camera::GetProjectionMatrix()
     {
-        return m_ProjectionMatrix;
+        return m_info.m_projection;
     }
 
     float Camera::GetFarPlane()
     {
-        return m_FarPlane;
+        return m_info.m_farPlane;
     }
 
     unsigned int Camera::GetWindowWidth()
     {
-        return *m_WindowWidth;
+        return m_info.m_xResolution;
     }
 
     unsigned int Camera::GetWindowHeight()
     {
-        return *m_WindowHeight;
+        return m_info.m_yResolution;
     }
 
-    void Camera::CreateViewMatrix(bool overrideUpdateCall)
+    void Camera::CreateViewMatrix()
     {
-        glm::mat4 basicMatrix;
-        glm::mat4 rotX = glm::rotate(basicMatrix, m_Rotation.x, glm::vec3(1, 0, 0));
-        glm::mat4 rotY = glm::rotate(rotX, m_Rotation.y, glm::vec3(0, 1, 0));
-        glm::mat4 rotZ = glm::rotate(rotY, m_Rotation.z, glm::vec3(0, 0, 1));
-        glm::vec3 negPos = glm::vec3(-m_Position.x, -m_Position.y, -m_Position.z);
-        m_ViewMatrix = glm::translate(rotZ, negPos);
+		glm::mat4 basicMatrix;
+		glm::mat4 rotX = glm::rotate(basicMatrix, -m_info.m_rotation.x , glm::vec3(1, 0, 0));
+		glm::mat4 rotY = glm::rotate(rotX, m_info.m_rotation.y, glm::vec3(0, 1, 0));
+		glm::mat4 rotZ = glm::rotate(rotY, m_info.m_rotation.z, glm::vec3(0, 0, 1));
+		glm::vec3 negPos = glm::vec3(m_info.m_position.x, -m_info.m_position.y, m_info.m_position.z);
+		m_info.m_view = glm::translate(rotZ, negPos);
+		//m_info.m_rotation = glm::vec3(0.0f);
     }
 
-    void Camera::CreateProjectionMatrix(bool overrideUpdateCall)
+    void Camera::CreateProjectionMatrix()
     {
-        m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
+		m_info.m_projection = glm::perspectiveLH(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane, m_info.m_farPlane);
     }
 
     void Camera::CalculatePosition(float horizontalDistance, float verticalDistance)
     {
-        if (m_Model != nullptr)
-        {
-            float theta = m_AngleAroundPlayer;
-            float offsetX = horizontalDistance * sinf(theta);
-            float offsetZ = horizontalDistance * cosf(theta);
-            m_Rotation.y = PI - m_AngleAroundPlayer;
-            m_Position.x = m_Model->GetPosition().x - offsetX;
-            m_Position.y = m_Model->GetPosition().y + verticalDistance;
-            m_Position.z = m_Model->GetPosition().z - offsetZ;
-            if (!m_bPlayerAttached)
-            {
-                AddPitch(PI / 4);
-                m_bPlayerAttached = true;
-            }
-        }
+		if (m_info.m_model != nullptr)
+		{
+			float theta = m_info.m_angleAroundPlayer;
+			float offsetX = horizontalDistance * sinf(theta);
+			float offsetZ = horizontalDistance * cosf(theta);
+			m_info.m_rotation.y = PI - m_info.m_angleAroundPlayer;
+			m_info.m_position.x = m_info.m_model->GetPosition().x - offsetX;
+			m_info.m_position.y = m_info.m_model->GetPosition().y + verticalDistance;
+			m_info.m_position.z = m_info.m_model->GetPosition().z - offsetZ;
+			if (!m_info.m_bPlayerAttached)
+			{
+				AddPitch(PI/4);
+				AddYaw(PI);
+				m_info.m_bPlayerAttached = true;
+			}
+		}
     }
 
-    float Camera::CalculateVertDistance()
-    {
-        return m_DistanceFromObject * sinf(m_Rotation.x);
-    }
+	float Camera::CalculateVertDistance()
+	{
+		return m_info.m_distanceFromObject * sinf(m_info.m_rotation.x);
+	}
 
-    float Camera::CalculateHorisDistance()
-    {
-        return m_DistanceFromObject * cosf(m_Rotation.x);
-    }
+	float Camera::CalculateHorisDistance()
+	{
+		return m_info.m_distanceFromObject * cosf(m_info.m_rotation.x);
+	}
 
 }

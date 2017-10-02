@@ -2,9 +2,12 @@
 Texture2D ObjTexture;
 SamplerState ObjSamplerState;
 
-cbuffer TransparentBuffer
+cbuffer PF_PixelBuffer
 {
 	float4 blendAmount;
+	float4 diffuseColor;
+	float3 sunDirection;
+	float padding;
 };
 
 float4 main(VSOutput input) : SV_TARGET

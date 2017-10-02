@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <comdef.h>
 #include <map>
-#include "DX11Camera.h"
+#include "Camera.h"
 #include "TextController.h"
 #include "Primitives.h"
 #include "D3Dcompiler.h"
@@ -17,14 +17,23 @@
 
 namespace Lime
 {
+	struct MatrixBuffer
+	{
+		glm::mat4 world;
+		glm::mat4 view;
+		glm::mat4 projection;
+	};
 
 	struct TextBuffer
 	{
 		glm::vec4 PosAscii;
 	};
-	struct TransparentBuffer
+	struct PF_PixelBuffer
 	{
 		glm::vec4 colorBlend;
+		glm::vec4 diffuseColor;
+		glm::vec3 lightDirection;
+		float padding;
 	};
 
 	class DX11Graphics
@@ -34,7 +43,7 @@ namespace Lime
 		DLL_EXPORT ~DX11Graphics();
 		DLL_EXPORT void DrawModel(std::shared_ptr<Model3D>& model);
 		DLL_EXPORT void DrawText(std::string text , std::shared_ptr<TextController>& controller);
-		DLL_EXPORT void AttatchCamera(std::shared_ptr<DX11Camera>& ptr);
+		DLL_EXPORT void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		DLL_EXPORT Texture LoadTextureFromFile(std::wstring filename);
 		DLL_EXPORT HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
 		DLL_EXPORT void Draw();
@@ -58,8 +67,6 @@ namespace Lime
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
-		XMMATRIX GlmToXM(glm::mat4 matrix);
-		XMVECTOR GlmToXM(glm::vec3 matrix);
 		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, 
 			LPCSTR profile, ID3DBlob** blob);
 
@@ -81,7 +88,7 @@ namespace Lime
 		ID3D11DepthStencilView* m_depthStencilView;
 		ID3D11DepthStencilState* m_depthStencilState;
 		ID3D11Texture2D* depthStencilBuffer;
-		std::shared_ptr<DX11Camera> m_camera;
+		std::shared_ptr<Camera> m_camera;
 		ID3D11RasterizerState* WireFrame;
 		ID3D11Device* m_dx11device;
 		ID3D11DeviceContext* m_dx11Context;
@@ -94,6 +101,7 @@ namespace Lime
 		ID3D11BlendState* TransparencyBack;
 		ID3D11RasterizerState* CCWcullMode;
 		ID3D11RasterizerState* CWcullMode;
+		DiffuseLight m_sun;
 		UINT m_bufferCount;
 		bool m_isWireframe = false;
 	};

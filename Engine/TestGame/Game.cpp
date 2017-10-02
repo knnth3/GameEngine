@@ -8,10 +8,11 @@ Game::Game() :
 
 void Game::Initialize()
 {
-	int width, height;
+	UINT width, height;
 	GetDefaultSize(width, height);
-	auto camera = std::make_shared<Lime::DX11Camera>(width, height);
-	m_graphicsDevice->AttatchCamera(camera);
+	m_camera = std::make_shared<Lime::Camera>();
+	m_camera->Initialize(width, height);
+	m_graphicsDevice->AttatchCamera(m_camera);
 	start = std::chrono::system_clock::now();
 	end = start;
 
@@ -19,60 +20,44 @@ void Game::Initialize()
 	model2 = std::make_shared<Model3D>();
 	model->m_Data->m_Verticies =
 	{
-		Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex(1.0f,  1.0f, -1.0f,  1.0f, 0.0f),
-		Vertex(1.0f, -1.0f, -1.0f,  1.0f, 1.0f),
-		Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
-		Vertex(1.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-		Vertex(1.0f,  1.0f, 1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f,  1.0f, 1.0f, 1.0f, 0.0f),
-		Vertex(-1.0f, 1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex(1.0f, 1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex(1.0f, 1.0f, -1.0f, 1.0f, 1.0f),
-		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-		Vertex(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(1.0f, -1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f, -1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex(-1.0f, -1.0f,  1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f,  1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-		Vertex(1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex(1.0f,  1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex(1.0f, -1.0f,  1.0f, 1.0f, 1.0f),
+		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f),
+		Vertex(-1.0f, +1.0f, -1.0f, 1.0f, 1.0f, -1.0f, +1.0f, -1.0f),
+		Vertex(+1.0f, +1.0f, -1.0f, 1.0f, 1.0f, +1.0f, +1.0f, -1.0f),
+		Vertex(+1.0f, -1.0f, -1.0f, 1.0f, 1.0f, +1.0f, -1.0f, -1.0f),
+		Vertex(-1.0f, -1.0f, +1.0f, 1.0f, 1.0f, -1.0f, -1.0f, +1.0f),
+		Vertex(-1.0f, +1.0f, +1.0f, 1.0f, 1.0f, -1.0f, +1.0f, +1.0f),
+		Vertex(+1.0f, +1.0f, +1.0f, 1.0f, 1.0f, +1.0f, +1.0f, +1.0f),
+		Vertex(+1.0f, -1.0f, +1.0f, 1.0f, 1.0f, +1.0f, -1.0f, +1.0f),
 	};
 	model->m_Data->m_Indicies = {
-		// Front Face
-		0,  1,  2,
-		0,  2,  3,
+		// front face
+		0, 1, 2,
+		0, 2, 3,
 
-		// Back Face
-		4,  5,  6,
-		4,  6,  7,
+		// back face
+		4, 6, 5,
+		4, 7, 6,
 
-		// Top Face
-		8,  9, 10,
-		8, 10, 11,
+		// left face
+		4, 5, 1,
+		4, 1, 0,
 
-		// Bottom Face
-		12, 13, 14,
-		12, 14, 15,
+		// right face
+		3, 2, 6,
+		3, 6, 7,
 
-		// Left Face
-		16, 17, 18,
-		16, 18, 19,
+		// top face
+		1, 5, 6,
+		1, 6, 2,
 
-		// Right Face
-		20, 21, 22,
-		20, 22, 23
+		// bottom face
+		4, 0, 3,
+		4, 3, 7
 	};
 	model2->m_Data = model->m_Data;
+	m_camera->AttachToModel(model2);
 	model->Color(1.0f, 0.0f, 1.0f, 0.5f);
-	model->SetOpacity(0.5f);
-	model->Translate(3.0f, 0.0f, -3.0f);
+	model->Translate(0.0f, 0.0f, -5.0f);
 	Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
 	model->SetTexture(tex);
 	model2->SetTexture(tex);
@@ -94,7 +79,7 @@ void Game::Tick()
 	start = end;
 	if (count >= 1000)
 	{
-		int fps = 1.0f / time.count();
+		int fps = (int)(1.0f / time.count());
 		controller->SetText("Fps: " + std::to_string(fps));
 		count = 0;
 	}
@@ -130,7 +115,27 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::Update(float elapsed)
 {
-	rot += 9.8 / 20.0f * elapsed;
+	camRot = 9.8f / 2.0f * elapsed;
+	float camRotY = camRot;
+	if (camRotY >= 3.14f)
+		camRotY = -camRotY;
+	if (m_input->KeyStatus(0x41) == true) //A
+	{
+		m_camera->Rotate(camRot, 0.0f, 0.0f);
+	}
+	if (m_input->KeyStatus(0x44) == true) //D
+	{
+		m_camera->Rotate(-camRot, 0.0f, 0.0f);
+	}
+	if (m_input->KeyStatus(0x57) == true) //W
+	{
+		m_camera->Rotate(0.0f, camRot, 0.0f);
+	}
+	if (m_input->KeyStatus(0x53) == true) //S
+	{
+		m_camera->Rotate(0.0f, -camRot, 0.0f);
+	}
+	rot += 9.8f / 20.0f * elapsed;
 	if (rot > 6.28f)
 		rot = 0.0f;
 	//model2->Rotate(0.0f, -rot, 0.0f);

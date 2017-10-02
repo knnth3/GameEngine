@@ -9,7 +9,11 @@
 
 namespace Lime
 {
-	DLL_EXPORT LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	class WinProc
+	{
+	public:
+		DLL_EXPORT static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	};
 
 	// Indicates to hybrid graphics systems to prefer the discrete part by default
 	extern "C"

@@ -12,6 +12,8 @@ Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT
 	m_hasBuffers = false;
 	HRESULT result = Initialize(window, width, height);
 	CheckSuccess(result);
+	m_sun.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_sun.SetDirection(glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 
@@ -54,12 +56,13 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	CreateShaders(m_vsPath, m_psPath, layout, 2);
+	UINT layoutSize = ARRAYSIZE(layout);
+	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
 	m_vsPath = L"shaders/FontVertexShader.hlsl";
 	m_psPath = L"shaders/FontPixelShader.hlsl";
-	CreateShaders(m_vsPath, m_psPath, layout, 2);
+	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
 	LoadTextureFromFile(L"white.dds");
 
 	RECT tex;
@@ -148,7 +151,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model3D> m
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		TextBuffer* dataPtr;
 		MatrixBuffer* dataPtr2;
-		TransparentBuffer* dataPtr3;
+		PF_PixelBuffer* dataPtr3;
 		result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CheckSuccess(result);
 
@@ -172,8 +175,10 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model3D> m
 		result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CheckSuccess(result);
 
-		dataPtr3 = (TransparentBuffer*)mappedResource.pData;
+		dataPtr3 = (PF_PixelBuffer*)mappedResource.pData;
 		dataPtr3->colorBlend = model->GetColor();
+		dataPtr3->diffuseColor = m_sun.GetColor();
+		dataPtr3->lightDirection = m_sun.GetDirection();
 		m_dx11Context->Unmap(m_transparentBuffer, 0);
 		m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 
@@ -192,7 +197,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model3D> model)
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBuffer* dataPtr;
-	TransparentBuffer* dataPtr2;
+	PF_PixelBuffer* dataPtr2;
 	result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	CheckSuccess(result);
 
@@ -206,8 +211,10 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model3D> model)
 	result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	CheckSuccess(result);
 
-	dataPtr2 = (TransparentBuffer*)mappedResource.pData;
+	dataPtr2 = (PF_PixelBuffer*)mappedResource.pData;
 	dataPtr2->colorBlend = model->GetColor();
+	dataPtr2->diffuseColor = m_sun.GetColor();
+	dataPtr2->lightDirection = m_sun.GetDirection();
 	m_dx11Context->Unmap(m_transparentBuffer, 0);
 	m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 	UINT size = (UINT)model->m_Data->m_Indicies.size();
@@ -347,7 +354,8 @@ void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
 	CreateRTV();
 	CreateDepthStencil(width, height);
 	CreateViewport(width, height);
-	m_camera->SetAspectRatio(width, height);
+	//Is optional
+	m_camera->SetResolution(width, height);
 }
 
 void Lime::DX11Graphics::Wireframe(bool statemnent)
@@ -363,7 +371,7 @@ void Lime::DX11Graphics::Reset()
 	m_modelLib.m_Indicies.clear();
 }
 
-void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<DX11Camera>& ptr)
+void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
 {
 	m_camera = ptr;
 }
@@ -375,10 +383,10 @@ Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
 	wchar_t fname[_MAX_FNAME];
 	errno_t err = _wsplitpath_s(filename.c_str(), nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
 	HRESULT result;
-	ScratchImage image;
+	DirectX::ScratchImage image;
 	if (_wcsicmp(ext, L".dds") == 0)
 	{
-		result = LoadFromDDSFile(filename.c_str(), DDS_FLAGS_NONE, nullptr, image);
+		result = LoadFromDDSFile(filename.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
 		CheckSuccess(result);
 	}
 	if (SUCCEEDED(result))
@@ -497,7 +505,7 @@ HRESULT Lime::DX11Graphics::CreateConstBuffers()
 
 	D3D11_BUFFER_DESC tbd = { 0 };
 	tbd.Usage = D3D11_USAGE_DYNAMIC;
-	tbd.ByteWidth = sizeof(TransparentBuffer);
+	tbd.ByteWidth = sizeof(PF_PixelBuffer);
 	tbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	tbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tbd.MiscFlags = 0;
@@ -661,20 +669,6 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 
 	//Set the Viewport
 	m_dx11Context->RSSetViewports(1, &viewport);
-}
-
-XMMATRIX Lime::DX11Graphics::GlmToXM(glm::mat4 matrix)
-{
-	glm::mat4* c = &matrix;
-	XMMATRIX* cast = reinterpret_cast<XMMATRIX*>(c);
-	return XMMatrixTranspose(*cast);
-}
-
-XMVECTOR Lime::DX11Graphics::GlmToXM(glm::vec3 matrix)
-{
-	glm::vec4* c = &glm::vec4(matrix, 0.0f);
-	XMVECTOR* cast = reinterpret_cast<XMVECTOR*>(c);
-	return *cast;
 }
 
 HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)

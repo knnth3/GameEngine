@@ -41,14 +41,16 @@ void Lime::TextInfo::LoadModel(std::shared_ptr<ModelData>& info)
 	static auto data = std::make_shared<ModelData>();
 	if (isFirst)
 	{
+		glm::vec3 normal(0.0f, 0.0f, 1.0f);
 		data->renderType = "Text";
 		data->m_Verticies =
 		{
 			// Front Face
-			Vertex(-0.6f, -1.0f, -1.0f, 0.0f, 1.0f),
-			Vertex(-0.6f,  1.0f, -1.0f, 0.0f, 0.0f),
-			Vertex(0.6f,  1.0f, -1.0f,  1.0f, 0.0f),
-			Vertex(0.6f, -1.0f, -1.0f,  1.0f, 1.0f),
+
+			Vertex(glm::vec3(-0.6f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), normal),
+			Vertex(glm::vec3(-0.6f,  1.0f, -1.0f), glm::vec2(0.0f, 0.0f), normal),
+			Vertex(glm::vec3(0.6f,  1.0f, -1.0f), glm::vec2(1.0f, 0.0f), normal),
+			Vertex(glm::vec3(0.6f, -1.0f, -1.0f), glm::vec2(1.0f, 1.0f), normal),
 		};
 
 		data->m_Indicies = {

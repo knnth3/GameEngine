@@ -6,40 +6,26 @@ namespace Lime
 
     InputManager::InputManager()
     {
+		m_directInput = NULL;
+		m_keyboard = NULL;
+		m_mouse = NULL;
         m_MouseCoords = glm::vec2(0.0f, 0.0f);
         m_Camera = nullptr;
     }
-    bool InputManager::Update()
-    {
-        bool isRunning = true;
-        SDL_Event evnt;
-        glm::vec2 mouserel(0, 0);
-        while (SDL_PollEvent(&evnt))
-        {
-            switch (evnt.type)
-            {
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-            case SDL_MOUSEMOTION:
-                SetMouseCoords((float)evnt.motion.x, (float)evnt.motion.y);
-                break;
-            case SDL_KEYUP:
-                KeyUp(evnt.key.keysym.sym);
-                break;
-            case SDL_KEYDOWN:
-                KeyDown(evnt.key.keysym.sym);
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                KeyDown(evnt.button.button);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                KeyUp(evnt.button.button);
-                break;
-            }
-        }
-        return isRunning;
-    }
+	InputManager::~InputManager()
+	{
+	}
+	void InputManager::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
+	{
+		m_screenWidth = screenWidth;
+		m_screenHeight = screenHeight;
+
+#if PLATFORM == OS_WINDOWS
+		//Windows is set to pass input through
+		//KeyUp(key) & KeyDown(key)
+		//No need to init as it is a default function
+#endif
+	}
 
     void InputManager::LoadCamera(std::shared_ptr<Camera>& camera)
     {
@@ -88,10 +74,10 @@ namespace Lime
 
     }
 
-    void InputManager::SetMouseCoords(float x, float y)
+    void InputManager::SetMouseCoords(short x, short y)
     {
-        m_MouseCoords.x = x;
-        m_MouseCoords.y = y;
+        m_MouseCoords.x = (float)x;
+        m_MouseCoords.y = (float)y;
     }
 
     glm::vec2 InputManager::NormalizeDeviceMouseCoords(glm::vec2 & mousePos)
@@ -110,7 +96,7 @@ namespace Lime
         glm::vec4 EyeSpaceCoords;
         if (m_Camera)
         {
-            EyeSpaceCoords = glm::inverse(m_Camera->GetProjectiomMatrix()) * mouseCoords;
+            EyeSpaceCoords = glm::inverse(m_Camera->GetProjectionMatrix()) * mouseCoords;
             EyeSpaceCoords = glm::vec4(EyeSpaceCoords.x, EyeSpaceCoords.y, -1.0f, 0.0f);
         }
         return EyeSpaceCoords;
@@ -136,7 +122,7 @@ namespace Lime
         m_KeysDown[keyID] = false;
     }
 
-    void InputManager::KeyDown(unsigned int keyID)
+	void InputManager::KeyDown(unsigned int keyID)
     {
         m_KeysDown[keyID] = true;
     }

@@ -5,8 +5,6 @@
 #include <ctime>
 #include <Windows.h>
 
-#define PI 3.14159f
-
 std::shared_ptr<Lime::ModelData> Lime::ModelLoader::LoadModel(std::string filename, unsigned int id)
 {
 	return nullptr;

@@ -2,9 +2,13 @@
 #include <Windows.h>
 #include "Primitives.h"
 #include "DX11Graphics.h"
+#include "InputManager.h"
 
 namespace Lime
 {
+	//Forward Decl
+	class WinProc;
+
 	class DX11App
 	{
 	public:
@@ -15,9 +19,8 @@ namespace Lime
 		//Return 0 upon success.
 		DLL_EXPORT virtual void Init(HWND wnd) final;
 		DLL_EXPORT virtual void CloseApp() final;
-
+		DLL_EXPORT virtual void GetDefaultSize(UINT& width, UINT& height);
 		DLL_EXPORT virtual void SetSize(UINT width, UINT height) final;
-		DLL_EXPORT virtual void GetDefaultSize(int& width, int& height) const final;
 
 		//state changes
 		DLL_EXPORT virtual void OnActivated() = 0;
@@ -28,14 +31,20 @@ namespace Lime
 		DLL_EXPORT virtual void OnWindowSizeChanged(int width, int height) = 0;
 
 	protected:
+		friend class WinProc;
+		void KeyUp(unsigned int Key);
+		void KeyDown(unsigned int Key);
+		void SetMouseCoords(short x, short y);
 		virtual void Initialize() = 0;
 		void SetWindowSize(UINT width, UINT height);
 
 		std::unique_ptr<DX11Graphics> m_graphicsDevice;
+		std::unique_ptr<InputManager> m_input;
 	private:
+
 		UINT m_width;
 		UINT m_height;
 
 	};
-}
 
+}
