@@ -78,7 +78,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -86,7 +86,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,11 +111,11 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTexd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Additional Directories\Include\Lime"
-copy "$(TargetDir)*.lib" "$(SolutionDir)Additional Directories\Library"
+copy "$(TargetDir)$(MSBuildProjectName).lib" "$(SolutionDir)Additional Directories\Library\$(Configuration)"
 copy "$(SolutionDir)Additional Directories\Runtime DLLs\*.dll" "$(TargetDir)"
 copy "$(ProjectDir)shaders\*.*" "$(TargetDir)\shaders\"
 copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
@@ -151,13 +151,14 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;OpenGL32.lib;SOIL.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Additional Directories\Include\Lime"
-copy "$(TargetDir)*.lib" "$(SolutionDir)Additional Directories\Library"
+copy "$(TargetDir)$(MSBuildProjectName).lib" "$(SolutionDir)Additional Directories\Library\$(Configuration)"
 copy "$(SolutionDir)Additional Directories\Runtime DLLs\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)shaders\*.*" "$(TargetDir)shaders\"</Command>
+copy "$(ProjectDir)shaders\*.*" "$(TargetDir)\shaders\"
+copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
