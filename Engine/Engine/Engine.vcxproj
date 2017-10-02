@@ -77,16 +77,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,12 +106,14 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;FBXSDK_SHARED;Engine_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Additional Directories\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Additional Directories\Library\64\Debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Additional Directories\Include\Lime"
@@ -145,13 +147,15 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;FBXSDK_SHARED;Engine_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Additional Directories\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;winmm.lib;DirectXTex.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Additional Directories\Library\x64\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Additional Directories\Include\Lime"
@@ -172,6 +176,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="DX11Graphics.cpp" />
     <ClCompile Include="DX11WindowApp.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="Primitives.cpp" />
@@ -194,6 +199,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="DX11Graphics.h" />
     <ClInclude Include="DX11WindowApp.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Primitives.h" />

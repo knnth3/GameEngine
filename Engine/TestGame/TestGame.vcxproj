@@ -74,7 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\Additional Directories\Library\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)\Additional Directories\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\Additional Directories\Library\Release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\Additional Directories\Library\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

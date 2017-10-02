@@ -4,18 +4,18 @@
 class PhysicsEngine
 {
 public:
-    DLL_EXPORT PhysicsEngine();
-    DLL_EXPORT PhysicsEngine(const float gravity, const glm::vec3 DirectionNormal);
-    DLL_EXPORT int GetOpenSlot();
-    DLL_EXPORT int AddObject(const std::shared_ptr<Collider>& col);
-    DLL_EXPORT void DeleteObject(int ID);
-    DLL_EXPORT void Update(float dTime);
+    AppDLL_API PhysicsEngine();
+    AppDLL_API PhysicsEngine(const float gravity, const glm::vec3 DirectionNormal);
+    AppDLL_API int GetOpenSlot();
+    AppDLL_API int AddObject(const std::shared_ptr<Collider>& col);
+    AppDLL_API void DeleteObject(int ID);
+    AppDLL_API void Update(float dTime);
 
-    DLL_EXPORT void SetGravity(float gravity);
-    DLL_EXPORT void SetGravityDir(glm::vec3 dir);
+    AppDLL_API void SetGravity(float gravity);
+    AppDLL_API void SetGravityDir(glm::vec3 dir);
  
-    DLL_EXPORT float GetGravity();
-    DLL_EXPORT glm::vec3 GetGravityDir();
+    AppDLL_API float GetGravity();
+    AppDLL_API glm::vec3 GetGravityDir();
 private:
     float m_airDesnity = 0.001225f;
     float m_Gravity;

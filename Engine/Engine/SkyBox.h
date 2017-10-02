@@ -11,9 +11,9 @@
 //    class SkyBox
 //    {
 //    public:
-//        DLL_EXPORT int Initialize(std::shared_ptr<Camera>& m_camera);
-//        DLL_EXPORT void Draw();
-//        DLL_EXPORT void Close();
+//        AppDLL_API int Initialize(std::shared_ptr<Camera>& m_camera);
+//        AppDLL_API void Draw();
+//        AppDLL_API void Close();
 //
 //    private:
 //        void CreateVertexArray();

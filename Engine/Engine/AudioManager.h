@@ -9,9 +9,9 @@
 //    class AudioManager
 //    {
 //    public:
-//        DLL_EXPORT bool LoadWAV(std::string filePath);
-//        DLL_EXPORT void Play(bool statement);
-//        DLL_EXPORT bool Close();
+//        AppDLL_API bool LoadWAV(std::string filePath);
+//        AppDLL_API void Play(bool statement);
+//        AppDLL_API bool Close();
 //    private:
 //        static void MyAudioCallback(void * userData, Uint8 * stream, int streamLength);
 //        bool CreateAudioDevice();

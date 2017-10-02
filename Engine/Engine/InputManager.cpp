@@ -136,7 +136,7 @@ namespace Lime
         }
         return false;
     }
-    DLL_EXPORT bool InputManager::KeyPressed(unsigned int keyID)
+    AppDLL_API bool InputManager::KeyPressed(unsigned int keyID)
     {
         bool bWasPressed = m_KeysPressed[keyID];
         if(bWasPressed)

@@ -12,7 +12,7 @@ namespace Lime
 	class WinProc
 	{
 	public:
-		DLL_EXPORT static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		AppDLL_API static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	};
 
 	// Indicates to hybrid graphics systems to prefer the discrete part by default
@@ -25,11 +25,11 @@ namespace Lime
 	class DX11WindowApp
 	{
 	public:
-		DLL_EXPORT DX11WindowApp(LPCWSTR AppName, std::unique_ptr<DX11App> app);
-		DLL_EXPORT int Initialize();
-		DLL_EXPORT ~DX11WindowApp();
+		AppDLL_API DX11WindowApp(LPCWSTR AppName, std::unique_ptr<DX11App> app);
+		AppDLL_API int Initialize();
+		AppDLL_API ~DX11WindowApp();
 		//Returns false on close
-		DLL_EXPORT bool Run();
+		AppDLL_API bool Run();
 	private:
 		unsigned int m_width;
 		unsigned int m_height;

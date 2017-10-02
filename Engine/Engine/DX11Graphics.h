@@ -39,21 +39,21 @@ namespace Lime
 	class DX11Graphics
 	{
 	public:
-		DLL_EXPORT DX11Graphics(const HWND window, const UINT width, const UINT height);
-		DLL_EXPORT ~DX11Graphics();
-		DLL_EXPORT void DrawModel(std::shared_ptr<Model3D>& model);
-		DLL_EXPORT void DrawText(std::string text , std::shared_ptr<TextController>& controller);
-		DLL_EXPORT void AttatchCamera(std::shared_ptr<Camera>& ptr);
-		DLL_EXPORT Texture LoadTextureFromFile(std::wstring filename);
-		DLL_EXPORT HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
-		DLL_EXPORT void Draw();
-		DLL_EXPORT ID3D11DeviceContext* GetDeviceContext() const;
-		DLL_EXPORT ID3D11RenderTargetView* GetRenderTargetView() const;
-		DLL_EXPORT ID3D11DepthStencilView* GetDepthStencilView() const;
-		DLL_EXPORT D3D11_VIEWPORT GetScreenViewport() const;
-		DLL_EXPORT void ResizeWindow(const UINT width, const UINT height);
-		DLL_EXPORT void Wireframe(bool statement);
-		DLL_EXPORT void Reset();
+		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
+		AppDLL_API ~DX11Graphics();
+		AppDLL_API void DrawModel(std::shared_ptr<Model3D>& model);
+		AppDLL_API void DrawText(std::string text , std::shared_ptr<TextController>& controller);
+		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
+		AppDLL_API Texture LoadTextureFromFile(std::wstring filename);
+		AppDLL_API HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
+		AppDLL_API void Draw();
+		AppDLL_API ID3D11DeviceContext* GetDeviceContext() const;
+		AppDLL_API ID3D11RenderTargetView* GetRenderTargetView() const;
+		AppDLL_API ID3D11DepthStencilView* GetDepthStencilView() const;
+		AppDLL_API D3D11_VIEWPORT GetScreenViewport() const;
+		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
+		AppDLL_API void Wireframe(bool statement);
+		AppDLL_API void Reset();
 	private:
 
 		void Close();

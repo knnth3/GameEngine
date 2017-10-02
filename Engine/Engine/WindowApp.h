@@ -11,15 +11,15 @@ namespace Lime
     class WindowApp
     {
     public:
-        DLL_EXPORT WindowApp();
+        AppDLL_API WindowApp();
         //Returns true if started correctly if else, returns an error code number for SDL
-        DLL_EXPORT int Initialize(std::string windowName, int windownWidth, int windowHeight, unsigned int flags = 0);
-        DLL_EXPORT void SwapWindow();
-        DLL_EXPORT void ClearBufferBits();
-        DLL_EXPORT int Close();
-        DLL_EXPORT void SetClearBufferBits(int bits);
-        DLL_EXPORT int WindowWidth();
-        DLL_EXPORT int WindowHeight();
+        AppDLL_API int Initialize(std::string windowName, int windownWidth, int windowHeight, unsigned int flags = 0);
+        AppDLL_API void SwapWindow();
+        AppDLL_API void ClearBufferBits();
+        AppDLL_API int Close();
+        AppDLL_API void SetClearBufferBits(int bits);
+        AppDLL_API int WindowWidth();
+        AppDLL_API int WindowHeight();
     private:
         enum error_code
         {
