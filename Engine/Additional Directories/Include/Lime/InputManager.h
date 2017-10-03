@@ -20,15 +20,15 @@ namespace Lime
     class InputManager
     {
     public:
-        DLL_EXPORT InputManager();
-		DLL_EXPORT ~InputManager();
-		DLL_EXPORT void Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight);
-        DLL_EXPORT void LoadCamera(std::shared_ptr<Camera>& camera);
-        DLL_EXPORT glm::vec2 GetMouseCoords();
-        DLL_EXPORT glm::vec3 GetMouse3DPosition();
-        DLL_EXPORT glm::vec3 GetMouse3DPosition2();
-        DLL_EXPORT bool KeyStatus(unsigned int keyID);
-        DLL_EXPORT bool KeyPressed(unsigned int keyID);
+        AppDLL_API InputManager();
+		AppDLL_API ~InputManager();
+		AppDLL_API void Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight);
+        AppDLL_API void LoadCamera(std::shared_ptr<Camera>& camera);
+        AppDLL_API glm::vec2 GetMouseCoords();
+        AppDLL_API glm::vec3 GetMouse3DPosition();
+        AppDLL_API glm::vec3 GetMouse3DPosition2();
+        AppDLL_API bool KeyStatus(unsigned int keyID);
+        AppDLL_API bool KeyPressed(unsigned int keyID);
 	protected:
 		friend class DX11App;
 		void KeyDown(unsigned int keyID);

@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <glm\glm.hpp>
 #include "Primitives.h"
 
 using namespace DirectX;
@@ -15,7 +16,7 @@ namespace Lime
 		AppDLL_API glm::mat4 GetProjectionMatrix();
 		AppDLL_API glm::mat4 GetWVPnMatrix();
 		AppDLL_API glm::vec3 GetPosition();
-		AppDLL_API void SetAspectRatio(const UINT width, const UINT height);
+		AppDLL_API void SetAspectRatio(const uint32_t width, const uint32_t height);
 		AppDLL_API void SetPosition(float x, float y, float z);
 		AppDLL_API glm::vec3 GetUpDirection();
 	private:

@@ -12,11 +12,11 @@
 //    class ShaderProgram
 //    {
 //    public:
-//        DLL_EXPORT void LoadShadersToProgram(const std::string vertexShaderFileName, const std::string fragmentShaderNameFileName);
-//        DLL_EXPORT void DeleteProgram();
-//        DLL_EXPORT void Load4vMatrix(const glm::mat4& matrix, const std::string variableName);
-//        DLL_EXPORT void Load3fv(const glm::vec3& vec, const std::string variableName);
-//        DLL_EXPORT void Use();
+//        AppDLL_API void LoadShadersToProgram(const std::string vertexShaderFileName, const std::string fragmentShaderNameFileName);
+//        AppDLL_API void DeleteProgram();
+//        AppDLL_API void Load4vMatrix(const glm::mat4& matrix, const std::string variableName);
+//        AppDLL_API void Load3fv(const glm::vec3& vec, const std::string variableName);
+//        AppDLL_API void Use();
 //    private:
 //
 //        std::string LoadShaderCode(std::string fileName);

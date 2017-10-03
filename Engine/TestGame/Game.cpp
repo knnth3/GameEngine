@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <Windows.h>
+using namespace Lime::Model;
 
 Game::Game() :
 	DX11App()
@@ -16,57 +17,23 @@ void Game::Initialize()
 	start = std::chrono::system_clock::now();
 	end = start;
 
-	model = std::make_shared<Model3D>();
-	model2 = std::make_shared<Model3D>();
-	model->m_Data->m_Verticies =
-	{
-		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f),
-		Vertex(-1.0f, +1.0f, -1.0f, 1.0f, 1.0f, -1.0f, +1.0f, -1.0f),
-		Vertex(+1.0f, +1.0f, -1.0f, 1.0f, 1.0f, +1.0f, +1.0f, -1.0f),
-		Vertex(+1.0f, -1.0f, -1.0f, 1.0f, 1.0f, +1.0f, -1.0f, -1.0f),
-		Vertex(-1.0f, -1.0f, +1.0f, 1.0f, 1.0f, -1.0f, -1.0f, +1.0f),
-		Vertex(-1.0f, +1.0f, +1.0f, 1.0f, 1.0f, -1.0f, +1.0f, +1.0f),
-		Vertex(+1.0f, +1.0f, +1.0f, 1.0f, 1.0f, +1.0f, +1.0f, +1.0f),
-		Vertex(+1.0f, -1.0f, +1.0f, 1.0f, 1.0f, +1.0f, -1.0f, +1.0f),
-	};
-	model->m_Data->m_Indicies = {
-		// front face
-		0, 1, 2,
-		0, 2, 3,
-
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
-	model2->m_Data = model->m_Data;
+	auto mesh = Model::MeshLoader::LoadModel("Cube.fbx");
+	model = std::make_shared<Model3D>(mesh);
+	model2 = std::make_shared<Model3D>(mesh);
 	m_camera->AttachToModel(model2);
-	model->Color(1.0f, 0.0f, 1.0f, 0.5f);
-	model->Translate(0.0f, 0.0f, -5.0f);
-	Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
-	model->SetTexture(tex);
-	model2->SetTexture(tex);
-	m_graphicsDevice->DrawModel(model);
+	model->SetColor(1.0f, 0.0f, 1.0f, 0.5f);
+	model->SetPosition(0.0f, 0.0f, -5.0f);
+	//Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
+	//model->SetTexture(tex);
+	//model2->SetTexture(tex);
+	model2->Scale(0.25f, 0.5f, 0.25f);
+	//m_graphicsDevice->DrawModel(model);
 	m_graphicsDevice->DrawModel(model2);
+	//m_graphicsDevice->Wireframe(true);
 	m_graphicsDevice->DrawText("Loading...", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
-	controller->Color(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	controller->Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//m_graphicsDevice->Wireframe(true);
 }
 
@@ -134,6 +101,14 @@ void Game::Update(float elapsed)
 	if (m_input->KeyStatus(0x53) == true) //S
 	{
 		m_camera->Rotate(0.0f, -camRot, 0.0f);
+	}
+	if (m_input->KeyStatus(0x51) == true) //Q
+	{
+		m_camera->Zoom(-camRot);
+	}
+	if (m_input->KeyStatus(0x45) == true) //E
+	{
+		m_camera->Zoom(camRot);
 	}
 	rot += 9.8f / 20.0f * elapsed;
 	if (rot > 6.28f)

@@ -4,8 +4,9 @@
 #include <glm\gtx\transform.hpp>
 #include <glm\gtx\rotate_vector.hpp>
 #include "Primitives.h"
+#include "Model.h"
 
-
+typedef uint32_t UINT;
 
 namespace Lime
 {
@@ -25,7 +26,7 @@ namespace Lime
 		glm::vec3 m_rotation = glm::vec3(0.0f);
 		UINT m_xResolution = 0;
 		UINT m_yResolution = 0;
-		std::shared_ptr<Model3D> m_model = nullptr;
+		std::shared_ptr<Model::Model3D> m_model = nullptr;
 		bool m_bPlayerAttached = false;
 	};
 
@@ -34,7 +35,7 @@ namespace Lime
     public:
         AppDLL_API Camera() = default;
         AppDLL_API void Initialize(UINT windowWidth, UINT windowHeight);
-        AppDLL_API void AttachToModel(std::shared_ptr<Model3D>& model);
+        AppDLL_API void AttachToModel(std::shared_ptr<Model::Model3D>& model);
         AppDLL_API void SetViewDistance(float near, float far);
         AppDLL_API void SetFOV(float fov);
         AppDLL_API void Move(float x, float y, float z);
@@ -42,7 +43,7 @@ namespace Lime
 		AppDLL_API void Rotate(float x, float y, float z);
         AppDLL_API void SetRotation(glm::vec3 rotation);
         AppDLL_API void SetResolution(UINT width, UINT height);
-        AppDLL_API void ZoomIn(float x);
+        AppDLL_API void Zoom(float x);
         AppDLL_API void AddPitch(float pitch);
         AppDLL_API void AddYaw(float yaw);
         AppDLL_API glm::vec3 GetPosition();

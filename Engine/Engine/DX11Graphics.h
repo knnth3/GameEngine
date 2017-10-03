@@ -17,6 +17,11 @@
 
 namespace Lime
 {
+	struct vertexInfo
+	{
+		std::vector<Model::Vertex> vertices;
+		std::vector<uint32_t> indices;
+	};
 	struct MatrixBuffer
 	{
 		glm::mat4 world;
@@ -41,10 +46,10 @@ namespace Lime
 	public:
 		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
 		AppDLL_API ~DX11Graphics();
-		AppDLL_API void DrawModel(std::shared_ptr<Model3D>& model);
-		AppDLL_API void DrawText(std::string text , std::shared_ptr<TextController>& controller);
+		AppDLL_API bool DrawModel(std::shared_ptr<Model::Model3D>& model);
+		AppDLL_API bool DrawText(std::string text , std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
-		AppDLL_API Texture LoadTextureFromFile(std::wstring filename);
+		AppDLL_API Model::Texture LoadTextureFromFile(std::wstring filename);
 		AppDLL_API HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
 		AppDLL_API void Draw();
 		AppDLL_API ID3D11DeviceContext* GetDeviceContext() const;
@@ -57,8 +62,8 @@ namespace Lime
 	private:
 
 		void Close();
-		void RenderText(std::string text, std::shared_ptr<Model3D> model);
-		void RenderMesh(std::shared_ptr<Model3D> model);
+		void RenderText(std::string text, std::shared_ptr<Model::Model3D> model);
+		void RenderMesh(std::shared_ptr<Model::Model3D> model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		HRESULT CreateBuffers();
 		HRESULT CreateConstBuffers();
@@ -93,14 +98,15 @@ namespace Lime
 		ID3D11Device* m_dx11device;
 		ID3D11DeviceContext* m_dx11Context;
 		D3D11_VIEWPORT viewport;
-		std::vector<std::shared_ptr<Model3D>> m_models;
-		ModelData m_modelLib;
+		std::vector<std::shared_ptr<Model::Model3D>> m_models;
+		vertexInfo m_modelLib;
 		std::vector<UINT> cachedIDs;
 		bool hasConsBuffers = false;
 		ID3D11BlendState* Transparency;
 		ID3D11BlendState* TransparencyBack;
 		ID3D11RasterizerState* CCWcullMode;
 		ID3D11RasterizerState* CWcullMode;
+		ID3D11RasterizerState* NoCull;
 		DiffuseLight m_sun;
 		UINT m_bufferCount;
 		bool m_isWireframe = false;

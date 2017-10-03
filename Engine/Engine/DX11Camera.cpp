@@ -1,3 +1,4 @@
+#include<glm\gtc\matrix_transform.hpp>
 #include "DX11Camera.h"
 
 
@@ -47,7 +48,7 @@ glm::vec3 Lime::DX11Camera::GetPosition()
 	return m_position;
 }
 
-void Lime::DX11Camera::SetAspectRatio(const UINT width, const UINT height)
+void Lime::DX11Camera::SetAspectRatio(const uint32_t width, const uint32_t height)
 {
 	m_width = width;
 	m_height = height;

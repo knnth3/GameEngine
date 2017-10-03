@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include <glm\glm.hpp>
 #include "Primitives.h"
 
 using namespace DirectX;
@@ -8,16 +9,16 @@ namespace Lime
 	class DX11Camera
 	{
 	public:
-		DLL_EXPORT DX11Camera(int width, int height);
-		DLL_EXPORT ~DX11Camera();
-		DLL_EXPORT glm::mat4 GetWorldMaxrix();
-		DLL_EXPORT glm::mat4 GetViewMatrix();
-		DLL_EXPORT glm::mat4 GetProjectionMatrix();
-		DLL_EXPORT glm::mat4 GetWVPnMatrix();
-		DLL_EXPORT glm::vec3 GetPosition();
-		DLL_EXPORT void SetAspectRatio(const UINT width, const UINT height);
-		DLL_EXPORT void SetPosition(float x, float y, float z);
-		DLL_EXPORT glm::vec3 GetUpDirection();
+		AppDLL_API DX11Camera(int width, int height);
+		AppDLL_API ~DX11Camera();
+		AppDLL_API glm::mat4 GetWorldMaxrix();
+		AppDLL_API glm::mat4 GetViewMatrix();
+		AppDLL_API glm::mat4 GetProjectionMatrix();
+		AppDLL_API glm::mat4 GetWVPnMatrix();
+		AppDLL_API glm::vec3 GetPosition();
+		AppDLL_API void SetAspectRatio(const uint32_t width, const uint32_t height);
+		AppDLL_API void SetPosition(float x, float y, float z);
+		AppDLL_API glm::vec3 GetUpDirection();
 	private:
 		int m_width;
 		int m_height;

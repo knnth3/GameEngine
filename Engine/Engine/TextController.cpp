@@ -2,15 +2,10 @@
 
 Lime::TextInfo::TextInfo(std::string str)
 {
-	data = std::make_shared<Model3D>();
+	data = std::make_shared<Model::Model3D>(TextInfo::LoadModel());
+	data->modelType = Model::TEXT;
 	data->m_ptr = this;
-	TextInfo::LoadModel(data->m_Data);
 	SetText(str);
-}
-
-const std::shared_ptr<Lime::Model3D>& Lime::TextInfo::GetData()
-{
-	return data;
 }
 
 void Lime::TextInfo::SetText(std::string str)
@@ -35,31 +30,16 @@ float Lime::TextInfo::GetTextOffset()
 	return middleX;
 }
 
-void Lime::TextInfo::LoadModel(std::shared_ptr<ModelData>& info)
+std::shared_ptr<Lime::Model::Model3D>& Lime::TextInfo::GetMesh()
+{
+	return data;
+}
+
+Lime::Model::MeshID Lime::TextInfo::LoadModel()
 {
 	static bool isFirst = true;
-	static auto data = std::make_shared<ModelData>();
-	if (isFirst)
-	{
-		glm::vec3 normal(0.0f, 0.0f, 1.0f);
-		data->renderType = "Text";
-		data->m_Verticies =
-		{
-			// Front Face
-
-			Vertex(glm::vec3(-0.6f, -1.0f, -1.0f), glm::vec2(0.0f, 1.0f), normal),
-			Vertex(glm::vec3(-0.6f,  1.0f, -1.0f), glm::vec2(0.0f, 0.0f), normal),
-			Vertex(glm::vec3(0.6f,  1.0f, -1.0f), glm::vec2(1.0f, 0.0f), normal),
-			Vertex(glm::vec3(0.6f, -1.0f, -1.0f), glm::vec2(1.0f, 1.0f), normal),
-		};
-
-		data->m_Indicies = {
-			// Front Face
-			0,  1,  2,
-			0,  2,  3,
-		};
-	}
-	info = data;
+	static auto data = Model::MeshLoader::LoadModel("TextFace.fbx", Model::TEXT);
+	return data;
 }
 
 Lime::TextController::TextController(std::string str)
@@ -69,12 +49,12 @@ Lime::TextController::TextController(std::string str)
 
 void Lime::TextController::Color(glm::vec4 color)
 {
-	info->data->Color(color.r, color.g, color.b, color.a);
+	info->data->SetColor(color.r, color.g, color.b, color.a);
 }
 
 void Lime::TextController::Position(glm::vec3 position)
 {
-	info->data->Translate(position);
+	info->data->SetPosition(position);
 }
 
 void Lime::TextController::Scale(glm::vec3 scale)

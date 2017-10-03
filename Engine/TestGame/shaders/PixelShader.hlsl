@@ -29,6 +29,7 @@ float4 main(VSOutput input) : SV_TARGET
 	color = saturate(diffuseColor * lightIntensity);
 	color.a = 1.0f;
 	color *= texColor;
+	//color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	return color;
 }

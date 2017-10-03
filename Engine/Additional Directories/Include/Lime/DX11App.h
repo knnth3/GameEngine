@@ -12,23 +12,23 @@ namespace Lime
 	class DX11App
 	{
 	public:
-		DLL_EXPORT DX11App();
-		DLL_EXPORT ~DX11App();
+		AppDLL_API DX11App();
+		AppDLL_API ~DX11App();
 		//Return 0 to close program.
-		DLL_EXPORT virtual void Tick() = 0;
+		AppDLL_API virtual void Tick() = 0;
 		//Return 0 upon success.
-		DLL_EXPORT virtual void Init(HWND wnd) final;
-		DLL_EXPORT virtual void CloseApp() final;
-		DLL_EXPORT virtual void GetDefaultSize(UINT& width, UINT& height);
-		DLL_EXPORT virtual void SetSize(UINT width, UINT height) final;
+		AppDLL_API virtual void Init(HWND wnd) final;
+		AppDLL_API virtual void CloseApp() final;
+		AppDLL_API virtual void GetDefaultSize(UINT& width, UINT& height);
+		AppDLL_API virtual void SetSize(UINT width, UINT height) final;
 
 		//state changes
-		DLL_EXPORT virtual void OnActivated() = 0;
-		DLL_EXPORT virtual void OnDeactivated() = 0;
-		DLL_EXPORT virtual void OnSuspending() = 0;
-		DLL_EXPORT virtual void OnResuming() = 0;
-		DLL_EXPORT virtual void OnWindowMoved() = 0;
-		DLL_EXPORT virtual void OnWindowSizeChanged(int width, int height) = 0;
+		AppDLL_API virtual void OnActivated() = 0;
+		AppDLL_API virtual void OnDeactivated() = 0;
+		AppDLL_API virtual void OnSuspending() = 0;
+		AppDLL_API virtual void OnResuming() = 0;
+		AppDLL_API virtual void OnWindowMoved() = 0;
+		AppDLL_API virtual void OnWindowSizeChanged(int width, int height) = 0;
 
 	protected:
 		friend class WinProc;

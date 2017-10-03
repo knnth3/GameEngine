@@ -3,6 +3,7 @@
 #include <memory>
 #include <iostream>
 #include <string>
+#include <glm\glm.hpp>
 
 
 //For later use

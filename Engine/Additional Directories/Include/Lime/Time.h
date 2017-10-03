@@ -6,20 +6,20 @@ namespace Lime
 {
     struct TimeVar
     {
-        DLL_EXPORT float seconds();
-        DLL_EXPORT float milliseconds();
+        AppDLL_API float seconds();
+        AppDLL_API float milliseconds();
         std::atomic<float> time;
     };
 
     class Time
     {
     public:
-        DLL_EXPORT Time();
-        DLL_EXPORT Time(float scale);
+        AppDLL_API Time();
+        AppDLL_API Time(float scale);
 
-        DLL_EXPORT void SetSpeed(float scale);
-        DLL_EXPORT float GetSpeed();
-        DLL_EXPORT void Update();
+        AppDLL_API void SetSpeed(float scale);
+        AppDLL_API float GetSpeed();
+        AppDLL_API void Update();
 
         TimeVar start;
         TimeVar running;

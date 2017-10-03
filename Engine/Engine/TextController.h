@@ -1,27 +1,30 @@
 #pragma once
 #include "Primitives.h"
-
+#include "Model.h"
 
 namespace Lime
 {
 	class TextInfo
 	{
+		friend class DX11Graphics;
 		friend class TextController;
 	public:
 		AppDLL_API TextInfo(std::string str);
-		AppDLL_API const std::shared_ptr<Model3D>& GetData();
 		AppDLL_API void SetText(std::string text);
 		AppDLL_API const std::string GetText() const;
 		AppDLL_API float GetTextOffset();
 
+	protected:
+		std::shared_ptr<Model::Model3D>& GetMesh();
+
 	private:
-		static void LoadModel(std::shared_ptr<ModelData>& info);
+		static Model::MeshID LoadModel();
 
 	protected:
 		float middleX = 0.0f;
 		float middleY = 0.0f;
 		std::string text;
-		std::shared_ptr<Model3D> data;
+		std::shared_ptr<Model::Model3D> data;
 	};
 
 	class TextController

@@ -6,13 +6,14 @@ namespace Lime
 
 	void Camera::Initialize(UINT windowWidth, UINT windowHeight)
 	{
+		m_info.m_distanceFromObject = 20.0f;
 		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_info.m_upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 		SetResolution(windowWidth, windowHeight);
 		CreateProjectionMatrix();
 	}
 
-	void Camera::AttachToModel(std::shared_ptr<Model3D>& model)
+	void Camera::AttachToModel(std::shared_ptr<Model::Model3D>& model)
 	{
 		m_info.m_model = model;
 	}
@@ -44,10 +45,10 @@ namespace Lime
 	void Camera::Rotate(float x, float y, float z)
 	{
 		float circle = (2.0f*PI);
-		float xLimitUp = (PI/2);
-		float xLimitDown = -(PI/2);
+		float xLimitUp = (PI / 2.0f);
+		float xLimitDown = 0.0f;
 
-		m_info.m_angleAroundPlayer += x;
+		m_info.m_angleAroundPlayer -= x;
 		m_info.m_rotation.x += y;
 
 		if (m_info.m_rotation.x > xLimitUp)
@@ -81,13 +82,16 @@ namespace Lime
 		m_info.m_aspectRatio = ((float)m_info.m_xResolution) / m_info.m_yResolution;
     }
 
-    void Camera::ZoomIn(float x)
+    void Camera::Zoom(float x)
     {
+		float maxZoomOut = 30.0f;
+		float maxZoomIn = 1.5f;
+
 		m_info.m_distanceFromObject += x;
-        if (m_info.m_distanceFromObject < 1.5f)
-			m_info.m_distanceFromObject = 1.5f;
-        else if (m_info.m_distanceFromObject > 9.0f)
-			m_info.m_distanceFromObject = 9.0f;
+        if (m_info.m_distanceFromObject < maxZoomIn)
+			m_info.m_distanceFromObject = maxZoomIn;
+        else if (m_info.m_distanceFromObject > maxZoomOut)
+			m_info.m_distanceFromObject = maxZoomOut;
     }
 
 	void Camera::AddPitch(float pitch)
@@ -111,7 +115,6 @@ namespace Lime
 		float vert = CalculateVertDistance();
 		CalculatePosition(horis, vert);
 		CreateViewMatrix();
-		//m_info.m_view = glm::view(m_info.m_position + m_info.m_model->GetPosition(), m_info.m_model->GetPosition(), m_info.m_upDirection);
         return m_info.m_view;
     }
 
@@ -138,17 +141,16 @@ namespace Lime
     void Camera::CreateViewMatrix()
     {
 		glm::mat4 basicMatrix;
-		glm::mat4 rotX = glm::rotate(basicMatrix, -m_info.m_rotation.x , glm::vec3(1, 0, 0));
+		glm::mat4 rotX = glm::rotate(basicMatrix, m_info.m_rotation.x , glm::vec3(1, 0, 0));
 		glm::mat4 rotY = glm::rotate(rotX, m_info.m_rotation.y, glm::vec3(0, 1, 0));
 		glm::mat4 rotZ = glm::rotate(rotY, m_info.m_rotation.z, glm::vec3(0, 0, 1));
-		glm::vec3 negPos = glm::vec3(m_info.m_position.x, -m_info.m_position.y, m_info.m_position.z);
+		glm::vec3 negPos = m_info.m_position * -1.0f;
 		m_info.m_view = glm::translate(rotZ, negPos);
-		//m_info.m_rotation = glm::vec3(0.0f);
     }
 
     void Camera::CreateProjectionMatrix()
     {
-		m_info.m_projection = glm::perspectiveLH(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane, m_info.m_farPlane);
+		m_info.m_projection = glm::perspective(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane, m_info.m_farPlane);
     }
 
     void Camera::CalculatePosition(float horizontalDistance, float verticalDistance)
@@ -161,7 +163,7 @@ namespace Lime
 			m_info.m_rotation.y = PI - m_info.m_angleAroundPlayer;
 			m_info.m_position.x = m_info.m_model->GetPosition().x - offsetX;
 			m_info.m_position.y = m_info.m_model->GetPosition().y + verticalDistance;
-			m_info.m_position.z = m_info.m_model->GetPosition().z - offsetZ;
+			m_info.m_position.z = -m_info.m_model->GetPosition().z - offsetZ;
 			if (!m_info.m_bPlayerAttached)
 			{
 				AddPitch(PI/4);
