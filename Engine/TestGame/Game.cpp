@@ -17,19 +17,18 @@ void Game::Initialize()
 	start = std::chrono::system_clock::now();
 	end = start;
 
-	auto mesh = Model::MeshLoader::LoadModel("Cube.fbx");
+	auto mesh = Model::MeshLoader::LoadModel("Cube_HardEdges.fbx");
 	model = std::make_shared<Model3D>(mesh);
 	model2 = std::make_shared<Model3D>(mesh);
 	m_camera->AttachToModel(model2);
 	model->SetColor(1.0f, 0.0f, 1.0f, 0.5f);
-	model->SetPosition(0.0f, 0.0f, -5.0f);
-	//Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
-	//model->SetTexture(tex);
-	//model2->SetTexture(tex);
-	model2->Scale(0.25f, 0.5f, 0.25f);
-	//m_graphicsDevice->DrawModel(model);
+	model->SetPosition(0.0f, 3.0f, -15.0f);
+	Texture tex = m_graphicsDevice->LoadTextureFromFile(L"images.dds");
+	model->SetTexture(tex);
+	model2->SetTexture(tex);
+	m_graphicsDevice->DrawModel(model);
 	m_graphicsDevice->DrawModel(model2);
-	//m_graphicsDevice->Wireframe(true);
+	model2->Scale(0.5f, 0.5f, 0.5f);
 	m_graphicsDevice->DrawText("Loading...", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
@@ -113,7 +112,7 @@ void Game::Update(float elapsed)
 	rot += 9.8f / 20.0f * elapsed;
 	if (rot > 6.28f)
 		rot = 0.0f;
-	//model2->Rotate(0.0f, -rot, 0.0f);
+	//model2->Rotate(0.0f, -rot/2.0f, 0.0f);
 	model->RotateAtOrigin(0.0f, rot, 0.0f);
 
 	//Update the colors of our scene

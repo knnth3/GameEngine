@@ -56,7 +56,7 @@ VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
 		inTexCoord.y = uv.y;
 
 	//Increase pos for next char in string.
-	pos.x += (posInSequence * 1.2f);
+	pos.x += (posInSequence * ascii.z);
 	pos.y -= 1.0f;
 	pos.w = 1.0f;
 

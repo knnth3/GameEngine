@@ -4,7 +4,7 @@
 //#include <iostream>
 //#include <gl\glew.h>
 //#include <glm\glm.hpp>
-//#include "Primitives.h"
+//#include "Lime.h"
 //
 //namespace Lime
 //{

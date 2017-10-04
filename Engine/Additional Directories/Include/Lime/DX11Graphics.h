@@ -6,7 +6,7 @@
 #include <map>
 #include "Camera.h"
 #include "TextController.h"
-#include "Primitives.h"
+#include "Lime.h"
 #include "D3Dcompiler.h"
 
 #define Check(x, lpctstr) \
@@ -19,6 +19,8 @@ namespace Lime
 {
 	struct vertexInfo
 	{
+		bool empty();
+
 		std::vector<Model::Vertex> vertices;
 		std::vector<uint32_t> indices;
 	};
@@ -27,6 +29,8 @@ namespace Lime
 		glm::mat4 world;
 		glm::mat4 view;
 		glm::mat4 projection;
+		glm::vec3 cameraPos;
+		float padding;
 	};
 
 	struct TextBuffer
@@ -35,10 +39,11 @@ namespace Lime
 	};
 	struct PF_PixelBuffer
 	{
-		glm::vec4 colorBlend;
+		glm::vec4 ambientColor;
 		glm::vec4 diffuseColor;
+		glm::vec4 specularColor;
 		glm::vec3 lightDirection;
-		float padding;
+		float specularPower;
 	};
 
 	class DX11Graphics
@@ -107,7 +112,7 @@ namespace Lime
 		ID3D11RasterizerState* CCWcullMode;
 		ID3D11RasterizerState* CWcullMode;
 		ID3D11RasterizerState* NoCull;
-		DiffuseLight m_sun;
+		WorldLight m_light;
 		UINT m_bufferCount;
 		bool m_isWireframe = false;
 	};

@@ -12,8 +12,6 @@ Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT
 	m_hasBuffers = false;
 	HRESULT result = Initialize(window, width, height);
 	CheckSuccess(result);
-	m_sun.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	m_sun.SetDirection(glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 
@@ -77,6 +75,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	CreateDepthStencil(width, height);
 	CreateViewport(width, height);
 	CreateBlendState();
+	m_dx11Context->RSSetState(CCWcullMode);
 
 	return result;
 }
@@ -142,7 +141,6 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 	m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
 	m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
 	m_dx11Context->IASetInputLayout(m_vertLayouts[1]);
-	m_dx11Context->RSSetState(NoCull);
 	for (auto x = 0; x < text.size(); x++)
 	{
 		HRESULT result;
@@ -166,7 +164,8 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		dataPtr = (TextBuffer*)mappedResource.pData;
 		float currentElement = (float)x;
 		float character = (float)text.at(x);
-		dataPtr->PosAscii = glm::vec4(currentElement, character, 0.0f, 0.0f);
+		float posOffset = 1.2f;
+		dataPtr->PosAscii = glm::vec4(currentElement, character, posOffset, 0.0f);
 		m_dx11Context->Unmap(m_textBuffer, 0);
 		m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
 
@@ -174,16 +173,26 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		CheckSuccess(result);
 
 		dataPtr3 = (PF_PixelBuffer*)mappedResource.pData;
-		dataPtr3->colorBlend = model->GetColor();
-		dataPtr3->diffuseColor = m_sun.GetColor();
-		dataPtr3->lightDirection = m_sun.GetDirection();
+		dataPtr3->specularColor = model->GetColor();
+		dataPtr3->diffuseColor = m_light.m_diffuseColor;
+		dataPtr3->lightDirection = m_light.m_direction;
 		m_dx11Context->Unmap(m_transparentBuffer, 0);
 		m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 
 		UINT size = (UINT)model->m_mesh->GetIndexCount();
 		UINT vertOff = model->m_mesh->vertOffset;
 		UINT indOff = model->m_mesh->indiciOffset;
-		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+
+		if (m_isWireframe)
+		{
+			m_dx11Context->RSSetState(WireFrame);
+			m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		}
+		else
+		{
+			m_dx11Context->RSSetState(NoCull);
+			m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		}
 	}
 }
 
@@ -203,6 +212,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	dataPtr->world = glm::transpose(model->GetModelMatrix());
 	dataPtr->view = glm::transpose(m_camera->GetViewMatrix());
 	dataPtr->projection = glm::transpose(m_camera->GetProjectionMatrix());
+	dataPtr->cameraPos = m_camera->GetPosition();
 	m_dx11Context->Unmap(m_ObjConstBuffer, 0);
 	m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
 
@@ -210,9 +220,11 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	CheckSuccess(result);
 
 	dataPtr2 = (PF_PixelBuffer*)mappedResource.pData;
-	dataPtr2->colorBlend = model->GetColor();
-	dataPtr2->diffuseColor = m_sun.GetColor();
-	dataPtr2->lightDirection = m_sun.GetDirection();
+	dataPtr2->ambientColor = m_light.m_ambientColor;
+	dataPtr2->diffuseColor = m_light.m_diffuseColor;
+	dataPtr2->lightDirection = m_light.m_direction;
+	dataPtr2->specularColor = m_light.m_specularColor;
+	dataPtr2->specularPower = m_light.m_specularPower;
 	m_dx11Context->Unmap(m_transparentBuffer, 0);
 	m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
@@ -225,9 +237,9 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	}
 	else
 	{
-		m_dx11Context->RSSetState(CCWcullMode);
-		m_dx11Context->DrawIndexed(size, indOff, vertOff);
 		m_dx11Context->RSSetState(CWcullMode);
+		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		m_dx11Context->RSSetState(CCWcullMode);
 		m_dx11Context->DrawIndexed(size, indOff, vertOff);
 	}
 }
@@ -245,13 +257,12 @@ bool Lime::DX11Graphics::DrawModel(std::shared_ptr<Model::Model3D>& model)
 			similar = true;
 		}
 	}
+	std::vector<Model::Vertex> vertices;
+	std::vector<uint32_t> indices;
+	model->m_mesh->GetBuffers(vertices, indices);
+	size_t vertInitSize = m_modelLib.vertices.size();
 	if (!similar)
 	{
-		std::vector<Model::Vertex> vertices;
-		std::vector<uint32_t> indices;
-		model->m_mesh->GetBuffers(vertices, indices);
-		size_t vertInitSize = m_modelLib.vertices.size();
-
 		m_modelLib.vertices.insert(
 			m_modelLib.vertices.end(),
 			std::make_move_iterator(vertices.begin()),
@@ -263,18 +274,17 @@ bool Lime::DX11Graphics::DrawModel(std::shared_ptr<Model::Model3D>& model)
 			std::make_move_iterator(indices.end())
 		);
 
-		if (m_modelLib.vertices.size() != vertInitSize)
-		{
-			model->m_mesh->vertOffset = VertCountOffset;
-			model->m_mesh->indiciOffset = IndCountOffset;
-			VertCountOffset += (int)vertices.size();
-			IndCountOffset += (int)indices.size();
-
-			m_models.push_back(model);
-			cachedIDs.push_back(model->m_mesh->objectID);
-			m_hasBuffers = true;
-			result = true;
-		}
+		model->m_mesh->vertOffset = VertCountOffset;
+		model->m_mesh->indiciOffset = IndCountOffset;
+		VertCountOffset += (int)vertices.size();
+		IndCountOffset += (int)indices.size();
+		cachedIDs.push_back(model->m_mesh->objectID);
+	}
+	if (m_modelLib.vertices.size() != vertInitSize || similar)
+	{
+		m_models.push_back(model);
+		m_hasBuffers = true;
+		result = true;
 	}
 	return result;
 }
@@ -297,11 +307,15 @@ bool Lime::DX11Graphics::DrawText(std::string text, std::shared_ptr<TextControll
 void Lime::DX11Graphics::Draw()
 {
 	static bool hasEntered = false;
-	if (!hasEntered)
+	if (!m_modelLib.empty())
 	{
-		CreateBuffers();
-		hasEntered = true;
+		if (!hasEntered)
+		{
+			CreateBuffers();
+			hasEntered = true;
+		}
 	}
+
 	if (m_hasBuffers && m_camera != nullptr)
 	{
 		std::multimap<float, std::shared_ptr<Model::Model3D>> tOrdering;
@@ -437,10 +451,9 @@ Lime::Model::Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filena
 HRESULT Lime::DX11Graphics::CreateBuffers()
 {
 	HRESULT result;
-
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Model::Vertex) * (UINT)m_modelLib.vertices.size();
+	vertexBufferDesc.ByteWidth = sizeof(Model::Vertex) * (uint32_t)m_modelLib.vertices.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -722,4 +735,16 @@ HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LP
 	*blob = shaderBlob;
 
 	return hr;
+}
+
+bool Lime::vertexInfo::empty()
+{
+	size_t vert = vertices.size();
+	size_t ind = indices.size();
+
+	size_t result = vert*ind;
+	if (result == 0)
+		return true;
+
+	return false;
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include <fbxsdk.h>
-#include "Primitives.h"
+#include "Lime.h"
 
 
 namespace Lime
@@ -49,7 +49,7 @@ namespace Lime
 
 		protected:
 			std::vector<uint32_t> m_indices;
-			std::vector<Vertex_ptr> m_vertices;
+			std::vector<Vertex> m_vertices;
 		};
 
 		class MeshData
@@ -62,10 +62,7 @@ namespace Lime
 			uint32_t vertOffset = 0;
 			uint32_t indiciOffset = 0;
 		protected:
-			std::vector<Polygon> polygons;
-			uint32_t m_indexCount = 0;
-		private:
-			std::vector<Vertex_ptr> m_vertices;
+			std::vector<Polygon> m_polygons;
 		};
 
 		//-This class instantiates any object needed to be rendered to the screen.
@@ -131,6 +128,16 @@ namespace Lime
 			glm::vec3 translation;
 		};
 
+		//Library that holds given mesh information
+		class MeshLibrary
+		{
+			friend class MeshLoader;
+		public:
+			AppDLL_API MeshID SaveMesh(const MeshData_ptr& mesh, const MeshDefaultSettings& setting);
+		protected:
+			std::vector<MeshData_ptr> m_modelLibrary;
+			std::vector<MeshDefaultSettings> m_defaultSettings;
+		};
 
 		//-Class used to create mesh objects
 		//-Models can be loaded in with the provided functions
@@ -141,21 +148,27 @@ namespace Lime
 			//-Loads a model from a file
 			//-Currently only supports fbx files
 			//-Only loads the last model in a scene
-			//-Optional: takes in the requested model type and builds accordingly
-			//so far onyl TEXT has different outcomes
-			AppDLL_API static MeshID LoadModel(std::string filename, ModelType type = Model::NONE);
+			//-Model Reqs:
+			//--Must be Quadrangulated
+			AppDLL_API static MeshID LoadModel(const std::string& filename, ModelType type = Model::NONE);
 
 		protected:
 			static void GrabMeshData(MeshID id, MeshData_ptr& ptr);
-			static void SetDefaultSettings(MeshID id, Model3D& ptr);
+			static void GetDefaulMeshInfo(MeshID id, Model3D& ptr);
 
 		private:
-			static bool GrabMeshNormal(FbxMesh* mesh, Vertex& vert, int vertIndex);
-			static void ProcessElement(FbxNode* pNode, MeshData_ptr& data, ModelType type);
-			static glm::vec3 FbxToGlmVec(FbxDouble3 in);
+			//Mesh saving
+			static MeshID SaveInformation(MeshLibrary& library, const MeshData_ptr& data, const MeshDefaultSettings& settings);
 
-			std::vector<MeshData_ptr> m_modelLibrary;
-			std::vector<MeshDefaultSettings> m_defaultSettings;
+			//FBX file processing
+			static bool InitFBXObjects(FbxManager*& manager, FbxScene*& scene);
+			static bool LoadFBXSceneFromFile(FbxManager* manager, FbxScene* scene, const std::string& filename);
+			static void Create3DMeshFromFBX(FbxNode* pNode, MeshData_ptr& data, MeshDefaultSettings& settings, ModelType type);
+			static bool GetFBXTextureCoordinates(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
+			static bool GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
+
+			//General Use
+			static glm::vec3 FbxVec4ToGlmVec3(const FbxVector4& in);
 		};
 
 	}

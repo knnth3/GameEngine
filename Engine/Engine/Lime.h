@@ -48,17 +48,20 @@
 
 namespace Lime
 {
-	class DiffuseLight
+
+	void GetFileExt(const std::string& path, std::string& ext);
+
+
+	class WorldLight
 	{
 	public:
-		AppDLL_API DiffuseLight() = default;
-		AppDLL_API void SetDirection(const glm::vec3 dir);
-		AppDLL_API void SetColor(const glm::vec4 color);
-		AppDLL_API const glm::vec3 GetDirection() const;
-		AppDLL_API const glm::vec4 GetColor() const;
-	private:
+		WorldLight();
 		glm::vec3 m_direction;
-		glm::vec4 m_color;
+		glm::vec4 m_specularColor;
+		glm::vec4 m_ambientColor;
+		glm::vec4 m_diffuseColor;
+		float m_specularPower;
+	private:
 	};
 
 }

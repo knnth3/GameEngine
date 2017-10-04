@@ -48,6 +48,10 @@
 
 namespace Lime
 {
+
+	void GetFileExt(const std::string& path, std::string& ext);
+
+
 	class WorldLight
 	{
 	public:

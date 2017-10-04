@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <Windows.h>
-#include "Primitives.h"
+#include "Lime.h"
 #include "DX11App.h"
 
 #define WIN32_LEAN_AND_MEAN

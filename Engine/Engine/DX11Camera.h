@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <glm\glm.hpp>
-#include "Primitives.h"
+#include "Lime.h"
 
 using namespace DirectX;
 namespace Lime

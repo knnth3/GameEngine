@@ -1,5 +1,5 @@
 #pragma once
-#include "Primitives.h"
+#include "Lime.h"
 #include "Model.h"
 
 namespace Lime

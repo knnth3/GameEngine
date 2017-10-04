@@ -178,7 +178,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
-    <ClCompile Include="Primitives.cpp" />
+    <ClCompile Include="Lime.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
@@ -200,7 +200,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PhysicsEngine.h" />
-    <ClInclude Include="Primitives.h" />
+    <ClInclude Include="Lime.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SpriteBatch.h" />

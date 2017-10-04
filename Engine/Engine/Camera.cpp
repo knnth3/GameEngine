@@ -90,8 +90,8 @@ namespace Lime
 		m_info.m_distanceFromObject += x;
         if (m_info.m_distanceFromObject < maxZoomIn)
 			m_info.m_distanceFromObject = maxZoomIn;
-        else if (m_info.m_distanceFromObject > maxZoomOut)
-			m_info.m_distanceFromObject = maxZoomOut;
+   //     else if (m_info.m_distanceFromObject > maxZoomOut)
+			//m_info.m_distanceFromObject = maxZoomOut;
     }
 
 	void Camera::AddPitch(float pitch)
@@ -150,7 +150,7 @@ namespace Lime
 
     void Camera::CreateProjectionMatrix()
     {
-		m_info.m_projection = glm::perspective(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane, m_info.m_farPlane);
+		m_info.m_projection = glm::infinitePerspective(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane);
     }
 
     void Camera::CalculatePosition(float horizontalDistance, float verticalDistance)

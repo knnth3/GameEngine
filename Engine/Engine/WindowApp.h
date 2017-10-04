@@ -3,7 +3,7 @@
 #include <string>
 #include <SDL2\SDL.h>
 #include <gl\glew.h>
-#include "Primitives.h"
+#include "Lime.h"
 
 namespace Lime
 {

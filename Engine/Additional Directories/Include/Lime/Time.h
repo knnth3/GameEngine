@@ -1,6 +1,6 @@
 #pragma once
 #include <atomic>
-#include "Primitives.h"
+#include "Lime.h"
 
 namespace Lime
 {

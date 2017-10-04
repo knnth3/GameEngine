@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "Primitives.h"
+#include "Lime.h"
 #include "DX11Graphics.h"
 #include "InputManager.h"
 

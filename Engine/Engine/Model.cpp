@@ -1,10 +1,21 @@
 #include <glm\gtx\transform.hpp>
+#include <typeinfo> 
 #include "Model.h"
+
+//-Checks a functions return value agains desired result
+//-does whatever instructed to do on fail;
+#define ENFORCE_SUCCESS(function, desiredResult, whatToDoOnFail) \
+		if (!desiredResult == function) { whatToDoOnFail; }
+
+#ifdef IOS_REF
+#undef  IOS_REF
+#define IOS_REF(fbxManager) (*(fbxManager->GetIOSettings()))
+#endif
 
 using namespace Lime::Model;
 using namespace std;
 
-static MeshLoader MESHLIB;
+static MeshLibrary MESHLIB;
 
 c_uint Lime::Model::Polygon::GetVertexCount()
 {
@@ -18,21 +29,22 @@ c_uint Lime::Model::Polygon::GetIndexCount()
 
 void Lime::Model::MeshData::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const
 {
-	for (size_t x = 0; x < polygons.size(); x++)
+	verts.clear();
+	indices.clear();
+
+	for (size_t x = 0; x < m_polygons.size(); x++)
 	{
-		auto& index = polygons.at(x).m_indices;
-		indices.insert(indices.end(), index.begin(), index.end());
-	}
-	for (size_t x = 0; x < m_vertices.size(); x++)
-	{
-		auto& vertex = m_vertices.at(x);
-		verts.push_back(*vertex);
+		verts.insert(verts.end(), m_polygons[x].m_vertices.begin(), m_polygons[x].m_vertices.end());
+		indices.insert(indices.end(), m_polygons[x].m_indices.begin(), m_polygons[x].m_indices.end());
 	}
 }
 
 uint32_t Lime::Model::MeshData::GetIndexCount()
 {
-	return m_indexCount;
+	if (!m_polygons.empty())
+		return (uint32_t)(m_polygons[0].m_indices.size() * m_polygons.size());
+	else
+		return 0u;
 }
 
 Lime::Model::Model3D::Model3D()
@@ -133,7 +145,7 @@ void Lime::Model::Model3D::AddMesh(MeshID id)
 	if (id > -1)
 	{
 		//Possibly implement this later
-		//MeshLoader::SetDefaultSettings(id, *this);
+		MeshLoader::GetDefaulMeshInfo(id, *this);
 		modelType = MESH;
 	}
 }
@@ -191,46 +203,37 @@ void Lime::Model::Model3D::RotateMatrix(glm::mat4 & matrix, glm::vec3 rot)
 	}
 }
 
-MeshID Lime::Model::MeshLoader::LoadModel(std::string filename, ModelType type)
+MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, ModelType type)
 {
-	bool IsFBX = true;
-	MeshData_ptr mesh = nullptr;
-	//Creates a handle for memory management
-	FbxManager* lSdkManager = FbxManager::Create();
-	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
-	lSdkManager->SetIOSettings(ios);
-	FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
-	if (!lImporter->Initialize(filename.c_str(), -1, lSdkManager->GetIOSettings())) {
-		IsFBX = false;
-		lImporter->Destroy();
-		lSdkManager->Destroy();
-		return -1;
-	}
-
-	// Create a new scene so that it can be populated by the imported file.
-	FbxScene* lScene = FbxScene::Create(lSdkManager, "myScene");
-	lImporter->Import(lScene);
-	lImporter->Destroy();
-	FbxNode* lRootNode = lScene->GetRootNode();
-	if (lRootNode)
+	MeshID result = -1;
+	std::string ext;
+	GetFileExt(filename, ext);
+	//Proccess fbx files
+	if (ext.compare("fbx") == 0)
 	{
-		for (int i = 0; i < lRootNode->GetChildCount(); i++)
-		{
-			auto node = lRootNode->GetChild(i);
-			ProcessElement(node, mesh, type);
-			MeshDefaultSettings settings;
-			settings.rotation = FbxToGlmVec(node->LclRotation.Get());
-			settings.scale = FbxToGlmVec(node->LclScaling.Get());
-			MESHLIB.m_defaultSettings.push_back(settings);
-		}
-	}
-	lScene->Destroy();
-	lSdkManager->Destroy();
+		FbxManager* fbxManager = NULL;
+		FbxScene* scene = NULL;
 
-	MeshID id = (MeshID)MESHLIB.m_modelLibrary.size();
-	mesh->objectID = id;
-	MESHLIB.m_modelLibrary.push_back(mesh);
-	return id;
+		ENFORCE_SUCCESS(InitFBXObjects(fbxManager, scene), true, goto close);
+		ENFORCE_SUCCESS(LoadFBXSceneFromFile(fbxManager, scene, filename), true, goto close);
+
+		//Can have multilpe nodes although this program only loads the first node
+		FbxNode* node = scene->GetRootNode()->GetChild(0);
+		if (node)
+		{
+			MeshData_ptr mesh = nullptr;
+			MeshDefaultSettings settings = {};
+
+			//Populates structures above and saves the to a desired MeshLibrary.
+			Create3DMeshFromFBX(node, mesh, settings, type);
+			result = SaveInformation(MESHLIB, mesh, settings);
+		}
+
+	close: 
+		fbxManager->Destroy();
+
+	}
+	return result;
 }
 
 void Lime::Model::MeshLoader::GrabMeshData(MeshID id, MeshData_ptr & ptr)
@@ -245,7 +248,7 @@ void Lime::Model::MeshLoader::GrabMeshData(MeshID id, MeshData_ptr & ptr)
 	}
 }
 
-void Lime::Model::MeshLoader::SetDefaultSettings(MeshID id, Model3D & ptr)
+void Lime::Model::MeshLoader::GetDefaulMeshInfo(MeshID id, Model3D & ptr)
 {
 	try
 	{
@@ -259,45 +262,199 @@ void Lime::Model::MeshLoader::SetDefaultSettings(MeshID id, Model3D & ptr)
 	}
 }
 
-bool Lime::Model::MeshLoader::GrabMeshNormal(FbxMesh* mesh, Vertex& vert, int vertIndex)
+MeshID Lime::Model::MeshLoader::SaveInformation(MeshLibrary & library, const MeshData_ptr & data, const MeshDefaultSettings & settings)
 {
-	bool result = false;
-	if (mesh->GetElementNormalCount() < 1)
+	return library.SaveMesh(data, settings);
+}
+
+bool Lime::Model::MeshLoader::InitFBXObjects(FbxManager *& manager, FbxScene *& scene)
+{
+	manager = FbxManager::Create();
+	if (!manager)
+		return false;
+
+	//Gets the current version of the fbx sdk
+	//fbxManager->GetVersion();
+	FbxIOSettings* ios = FbxIOSettings::Create(manager, IOSROOT);
+	manager->SetIOSettings(ios);
+
+	scene = FbxScene::Create(manager, "Imported scene");
+	if (!scene)
+		return false;
+
+	return true;
+}
+
+bool Lime::Model::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScene * scene, const std::string & filename)
+{
+	//GetVersion for error checking
+	//FbxManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
+	FbxImporter* fileReader = FbxImporter::Create(manager, "Fbx FileReader");
+	const bool importStatus = fileReader->Initialize(filename.c_str(), -1, manager->GetIOSettings());
+	if (!importStatus)
 	{
-		throw std::exception("Invalid Normal Number");
+		//Gets the error from load fail
+		//FbxString error = fileReader->GetStatus().GetErrorString();
+		//FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
+		//FBXSDK_printf("Error returned: %s\n\n", error.Buffer());
+
+		if (fileReader->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
+		{
+			//FBXSDK_printf("FBX file format version for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
+			//FBXSDK_printf("FBX file format version for file '%s' is %d.%d.%d\n\n", pFilename, lFileMajor, lFileMinor, lFileRevision);
+		}
+
+		return false;
 	}
 
-	FbxGeometryElementNormal* vertexNormal = mesh->GetElementNormal(0);
-	switch (vertexNormal->GetMappingMode())
+	//Check the Autodesk file type
+	if (fileReader->IsFBX())
 	{
-		//-Used in cases where object has per vertex normal
+		bool success = fileReader->Import(scene);
+		if (!success)
+		{
+			//Access files that have passwords
+			if (fileReader->GetStatus().GetCode() == FbxStatus::ePasswordError)
+			{
+				//char lPassword[1024];
+				//do
+				//{
+				//	//Used to implement password
+				//	FBXSDK_printf("Please enter password: ");
+
+				//	lPassword[0] = '\0';
+
+				//	FBXSDK_CRT_SECURE_NO_WARNING_BEGIN
+				//		scanf("%s", lPassword);
+				//	FBXSDK_CRT_SECURE_NO_WARNING_END
+
+				//		FbxString lString(lPassword);
+
+				//	IOS_REF(manager).SetStringProp(IMP_FBX_PASSWORD, lString);
+				//	IOS_REF(manager).SetBoolProp(IMP_FBX_PASSWORD_ENABLE, true);
+
+				//	success = fileReader->Import(scene);
+				//} while (!success);
+				return false;
+			}
+			else
+				return false;
+		}
+	}
+	fileReader->Destroy();
+	return true;
+}
+
+void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, MeshData_ptr& data, MeshDefaultSettings& settings, ModelType type)
+{
+	auto tempdata = std::make_shared<MeshData>();
+	FbxMesh* mesh = pNode->GetMesh();
+
+	//Populate MeshData with FBX data
+	c_uint totalPolygonCount = mesh->GetPolygonCount();
+	int totalIndexCount = 0;
+	for (uint32_t polyIndex = 0; polyIndex < totalPolygonCount; polyIndex++)
+	{
+		Polygon poly;
+		int polyVertexCount = mesh->GetPolygonSize(polyIndex);
+		ENFORCE_SUCCESS(polyVertexCount, 3, return);
+		for (int vertexIndex = 0; vertexIndex < polyVertexCount; vertexIndex++)
+		{
+			Vertex vert;
+			int currentVertIndex = mesh->GetPolygonVertex(polyIndex, vertexIndex);
+			auto& fbxVert = mesh->GetControlPointAt(currentVertIndex);
+			vert.m_position = FbxVec4ToGlmVec3(fbxVert);
+			ENFORCE_SUCCESS(GetFBXTextureCoordinates(mesh, vert, totalIndexCount), true, return);
+			ENFORCE_SUCCESS(GetFBXMeshNormals(mesh, vert, totalIndexCount), true, return);
+
+			poly.m_vertices.push_back(vert);
+			poly.m_indices.push_back(totalIndexCount);
+			totalIndexCount++;
+		}
+		tempdata->m_polygons.push_back(poly);
+	}
+	data = tempdata;
+
+	//Get Default Settings
+	settings.scale = FbxVec4ToGlmVec3(pNode->LclScaling.Get());
+	settings.rotation = FbxVec4ToGlmVec3(pNode->LclRotation.Get());
+	settings.rotation.x = -glm::radians(settings.rotation.x);
+	settings.rotation.y = glm::radians(settings.rotation.y);
+	settings.rotation.z = glm::radians(settings.rotation.z);
+	settings.translation = FbxVec4ToGlmVec3(pNode->LclTranslation.Get());
+}
+
+bool Lime::Model::MeshLoader::GetFBXTextureCoordinates(FbxMesh * mesh, Vertex& vert, int totalIndexCount)
+{
+	//Implement logging for error cases
+	bool result = false;
+	FbxStringList uvSetNameList;
+	mesh->GetUVSetNames(uvSetNameList);
+
+	//Only grabbing the first uv set
+	const char* uvSetName = uvSetNameList.GetStringAt(0);
+	FbxGeometryElementUV* uvElement = mesh->GetElementUV(uvSetName);
+
+	//Set the search mode to grab data fast as we are not going to modify it
+	uvElement->SetMappingMode(FbxLayerElement::EMappingMode::eByPolygonVertex);
+	uvElement->SetReferenceMode(FbxLayerElement::EReferenceMode::eDirect);
+
+	// only support mapping mode eByPolygonVertex and eByControlPoint
+	switch (uvElement->GetMappingMode())
+	{
+		//Implement for later use
 	case FbxGeometryElement::eByControlPoint:
-		switch (vertexNormal->GetReferenceMode())
+		break;
+
+	case FbxGeometryElement::eByPolygonVertex:
+		switch (uvElement->GetReferenceMode())
 		{
 		case FbxGeometryElement::eDirect:
 		{
-			vert.m_normal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[0]);
-			vert.m_normal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[1]);
-			vert.m_normal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[2]);
-			//Invert the output to work with DirectX coordinate system
-			vert.m_normal = -vert.m_position;
+			int uvIndex = uvElement->GetIndexArray().GetAt(totalIndexCount);
+			FbxVector2 uv = uvElement->GetDirectArray().GetAt(uvIndex);
+			vert.m_uv.x = (float)uv[0];
+			vert.m_uv.y = (float)uv[1];
 			result = true;
+
+		}
+			break;
 		}
 		break;
-		}
+
+	default:
 		break;
-		//-Used in cases where object has hard edges (per face normal)
-		//-This is currently Ignored and per vertex normal is obtained
-		// Use case FbxGeometryElement::eIndexToDirect: to access normals by index
-		// and vertexNormal->GetIndexArray().GetAt(inVertexCounter);
+	}
+
+	return result;
+}
+
+bool Lime::Model::MeshLoader::GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int totalIndexCount)
+{
+	//Implement logging for error cases
+	bool result = false;
+
+	//Grab the first normal set
+	FbxGeometryElementNormal* vertexNormal = mesh->GetElementNormal(0);
+
+	//Set the search mode to grab data fast as we are not going to modify it
+	vertexNormal->SetMappingMode(FbxLayerElement::EMappingMode::eByPolygonVertex);
+	vertexNormal->SetReferenceMode(FbxLayerElement::EReferenceMode::eDirect);
+
+	switch (vertexNormal->GetMappingMode())
+	{
+		//Implement for later use
+	case FbxGeometryElement::eByControlPoint:
+		break;
+
 	case FbxGeometryElement::eByPolygonVertex:
 		switch (vertexNormal->GetReferenceMode())
 		{
 		case FbxGeometryElement::eDirect:
 		{
-			vert.m_normal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[0]);
-			vert.m_normal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[1]);
-			vert.m_normal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(vertIndex).mData[2]);
+			int uvIndex = vertexNormal->GetIndexArray().GetAt(totalIndexCount);
+			FbxVector4 normal = vertexNormal->GetDirectArray().GetAt(totalIndexCount);
+			vert.m_normal = FbxVec4ToGlmVec3(normal);
 			//Invert the output to work with DirectX coordinate system
 			vert.m_normal = -vert.m_position;
 			result = true;
@@ -310,68 +467,29 @@ bool Lime::Model::MeshLoader::GrabMeshNormal(FbxMesh* mesh, Vertex& vert, int ve
 	return result;
 }
 
-void Lime::Model::MeshLoader::ProcessElement(FbxNode * pNode, Lime::Model::MeshData_ptr& data, ModelType type)
-{
-	data = std::make_shared<MeshData>();
-	data->m_indexCount = 0;
-	FbxMesh* mesh = pNode->GetMesh();
-	unsigned int vertexCount = mesh->GetControlPointsCount();
-	unsigned int polygonCount = mesh->GetPolygonCount();
-
-	for (uint32_t x = 0; x < vertexCount; x++)
-	{
-		Vertex vert;
-		vert.m_position.x = static_cast<float>(mesh->GetControlPointAt(x).mData[0]);
-		vert.m_position.y = static_cast<float>(mesh->GetControlPointAt(x).mData[1]);
-		vert.m_position.z = static_cast<float>(mesh->GetControlPointAt(x).mData[2]);
-
-		if (!GrabMeshNormal(mesh, vert, x))
-			return;
-
-		if (type == Model::TEXT && vertexCount == 4)
-		{
-			if (vert.m_position.x > 0.0f)
-				vert.m_position.x = 0.6f;
-			else
-				vert.m_position.x = -0.6f;
-
-			if (vert.m_position.y > 0.0f)
-				vert.m_position.y = 1.0f;
-			else
-				vert.m_position.y = -1.0f;
-		}
-
-		data->m_vertices.emplace_back(new Vertex(vert));
-	}
-	if (type == Model::TEXT && vertexCount == 4)
-	{
-		data->m_vertices[0]->m_uv = glm::vec2(0.0f, 1.0f);
-		data->m_vertices[1]->m_uv = glm::vec2(1.0f, 1.0f);
-		data->m_vertices[2]->m_uv = glm::vec2(0.0f, 0.0f);
-		data->m_vertices[3]->m_uv = glm::vec2(1.0f, 0.0f);
-
-	}
-
-	for (uint32_t x = 0; x < polygonCount; x++)
-	{
-		Polygon shape;
-		int size = mesh->GetPolygonSize(x);
-		for (int y = 0; y < size; y++)
-		{
-			int index = mesh->GetPolygonVertex(x, y);
-			shape.m_indices.push_back(index);
-			shape.m_vertices.push_back(data->m_vertices.at(index));
-			data->m_indexCount++;
-		}
-		data->polygons.push_back(shape);
-	}
-}
-
-glm::vec3 Lime::Model::MeshLoader::FbxToGlmVec(FbxDouble3 in)
+glm::vec3 Lime::Model::MeshLoader::FbxVec4ToGlmVec3(const FbxVector4& in)
 {
 	glm::vec3 output;
 	output.x = (float)in.mData[0];
 	output.y = (float)in.mData[1];
 	output.z = (float)in.mData[2];
 	return output;
+}
+
+MeshID Lime::Model::MeshLibrary::SaveMesh(const MeshData_ptr & mesh, const MeshDefaultSettings & setting)
+{
+	MeshID result = -1;
+	size_t models = m_modelLibrary.size();
+	size_t settings = m_defaultSettings.size();
+	if (models == settings)
+	{
+		result = (MeshID)models;
+		mesh->objectID = result;
+		m_modelLibrary.push_back(mesh);
+		m_defaultSettings.push_back(setting);
+	}
+
+	//TODO:
+	//Output log information that MeshLibrary is corrupt
+	return result;
 }

@@ -4,19 +4,21 @@ SamplerState ObjSamplerState;
 
 cbuffer PF_PixelBuffer
 {
-	float4 blendAmount;
+	float4 ambientColor;
 	float4 diffuseColor;
+	float4 specularColor;
 	float3 sunDirection;
-	float padding;
+	float specularPower;
 };
+
 
 float4 main(VSOutput input) : SV_TARGET
 {
 	float4 color;
 	color = ObjTexture.Sample(ObjSamplerState, input.texCoord);
-	if (color.a >= blendAmount.a)
+	if (color.a >= specularColor.a)
 	{
-		color = blendAmount;
+		color = specularColor;
 	}
 	else
 	{
