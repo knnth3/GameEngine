@@ -53,23 +53,29 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	//Shaders
 	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
 	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
-	m_modelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
-	m_modelShader->Initialize();
+	m_3DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_3DmodelShader->Initialize();
 
 	vsPath = L"shaders/FontVertexShader.hlsl";
 	psPath = L"shaders/FontPixelShader.hlsl";
 	m_textShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
 	m_textShader->Initialize();
 
+	vsPath = L"shaders/VertexShader2D.hlsl";
+	psPath = L"shaders/PixelShader2D.hlsl";
+	m_2DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_2DmodelShader->Initialize();
+
 	//Textures
 	m_textTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
 	m_modelTexture = std::make_unique<DX11Texture>(L"outUV.dds", m_device, m_deviceContext);
+	m_2DmodelTexture = std::make_unique<DX11Texture>(L"white.dds", m_device, m_deviceContext);
 
 	//Buffer Manager
 	m_cbManager = std::make_shared<DX11ConstantBuffer>(m_device, m_deviceContext);
 	m_bufferManager = std::make_unique<DX11BufferManager>(m_device, m_deviceContext, m_cbManager);
 
-	m_modelShader->AttachConstBufferManager(m_cbManager);
+	m_3DmodelShader->AttachConstBufferManager(m_cbManager);
 	D3D11_BUFFER_DESC tbd = { 0 };
 	tbd.Usage = D3D11_USAGE_DYNAMIC;
 	tbd.ByteWidth = sizeof(PF_PixelBuffer);
@@ -77,7 +83,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	tbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tbd.MiscFlags = 0;
 	tbd.StructureByteStride = 0;
-	m_modelShader->CreateConstantBuffer(tbd, "Light");
+	m_3DmodelShader->CreateConstantBuffer(tbd, "Light");
 
 	m_textShader->AttachConstBufferManager(m_cbManager);
 	D3D11_BUFFER_DESC txtbd = { 0 };
@@ -113,7 +119,7 @@ void Lime::DX11Graphics::Close()
 	CLOSE_COM_PTR(Transparency);
 }
 
-void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D> model)
+void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D>& model)
 {
 	m_textTexture->SetAsActive();
 	m_textShader->SetAsActive();
@@ -133,7 +139,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		float posOffset = 1.2f;
 		textInfo.PosAscii = glm::vec4(currentElement, character, posOffset, 0.0f);
 		textInfo.color = model->GetColor();
-		m_modelShader->SetConstBufferData("Text", &textInfo, Lime::ShaderType::Vertex);
+		m_3DmodelShader->SetConstBufferData("Text", &textInfo, Lime::ShaderType::Vertex);
 
 		UINT size = (UINT)model->m_mesh->GetIndexCount();
 		UINT vertOff = model->m_mesh->vertOffset;
@@ -144,10 +150,10 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 	}
 }
 
-void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
+void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 {
 	m_modelTexture->SetAsActive();
-	m_modelShader->SetAsActive();
+	m_3DmodelShader->SetAsActive();
 
 	MatrixBuffer matrices;
 	PF_PixelBuffer lightInfo;
@@ -155,6 +161,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	matrices.view = glm::transpose(m_camera->GetViewMatrix());
 	matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 	matrices.cameraPos = m_camera->GetPosition();
+	matrices.color = model->GetColor();
 	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	lightInfo.ambientColor = m_light.m_ambientColor;
@@ -162,7 +169,26 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	lightInfo.lightDirection = m_light.m_direction;
 	lightInfo.specularColor = m_light.m_specularColor;
 	lightInfo.specularPower = m_light.m_specularPower;
-	m_modelShader->SetConstBufferData("Light", &lightInfo, Lime::ShaderType::Pixel);
+	m_3DmodelShader->SetConstBufferData("Light", &lightInfo, Lime::ShaderType::Pixel);
+
+	UINT size = (UINT)model->m_mesh->GetIndexCount();
+	UINT vertOff = model->m_mesh->vertOffset;
+	UINT indOff = model->m_mesh->indiciOffset;
+
+	m_deviceContext->RSSetState(m_cullBack);
+	m_bufferManager->DrawIndexed(size, indOff, vertOff);
+}
+
+void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model3D>& model)
+{
+	m_2DmodelTexture->SetAsActive();
+	m_2DmodelShader->SetAsActive();
+	MatrixBuffer matrices;
+	matrices.world = glm::transpose(model->GetModelMatrix());
+	matrices.view = glm::transpose(m_camera->GetIdentityMatrix());
+	matrices.projection = glm::transpose(m_camera->Get2DProjectionMatrix());
+	//matrices.cameraPos = m_camera->GetPosition();
+	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
 	UINT vertOff = model->m_mesh->vertOffset;
@@ -200,6 +226,8 @@ void Lime::DX11Graphics::Draw()
 	}
 	if (hasEntered && m_camera != nullptr)
 	{
+		//Render 3D objects
+		m_dsState->SetDepthBufferStatus(true);
 		for (size_t index = 0; index < m_newModelLib.size(); index++)
 		{
 			Model::ModelType type = m_newModelLib[index]->m_modelType;
@@ -213,6 +241,13 @@ void Lime::DX11Graphics::Draw()
 			{
 				RenderMesh(m_newModelLib[index]);
 			}
+		}
+
+		//Render 2D objects
+		m_dsState->SetDepthBufferStatus(false);
+		for (size_t index = 0; index < m_newModelLib.size2D(); index++)
+		{
+			Render2DMesh(m_newModelLib.at2D(index));
 		}
 	}
 	m_swapChain->Present(0, 0);

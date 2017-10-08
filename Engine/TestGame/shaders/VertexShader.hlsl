@@ -3,6 +3,7 @@ cbuffer ConstBuffer
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
+	float4 color;
 	float3 cameraPos;
 	float padding;
 };
@@ -20,6 +21,7 @@ struct VSOutput
 	float2 uv  : TEXCOORD;
 	float3 normal : NORMAL;
 	float3 viewDirection : VIEW;
+	float4 color : COLOR;
 };
 
 VSOutput main( VSInput input )
@@ -53,6 +55,8 @@ VSOutput main( VSInput input )
 
 	// Normalize the viewing direction vector.
 	output.viewDirection = normalize(output.viewDirection);
+
+	output.color = color;
 
 	return output;
 

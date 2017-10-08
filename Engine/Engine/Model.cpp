@@ -35,12 +35,30 @@ void Lime::Model::VertexLibrary::clear()
 	m_cachedIDs.clear();
 	m_vertices.clear();
 	m_indices.clear();
-	m_models.clear();
+	m_3Dmodels.clear();
 }
 
 size_t Lime::Model::VertexLibrary::size()
 {
-	return m_models.size();
+	return m_3Dmodels.size();
+}
+
+size_t Lime::Model::VertexLibrary::size2D()
+{
+	return m_2Dmodels.size();
+}
+
+std::shared_ptr<Lime::Model::Model3D>& Lime::Model::VertexLibrary::at2D(const size_t index)
+{
+	try
+	{
+		return m_2Dmodels.at(index);
+	}
+	catch (...)
+	{
+		//Catch plzzzzzz
+		return m_2Dmodels.at(0);
+	}
 }
 
 void Lime::Model::VertexLibrary::AddModel(std::shared_ptr<Model::Model3D>& model)
@@ -68,7 +86,10 @@ void Lime::Model::VertexLibrary::AddModel(std::shared_ptr<Model::Model3D>& model
 		m_cachedIDs.push_back(model->m_mesh->objectID);
 	}
 
-	m_models.push_back(model);
+	if (model->m_modelType == Model::MeshType::TWO_DIMENSION)
+		m_2Dmodels.push_back(model);
+	else
+		m_3Dmodels.push_back(model);
 }
 
 const void * Lime::Model::VertexLibrary::VertexData()
@@ -93,7 +114,15 @@ uint32_t Lime::Model::VertexLibrary::IndexDataSize()
 
 std::shared_ptr<Lime::Model::Model3D>& Lime::Model::VertexLibrary::operator[](const size_t index)
 {
-	return m_models[index];
+	try
+	{
+		return m_3Dmodels[index];
+	}
+	catch(...)
+	{
+		//Catch plzzzzzz
+		return m_3Dmodels[0];
+	}
 }
 
 template<class T>
@@ -322,10 +351,23 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, ModelType
 	return result;
 }
 
-MeshID Lime::Model::MeshLoader::LoadModel(std::vector<Vertex> verts, std::vector<uint32_t> indices)
+MeshID Lime::Model::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices)
 {
-	std::shared_ptr<MeshData> mesh = nullptr;
+	std::shared_ptr<MeshData> mesh = std::make_shared<MeshData>();
 	MeshDefaultSettings settings = {};
+	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	int counter = 0;
+	for (int x = 0; x < (int)(verts.size()/3); x++)
+	{
+		Polygon<Vertex> p;
+		p.m_vertices.insert(p.m_vertices.end(), verts.begin() + counter, verts.begin() + counter + 3);
+		p.m_indices.insert(p.m_indices.end(), indices.begin() + counter, indices.begin() + counter + 3);
+
+		mesh->m_polygons.push_back(p);
+		counter += 3;
+	}
+
 
 	return SaveInformation(MESHLIB, mesh, settings);
 }

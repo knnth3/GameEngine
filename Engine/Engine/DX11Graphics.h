@@ -26,6 +26,7 @@ namespace Lime
 		glm::mat4 world;
 		glm::mat4 view;
 		glm::mat4 projection;
+		glm::vec4 color;
 		glm::vec3 cameraPos;
 		float padding;
 	};
@@ -60,8 +61,9 @@ namespace Lime
 	private:
 
 		void Close();
-		void RenderText(std::string text, std::shared_ptr<Model::Model3D> model);
-		void RenderMesh(std::shared_ptr<Model::Model3D> model);
+		void RenderText(std::string text, std::shared_ptr<Model::Model3D>& model);
+		void RenderMesh(std::shared_ptr<Model::Model3D>& model);
+		void Render2DMesh(std::shared_ptr<Model::Model3D>& model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		void CreateBuffers();
 		void CreateConstBuffers();
@@ -100,12 +102,15 @@ namespace Lime
 		std::unique_ptr<DX11DepthStencilState> m_dsState;
 
 		//Shaders
-		std::unique_ptr<DX11Shader> m_modelShader;
+		std::unique_ptr<DX11Shader> m_3DmodelShader;
+		std::unique_ptr<DX11Shader> m_2DmodelShader;
 		std::unique_ptr<DX11Shader> m_textShader;
 
 		//Textures
 		std::unique_ptr<DX11Texture> m_modelTexture;
+		std::unique_ptr<DX11Texture> m_2DmodelTexture;
 		std::unique_ptr<DX11Texture> m_textTexture;
+
 	};
 
 

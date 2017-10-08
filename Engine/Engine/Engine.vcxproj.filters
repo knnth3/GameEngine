@@ -184,10 +184,10 @@
     <FxCompile Include="shaders\FontVertexShader.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader2D.hlsl">
+    <FxCompile Include="shaders\PixelShader2D.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="PixelShader2D.hlsl">
+    <FxCompile Include="shaders\VertexShader2D.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

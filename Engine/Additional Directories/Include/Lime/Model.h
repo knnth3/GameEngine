@@ -138,6 +138,8 @@ namespace Lime
 			AppDLL_API bool empty();
 			AppDLL_API void clear();
 			AppDLL_API size_t size();
+			AppDLL_API size_t size2D();
+			AppDLL_API std::shared_ptr<Model::Model3D>& at2D(const size_t index);
 			AppDLL_API void AddModel(std::shared_ptr<Model::Model3D>& model);
 			AppDLL_API const void* VertexData();
 			AppDLL_API const void* IndexData();
@@ -153,7 +155,8 @@ namespace Lime
 			std::vector<UINT> m_cachedIDs;
 			std::vector<Vertex> m_vertices;
 			std::vector<uint32_t> m_indices;
-			std::vector<std::shared_ptr<Model::Model3D>> m_models;
+			std::vector<std::shared_ptr<Model::Model3D>> m_3Dmodels;
+			std::vector<std::shared_ptr<Model::Model3D>> m_2Dmodels;
 		};
 
 		//Library that holds given mesh information
@@ -179,7 +182,7 @@ namespace Lime
 			//-Model Reqs:
 			//--Must be Quadrangulated
 			AppDLL_API static MeshID LoadModel(const std::string& filename, ModelType type = Model::NONE);
-			AppDLL_API static MeshID LoadModel(std::vector<Vertex> verts, std::vector<uint32_t> indices);
+			AppDLL_API static MeshID LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices);
 
 		protected:
 			static void GrabMeshData(MeshID id, std::shared_ptr<MeshData>& ptr);

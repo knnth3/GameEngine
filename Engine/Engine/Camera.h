@@ -49,6 +49,7 @@ namespace Lime
         AppDLL_API void AddYaw(float yaw);
         AppDLL_API glm::vec3 GetPosition();
         AppDLL_API glm::mat4 GetViewMatrix();
+		AppDLL_API glm::mat4 GetIdentityMatrix();
         AppDLL_API glm::mat4 Get3DProjectionMatrix();
 		AppDLL_API glm::mat4 Get2DProjectionMatrix();
         AppDLL_API float GetFarPlane();

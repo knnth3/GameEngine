@@ -56,6 +56,11 @@ float4 main(VSOutput input) : SV_TARGET
 	// Multiply the texture pixel and the input color to get the textured result.
 	color = color * textureColor;
 
+	if (color.x <= 0.1f && color.y <= 0.1f && color.z <= 0.1f)
+	{
+		color = input.color;
+	}
+
 	// Add the specular component last to the output color.
 	color = saturate(color + specular);
 

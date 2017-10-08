@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <glm\gtx\vector_angle.hpp>
+#include <DirectXMath.h>
 
 #undef near
 #undef far
@@ -128,6 +129,12 @@ namespace Lime
         return m_info.m_view;
     }
 
+	glm::mat4 Camera::GetIdentityMatrix()
+	{
+		glm::mat4 identity(1.0f);
+		return identity;
+	}
+
     glm::mat4 Camera::Get3DProjectionMatrix()
     {
         return m_info.m_3Dprojection;
@@ -170,10 +177,10 @@ namespace Lime
 
 	void Camera::Create2DProjectionMatrix()
 	{
-		float top = (float)m_info.m_yResolution * 0.5f;
-		float left = (float)m_info.m_xResolution * -0.5f;
-		float bottom = (float)m_info.m_yResolution * -0.5f;
-		float right = (float)m_info.m_xResolution * 0.5f;
+		float top = 0.0f;
+		float left = 0.0f;
+		float bottom = ((float)m_info.m_yResolution * -1.0f);
+		float right = (float)m_info.m_xResolution;
 		m_info.m_2Dprojection = glm::ortho(left, right, bottom, top, m_info.m_nearPlane, m_info.m_farPlane);
 	}
 

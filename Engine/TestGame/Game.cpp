@@ -17,14 +17,33 @@ void Game::Initialize()
 	start = std::chrono::system_clock::now();
 	end = start;
 
-	auto mesh = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
-	model = std::make_shared<Model3D>(mesh);
-	model2 = std::make_shared<Model3D>(mesh);
+	std::vector<Vertex> m_verties = 
+	{
+		{ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+		{ glm::vec3(300.0f, -300.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) }
+	};
+	std::vector<uint32_t> m_indices =
+	{
+		0,1,2,
+		3,4,5
+	};
+
+
+	auto mesh1 = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
+	auto mesh2 = Model::MeshLoader::LoadModel(m_verties, m_indices);
+	model1 = std::make_shared<Model3D>(mesh1);
+	model2 = std::make_shared<Model3D>(mesh1);
+	model3 = std::make_shared<Model3D>(mesh2);
+	model3->SetType(Model::MeshType::TWO_DIMENSION);
 	m_camera->AttachToModel(model2);
-	model->SetColor(1.0f, 0.0f, 1.0f, 0.5f);
-	model->SetPosition(0.0f, 3.0f, -15.0f);
-	m_graphicsDevice->AddModel(model);
+	model1->SetPosition(0.0f, 3.0f, -15.0f);
+	m_graphicsDevice->AddModel(model1);
 	m_graphicsDevice->AddModel(model2);
+	m_graphicsDevice->AddModel(model3);
 	model2->Scale(0.25f, 0.25f, 0.25f);
 	m_graphicsDevice->AddText("Loading...", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
@@ -109,8 +128,11 @@ void Game::Update(float elapsed)
 	if (rot > 6.28f)
 		rot = 0.0f;
 
-	model->RotateAtOrigin(0.0f, rot, 0.0f);
+	model1->RotateAtOrigin(0.0f, rot, 0.0f);
 	model2->Rotate(0.0f, -rot , 0.0f);
+
+	model1->SetColor(red,green, blue);
+	model2->SetColor(red, green, blue);
 
 	//Update the colors of our scene
 	red += colormodr * 0.00005f;
@@ -134,5 +156,5 @@ void Game::Render()
 
 void Game::Clear()
 {
-	m_graphicsDevice->ClearScreen(glm::vec3(red, green, blue));
+	m_graphicsDevice->ClearScreen(glm::vec3(0.0f, 0.0f, 0.0f));
 }
