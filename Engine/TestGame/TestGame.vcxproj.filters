@@ -35,6 +35,15 @@
     <ImageContentTask Include="textures\SpriteSheetx200RomanItal.tga">
       <Filter>Resource Files</Filter>
     </ImageContentTask>
+    <ImageContentTask Include="textures\skybox1.png">
+      <Filter>Resource Files</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="textures\direction.png">
+      <Filter>Resource Files</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="textures\outUV.jpg">
+      <Filter>Resource Files</Filter>
+    </ImageContentTask>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">

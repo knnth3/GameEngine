@@ -1,5 +1,5 @@
 #include "DX11Texture.h"
-#include <dxtex\DirectXTex.h>
+#include <DirectXTex.h>
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -11,6 +11,8 @@
 	if(ptr) { ptr->Release(); ptr = nullptr;}
 
 static ID3D11SamplerState* m_samplerState = nullptr;
+
+using namespace DirectX;
 
 Lime::DX11Texture::DX11Texture(const LPCWSTR filepath, ID3D11Device* device, ID3D11DeviceContext* context)
 {
@@ -46,15 +48,17 @@ void Lime::DX11Texture::Initialize()
 	wchar_t fname[_MAX_FNAME];
 	errno_t err = _wsplitpath_s(m_filepath, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
 	HRESULT result;
-	DirectX::ScratchImage image;
+	ScratchImage srcImage;
 	if (_wcsicmp(ext, L".dds") == 0)
 	{
-		result = LoadFromDDSFile(m_filepath, DirectX::DDS_FLAGS_NONE, nullptr, image);
+		result = LoadFromDDSFile(m_filepath, DDS_FLAGS_NONE, nullptr, srcImage);
 		CheckSuccess(result);
 	}
 	if (SUCCEEDED(result))
 	{
-		result = CreateShaderResourceView(m_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &m_texture);
+		ScratchImage secondary;
+		ScratchImage finalImage;
+		result = CreateShaderResourceView(m_device, srcImage.GetImages(), srcImage.GetImageCount(), srcImage.GetMetadata(), &m_texture);
 		CheckSuccess(result);
 	}
 }

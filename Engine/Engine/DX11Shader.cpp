@@ -1,5 +1,4 @@
 #include "DX11Shader.h"
-#include <dxtex\DirectXTex.h>
 
 
 Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context)

@@ -1,5 +1,4 @@
 #include "DX11Graphics.h"
-#include <dxtex\DirectXTex.h>
 #include <chrono>
 #include <wchar.h>
 #include <stdlib.h>
@@ -64,7 +63,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	//Textures
 	m_newTextTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
-	m_newModelTexture = std::make_unique<DX11Texture>(L"image.dds", m_device, m_deviceContext);
+	m_newModelTexture = std::make_unique<DX11Texture>(L"outUV.dds", m_device, m_deviceContext);
 
 	//BMBuffer Manager
 	m_cbManager = std::make_shared<DX11ConstantBuffer>(m_device, m_deviceContext);

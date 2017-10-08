@@ -450,9 +450,11 @@ void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_pt
 			ENFORCE_SUCCESS(GetFBXMeshNormals(mesh, vert, totalIndexCount), true, return);
 
 			poly.m_vertices.push_back(vert);
-			poly.m_indices.push_back(totalIndexCount);
 			totalIndexCount++;
 		}
+		poly.m_indices.push_back(totalIndexCount-3);
+		poly.m_indices.push_back(totalIndexCount-1);
+		poly.m_indices.push_back(totalIndexCount-2);
 		tempdata->m_polygons.push_back(poly);
 	}
 	data = tempdata;
@@ -496,7 +498,7 @@ bool Lime::Model::MeshLoader::GetFBXTextureCoordinates(FbxMesh * mesh, Vertex& v
 			int uvIndex = uvElement->GetIndexArray().GetAt(totalIndexCount);
 			FbxVector2 uv = uvElement->GetDirectArray().GetAt(uvIndex);
 			vert.m_uv.x = (float)uv[0];
-			vert.m_uv.y = (float)uv[1];
+			vert.m_uv.y = 1 - (float)uv[1];
 			result = true;
 
 		}
@@ -538,7 +540,7 @@ bool Lime::Model::MeshLoader::GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int
 			FbxVector4 normal = vertexNormal->GetDirectArray().GetAt(totalIndexCount);
 			vert.m_normal = FbxVec4ToGlmVec3(normal);
 			//Invert the output to work with DirectX coordinate system
-			vert.m_normal = -vert.m_position;
+			vert.m_normal = -vert.m_normal;
 			result = true;
 		}
 		break;

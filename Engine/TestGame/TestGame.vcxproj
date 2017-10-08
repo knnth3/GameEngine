@@ -193,6 +193,15 @@
   <ItemGroup>
     <ImageContentTask Include="textures\SpriteSheetx200RomanItal.tga" />
   </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\skybox1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\direction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\outUV.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\ImageContentTask.targets" />
