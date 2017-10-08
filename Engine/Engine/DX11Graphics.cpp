@@ -61,8 +61,8 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	m_vsPath = L"shaders/FontVertexShader.hlsl";
 	m_psPath = L"shaders/FontPixelShader.hlsl";
 	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
-	LoadTextureFromFile(L"image.dds");
-	//m_newTexture = std::make_unique<DX11Texture>(L"image.dds", m_device, m_deviceContext);
+	m_newTextTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
+	m_newModelTexture = std::make_unique<DX11Texture>(L"image.dds", m_device, m_deviceContext);
 
 	RECT tex;
 	tex.top = 0;
@@ -124,13 +124,6 @@ void Lime::DX11Graphics::Close()
 			m_samplerStates[it]->Release();
 		}
 	}
-	if (!m_textures.empty())
-	{
-		for (size_t it = 0; it < m_textures.size(); it++)
-		{
-			m_textures[it]->Release();
-		}
-	}
 	Transparency->Release();
 	CCWcullMode->Release();
 	CWcullMode->Release();
@@ -139,6 +132,7 @@ void Lime::DX11Graphics::Close()
 
 void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D> model)
 {
+	m_newTextTexture->SetAsActive();
 	m_deviceContext->VSSetShader(m_vertexShaders[1], 0, 0);
 	m_deviceContext->PSSetShader(m_pixelShaders[1], 0, 0);
 	m_deviceContext->IASetInputLayout(m_vertLayouts[1]);
@@ -199,6 +193,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 
 void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 {
+	m_newModelTexture->SetAsActive();
 	m_deviceContext->VSSetShader(m_vertexShaders[0], 0, 0);
 	m_deviceContext->PSSetShader(m_pixelShaders[0], 0, 0);
 	m_deviceContext->IASetInputLayout(m_vertLayouts[0]);
@@ -292,9 +287,7 @@ bool Lime::DX11Graphics::DrawModel(std::shared_ptr<Model::Model3D>& model)
 
 bool Lime::DX11Graphics::DrawText(std::string text, std::shared_ptr<TextController>& controller)
 {
-	static Model::Texture tex = LoadTextureFromFile(L"SpriteSheetx200.dds");
 	auto ctrler = std::make_shared<TextController>(text);
-	ctrler->GetInfo()->GetMesh()->SetTexture(tex);
 	auto mesh = ctrler->GetInfo()->GetMesh();
 	if (DrawModel(mesh))
 	{
@@ -335,13 +328,11 @@ void Lime::DX11Graphics::Draw()
 			Model::Texture tex = model->second->GetTexture();
 			if (type == Lime::Model::TEXT)
 			{
-				m_deviceContext->PSSetShaderResources(0, 1, &m_textures[tex]);
 				auto ptr = reinterpret_cast<TextInfo*>(model->second->m_ptr);
 				RenderText(ptr->GetText(), model->second);
 			}
 			else if (type == Lime::Model::MESH)
 			{
-				m_deviceContext->PSSetShaderResources(0, 1, &m_textures[tex]);
 				RenderMesh(model->second);
 			}
 		}
@@ -366,7 +357,7 @@ ID3D11DepthStencilView * Lime::DX11Graphics::GetDepthStencilView() const
 
 D3D11_VIEWPORT Lime::DX11Graphics::GetScreenViewport() const
 {
-	return viewport;
+	return m_viewport;
 }
 
 void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
@@ -404,50 +395,6 @@ void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
 {
 	m_camera = ptr;
 }
-
-Lime::Model::Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filename)
-{
-	Model::Texture tex;
-	wchar_t ext[_MAX_EXT];
-	wchar_t fname[_MAX_FNAME];
-	errno_t err = _wsplitpath_s(filename.c_str(), nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
-	HRESULT result;
-	DirectX::ScratchImage image;
-	if (_wcsicmp(ext, L".dds") == 0)
-	{
-		result = LoadFromDDSFile(filename.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
-		CheckSuccess(result);
-	}
-	if (SUCCEEDED(result))
-	{
-		ID3D11ShaderResourceView* pResource = nullptr;
-		result = CreateShaderResourceView(m_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pResource);
-		CheckSuccess(result);
-
-		tex = (Model::Texture)m_textures.size();
-		m_textures.push_back(pResource);
-		if (m_samplerStates.empty())
-		{
-			ID3D11SamplerState* state;
-			D3D11_SAMPLER_DESC sampDesc;
-			ZeroMemory(&sampDesc, sizeof(sampDesc));
-			sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-			sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-			sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-			sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-			sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-			sampDesc.MinLOD = 0;
-			sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-			result = m_device->CreateSamplerState(&sampDesc, &state);
-			CheckSuccess(result);
-
-			m_samplerStates.push_back(state);
-			m_deviceContext->PSSetSamplers(0, 1, &m_samplerStates[0]);
-		}
-	}
-	return tex;
-}
-
 
 HRESULT Lime::DX11Graphics::CreateBuffers()
 {
@@ -691,16 +638,16 @@ HRESULT Lime::DX11Graphics::CreateRTV()
 
 void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 {
-	viewport = { 0 };
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = (float)width;
-	viewport.Height = (float)height;
+	m_viewport = { 0 };
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0;
+	m_viewport.TopLeftY = 0;
+	m_viewport.Width = (float)width;
+	m_viewport.Height = (float)height;
 
 	//Set the Viewport
-	m_deviceContext->RSSetViewports(1, &viewport);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)

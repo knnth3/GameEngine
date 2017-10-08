@@ -10,7 +10,7 @@
 #define CLOSE_COM_PTR(ptr) \
 	if(ptr) { ptr->Release(); ptr = nullptr;}
 
-static ID3D11SamplerState* m_samplerState;
+static ID3D11SamplerState* m_samplerState = nullptr;
 
 Lime::DX11Texture::DX11Texture(const LPCWSTR filepath, ID3D11Device* device, ID3D11DeviceContext* context)
 {
@@ -32,9 +32,11 @@ void Lime::DX11Texture::SetAsActive()
 
 Lime::DX11Texture::~DX11Texture()
 {
-	m_context->PSSetShaderResources(0, 0, nullptr);
+	//Not sure on how to go about deleting textures
+	//if they are active
+	//m_context->PSSetShaderResources(0, 0, nullptr);
+	//m_context->PSSetSamplers(0, 0, nullptr);
 	CLOSE_COM_PTR(m_texture);
-	m_context->PSSetSamplers(0, 0, nullptr);
 	CLOSE_COM_PTR(m_samplerState);
 }
 

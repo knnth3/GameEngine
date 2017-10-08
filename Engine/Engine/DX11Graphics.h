@@ -55,7 +55,6 @@ namespace Lime
 		AppDLL_API bool DrawModel(std::shared_ptr<Model::Model3D>& model);
 		AppDLL_API bool DrawText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
-		AppDLL_API Model::Texture LoadTextureFromFile(std::wstring filename);
 		AppDLL_API HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
 		AppDLL_API void Draw();
 		AppDLL_API ID3D11DeviceContext* GetDeviceContext() const;
@@ -91,7 +90,6 @@ namespace Lime
 		ID3D11Buffer* m_textBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		ID3D11Buffer* m_vertexBuffer;
-		std::vector<ID3D11ShaderResourceView*> m_textures;
 		std::vector<ID3D11SamplerState*> m_samplerStates;
 		std::vector<ID3D11VertexShader*> m_vertexShaders;
 		std::vector<ID3D11InputLayout*> m_vertLayouts;
@@ -103,7 +101,7 @@ namespace Lime
 		ID3D11RasterizerState* WireFrame;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_deviceContext;
-		D3D11_VIEWPORT viewport;
+		D3D11_VIEWPORT m_viewport;
 		std::vector<std::shared_ptr<Model::Model3D>> m_models;
 		vertexInfo m_modelLib;
 		std::vector<UINT> cachedIDs;
@@ -117,7 +115,9 @@ namespace Lime
 		UINT m_bufferCount;
 		bool m_isWireframe = false;
 
-		std::unique_ptr<DX11Texture> m_newTexture;
+		//New API
+		std::unique_ptr<DX11Texture> m_newModelTexture;
+		std::unique_ptr<DX11Texture> m_newTextTexture;
 	};
 
 
