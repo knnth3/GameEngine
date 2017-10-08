@@ -18,7 +18,7 @@ using namespace std;
 static MeshLibrary MESHLIB;
 
 
-bool Lime::Model::vertexBuffer::empty()
+bool Lime::Model::VertexLibrary::empty()
 {
 	size_t vert = m_vertices.size();
 	size_t ind = m_indices.size();
@@ -30,7 +30,7 @@ bool Lime::Model::vertexBuffer::empty()
 	return false;
 }
 
-void Lime::Model::vertexBuffer::clear()
+void Lime::Model::VertexLibrary::clear()
 {
 	m_cachedIDs.clear();
 	m_vertices.clear();
@@ -38,12 +38,12 @@ void Lime::Model::vertexBuffer::clear()
 	m_models.clear();
 }
 
-size_t Lime::Model::vertexBuffer::size()
+size_t Lime::Model::VertexLibrary::size()
 {
 	return m_models.size();
 }
 
-void Lime::Model::vertexBuffer::AddModel(std::shared_ptr<Model::Model3D>& model)
+void Lime::Model::VertexLibrary::AddModel(std::shared_ptr<Model::Model3D>& model)
 {
 	bool similar = false;
 	for (auto const& id : m_cachedIDs)
@@ -71,27 +71,27 @@ void Lime::Model::vertexBuffer::AddModel(std::shared_ptr<Model::Model3D>& model)
 	m_models.push_back(model);
 }
 
-const void * Lime::Model::vertexBuffer::VertexData()
+const void * Lime::Model::VertexLibrary::VertexData()
 {
 	return m_vertices.data();
 }
 
-const void * Lime::Model::vertexBuffer::IndexData()
+const void * Lime::Model::VertexLibrary::IndexData()
 {
 	return m_indices.data();
 }
 
-uint32_t Lime::Model::vertexBuffer::VertexDataSize()
+uint32_t Lime::Model::VertexLibrary::VertexDataSize()
 {
 	return (uint32_t)m_vertices.size();
 }
 
-uint32_t Lime::Model::vertexBuffer::IndexDataSize()
+uint32_t Lime::Model::VertexLibrary::IndexDataSize()
 {
 	return (uint32_t)m_indices.size();
 }
 
-std::shared_ptr<Lime::Model::Model3D>& Lime::Model::vertexBuffer::operator[](const size_t index)
+std::shared_ptr<Lime::Model::Model3D>& Lime::Model::VertexLibrary::operator[](const size_t index)
 {
 	return m_models[index];
 }

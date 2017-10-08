@@ -5,17 +5,15 @@
 #include <stdlib.h>
 #include <stdlib.h>
 
-Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height)
+Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height):
+	m_bufferCount(3)
 {
 	m_windowWidth = width;
 	m_windowHeight = height;
 	m_hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(NULL));
-	m_bufferCount = 3;
-	m_hasBuffers = false;
 	HRESULT result = Initialize(window, width, height);
 	CheckSuccess(result);
 }
-
 
 Lime::DX11Graphics::~DX11Graphics()
 {
@@ -207,68 +205,25 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	}
 }
 
-bool Lime::DX11Graphics::DrawModel(std::shared_ptr<Model::Model3D>& model)
+bool Lime::DX11Graphics::AddModel(std::shared_ptr<Model::Model3D>& model)
 {
-	bool result = false;
-	static int VertCountOffset = 0;
-	static int IndCountOffset = 0;
-	bool similar = false;
-	for (auto const& id : cachedIDs)
-	{
-		if (id == model->m_mesh->objectID)
-		{
-			similar = true;
-		}
-	}
-	std::vector<Model::Vertex> vertices;
-	std::vector<uint32_t> indices;
-	model->m_mesh->GetBuffers(vertices, indices);
-	size_t vertInitSize = m_modelLib.vertices.size();
-	if (!similar)
-	{
-		m_modelLib.vertices.insert(
-			m_modelLib.vertices.end(),
-			std::make_move_iterator(vertices.begin()),
-			std::make_move_iterator(vertices.end())
-		);
-		m_modelLib.indices.insert(
-			m_modelLib.indices.end(),
-			std::make_move_iterator(indices.begin()),
-			std::make_move_iterator(indices.end())
-		);
-
-		model->m_mesh->vertOffset = VertCountOffset;
-		model->m_mesh->indiciOffset = IndCountOffset;
-		VertCountOffset += (int)vertices.size();
-		IndCountOffset += (int)indices.size();
-		cachedIDs.push_back(model->m_mesh->objectID);
-	}
-	if (m_modelLib.vertices.size() != vertInitSize || similar)
-	{
-		m_models.push_back(model);
-		m_hasBuffers = true;
-		result = true;
-	}
-	return result;
+	m_newModelLib.AddModel(model);
+	return true;
 }
 
-bool Lime::DX11Graphics::DrawText(std::string text, std::shared_ptr<TextController>& controller)
+bool Lime::DX11Graphics::AddText(std::string text, std::shared_ptr<TextController>& controller)
 {
 	auto ctrler = std::make_shared<TextController>(text);
 	auto mesh = ctrler->GetInfo()->GetMesh();
-	if (DrawModel(mesh))
-	{
-		controller = ctrler;
-		m_hasBuffers = true;
-		return true;
-	}
-	return false;
+	AddModel(mesh);
+	controller = ctrler;
+	return true;
 }
 
 void Lime::DX11Graphics::Draw()
 {
 	static bool hasEntered = false;
-	if (!m_modelLib.empty())
+	if (!m_newModelLib.empty())
 	{
 		if (!hasEntered)
 		{
@@ -276,18 +231,17 @@ void Lime::DX11Graphics::Draw()
 			hasEntered = true;
 		}
 	}
-
-	if (m_hasBuffers && m_camera != nullptr)
+	if (hasEntered && m_camera != nullptr)
 	{
 		std::multimap<float, std::shared_ptr<Model::Model3D>> tOrdering;
-		for (auto model = 0; model < m_models.size(); model++)
+		for (auto model = 0; model < m_newModelLib.size(); model++)
 		{
-			glm::vec4 p(m_models[model]->GetPosition(), 1.0f);
-			glm::vec4 res = m_models[model]->GetModelMatrix() * p;
+			glm::vec4 p(m_newModelLib[model]->GetPosition(), 1.0f);
+			glm::vec4 res = m_newModelLib[model]->GetModelMatrix() * p;
 			glm::vec4 toCameraSpace = m_camera->GetProjectionMatrix() * res;
 			//Uses the z plane for comparison since camera is static
 			float len2 = toCameraSpace.z;
-			tOrdering.insert(std::pair<float, std::shared_ptr<Model::Model3D>>(len2, m_models[model]));
+			tOrdering.insert(std::pair<float, std::shared_ptr<Model::Model3D>>(len2, m_newModelLib[model]));
 		}
 		for (auto model = tOrdering.rbegin(); model != tOrdering.rend(); ++model)
 		{
@@ -340,10 +294,7 @@ void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
 
 void Lime::DX11Graphics::Reset()
 {
-	m_models.clear();
-	cachedIDs.clear();
-	m_modelLib.vertices.clear();
-	m_modelLib.indices.clear();
+	m_newModelLib.clear();
 }
 
 void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
@@ -353,28 +304,29 @@ void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
 
 HRESULT Lime::DX11Graphics::CreateBuffers()
 {
+
 	HRESULT result;
 	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Model::Vertex) * (uint32_t)m_modelLib.vertices.size();
+	vertexBufferDesc.ByteWidth = sizeof(Model::Vertex) * (uint32_t)m_newModelLib.VertexDataSize();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 
 	D3D11_BUFFER_DESC indexBufferDesc = { 0 };
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * (uint32_t)m_modelLib.indices.size();
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (uint32_t)m_newModelLib.IndexDataSize();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-	vertexBufferData.pSysMem = m_modelLib.vertices.data();
+	vertexBufferData.pSysMem = m_newModelLib.VertexData();
 	result = m_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
 	CheckSuccess(result);
 
 	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-	indexBufferData.pSysMem = m_modelLib.indices.data();
+	indexBufferData.pSysMem = m_newModelLib.IndexData();
 	m_device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 
 	UINT stride = sizeof(Model::Vertex);
@@ -511,16 +463,4 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 
 	//Set the Viewport
 	m_deviceContext->RSSetViewports(1, &m_viewport);
-}
-
-bool Lime::vertexInfo::empty()
-{
-	size_t vert = vertices.size();
-	size_t ind = indices.size();
-
-	size_t result = vert*ind;
-	if (result == 0)
-		return true;
-
-	return false;
 }

@@ -20,13 +20,6 @@
 
 namespace Lime
 {
-	struct vertexInfo
-	{
-		bool empty();
-
-		std::vector<Model::Vertex> vertices;
-		std::vector<uint32_t> indices;
-	};
 	struct MatrixBuffer
 	{
 		glm::mat4 world;
@@ -54,8 +47,8 @@ namespace Lime
 	public:
 		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
 		AppDLL_API ~DX11Graphics();
-		AppDLL_API bool DrawModel(std::shared_ptr<Model::Model3D>& model);
-		AppDLL_API bool DrawText(std::string text, std::shared_ptr<TextController>& controller);
+		AppDLL_API bool AddModel(std::shared_ptr<Model::Model3D>& model);
+		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		AppDLL_API void Draw();
 		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
@@ -76,36 +69,34 @@ namespace Lime
 		void CreateViewport(const UINT width, const UINT height);
 
 
-		bool m_hasBuffers;
-		HINSTANCE m_hInstance;
-		IDXGISwapChain* SwapChain;
+
 		ID3D11Buffer* m_ObjConstBuffer;
 		ID3D11Buffer* m_transparentBuffer;
 		ID3D11Buffer* m_textBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		ID3D11Buffer* m_vertexBuffer;
-		std::shared_ptr<Camera> m_camera;
 		ID3D11RasterizerState* WireFrame;
-		ID3D11Device* m_device;
-		ID3D11DeviceContext* m_deviceContext;
-		D3D11_VIEWPORT m_viewport;
-		std::vector<std::shared_ptr<Model::Model3D>> m_models;
-		vertexInfo m_modelLib;
-		std::vector<UINT> cachedIDs;
-		bool hasConsBuffers = false;
-		ID3D11BlendState* Transparency;
-		ID3D11BlendState* TransparencyBack;
 		ID3D11RasterizerState* CCWcullMode;
 		ID3D11RasterizerState* CWcullMode;
 		ID3D11RasterizerState* NoCull;
-		WorldLight m_light;
-		UINT m_bufferCount;
 		bool m_isWireframe = false;
 
 		//New API
+		const UINT m_bufferCount;
+		WorldLight m_light;
 		int m_windowWidth;
 		int m_windowHeight;
+		bool hasConsBuffers = false;
+		std::shared_ptr<Camera> m_camera;
+		Model::VertexLibrary m_newModelLib;
+		HINSTANCE m_hInstance;
+		D3D11_VIEWPORT m_viewport;
+		ID3D11Device* m_device;
+		ID3D11DeviceContext* m_deviceContext;
+		IDXGISwapChain* SwapChain;
 		ID3D11RenderTargetView* m_renderTargetView;
+		ID3D11BlendState* Transparency;
+		ID3D11BlendState* TransparencyBack;
 
 		//Dpeth Stencil state
 		std::unique_ptr<DX11DepthStencilState> m_newDSState;

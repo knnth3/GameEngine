@@ -24,9 +24,9 @@ void Game::Initialize()
 	model->SetColor(1.0f, 0.0f, 1.0f, 0.5f);
 	model->SetPosition(0.0f, 3.0f, -15.0f);
 	//m_graphicsDevice->AddModel(model);
-	m_graphicsDevice->DrawModel(model2);
+	m_graphicsDevice->AddModel(model2);
 	model2->Scale(0.5f, 0.5f, 0.5f);
-	m_graphicsDevice->DrawText("Loading...", controller);
+	m_graphicsDevice->AddText("Loading...", controller);
 	//controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	//controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
 	//controller->Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));

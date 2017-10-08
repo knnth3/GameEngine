@@ -81,7 +81,7 @@ namespace Lime
 		//and meters for length;
 		class Model3D
 		{
-			friend class vertexBuffer;
+			friend class VertexLibrary;
 			friend class Lime::DX11Graphics;
 			friend class Lime::TextInfo;
 		public:
@@ -130,7 +130,7 @@ namespace Lime
 			uint16_t m_texture;
 		};
 
-		class vertexBuffer
+		class VertexLibrary
 		{
 		public:
 			AppDLL_API bool empty();
@@ -141,10 +141,11 @@ namespace Lime
 			AppDLL_API const void* IndexData();
 			AppDLL_API uint32_t VertexDataSize();
 			AppDLL_API uint32_t IndexDataSize();
+
 			//Operator overloads
 			AppDLL_API std::shared_ptr<Model::Model3D>& operator[] (const size_t index);
-		private:
 
+		private:
 			int VertCountOffset = 0;
 			int IndCountOffset = 0;
 			std::vector<UINT> m_cachedIDs;
