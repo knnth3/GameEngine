@@ -9,6 +9,7 @@
 #include "Lime.h"
 #include "D3Dcompiler.h"
 #include "DX11Texture.h"
+#include "DX11Shader.h"
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -55,7 +56,6 @@ namespace Lime
 		AppDLL_API bool DrawModel(std::shared_ptr<Model::Model3D>& model);
 		AppDLL_API bool DrawText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
-		AppDLL_API HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
 		AppDLL_API void Draw();
 		AppDLL_API ID3D11DeviceContext* GetDeviceContext() const;
 		AppDLL_API ID3D11RenderTargetView* GetRenderTargetView() const;
@@ -77,8 +77,6 @@ namespace Lime
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
-		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
-			LPCSTR profile, ID3DBlob** blob);
 
 
 		bool m_hasBuffers;
@@ -90,10 +88,6 @@ namespace Lime
 		ID3D11Buffer* m_textBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		ID3D11Buffer* m_vertexBuffer;
-		std::vector<ID3D11SamplerState*> m_samplerStates;
-		std::vector<ID3D11VertexShader*> m_vertexShaders;
-		std::vector<ID3D11InputLayout*> m_vertLayouts;
-		std::vector<ID3D11PixelShader*> m_pixelShaders;
 		ID3D11DepthStencilView* m_depthStencilView;
 		ID3D11DepthStencilState* m_depthStencilState;
 		ID3D11Texture2D* depthStencilBuffer;
@@ -116,6 +110,12 @@ namespace Lime
 		bool m_isWireframe = false;
 
 		//New API
+
+		//Shaders
+		std::unique_ptr<DX11Shader> m_newModelShader;
+		std::unique_ptr<DX11Shader> m_newTextShader;
+
+		//Textures
 		std::unique_ptr<DX11Texture> m_newModelTexture;
 		std::unique_ptr<DX11Texture> m_newTextTexture;
 	};

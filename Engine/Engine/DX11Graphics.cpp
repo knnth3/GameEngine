@@ -47,20 +47,17 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	//Create our BackBuffer
 	CreateRTV();
 
-	//Set our Render Target
-	m_deviceContext->OMSetRenderTargets(1, &renderTargetView, NULL);
-	LPCWSTR m_vsPath = L"shaders/VertexShader.hlsl";
-	LPCWSTR m_psPath = L"shaders/PixelShader.hlsl";
-	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	UINT layoutSize = ARRAYSIZE(layout);
-	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
-	m_vsPath = L"shaders/FontVertexShader.hlsl";
-	m_psPath = L"shaders/FontPixelShader.hlsl";
-	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
+	//Shaders
+	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
+	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
+	m_newModelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	vsPath = L"shaders/FontVertexShader.hlsl";
+	psPath = L"shaders/FontPixelShader.hlsl";
+	m_newTextShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_newModelShader->Initialize();
+	m_newTextShader->Initialize();
+
+	//Textures
 	m_newTextTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
 	m_newModelTexture = std::make_unique<DX11Texture>(L"image.dds", m_device, m_deviceContext);
 
@@ -96,34 +93,6 @@ void Lime::DX11Graphics::Close()
 	m_transparentBuffer->Release();
 	m_textBuffer->Release();
 	WireFrame->Release();
-	if (!m_vertexShaders.empty())
-	{
-		for (size_t it = 0; it < m_vertexShaders.size(); it++)
-		{
-			m_vertexShaders[it]->Release();
-		}
-	}
-	if (!m_pixelShaders.empty())
-	{
-		for (size_t it = 0; it < m_pixelShaders.size(); it++)
-		{
-			m_pixelShaders[it]->Release();
-		}
-	}
-	if (!m_vertLayouts.empty())
-	{
-		for (size_t it = 0; it < m_vertLayouts.size(); it++)
-		{
-			m_vertLayouts[it]->Release();
-		}
-	}
-	if (!m_samplerStates.empty())
-	{
-		for (size_t it = 0; it < m_samplerStates.size(); it++)
-		{
-			m_samplerStates[it]->Release();
-		}
-	}
 	Transparency->Release();
 	CCWcullMode->Release();
 	CWcullMode->Release();
@@ -133,9 +102,7 @@ void Lime::DX11Graphics::Close()
 void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D> model)
 {
 	m_newTextTexture->SetAsActive();
-	m_deviceContext->VSSetShader(m_vertexShaders[1], 0, 0);
-	m_deviceContext->PSSetShader(m_pixelShaders[1], 0, 0);
-	m_deviceContext->IASetInputLayout(m_vertLayouts[1]);
+	m_newTextShader->SetAsActive();
 	for (auto x = 0; x < text.size(); x++)
 	{
 		HRESULT result;
@@ -194,9 +161,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 {
 	m_newModelTexture->SetAsActive();
-	m_deviceContext->VSSetShader(m_vertexShaders[0], 0, 0);
-	m_deviceContext->PSSetShader(m_pixelShaders[0], 0, 0);
-	m_deviceContext->IASetInputLayout(m_vertLayouts[0]);
+	m_newModelShader->SetAsActive();
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBuffer* dataPtr;
@@ -431,40 +396,6 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 	return result;
 }
 
-HRESULT Lime::DX11Graphics::CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize)
-{
-	HRESULT result;
-	ID3DBlob *vsBlob = nullptr;
-	ID3DBlob *psBlob = nullptr;
-	ID3D11VertexShader* VS = nullptr;
-	ID3D11PixelShader* PS = nullptr;
-	ID3D11InputLayout* vertLayout = nullptr;
-
-	result = CompileShader(vsPath, "main", "vs_5_0", &vsBlob);
-	CheckSuccess(result);
-
-	result = CompileShader(psPath, "main", "ps_5_0", &psBlob);
-	CheckSuccess(result);
-
-	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
-	CheckSuccess(result);
-	m_vertexShaders.push_back(VS);
-
-	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
-	CheckSuccess(result);
-	m_pixelShaders.push_back(PS);
-
-	result = m_device->CreateInputLayout(layout, (UINT)layoutSize, vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(), &vertLayout);
-	CheckSuccess(result);
-	m_vertLayouts.push_back(vertLayout);
-
-	vsBlob->Release();
-	psBlob->Release();
-
-	return result;
-}
-
 HRESULT Lime::DX11Graphics::CreateConstBuffers()
 {
 	HRESULT result;
@@ -648,41 +579,6 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 
 	//Set the Viewport
 	m_deviceContext->RSSetViewports(1, &m_viewport);
-}
-
-HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)
-{
-	if (!srcFile || !entryPoint || !profile || !blob)
-		return E_INVALIDARG;
-
-	*blob = nullptr;
-
-	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-	flags |= D3DCOMPILE_DEBUG;
-#endif
-	ID3DBlob* shaderBlob = nullptr;
-	ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DCompileFromFile(srcFile, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		entryPoint, profile,
-		flags, 0, &shaderBlob, &errorBlob);
-	if (FAILED(hr))
-	{
-		if (errorBlob)
-		{
-			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
-		}
-
-		if (shaderBlob)
-			shaderBlob->Release();
-
-		return hr;
-	}
-
-	*blob = shaderBlob;
-
-	return hr;
 }
 
 bool Lime::vertexInfo::empty()

@@ -16,6 +16,9 @@ Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11D
 	m_psPath = psPath;
 	m_device = device;
 	m_context = context;
+	m_vertLayout = nullptr;
+	m_vertexShader = nullptr;
+	m_pixelShader = nullptr;
 
 	m_layout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -29,9 +32,6 @@ HRESULT Lime::DX11Shader::Initialize()
 	HRESULT result;
 	ID3DBlob *vsBlob = nullptr;
 	ID3DBlob *psBlob = nullptr;
-	ID3D11VertexShader* VS = nullptr;
-	ID3D11PixelShader* PS = nullptr;
-	ID3D11InputLayout* vertLayout = nullptr;
 
 	result = CompileShader(m_vsPath, "main", "vs_5_0", &vsBlob);
 	CheckSuccess(result);
@@ -39,19 +39,15 @@ HRESULT Lime::DX11Shader::Initialize()
 	result = CompileShader(m_psPath, "main", "ps_5_0", &psBlob);
 	CheckSuccess(result);
 
-	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
+	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &m_vertexShader);
 	CheckSuccess(result);
 
-	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
+	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &m_pixelShader);
 	CheckSuccess(result);
 
 	result = m_device->CreateInputLayout(m_layout.data(), (UINT)m_layout.size(), vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(), &vertLayout);
+		vsBlob->GetBufferSize(), &m_vertLayout);
 	CheckSuccess(result);
-
-	m_vertLayout = vertLayout;
-	m_vertexShader = VS;
-	m_pixelShader = PS;
 
 	vsBlob->Release();
 	psBlob->Release();
@@ -61,9 +57,9 @@ HRESULT Lime::DX11Shader::Initialize()
 
 void Lime::DX11Shader::Close()
 {
-	CLOSE_COM_PTR(m_vertLayout);
 	CLOSE_COM_PTR(m_vertexShader);
 	CLOSE_COM_PTR(m_pixelShader);
+	CLOSE_COM_PTR(m_vertLayout);
 }
 
 void Lime::DX11Shader::SetAsActive()
