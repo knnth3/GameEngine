@@ -1,14 +1,6 @@
 #include "DX11Shader.h"
 #include <dxtex\DirectXTex.h>
 
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
-
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
-
-#define CLOSE_COM_PTR(ptr) \
-	if(ptr) { ptr->Release(); ptr = nullptr;}
 
 Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context)
 {
@@ -78,6 +70,27 @@ void Lime::DX11Shader::SetLayout(std::vector<D3D11_INPUT_ELEMENT_DESC> newLayout
 {
 	Close();
 	m_layout = newLayout;
+}
+
+void Lime::DX11Shader::AttachConstBufferManager(std::shared_ptr<DX11ConstantBuffer>& constbuff)
+{
+	m_cbManager = constbuff;
+}
+
+void Lime::DX11Shader::CreateConstantBuffer(const D3D11_BUFFER_DESC & desc, const std::string uniqueName, D3D11_SUBRESOURCE_DATA * data)
+{
+	if (m_cbManager)
+	{
+		m_cbManager->CreateBuffer(desc, uniqueName, data);
+	}
+}
+
+void Lime::DX11Shader::SetConstBufferData(const std::string & uniqueName, void * data, const ShaderType type)
+{
+	if (m_cbManager)
+	{
+		m_cbManager->SetBufferData(uniqueName, data, type);
+	}
 }
 
 HRESULT Lime::DX11Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,

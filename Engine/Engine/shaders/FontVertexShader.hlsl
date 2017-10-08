@@ -3,18 +3,19 @@ cbuffer ConstBuffer
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-	//float4x4 WVP;
 };
 
 cbuffer TextBuffer
 {
 	float4 ascii;
+	float4 color;
 };
 
 struct VSOutput
 {
 	float4 pos : SV_POSITION;
 	float2 texCoord  : TEXCOORD;
+	float4 color : TEXTCOLOR;
 };
 
 float4 GetCharUVCoords(int char)
@@ -65,5 +66,6 @@ VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
 	output.pos = mul(output.pos, viewMatrix);
 	output.pos = mul(output.pos, projectionMatrix);
 	output.texCoord = inTexCoord;
+	output.color = color;
 	return output;
 }

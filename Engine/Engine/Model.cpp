@@ -377,7 +377,7 @@ bool Lime::Model::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScen
 		//Gets the error from load fail
 		//FbxString error = fileReader->GetStatus().GetErrorString();
 		//FBXSDK_printf("Call to FbxImporter::CompileVertexData() failed.\n");
-		//FBXSDK_printf("Error returned: %s\n\n", error.Buffer());
+		//FBXSDK_printf("Error returned: %s\n\n", error.BMBuffer());
 
 		if (fileReader->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{

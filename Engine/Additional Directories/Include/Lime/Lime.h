@@ -18,7 +18,6 @@
 //#define API_OPENGL 0x02
 //#define API_INUSE API_NONE
 #define PI 3.1415927f
-#undef DrawText
 
 //OS Types
 #define OS_UNDEFINED 0x00
@@ -41,6 +40,7 @@
 
 
 #if PLATFORM == OS_WINDOWS
+#include "WindowsAdditionals.h"
 #endif
 
 

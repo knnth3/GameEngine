@@ -60,7 +60,7 @@
 //
 //    void SkyBox::CreateVertexArray()
 //    {
-//        //Creates the Vertex Buffer Object ID and the Vertex Array Object ID
+//        //Creates the Vertex BMBuffer Object ID and the Vertex Array Object ID
 //        if (m_VaoID == 0)
 //            glGenVertexArrays(1, &m_VaoID);
 //        if (m_VboID == 0)

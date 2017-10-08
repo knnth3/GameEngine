@@ -1,31 +1,30 @@
 #include "DX11BufferManager.h"
 #include "Model.h"
 
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
+struct MatrixBuffer
+{
+	glm::mat4 world;
+	glm::mat4 view;
+	glm::mat4 projection;
+	glm::vec3 cameraPos;
+	float padding;
+};
 
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
-
-#define CLOSE_COM_PTR(ptr) \
-	if(ptr) { ptr->Release(); ptr = nullptr;}
-
-Lime::DX11BufferManager::DX11BufferManager(ID3D11Device* device, ID3D11DeviceContext* context)
+Lime::DX11BufferManager::DX11BufferManager(ID3D11Device* device, ID3D11DeviceContext* context, std::shared_ptr<DX11ConstantBuffer>& constbuff)
 {
 	m_device = device;
 	m_context = context;
-	m_vertexCounter = 0;
-	m_pixelCounter = 0;
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
-	//Default Vertex Buffer Description
+	m_cbManager = constbuff;
+	//Default Vertex BMBuffer Description
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = 0;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 
-	//Default Pixel Buffer Description
+	//Default Pixel BMBuffer Description
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = 0;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -37,7 +36,7 @@ void Lime::DX11BufferManager::AddVertexData(const void* data, const uint32_t ver
 {
 	vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = data;
-	vertexBufferDesc.ByteWidth = sizeof(Model::Vertex) * 3;
+	vertexBufferDesc.ByteWidth = vertexSize * vertexBufferSize;
 	stride = vertexSize;
 }
 
@@ -45,7 +44,7 @@ void Lime::DX11BufferManager::AddIndexData(const void * data, const uint32_t ind
 {
 	indexBufferData = { 0 };
 	indexBufferData.pSysMem = data;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * 3;
+	indexBufferDesc.ByteWidth = indexSize * indexBufferSize;
 }
 
 void Lime::DX11BufferManager::SetVertexBufferDesc(const D3D11_BUFFER_DESC & desc)
@@ -60,41 +59,6 @@ void Lime::DX11BufferManager::SetIndexBufferDesc(const D3D11_BUFFER_DESC & desc)
 	indexBufferDesc = desc;
 }
 
-void Lime::DX11BufferManager::CreateConstantBuffer(const D3D11_BUFFER_DESC& desc, const std::string uniqueName, D3D11_SUBRESOURCE_DATA* data)
-{
-	HRESULT result;
-	ID3D11Buffer* constBuffer = nullptr;
-	result = m_device->CreateBuffer(&desc, data, &constBuffer);
-	CheckSuccess(result);
-
-	m_constBuffers.insert(std::pair<std::string, ID3D11Buffer*>(uniqueName, constBuffer));
-}
-
-void Lime::DX11BufferManager::SetConstBufferData(const std::string& uniqueName, void * data, const Buffer type)
-{
-	HRESULT result;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	ID3D11Buffer* constBuffer = m_constBuffers[uniqueName];
-	result = m_context->Map(constBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	CheckSuccess(result);
-	mappedResource.pData = data;
-	m_context->Unmap(constBuffer, 0);
-
-	switch (type)
-	{
-	case Buffer::Vertex:
-		m_context->VSSetConstantBuffers(0, 1, &constBuffer);
-		m_vertexCounter++;
-		break;
-	case Buffer::Pixel:
-		m_context->PSSetConstantBuffers(0, 1, &constBuffer);
-		m_pixelCounter++;
-		break;
-	default:
-		break;
-	}
-}
-
 void Lime::DX11BufferManager::CompileVertexData()
 {
 	//ClearVertexBuffers before intialize for safety
@@ -105,6 +69,8 @@ void Lime::DX11BufferManager::CompileVertexData()
 	CheckSuccess(result);
 	result = m_device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 	CheckSuccess(result);
+
+	SetAsActive();
 }
 
 void Lime::DX11BufferManager::SetAsActive()
@@ -121,19 +87,25 @@ void Lime::DX11BufferManager::ClearVertexBuffers()
 	CLOSE_COM_PTR(m_indexBuffer);
 }
 
+void Lime::DX11BufferManager::CreateBuffer(const D3D11_BUFFER_DESC & desc, const std::string uniqueName, D3D11_SUBRESOURCE_DATA * data)
+{
+	if (m_cbManager)
+		m_cbManager->CreateBuffer(desc, uniqueName, data);
+}
+
+void Lime::DX11BufferManager::SetBufferData(const std::string & uniqueName, void * data, const ShaderType type)
+{
+	if (m_cbManager)
+		m_cbManager->SetBufferData(uniqueName, data, type);
+}
+
 void Lime::DX11BufferManager::DrawIndexed(uint32_t size, uint32_t vertexOffset, uint32_t indexOffset)
 {
-	m_vertexCounter = 0;
-	m_pixelCounter = 0;
+	m_cbManager->ResetCounter();
 	m_context->DrawIndexed(size, vertexOffset, indexOffset);
 }
 
 Lime::DX11BufferManager::~DX11BufferManager()
 {
 	ClearVertexBuffers();
-	for (auto x : m_constBuffers)
-	{
-		CLOSE_COM_PTR(x.second);
-	}
-	m_constBuffers.clear();
 }

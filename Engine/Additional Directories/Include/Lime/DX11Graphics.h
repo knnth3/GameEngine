@@ -11,6 +11,7 @@
 #include "DX11Texture.h"
 #include "DX11Shader.h"
 #include "DX11DepthStencilState.h"
+#include "DX11BufferManager.h"
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -20,13 +21,6 @@
 
 namespace Lime
 {
-	struct vertexInfo
-	{
-		bool empty();
-
-		std::vector<Model::Vertex> vertices;
-		std::vector<uint32_t> indices;
-	};
 	struct MatrixBuffer
 	{
 		glm::mat4 world;
@@ -39,6 +33,7 @@ namespace Lime
 	struct TextBuffer
 	{
 		glm::vec4 PosAscii;
+		glm::vec4 color;
 	};
 	struct PF_PixelBuffer
 	{
@@ -68,8 +63,8 @@ namespace Lime
 		void RenderText(std::string text, std::shared_ptr<Model::Model3D> model);
 		void RenderMesh(std::shared_ptr<Model::Model3D> model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
-		HRESULT CreateBuffers();
-		HRESULT CreateConstBuffers();
+		void CreateBuffers();
+		void CreateConstBuffers();
 		HRESULT CreateRenderStates();
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
@@ -77,15 +72,8 @@ namespace Lime
 
 
 
-		ID3D11Buffer* m_ObjConstBuffer;
-		ID3D11Buffer* m_transparentBuffer;
-		ID3D11Buffer* m_textBuffer;
-		ID3D11Buffer* m_indexBuffer;
-		ID3D11Buffer* m_vertexBuffer;
 		ID3D11RasterizerState* WireFrame;
-		ID3D11RasterizerState* CCWcullMode;
-		ID3D11RasterizerState* CWcullMode;
-		ID3D11RasterizerState* NoCull;
+		ID3D11RasterizerState* m_cullBack;
 		bool m_isWireframe = false;
 
 		//New API
@@ -93,9 +81,8 @@ namespace Lime
 		WorldLight m_light;
 		int m_windowWidth;
 		int m_windowHeight;
-		bool hasConsBuffers = false;
 		std::shared_ptr<Camera> m_camera;
-		Model::VertexBuffer m_newModelLib;
+		Model::VertexLibrary m_newModelLib;
 		HINSTANCE m_hInstance;
 		D3D11_VIEWPORT m_viewport;
 		ID3D11Device* m_device;
@@ -104,6 +91,10 @@ namespace Lime
 		ID3D11RenderTargetView* m_renderTargetView;
 		ID3D11BlendState* Transparency;
 		ID3D11BlendState* TransparencyBack;
+
+		//Buffers
+		std::shared_ptr<DX11ConstantBuffer> m_cbManager;
+		std::unique_ptr<DX11BufferManager> m_newBufferManager;
 
 		//Dpeth Stencil state
 		std::unique_ptr<DX11DepthStencilState> m_newDSState;

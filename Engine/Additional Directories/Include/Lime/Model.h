@@ -81,7 +81,7 @@ namespace Lime
 		//and meters for length;
 		class Model3D
 		{
-			friend class VertexBuffer;
+			friend class VertexLibrary;
 			friend class Lime::DX11Graphics;
 			friend class Lime::TextInfo;
 		public:
@@ -130,7 +130,7 @@ namespace Lime
 			uint16_t m_texture;
 		};
 
-		class VertexBuffer
+		class VertexLibrary
 		{
 		public:
 			AppDLL_API bool empty();

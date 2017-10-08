@@ -29,7 +29,7 @@ void Game::Initialize()
 	m_graphicsDevice->AddText("Loading...", controller);
 	//controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
 	//controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
-	//controller->Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	controller->Color(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 void Game::Tick()
