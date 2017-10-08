@@ -10,6 +10,7 @@
 #include "D3Dcompiler.h"
 #include "DX11Texture.h"
 #include "DX11Shader.h"
+#include "DX11DepthStencilState.h"
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -57,12 +58,9 @@ namespace Lime
 		AppDLL_API bool DrawText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		AppDLL_API void Draw();
-		AppDLL_API ID3D11DeviceContext* GetDeviceContext() const;
-		AppDLL_API ID3D11RenderTargetView* GetRenderTargetView() const;
-		AppDLL_API ID3D11DepthStencilView* GetDepthStencilView() const;
-		AppDLL_API D3D11_VIEWPORT GetScreenViewport() const;
 		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
 		AppDLL_API void Wireframe(bool statement);
+		AppDLL_API void ClearScreen(glm::vec3 color);
 		AppDLL_API void Reset();
 	private:
 
@@ -73,7 +71,6 @@ namespace Lime
 		HRESULT CreateBuffers();
 		HRESULT CreateConstBuffers();
 		HRESULT CreateRenderStates();
-		HRESULT CreateDepthStencil(const UINT width, const UINT height);
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
@@ -82,15 +79,11 @@ namespace Lime
 		bool m_hasBuffers;
 		HINSTANCE m_hInstance;
 		IDXGISwapChain* SwapChain;
-		ID3D11RenderTargetView* renderTargetView;
 		ID3D11Buffer* m_ObjConstBuffer;
 		ID3D11Buffer* m_transparentBuffer;
 		ID3D11Buffer* m_textBuffer;
 		ID3D11Buffer* m_indexBuffer;
 		ID3D11Buffer* m_vertexBuffer;
-		ID3D11DepthStencilView* m_depthStencilView;
-		ID3D11DepthStencilState* m_depthStencilState;
-		ID3D11Texture2D* depthStencilBuffer;
 		std::shared_ptr<Camera> m_camera;
 		ID3D11RasterizerState* WireFrame;
 		ID3D11Device* m_device;
@@ -110,6 +103,12 @@ namespace Lime
 		bool m_isWireframe = false;
 
 		//New API
+		int m_windowWidth;
+		int m_windowHeight;
+		ID3D11RenderTargetView* m_renderTargetView;
+
+		//Dpeth Stencil state
+		std::unique_ptr<DX11DepthStencilState> m_newDSState;
 
 		//Shaders
 		std::unique_ptr<DX11Shader> m_newModelShader;

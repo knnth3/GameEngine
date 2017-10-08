@@ -133,17 +133,5 @@ void Game::Render()
 
 void Game::Clear()
 {
-	//Clear our backbuffer to the updated color
-	auto context = m_graphicsDevice->GetDeviceContext();
-	auto rtv = m_graphicsDevice->GetRenderTargetView();
-	auto depthStencil = m_graphicsDevice->GetDepthStencilView();
-
-	const float bgColor[4] = { red, green, blue, 1.0f };
-
-	context->ClearRenderTargetView(rtv, bgColor);
-	context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	context->OMSetRenderTargets(1, &rtv, depthStencil);
-
-	auto viewport = m_graphicsDevice->GetScreenViewport();
-	context->RSSetViewports(1, &viewport);
+	m_graphicsDevice->ClearScreen(glm::vec3(red, green, blue));
 }

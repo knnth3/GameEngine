@@ -7,6 +7,8 @@
 
 Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height)
 {
+	m_windowWidth = width;
+	m_windowHeight = height;
 	m_hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(NULL));
 	m_bufferCount = 3;
 	m_hasBuffers = false;
@@ -47,6 +49,10 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	//Create our BackBuffer
 	CreateRTV();
 
+	//Depth stencil state
+	m_newDSState = std::make_unique<DX11DepthStencilState>(m_windowWidth, m_windowHeight, m_device, m_deviceContext, m_renderTargetView);
+	m_newDSState->Initialize();
+
 	//Shaders
 	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
 	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
@@ -70,7 +76,6 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	CreateConstBuffers();
 	CreateRenderStates();
-	CreateDepthStencil(width, height);
 	CreateViewport(width, height);
 	CreateBlendState();
 	m_deviceContext->RSSetState(CCWcullMode);
@@ -83,12 +88,9 @@ void Lime::DX11Graphics::Close()
 	SwapChain->Release();
 	m_device->Release();
 	m_deviceContext->Release();
-	renderTargetView->Release();
+	m_renderTargetView->Release();
 	m_vertexBuffer->Release();
 	m_indexBuffer->Release();
-	depthStencilBuffer->Release();
-	m_depthStencilState->Release();
-	m_depthStencilView->Release();
 	m_ObjConstBuffer->Release();
 	m_transparentBuffer->Release();
 	m_textBuffer->Release();
@@ -305,39 +307,16 @@ void Lime::DX11Graphics::Draw()
 	}
 }
 
-ID3D11DeviceContext * Lime::DX11Graphics::GetDeviceContext() const
-{
-	return m_deviceContext;
-}
-
-ID3D11RenderTargetView * Lime::DX11Graphics::GetRenderTargetView() const
-{
-	return renderTargetView;
-}
-
-ID3D11DepthStencilView * Lime::DX11Graphics::GetDepthStencilView() const
-{
-	return m_depthStencilView;
-}
-
-D3D11_VIEWPORT Lime::DX11Graphics::GetScreenViewport() const
-{
-	return m_viewport;
-}
-
 void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
 {
 	HRESULT result;
 	//Reset all objects that use window size
-	renderTargetView->Release();
-	depthStencilBuffer->Release();
-	m_depthStencilState->Release();
-	m_depthStencilView->Release();
+	m_renderTargetView->Release();
 	result = SwapChain->ResizeBuffers(m_bufferCount, width, height, DXGI_FORMAT_UNKNOWN, NULL);
 	CheckSuccess(result);
 
 	CreateRTV();
-	CreateDepthStencil(width, height);
+	m_newDSState->OnWindowResize(m_renderTargetView, width, height);
 	CreateViewport(width, height);
 	//Is optional
 	m_camera->SetResolution(width, height);
@@ -346,6 +325,17 @@ void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
 void Lime::DX11Graphics::Wireframe(bool statemnent)
 {
 	m_isWireframe = statemnent;
+}
+
+void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
+{
+	//Clear our backbuffer to the updated color
+	const float bgColor[4] = { color.r, color.g, color.b, 1.0f };
+
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView, bgColor);
+	m_newDSState->ClearView();
+	m_newDSState->SetAsActive();
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 void Lime::DX11Graphics::Reset()
@@ -445,64 +435,6 @@ HRESULT Lime::DX11Graphics::CreateRenderStates()
 	return result;
 }
 
-HRESULT Lime::DX11Graphics::CreateDepthStencil(const UINT width, const UINT height)
-{
-	HRESULT result;
-	//Describe our Depth/Stencil Buffer
-	D3D11_TEXTURE2D_DESC depthBufferDesc = { 0 };
-	depthBufferDesc.Width = width;
-	depthBufferDesc.Height = height;
-	depthBufferDesc.MipLevels = 1;
-	depthBufferDesc.ArraySize = 1;
-	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthBufferDesc.SampleDesc.Count = 1;
-	depthBufferDesc.SampleDesc.Quality = 0;
-	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthBufferDesc.CPUAccessFlags = 0;
-	depthBufferDesc.MiscFlags = 0;
-
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-	depthStencilDesc.StencilEnable = true;
-	depthStencilDesc.StencilReadMask = 0xFF;
-	depthStencilDesc.StencilWriteMask = 0xFF;
-
-	// Stencil operations if pixel is front-facing.
-	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	// Stencil operations if pixel is back-facing.
-	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDesc.Texture2D.MipSlice = 0;
-	result = m_device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencilBuffer);
-	CheckSuccess(result);
-
-	result = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
-	CheckSuccess(result);
-
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
-
-	result = m_device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
-	CheckSuccess(result);
-
-	m_deviceContext->OMSetRenderTargets(1, &renderTargetView, m_depthStencilView);
-
-	return result;
-}
-
 HRESULT Lime::DX11Graphics::CreateBlendState()
 {
 	HRESULT result;
@@ -560,7 +492,7 @@ HRESULT Lime::DX11Graphics::CreateRTV()
 	result = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
 	CheckSuccess(result);
 	//Create our Render Target
-	result = m_device->CreateRenderTargetView(BackBuffer, NULL, &renderTargetView);
+	result = m_device->CreateRenderTargetView(BackBuffer, NULL, &m_renderTargetView);
 	CheckSuccess(result);
 
 	BackBuffer->Release();

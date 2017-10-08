@@ -67,8 +67,6 @@ void Lime::DX11DepthStencilState::Initialize()
 	result = m_device->CreateDepthStencilState(&m_depthStencilDesc, &m_depthStencilState);
 	CheckSuccess(result);
 
-	m_context->OMSetDepthStencilState(m_depthStencilState, 1);
-
 	result = m_device->CreateDepthStencilView(m_depthStencilBuffer, &m_depthStencilViewDesc, &m_depthStencilView);
 	CheckSuccess(result);
 
@@ -88,6 +86,7 @@ void Lime::DX11DepthStencilState::OnWindowResize(ID3D11RenderTargetView* rtv, ui
 
 void Lime::DX11DepthStencilState::SetAsActive()
 {
+	m_context->OMSetDepthStencilState(m_depthStencilState, 1);
 	m_context->OMSetRenderTargets(1, &m_rtv, m_depthStencilView);
 }
 
