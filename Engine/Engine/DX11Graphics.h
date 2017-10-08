@@ -69,7 +69,7 @@ namespace Lime
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
-
+		void SetZBufferStatus(const bool value);
 
 
 		ID3D11RasterizerState* WireFrame;
@@ -87,25 +87,25 @@ namespace Lime
 		D3D11_VIEWPORT m_viewport;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_deviceContext;
-		IDXGISwapChain* SwapChain;
+		IDXGISwapChain* m_swapChain;
 		ID3D11RenderTargetView* m_renderTargetView;
 		ID3D11BlendState* Transparency;
 		ID3D11BlendState* TransparencyBack;
 
 		//Buffers
 		std::shared_ptr<DX11ConstantBuffer> m_cbManager;
-		std::unique_ptr<DX11BufferManager> m_newBufferManager;
+		std::unique_ptr<DX11BufferManager> m_bufferManager;
 
 		//Dpeth Stencil state
-		std::unique_ptr<DX11DepthStencilState> m_newDSState;
+		std::unique_ptr<DX11DepthStencilState> m_dsState;
 
 		//Shaders
-		std::unique_ptr<DX11Shader> m_newModelShader;
-		std::unique_ptr<DX11Shader> m_newTextShader;
+		std::unique_ptr<DX11Shader> m_modelShader;
+		std::unique_ptr<DX11Shader> m_textShader;
 
 		//Textures
-		std::unique_ptr<DX11Texture> m_newModelTexture;
-		std::unique_ptr<DX11Texture> m_newTextTexture;
+		std::unique_ptr<DX11Texture> m_modelTexture;
+		std::unique_ptr<DX11Texture> m_textTexture;
 	};
 
 

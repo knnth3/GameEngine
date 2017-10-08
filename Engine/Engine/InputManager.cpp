@@ -96,7 +96,7 @@ namespace Lime
         glm::vec4 EyeSpaceCoords;
         if (m_Camera)
         {
-            EyeSpaceCoords = glm::inverse(m_Camera->GetProjectionMatrix()) * mouseCoords;
+            EyeSpaceCoords = glm::inverse(m_Camera->Get3DProjectionMatrix()) * mouseCoords;
             EyeSpaceCoords = glm::vec4(EyeSpaceCoords.x, EyeSpaceCoords.y, -1.0f, 0.0f);
         }
         return EyeSpaceCoords;

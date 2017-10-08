@@ -3,7 +3,7 @@
 Lime::TextInfo::TextInfo(std::string str)
 {
 	data = std::make_shared<Model::Model3D>(TextInfo::LoadModel());
-	data->modelType = Model::TEXT;
+	data->m_modelType = Model::TEXT;
 	data->m_ptr = this;
 	SetText(str);
 }

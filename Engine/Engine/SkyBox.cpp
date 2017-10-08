@@ -37,7 +37,7 @@
 //		//Might need to separate rotation matrix from worldMatrix
 //        glm::mat4 modelMatrix = m_SkyBox.GetLocalToWorld();
 //        m_ShaderProgram.Load4vMatrix(m_Camera->GetViewMatrix(), "view");
-//        m_ShaderProgram.Load4vMatrix(m_Camera->GetProjectionMatrix(), "projection");
+//        m_ShaderProgram.Load4vMatrix(m_Camera->Get3DProjectionMatrix(), "projection");
 //        m_ShaderProgram.Load4vMatrix(modelMatrix, "model");
 //
 //        glBindVertexArray(m_VaoID);

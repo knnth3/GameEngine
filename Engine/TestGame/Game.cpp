@@ -23,12 +23,12 @@ void Game::Initialize()
 	m_camera->AttachToModel(model2);
 	model->SetColor(1.0f, 0.0f, 1.0f, 0.5f);
 	model->SetPosition(0.0f, 3.0f, -15.0f);
-	//m_graphicsDevice->AddModel(model);
+	m_graphicsDevice->AddModel(model);
 	m_graphicsDevice->AddModel(model2);
 	model2->Scale(0.25f, 0.25f, 0.25f);
 	m_graphicsDevice->AddText("Loading...", controller);
-	//controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
-	//controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
+	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
+	controller->Scale(glm::vec3(0.25f, 0.25f, 0.25f));
 	controller->Color(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 }
 
@@ -42,7 +42,7 @@ void Game::Tick()
 	if (count >= 1000)
 	{
 		int fps = (int)(1.0f / time.count());
-		//controller->SetText("Fps: " + std::to_string(fps));
+		controller->SetText("Fps: " + std::to_string(fps));
 		count = 0;
 	}
 	Update(time.count());
@@ -109,8 +109,8 @@ void Game::Update(float elapsed)
 	if (rot > 6.28f)
 		rot = 0.0f;
 
-	//model->RotateAtOrigin(0.0f, rot, 0.0f);
-	model2->Rotate(0.0f, -rot / 2.0f, 0.0f);
+	model->RotateAtOrigin(0.0f, rot, 0.0f);
+	model2->Rotate(0.0f, -rot , 0.0f);
 
 	//Update the colors of our scene
 	red += colormodr * 0.00005f;

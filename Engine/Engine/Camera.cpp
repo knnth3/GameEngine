@@ -13,7 +13,8 @@ namespace Lime
 		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_info.m_upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 		SetResolution(windowWidth, windowHeight);
-		CreateProjectionMatrix();
+		Create3DProjectionMatrix();
+		Create2DProjectionMatrix();
 	}
 
 	void Camera::AttachToModel(std::shared_ptr<Model::Model3D>& model)
@@ -25,11 +26,15 @@ namespace Lime
 	{
 		m_info.m_nearPlane = near;
 		m_info.m_farPlane = far;
+		Create3DProjectionMatrix();
+		Create2DProjectionMatrix();
 	}
 
 	void Camera::SetFOV(float fov)
 	{
 		m_info.m_fov = fov;
+		Create3DProjectionMatrix();
+		Create2DProjectionMatrix();
 	}
 
 	void Camera::Move(float x, float y, float z)
@@ -83,6 +88,8 @@ namespace Lime
         m_info.m_xResolution = width;
         m_info.m_yResolution = height;
 		m_info.m_aspectRatio = ((float)m_info.m_xResolution) / m_info.m_yResolution;
+		Create3DProjectionMatrix();
+		Create2DProjectionMatrix();
     }
 
     void Camera::Zoom(float x)
@@ -121,10 +128,15 @@ namespace Lime
         return m_info.m_view;
     }
 
-    glm::mat4 Camera::GetProjectionMatrix()
+    glm::mat4 Camera::Get3DProjectionMatrix()
     {
-        return m_info.m_projection;
+        return m_info.m_3Dprojection;
     }
+
+	glm::mat4 Camera::Get2DProjectionMatrix()
+	{
+		return m_info.m_2Dprojection;
+	}
 
     float Camera::GetFarPlane()
     {
@@ -151,10 +163,19 @@ namespace Lime
 		m_info.m_view = glm::translate(rotZ, negPos);
     }
 
-    void Camera::CreateProjectionMatrix()
+    void Camera::Create3DProjectionMatrix()
     {
-		m_info.m_projection = glm::infinitePerspective(m_info.m_fov, m_info.m_aspectRatio, m_info.m_nearPlane);
+		m_info.m_3Dprojection = glm::infinitePerspective(m_info.m_fov, m_info.m_aspectRatio, m_info.m_nearPlane);
     }
+
+	void Camera::Create2DProjectionMatrix()
+	{
+		float top = (float)m_info.m_yResolution * 0.5f;
+		float left = (float)m_info.m_xResolution * -0.5f;
+		float bottom = (float)m_info.m_yResolution * -0.5f;
+		float right = (float)m_info.m_xResolution * 0.5f;
+		m_info.m_2Dprojection = glm::ortho(left, right, bottom, top, m_info.m_nearPlane, m_info.m_farPlane);
+	}
 
     void Camera::CalculatePosition(float horizontalDistance, float verticalDistance)
     {

@@ -50,7 +50,7 @@
 //        glm::mat4 modelMatrix = m_MatrixBank[nOfObject];
 //        m_ShaderProgram->Load4vMatrix(modelMatrix, "modelMatrix");
 //
-//        glm::mat4 fullTransformMatrix = m_Camera->GetProjectionMatrix() * m_Camera->GetViewMatrix() * modelMatrix;
+//        glm::mat4 fullTransformMatrix = m_Camera->Get3DProjectionMatrix() * m_Camera->GetViewMatrix() * modelMatrix;
 //        m_ShaderProgram->Load4vMatrix(fullTransformMatrix, "fullTransformMatrix");
 //
 //        m_ShaderProgram->Load3fv(m_Camera->GetPosition(), "cameraPos");

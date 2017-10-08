@@ -41,35 +41,35 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
-		D3D11_SDK_VERSION, &swapChainDesc, &SwapChain, &m_device, NULL, &m_deviceContext);
+		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
 	CheckSuccess(result);
 	//Create our BackBuffer
 	CreateRTV();
 
 	//Depth stencil state
-	m_newDSState = std::make_unique<DX11DepthStencilState>(m_windowWidth, m_windowHeight, m_device, m_deviceContext, m_renderTargetView);
-	m_newDSState->Initialize();
+	m_dsState = std::make_unique<DX11DepthStencilState>(m_windowWidth, m_windowHeight, m_device, m_deviceContext, m_renderTargetView);
+	m_dsState->Initialize();
 
 	//Shaders
 	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
 	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
-	m_newModelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
-	m_newModelShader->Initialize();
+	m_modelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_modelShader->Initialize();
 
 	vsPath = L"shaders/FontVertexShader.hlsl";
 	psPath = L"shaders/FontPixelShader.hlsl";
-	m_newTextShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
-	m_newTextShader->Initialize();
+	m_textShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_textShader->Initialize();
 
 	//Textures
-	m_newTextTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
-	m_newModelTexture = std::make_unique<DX11Texture>(L"outUV.dds", m_device, m_deviceContext);
+	m_textTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
+	m_modelTexture = std::make_unique<DX11Texture>(L"outUV.dds", m_device, m_deviceContext);
 
-	//BMBuffer Manager
+	//Buffer Manager
 	m_cbManager = std::make_shared<DX11ConstantBuffer>(m_device, m_deviceContext);
-	m_newBufferManager = std::make_unique<DX11BufferManager>(m_device, m_deviceContext, m_cbManager);
+	m_bufferManager = std::make_unique<DX11BufferManager>(m_device, m_deviceContext, m_cbManager);
 
-	m_newModelShader->AttachConstBufferManager(m_cbManager);
+	m_modelShader->AttachConstBufferManager(m_cbManager);
 	D3D11_BUFFER_DESC tbd = { 0 };
 	tbd.Usage = D3D11_USAGE_DYNAMIC;
 	tbd.ByteWidth = sizeof(PF_PixelBuffer);
@@ -77,9 +77,9 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	tbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tbd.MiscFlags = 0;
 	tbd.StructureByteStride = 0;
-	m_newModelShader->CreateConstantBuffer(tbd, "Light");
+	m_modelShader->CreateConstantBuffer(tbd, "Light");
 
-	m_newTextShader->AttachConstBufferManager(m_cbManager);
+	m_textShader->AttachConstBufferManager(m_cbManager);
 	D3D11_BUFFER_DESC txtbd = { 0 };
 	txtbd.Usage = D3D11_USAGE_DYNAMIC;
 	txtbd.ByteWidth = sizeof(TextBuffer);
@@ -87,14 +87,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	txtbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	txtbd.MiscFlags = 0;
 	txtbd.StructureByteStride = 0;
-	m_newTextShader->CreateConstantBuffer(txtbd, "Text");
-
-	RECT tex;
-	tex.top = 0;
-	tex.left = 0;
-	tex.right = 1;
-	tex.bottom = 1;
-	HDC handle = (HDC)m_deviceContext;
+	m_textShader->CreateConstantBuffer(txtbd, "Text");
 
 	CreateConstBuffers();
 	CreateRenderStates();
@@ -107,19 +100,23 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 void Lime::DX11Graphics::Close()
 {
-	SwapChain->Release();
-	m_device->Release();
-	m_deviceContext->Release();
-	m_renderTargetView->Release();
-	WireFrame->Release();
-	m_cullBack->Release();
-	Transparency->Release();
+	if (m_swapChain)
+	{
+		m_swapChain->SetFullscreenState(false, NULL);
+	}
+	CLOSE_COM_PTR(m_device);
+	CLOSE_COM_PTR(m_deviceContext);
+	CLOSE_COM_PTR(m_swapChain);
+	CLOSE_COM_PTR(m_renderTargetView);
+	CLOSE_COM_PTR(WireFrame);
+	CLOSE_COM_PTR(m_cullBack);
+	CLOSE_COM_PTR(Transparency);
 }
 
 void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D> model)
 {
-	m_newTextTexture->SetAsActive();
-	m_newTextShader->SetAsActive();
+	m_textTexture->SetAsActive();
+	m_textShader->SetAsActive();
 	for (auto x = 0; x < text.size(); x++)
 	{
 		TextBuffer textInfo;
@@ -127,71 +124,52 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 
 		matrices.world = glm::transpose(model->GetModelMatrix());
 		matrices.view = glm::transpose(m_camera->GetViewMatrix());
-		matrices.projection = glm::transpose(m_camera->GetProjectionMatrix());
+		matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 		matrices.cameraPos = glm::vec3(0.0f);
-		m_newBufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
+		m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 		float currentElement = (float)x;
 		float character = (float)text.at(x);
 		float posOffset = 1.2f;
 		textInfo.PosAscii = glm::vec4(currentElement, character, posOffset, 0.0f);
 		textInfo.color = model->GetColor();
-		m_newModelShader->SetConstBufferData("Text", &textInfo, Lime::ShaderType::Vertex);
+		m_modelShader->SetConstBufferData("Text", &textInfo, Lime::ShaderType::Vertex);
 
 		UINT size = (UINT)model->m_mesh->GetIndexCount();
 		UINT vertOff = model->m_mesh->vertOffset;
 		UINT indOff = model->m_mesh->indiciOffset;
 
-		if (m_isWireframe)
-		{
-			m_deviceContext->RSSetState(WireFrame);
-			m_newBufferManager->DrawIndexed(size, indOff, vertOff);
-		}
-		else
-		{
-			m_deviceContext->RSSetState(m_cullBack);
-			m_newBufferManager->DrawIndexed(size, indOff, vertOff);
-		}
+		m_deviceContext->RSSetState(m_cullBack);
+		m_bufferManager->DrawIndexed(size, indOff, vertOff);
 	}
 }
 
 void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 {
-	m_newModelTexture->SetAsActive();
-	m_newModelShader->SetAsActive();
+	m_modelTexture->SetAsActive();
+	m_modelShader->SetAsActive();
 
 	MatrixBuffer matrices;
 	PF_PixelBuffer lightInfo;
 	matrices.world = glm::transpose(model->GetModelMatrix());
 	matrices.view = glm::transpose(m_camera->GetViewMatrix());
-	matrices.projection = glm::transpose(m_camera->GetProjectionMatrix());
+	matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 	matrices.cameraPos = m_camera->GetPosition();
-	m_newBufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
+	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	lightInfo.ambientColor = m_light.m_ambientColor;
 	lightInfo.diffuseColor = m_light.m_diffuseColor;
 	lightInfo.lightDirection = m_light.m_direction;
 	lightInfo.specularColor = m_light.m_specularColor;
 	lightInfo.specularPower = m_light.m_specularPower;
-	m_newModelShader->SetConstBufferData("Light", &lightInfo, Lime::ShaderType::Pixel);
+	m_modelShader->SetConstBufferData("Light", &lightInfo, Lime::ShaderType::Pixel);
 
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
 	UINT vertOff = model->m_mesh->vertOffset;
 	UINT indOff = model->m_mesh->indiciOffset;
 
 	m_deviceContext->RSSetState(m_cullBack);
-	m_newBufferManager->DrawIndexed(size, indOff, vertOff);
-	//if (m_isWireframe)
-	//{
-
-	//}
-	//else
-	//{
-	//	m_deviceContext->RSSetState(CWcullMode);
-	//	m_deviceContext->DrawIndexed(size, indOff, vertOff);
-	//	m_deviceContext->RSSetState(CCWcullMode);
-	//	m_deviceContext->DrawIndexed(size, indOff, vertOff);
-	//}
+	m_bufferManager->DrawIndexed(size, indOff, vertOff);
 }
 
 bool Lime::DX11Graphics::AddModel(std::shared_ptr<Model::Model3D>& model)
@@ -224,7 +202,7 @@ void Lime::DX11Graphics::Draw()
 	{
 		for (size_t index = 0; index < m_newModelLib.size(); index++)
 		{
-			Model::ModelType type = m_newModelLib[index]->modelType;
+			Model::ModelType type = m_newModelLib[index]->m_modelType;
 			Model::Texture tex = m_newModelLib[index]->GetTexture();
 			if (type == Lime::Model::TEXT)
 			{
@@ -237,7 +215,7 @@ void Lime::DX11Graphics::Draw()
 			}
 		}
 	}
-	SwapChain->Present(0, 0);
+	m_swapChain->Present(0, 0);
 }
 
 void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
@@ -245,11 +223,11 @@ void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
 	HRESULT result;
 	//Reset all objects that use window size
 	m_renderTargetView->Release();
-	result = SwapChain->ResizeBuffers(m_bufferCount, width, height, DXGI_FORMAT_UNKNOWN, NULL);
+	result = m_swapChain->ResizeBuffers(m_bufferCount, width, height, DXGI_FORMAT_UNKNOWN, NULL);
 	CheckSuccess(result);
 
 	CreateRTV();
-	m_newDSState->OnWindowResize(m_renderTargetView, width, height);
+	m_dsState->OnWindowResize(m_renderTargetView, width, height);
 	CreateViewport(width, height);
 	//Is optional
 	m_camera->SetResolution(width, height);
@@ -265,8 +243,8 @@ void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
 	//Clear our backbuffer to the updated color
 	glm::vec4 bgColor(color, 1.0f);
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, (float*)&bgColor);
-	m_newDSState->ClearView();
-	m_newDSState->SetAsActive();
+	m_dsState->ClearView();
+	m_dsState->SetAsActive();
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
@@ -282,9 +260,9 @@ void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
 
 void Lime::DX11Graphics::CreateBuffers()
 {
-	m_newBufferManager->AddVertexData(m_newModelLib.VertexData(), sizeof(Model::Vertex), m_newModelLib.VertexDataSize());
-	m_newBufferManager->AddIndexData(m_newModelLib.IndexData(), sizeof(DWORD), m_newModelLib.IndexDataSize());
-	m_newBufferManager->CompileVertexData();
+	m_bufferManager->AddVertexData(m_newModelLib.VertexData(), sizeof(Model::Vertex), m_newModelLib.VertexDataSize());
+	m_bufferManager->AddIndexData(m_newModelLib.IndexData(), sizeof(DWORD), m_newModelLib.IndexDataSize());
+	m_bufferManager->CompileVertexData();
 }
 
 void Lime::DX11Graphics::CreateConstBuffers()
@@ -296,7 +274,7 @@ void Lime::DX11Graphics::CreateConstBuffers()
 	cbbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbbd.MiscFlags = 0;
 	cbbd.StructureByteStride = 0;
-	m_newBufferManager->CreateBuffer(cbbd, "Matrix");
+	m_bufferManager->CreateBuffer(cbbd, "Matrix");
 }
 
 HRESULT Lime::DX11Graphics::CreateRenderStates()
@@ -353,7 +331,7 @@ HRESULT Lime::DX11Graphics::CreateRTV()
 	HRESULT result;
 
 	ID3D11Texture2D* BackBuffer;
-	result = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
+	result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
 	CheckSuccess(result);
 	//Create our Render Target
 	result = m_device->CreateRenderTargetView(BackBuffer, NULL, &m_renderTargetView);
@@ -375,4 +353,9 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 
 	//Set the Viewport
 	m_deviceContext->RSSetViewports(1, &m_viewport);
+}
+
+void Lime::DX11Graphics::SetZBufferStatus(const bool value)
+{
+	m_dsState->SetDepthBufferStatus(value);
 }

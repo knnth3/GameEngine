@@ -19,7 +19,8 @@ namespace Lime
 		float m_distanceFromObject = 10.0f;
 		float m_angleAroundPlayer = 0.0f;
 		glm::mat4 m_view = glm::mat4(0.0f);
-		glm::mat4 m_projection = glm::mat4(0.0f);
+		glm::mat4 m_3Dprojection = glm::mat4(0.0f);
+		glm::mat4 m_2Dprojection = glm::mat4(0.0f);
 		glm::vec3 m_position = glm::vec3(0.0f, 1.0f, 0.0f);
 		glm::vec3 m_targetPos = glm::vec3(0.0f);
 		glm::vec3 m_upDirection = glm::vec3(0.0f);
@@ -48,17 +49,18 @@ namespace Lime
         AppDLL_API void AddYaw(float yaw);
         AppDLL_API glm::vec3 GetPosition();
         AppDLL_API glm::mat4 GetViewMatrix();
-        AppDLL_API glm::mat4 GetProjectionMatrix();
+        AppDLL_API glm::mat4 Get3DProjectionMatrix();
+		AppDLL_API glm::mat4 Get2DProjectionMatrix();
         AppDLL_API float GetFarPlane();
         AppDLL_API unsigned int GetWindowWidth();
         AppDLL_API unsigned int GetWindowHeight();
     private:
         void CreateViewMatrix();
-        void CreateProjectionMatrix();
+        void Create3DProjectionMatrix();
+		void Create2DProjectionMatrix();
 		float CalculateVertDistance();
 		float CalculateHorisDistance();
         void CalculatePosition(float horizontalDistance, float verticalDistance);
-
 		CAMERA_INFO m_info;
     };
 

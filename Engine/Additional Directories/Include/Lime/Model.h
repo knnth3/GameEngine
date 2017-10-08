@@ -11,11 +11,12 @@ namespace Lime
 	namespace Model
 	{
 		//Enum to identify different model uses
-		enum
+		enum MeshType
 		{
 			NONE = -1,
 			TEXT = 0,
-			MESH = 1
+			MESH = 1,
+			TWO_DIMENSION = 2
 		};
 
 		struct MeshDefaultSettings
@@ -87,6 +88,7 @@ namespace Lime
 		public:
 			AppDLL_API Model3D();
 			AppDLL_API Model3D(const MeshID id);
+			AppDLL_API void SetType(Model::MeshType type);
 			AppDLL_API void Scale(const float x, const float y, const float z);
 			AppDLL_API void Scale(glm::vec3 scale);
 			AppDLL_API void SetPosition(const float x, const float y, const float z);
@@ -112,7 +114,7 @@ namespace Lime
 
 
 		protected:
-			ModelType modelType = NONE;
+			ModelType m_modelType = NONE;
 			std::shared_ptr<MeshData> m_mesh;
 			void * m_ptr;
 		private:
@@ -177,6 +179,7 @@ namespace Lime
 			//-Model Reqs:
 			//--Must be Quadrangulated
 			AppDLL_API static MeshID LoadModel(const std::string& filename, ModelType type = Model::NONE);
+			AppDLL_API static MeshID LoadModel(std::vector<Vertex> verts, std::vector<uint32_t> indices);
 
 		protected:
 			static void GrabMeshData(MeshID id, std::shared_ptr<MeshData>& ptr);

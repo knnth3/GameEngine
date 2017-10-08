@@ -14,6 +14,9 @@ namespace Lime
 		void ClearView();
 		void Close();
 		~DX11DepthStencilState();
+
+		//Change Z buffer status
+		void SetDepthBufferStatus(const bool value);
 	private:
 
 		uint16_t m_windowWidth;
@@ -22,11 +25,14 @@ namespace Lime
 		ID3D11DeviceContext* m_context;
 		ID3D11RenderTargetView* m_rtv;
 		D3D11_TEXTURE2D_DESC m_depthBufferDesc;
-		D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc;
+		D3D11_DEPTH_STENCIL_DESC m_3DdepthStencilDesc;
+		D3D11_DEPTH_STENCIL_DESC m_2DdepthStencilDesc;
 		D3D11_DEPTH_STENCIL_VIEW_DESC m_depthStencilViewDesc;
 		ID3D11Texture2D* m_depthStencilBuffer;
 		ID3D11DepthStencilView* m_depthStencilView;
-		ID3D11DepthStencilState* m_depthStencilState;
+		ID3D11DepthStencilState* m_3DdepthStencilState;
+		ID3D11DepthStencilState* m_2DdepthStencilState;
+
 	};
 }
 

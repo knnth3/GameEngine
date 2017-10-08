@@ -148,6 +148,11 @@ Lime::Model::Model3D::Model3D(const MeshID id) :
 	AddMesh(id);
 }
 
+void Lime::Model::Model3D::SetType(Model::MeshType type)
+{
+	m_modelType = type;
+}
+
 void Lime::Model::Model3D::Scale(const float x, const float y, const float z)
 {
 	m_scale = glm::vec3(x, y, z);
@@ -226,7 +231,7 @@ void Lime::Model::Model3D::AddMesh(MeshID id)
 	{
 		//Possibly implement this later
 		MeshLoader::GetDefaulMeshInfo(id, *this);
-		modelType = MESH;
+		m_modelType = MESH;
 	}
 }
 
@@ -315,6 +320,14 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, ModelType
 
 	}
 	return result;
+}
+
+MeshID Lime::Model::MeshLoader::LoadModel(std::vector<Vertex> verts, std::vector<uint32_t> indices)
+{
+	std::shared_ptr<MeshData> mesh = nullptr;
+	MeshDefaultSettings settings = {};
+
+	return SaveInformation(MESHLIB, mesh, settings);
 }
 
 void Lime::Model::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<MeshData> & ptr)
