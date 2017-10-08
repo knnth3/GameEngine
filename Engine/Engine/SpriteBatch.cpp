@@ -7,7 +7,7 @@
 //namespace Lime
 //{
 //
-//    void SpriteBatch::Initialize(std::shared_ptr<Camera> camera, std::shared_ptr<ShaderProgram> shaders)
+//    void SpriteBatch::CompileVertexData(std::shared_ptr<Camera> camera, std::shared_ptr<ShaderProgram> shaders)
 //    {
 //        m_Camera = camera;
 //        m_ShaderProgram = shaders;
@@ -98,7 +98,7 @@
 //        m_VertexSize = 0;
 //    }
 //
-//    void SpriteBatch::Draw(Model3D& model)
+//    void SpriteBatch::Render(Model3D& model)
 //    {
 //        //Checks to see if the model pointers arent set to 0
 //        //If not, pointer adress is copied to memory bank;
@@ -121,7 +121,7 @@
 //        RenderBatch();
 //    }
 //
-//    void SpriteBatch::Close()
+//    void SpriteBatch::ClearVertexBuffers()
 //    {
 //        m_ModelDataBank.clear();
 //        m_MatrixBank.clear();

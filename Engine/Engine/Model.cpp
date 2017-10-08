@@ -17,12 +17,92 @@ using namespace std;
 
 static MeshLibrary MESHLIB;
 
-c_uint Lime::Model::Polygon::GetVertexCount()
+
+bool Lime::Model::vertexBuffer::empty()
+{
+	size_t vert = m_vertices.size();
+	size_t ind = m_indices.size();
+
+	size_t result = vert*ind;
+	if (result == 0)
+		return true;
+
+	return false;
+}
+
+void Lime::Model::vertexBuffer::clear()
+{
+	m_cachedIDs.clear();
+	m_vertices.clear();
+	m_indices.clear();
+	m_models.clear();
+}
+
+size_t Lime::Model::vertexBuffer::size()
+{
+	return m_models.size();
+}
+
+void Lime::Model::vertexBuffer::AddModel(std::shared_ptr<Model::Model3D>& model)
+{
+	bool similar = false;
+	for (auto const& id : m_cachedIDs)
+	{
+		if (id == model->m_mesh->objectID)
+		{
+			similar = true;
+		}
+	}
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+	model->m_mesh->GetBuffers(vertices, indices);
+	if (!similar)
+	{
+		m_vertices.insert(m_vertices.end(), vertices.begin(), vertices.end());
+		m_indices.insert(m_indices.end(), indices.begin(), indices.end());
+
+		model->m_mesh->vertOffset = VertCountOffset;
+		model->m_mesh->indiciOffset = IndCountOffset;
+		VertCountOffset += (int)vertices.size();
+		IndCountOffset += (int)indices.size();
+		m_cachedIDs.push_back(model->m_mesh->objectID);
+	}
+
+	m_models.push_back(model);
+}
+
+const void * Lime::Model::vertexBuffer::VertexData()
+{
+	return m_vertices.data();
+}
+
+const void * Lime::Model::vertexBuffer::IndexData()
+{
+	return m_indices.data();
+}
+
+uint32_t Lime::Model::vertexBuffer::VertexDataSize()
+{
+	return (uint32_t)m_vertices.size();
+}
+
+uint32_t Lime::Model::vertexBuffer::IndexDataSize()
+{
+	return (uint32_t)m_indices.size();
+}
+
+std::shared_ptr<Lime::Model::Model3D>& Lime::Model::vertexBuffer::operator[](const size_t index)
+{
+	return m_models[index];
+}
+
+template<class T>
+c_uint Lime::Model::Polygon<T>::GetVertexCount()
 {
 	return (c_uint)m_vertices.size();
 }
-
-c_uint Lime::Model::Polygon::GetIndexCount()
+template<class T>
+c_uint Lime::Model::Polygon<T>::GetIndexCount()
 {
 	return (c_uint)m_indices.size();
 }
@@ -221,12 +301,13 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, ModelType
 		FbxNode* node = scene->GetRootNode()->GetChild(0);
 		if (node)
 		{
-			MeshData_ptr mesh = nullptr;
+			std::shared_ptr<MeshData> mesh = nullptr;
 			MeshDefaultSettings settings = {};
 
 			//Populates structures above and saves the to a desired MeshLibrary.
 			Create3DMeshFromFBX(node, mesh, settings, type);
-			result = SaveInformation(MESHLIB, mesh, settings);
+			if(mesh != nullptr)
+				result = SaveInformation(MESHLIB, mesh, settings);
 		}
 
 	close: 
@@ -236,7 +317,7 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, ModelType
 	return result;
 }
 
-void Lime::Model::MeshLoader::GrabMeshData(MeshID id, MeshData_ptr & ptr)
+void Lime::Model::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<MeshData> & ptr)
 {
 	try
 	{
@@ -262,7 +343,7 @@ void Lime::Model::MeshLoader::GetDefaulMeshInfo(MeshID id, Model3D & ptr)
 	}
 }
 
-MeshID Lime::Model::MeshLoader::SaveInformation(MeshLibrary & library, const MeshData_ptr & data, const MeshDefaultSettings & settings)
+MeshID Lime::Model::MeshLoader::SaveInformation(MeshLibrary & library, const std::shared_ptr<MeshData> & data, const MeshDefaultSettings & settings)
 {
 	return library.SaveMesh(data, settings);
 }
@@ -295,7 +376,7 @@ bool Lime::Model::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScen
 	{
 		//Gets the error from load fail
 		//FbxString error = fileReader->GetStatus().GetErrorString();
-		//FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
+		//FBXSDK_printf("Call to FbxImporter::CompileVertexData() failed.\n");
 		//FBXSDK_printf("Error returned: %s\n\n", error.Buffer());
 
 		if (fileReader->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
@@ -345,17 +426,18 @@ bool Lime::Model::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScen
 	return true;
 }
 
-void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, MeshData_ptr& data, MeshDefaultSettings& settings, ModelType type)
+void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings, ModelType type)
 {
 	auto tempdata = std::make_shared<MeshData>();
 	FbxMesh* mesh = pNode->GetMesh();
+	ENFORCE_SUCCESS(mesh, true, return);
 
 	//Populate MeshData with FBX data
 	c_uint totalPolygonCount = mesh->GetPolygonCount();
 	int totalIndexCount = 0;
 	for (uint32_t polyIndex = 0; polyIndex < totalPolygonCount; polyIndex++)
 	{
-		Polygon poly;
+		Polygon<Vertex> poly;
 		int polyVertexCount = mesh->GetPolygonSize(polyIndex);
 		ENFORCE_SUCCESS(polyVertexCount, 3, return);
 		for (int vertexIndex = 0; vertexIndex < polyVertexCount; vertexIndex++)
@@ -476,7 +558,7 @@ glm::vec3 Lime::Model::MeshLoader::FbxVec4ToGlmVec3(const FbxVector4& in)
 	return output;
 }
 
-MeshID Lime::Model::MeshLibrary::SaveMesh(const MeshData_ptr & mesh, const MeshDefaultSettings & setting)
+MeshID Lime::Model::MeshLibrary::SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings & setting)
 {
 	MeshID result = -1;
 	size_t models = m_modelLibrary.size();

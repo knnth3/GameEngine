@@ -1,0 +1,121 @@
+#include "DX11Shader.h"
+#include <dxtex\DirectXTex.h>
+
+#define Check(x, lpctstr) \
+	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
+
+#define CheckSuccess(hresult) \
+	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
+
+#define CLOSE_COM_PTR(ptr) \
+	if(ptr) { ptr->Release(); ptr = nullptr;}
+
+Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context)
+{
+	m_vsPath = vsPath;
+	m_psPath = psPath;
+	m_device = device;
+	m_context = context;
+
+	m_layout = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+}
+
+HRESULT Lime::DX11Shader::Initialize()
+{
+	HRESULT result;
+	ID3DBlob *vsBlob = nullptr;
+	ID3DBlob *psBlob = nullptr;
+	ID3D11VertexShader* VS = nullptr;
+	ID3D11PixelShader* PS = nullptr;
+	ID3D11InputLayout* vertLayout = nullptr;
+
+	result = CompileShader(m_vsPath, "main", "vs_5_0", &vsBlob);
+	CheckSuccess(result);
+
+	result = CompileShader(m_psPath, "main", "ps_5_0", &psBlob);
+	CheckSuccess(result);
+
+	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
+	CheckSuccess(result);
+
+	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
+	CheckSuccess(result);
+
+	result = m_device->CreateInputLayout(m_layout.data(), (UINT)m_layout.size(), vsBlob->GetBufferPointer(),
+		vsBlob->GetBufferSize(), &vertLayout);
+	CheckSuccess(result);
+
+	m_vertLayout = vertLayout;
+	m_vertexShader = VS;
+	m_pixelShader = PS;
+
+	vsBlob->Release();
+	psBlob->Release();
+
+	return result;
+}
+
+void Lime::DX11Shader::Close()
+{
+	CLOSE_COM_PTR(m_vertLayout);
+	CLOSE_COM_PTR(m_vertexShader);
+	CLOSE_COM_PTR(m_pixelShader);
+}
+
+void Lime::DX11Shader::SetAsActive()
+{
+	m_context->IASetInputLayout(m_vertLayout);
+	m_context->VSSetShader(m_vertexShader, 0, 0);
+	m_context->PSSetShader(m_pixelShader, 0, 0);
+}
+
+Lime::DX11Shader::~DX11Shader()
+{
+	Close();
+}
+
+void Lime::DX11Shader::SetLayout(std::vector<D3D11_INPUT_ELEMENT_DESC> newLayout)
+{
+	Close();
+	m_layout = newLayout;
+}
+
+HRESULT Lime::DX11Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
+	LPCSTR profile, ID3DBlob** blob)
+{
+	if (!srcFile || !entryPoint || !profile || !blob)
+		return E_INVALIDARG;
+
+	*blob = nullptr;
+
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+	flags |= D3DCOMPILE_DEBUG;
+#endif
+	ID3DBlob* shaderBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
+	HRESULT hr = D3DCompileFromFile(srcFile, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		entryPoint, profile,
+		flags, 0, &shaderBlob, &errorBlob);
+	if (FAILED(hr))
+	{
+		if (errorBlob)
+		{
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+		}
+
+		if (shaderBlob)
+			shaderBlob->Release();
+
+		return hr;
+	}
+
+	*blob = shaderBlob;
+
+	return hr;
+}

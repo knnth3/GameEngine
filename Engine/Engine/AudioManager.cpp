@@ -61,7 +61,7 @@
 //        }
 //    }
 //
-//    bool AudioManager::Close()
+//    bool AudioManager::ClearVertexBuffers()
 //    {
 //        SDL_CloseAudioDevice(mAudioDeviceID);
 //        SDL_FreeWAV(wavStart);

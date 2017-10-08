@@ -3,7 +3,7 @@
 //namespace Lime
 //{
 //
-//    int SkyBox::Initialize(std::shared_ptr<Camera>& camera)
+//    int SkyBox::CompileVertexData(std::shared_ptr<Camera>& camera)
 //    {
 //        m_Camera = camera;
 //        CreateVertexArray();
@@ -31,7 +31,7 @@
 //        return 0;
 //    }
 //
-//    void SkyBox::Draw()
+//    void SkyBox::Render()
 //    {
 //        m_ShaderProgram.Use();
 //		//Might need to separate rotation matrix from worldMatrix
@@ -52,7 +52,7 @@
 //        glBindVertexArray(0);
 //    }
 //
-//    void SkyBox::Close()
+//    void SkyBox::ClearVertexBuffers()
 //    {
 //        m_ShaderProgram.DeleteProgram();
 //        glDeleteTextures(1, &m_Texture);

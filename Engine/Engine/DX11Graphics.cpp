@@ -23,7 +23,7 @@ Lime::DX11Graphics::~DX11Graphics()
 HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, const UINT height)
 {
 	HRESULT result;
-	DXGI_MODE_DESC bufferDesc = {0};
+	DXGI_MODE_DESC bufferDesc = { 0 };
 
 	bufferDesc.Width = width;
 	bufferDesc.Height = height;
@@ -42,13 +42,13 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
-		D3D11_SDK_VERSION, &swapChainDesc, &SwapChain, &m_dx11device, NULL, &m_dx11Context);
+		D3D11_SDK_VERSION, &swapChainDesc, &SwapChain, &m_device, NULL, &m_deviceContext);
 	CheckSuccess(result);
 	//Create our BackBuffer
 	CreateRTV();
 
 	//Set our Render Target
-	m_dx11Context->OMSetRenderTargets(1, &renderTargetView, NULL);
+	m_deviceContext->OMSetRenderTargets(1, &renderTargetView, NULL);
 	LPCWSTR m_vsPath = L"shaders/VertexShader.hlsl";
 	LPCWSTR m_psPath = L"shaders/PixelShader.hlsl";
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
@@ -61,21 +61,22 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	m_vsPath = L"shaders/FontVertexShader.hlsl";
 	m_psPath = L"shaders/FontPixelShader.hlsl";
 	CreateShaders(m_vsPath, m_psPath, layout, layoutSize);
-	LoadTextureFromFile(L"white.dds");
+	LoadTextureFromFile(L"image.dds");
+	//m_newTexture = std::make_unique<DX11Texture>(L"image.dds", m_device, m_deviceContext);
 
 	RECT tex;
 	tex.top = 0;
 	tex.left = 0;
 	tex.right = 1;
 	tex.bottom = 1;
-	HDC handle = (HDC)m_dx11Context;
+	HDC handle = (HDC)m_deviceContext;
 
 	CreateConstBuffers();
 	CreateRenderStates();
 	CreateDepthStencil(width, height);
 	CreateViewport(width, height);
 	CreateBlendState();
-	m_dx11Context->RSSetState(CCWcullMode);
+	m_deviceContext->RSSetState(CCWcullMode);
 
 	return result;
 }
@@ -83,8 +84,8 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 void Lime::DX11Graphics::Close()
 {
 	SwapChain->Release();
-	m_dx11device->Release();
-	m_dx11Context->Release();
+	m_device->Release();
+	m_deviceContext->Release();
 	renderTargetView->Release();
 	m_vertexBuffer->Release();
 	m_indexBuffer->Release();
@@ -138,9 +139,9 @@ void Lime::DX11Graphics::Close()
 
 void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D> model)
 {
-	m_dx11Context->VSSetShader(m_vertexShaders[1], 0, 0);
-	m_dx11Context->PSSetShader(m_pixelShaders[1], 0, 0);
-	m_dx11Context->IASetInputLayout(m_vertLayouts[1]);
+	m_deviceContext->VSSetShader(m_vertexShaders[1], 0, 0);
+	m_deviceContext->PSSetShader(m_pixelShaders[1], 0, 0);
+	m_deviceContext->IASetInputLayout(m_vertLayouts[1]);
 	for (auto x = 0; x < text.size(); x++)
 	{
 		HRESULT result;
@@ -148,17 +149,17 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		TextBuffer* dataPtr;
 		MatrixBuffer* dataPtr2;
 		PF_PixelBuffer* dataPtr3;
-		result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		result = m_deviceContext->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CheckSuccess(result);
 
 		dataPtr2 = (MatrixBuffer*)mappedResource.pData;
 		dataPtr2->world = glm::transpose(model->GetModelMatrix());
 		dataPtr2->view = glm::transpose(m_camera->GetViewMatrix());
 		dataPtr2->projection = glm::transpose(m_camera->GetProjectionMatrix());
-		m_dx11Context->Unmap(m_ObjConstBuffer, 0);
-		m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+		m_deviceContext->Unmap(m_ObjConstBuffer, 0);
+		m_deviceContext->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
 
-		result = m_dx11Context->Map(m_textBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		result = m_deviceContext->Map(m_textBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CheckSuccess(result);
 
 		dataPtr = (TextBuffer*)mappedResource.pData;
@@ -166,18 +167,18 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		float character = (float)text.at(x);
 		float posOffset = 1.2f;
 		dataPtr->PosAscii = glm::vec4(currentElement, character, posOffset, 0.0f);
-		m_dx11Context->Unmap(m_textBuffer, 0);
-		m_dx11Context->VSSetConstantBuffers(1, 1, &m_textBuffer);
+		m_deviceContext->Unmap(m_textBuffer, 0);
+		m_deviceContext->VSSetConstantBuffers(1, 1, &m_textBuffer);
 
-		result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		result = m_deviceContext->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		CheckSuccess(result);
 
 		dataPtr3 = (PF_PixelBuffer*)mappedResource.pData;
 		dataPtr3->specularColor = model->GetColor();
 		dataPtr3->diffuseColor = m_light.m_diffuseColor;
 		dataPtr3->lightDirection = m_light.m_direction;
-		m_dx11Context->Unmap(m_transparentBuffer, 0);
-		m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+		m_deviceContext->Unmap(m_transparentBuffer, 0);
+		m_deviceContext->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 
 		UINT size = (UINT)model->m_mesh->GetIndexCount();
 		UINT vertOff = model->m_mesh->vertOffset;
@@ -185,27 +186,27 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 
 		if (m_isWireframe)
 		{
-			m_dx11Context->RSSetState(WireFrame);
-			m_dx11Context->DrawIndexed(size, indOff, vertOff);
+			m_deviceContext->RSSetState(WireFrame);
+			m_deviceContext->DrawIndexed(size, indOff, vertOff);
 		}
 		else
 		{
-			m_dx11Context->RSSetState(NoCull);
-			m_dx11Context->DrawIndexed(size, indOff, vertOff);
+			m_deviceContext->RSSetState(NoCull);
+			m_deviceContext->DrawIndexed(size, indOff, vertOff);
 		}
 	}
 }
 
 void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 {
-	m_dx11Context->VSSetShader(m_vertexShaders[0], 0, 0);
-	m_dx11Context->PSSetShader(m_pixelShaders[0], 0, 0);
-	m_dx11Context->IASetInputLayout(m_vertLayouts[0]);
+	m_deviceContext->VSSetShader(m_vertexShaders[0], 0, 0);
+	m_deviceContext->PSSetShader(m_pixelShaders[0], 0, 0);
+	m_deviceContext->IASetInputLayout(m_vertLayouts[0]);
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBuffer* dataPtr;
 	PF_PixelBuffer* dataPtr2;
-	result = m_dx11Context->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = m_deviceContext->Map(m_ObjConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	CheckSuccess(result);
 
 	dataPtr = (MatrixBuffer*)mappedResource.pData;
@@ -213,10 +214,10 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	dataPtr->view = glm::transpose(m_camera->GetViewMatrix());
 	dataPtr->projection = glm::transpose(m_camera->GetProjectionMatrix());
 	dataPtr->cameraPos = m_camera->GetPosition();
-	m_dx11Context->Unmap(m_ObjConstBuffer, 0);
-	m_dx11Context->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
+	m_deviceContext->Unmap(m_ObjConstBuffer, 0);
+	m_deviceContext->VSSetConstantBuffers(0, 1, &m_ObjConstBuffer);
 
-	result = m_dx11Context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = m_deviceContext->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	CheckSuccess(result);
 
 	dataPtr2 = (PF_PixelBuffer*)mappedResource.pData;
@@ -225,22 +226,22 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D> model)
 	dataPtr2->lightDirection = m_light.m_direction;
 	dataPtr2->specularColor = m_light.m_specularColor;
 	dataPtr2->specularPower = m_light.m_specularPower;
-	m_dx11Context->Unmap(m_transparentBuffer, 0);
-	m_dx11Context->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
+	m_deviceContext->Unmap(m_transparentBuffer, 0);
+	m_deviceContext->PSSetConstantBuffers(0, 1, &m_transparentBuffer);
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
 	UINT vertOff = model->m_mesh->vertOffset;
 	UINT indOff = model->m_mesh->indiciOffset;
 	if (m_isWireframe)
 	{
-		m_dx11Context->RSSetState(WireFrame);
-		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		m_deviceContext->RSSetState(WireFrame);
+		m_deviceContext->DrawIndexed(size, indOff, vertOff);
 	}
 	else
 	{
-		m_dx11Context->RSSetState(CWcullMode);
-		m_dx11Context->DrawIndexed(size, indOff, vertOff);
-		m_dx11Context->RSSetState(CCWcullMode);
-		m_dx11Context->DrawIndexed(size, indOff, vertOff);
+		m_deviceContext->RSSetState(CWcullMode);
+		m_deviceContext->DrawIndexed(size, indOff, vertOff);
+		m_deviceContext->RSSetState(CCWcullMode);
+		m_deviceContext->DrawIndexed(size, indOff, vertOff);
 	}
 }
 
@@ -334,13 +335,13 @@ void Lime::DX11Graphics::Draw()
 			Model::Texture tex = model->second->GetTexture();
 			if (type == Lime::Model::TEXT)
 			{
-				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[tex]);
+				m_deviceContext->PSSetShaderResources(0, 1, &m_textures[tex]);
 				auto ptr = reinterpret_cast<TextInfo*>(model->second->m_ptr);
 				RenderText(ptr->GetText(), model->second);
 			}
 			else if (type == Lime::Model::MESH)
 			{
-				m_dx11Context->PSSetShaderResources(0, 1, &m_textures[tex]);
+				m_deviceContext->PSSetShaderResources(0, 1, &m_textures[tex]);
 				RenderMesh(model->second);
 			}
 		}
@@ -350,7 +351,7 @@ void Lime::DX11Graphics::Draw()
 
 ID3D11DeviceContext * Lime::DX11Graphics::GetDeviceContext() const
 {
-	return m_dx11Context;
+	return m_deviceContext;
 }
 
 ID3D11RenderTargetView * Lime::DX11Graphics::GetRenderTargetView() const
@@ -420,7 +421,7 @@ Lime::Model::Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filena
 	if (SUCCEEDED(result))
 	{
 		ID3D11ShaderResourceView* pResource = nullptr;
-		result = CreateShaderResourceView(m_dx11device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pResource);
+		result = CreateShaderResourceView(m_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pResource);
 		CheckSuccess(result);
 
 		tex = (Model::Texture)m_textures.size();
@@ -437,11 +438,11 @@ Lime::Model::Texture Lime::DX11Graphics::LoadTextureFromFile(std::wstring filena
 			sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 			sampDesc.MinLOD = 0;
 			sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-			result = m_dx11device->CreateSamplerState(&sampDesc, &state);
+			result = m_device->CreateSamplerState(&sampDesc, &state);
 			CheckSuccess(result);
 
 			m_samplerStates.push_back(state);
-			m_dx11Context->PSSetSamplers(0, 1, &m_samplerStates[0]);
+			m_deviceContext->PSSetSamplers(0, 1, &m_samplerStates[0]);
 		}
 	}
 	return tex;
@@ -467,19 +468,19 @@ HRESULT Lime::DX11Graphics::CreateBuffers()
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = m_modelLib.vertices.data();
-	result = m_dx11device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
+	result = m_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
 	CheckSuccess(result);
 
 	D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
 	indexBufferData.pSysMem = m_modelLib.indices.data();
-	m_dx11device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
+	m_device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
 
 	UINT stride = sizeof(Model::Vertex);
 	UINT offset = 0;
-	m_dx11Context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-	m_dx11Context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	m_dx11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	return result;
 }
 
@@ -498,15 +499,15 @@ HRESULT Lime::DX11Graphics::CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_
 	result = CompileShader(psPath, "main", "ps_5_0", &psBlob);
 	CheckSuccess(result);
 
-	result = m_dx11device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
+	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &VS);
 	CheckSuccess(result);
 	m_vertexShaders.push_back(VS);
 
-	result = m_dx11device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
+	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &PS);
 	CheckSuccess(result);
 	m_pixelShaders.push_back(PS);
 
-	result = m_dx11device->CreateInputLayout(layout, (UINT)layoutSize, vsBlob->GetBufferPointer(),
+	result = m_device->CreateInputLayout(layout, (UINT)layoutSize, vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(), &vertLayout);
 	CheckSuccess(result);
 	m_vertLayouts.push_back(vertLayout);
@@ -527,7 +528,7 @@ HRESULT Lime::DX11Graphics::CreateConstBuffers()
 	cbbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbbd.MiscFlags = 0;
 	cbbd.StructureByteStride = 0;
-	result = m_dx11device->CreateBuffer(&cbbd, NULL, &m_ObjConstBuffer);
+	result = m_device->CreateBuffer(&cbbd, NULL, &m_ObjConstBuffer);
 	CheckSuccess(result);
 
 	D3D11_BUFFER_DESC tbd = { 0 };
@@ -537,7 +538,7 @@ HRESULT Lime::DX11Graphics::CreateConstBuffers()
 	tbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tbd.MiscFlags = 0;
 	tbd.StructureByteStride = 0;
-	result = m_dx11device->CreateBuffer(&tbd, NULL, &m_transparentBuffer);
+	result = m_device->CreateBuffer(&tbd, NULL, &m_transparentBuffer);
 	CheckSuccess(result);
 
 	D3D11_BUFFER_DESC txtbd = { 0 };
@@ -547,7 +548,7 @@ HRESULT Lime::DX11Graphics::CreateConstBuffers()
 	txtbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	txtbd.MiscFlags = 0;
 	txtbd.StructureByteStride = 0;
-	result = m_dx11device->CreateBuffer(&txtbd, NULL, &m_textBuffer);
+	result = m_device->CreateBuffer(&txtbd, NULL, &m_textBuffer);
 	CheckSuccess(result);
 
 	hasConsBuffers = true;
@@ -560,7 +561,7 @@ HRESULT Lime::DX11Graphics::CreateRenderStates()
 	D3D11_RASTERIZER_DESC wfdesc = {};
 	wfdesc.FillMode = D3D11_FILL_WIREFRAME;
 	wfdesc.CullMode = D3D11_CULL_NONE;
-	result = m_dx11device->CreateRasterizerState(&wfdesc, &WireFrame);
+	result = m_device->CreateRasterizerState(&wfdesc, &WireFrame);
 	CheckSuccess(result);
 
 	return result;
@@ -570,7 +571,7 @@ HRESULT Lime::DX11Graphics::CreateDepthStencil(const UINT width, const UINT heig
 {
 	HRESULT result;
 	//Describe our Depth/Stencil Buffer
-	D3D11_TEXTURE2D_DESC depthBufferDesc = {0};
+	D3D11_TEXTURE2D_DESC depthBufferDesc = { 0 };
 	depthBufferDesc.Width = width;
 	depthBufferDesc.Height = height;
 	depthBufferDesc.MipLevels = 1;
@@ -608,18 +609,18 @@ HRESULT Lime::DX11Graphics::CreateDepthStencil(const UINT width, const UINT heig
 	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
-	result = m_dx11device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencilBuffer);
+	result = m_device->CreateTexture2D(&depthBufferDesc, NULL, &depthStencilBuffer);
 	CheckSuccess(result);
 
-	result = m_dx11device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+	result = m_device->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
 	CheckSuccess(result);
 
-	m_dx11Context->OMSetDepthStencilState(m_depthStencilState, 1);
+	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
 
-	result = m_dx11device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
+	result = m_device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &m_depthStencilView);
 	CheckSuccess(result);
 
-	m_dx11Context->OMSetRenderTargets(1, &renderTargetView, m_depthStencilView);
+	m_deviceContext->OMSetRenderTargets(1, &renderTargetView, m_depthStencilView);
 
 	return result;
 }
@@ -645,7 +646,7 @@ HRESULT Lime::DX11Graphics::CreateBlendState()
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.RenderTarget[0] = rtbd;
 
-	result = m_dx11device->CreateBlendState(&blendDesc, &Transparency);
+	result = m_device->CreateBlendState(&blendDesc, &Transparency);
 	CheckSuccess(result);
 
 	D3D11_RASTERIZER_DESC cmdesc;
@@ -655,20 +656,20 @@ HRESULT Lime::DX11Graphics::CreateBlendState()
 	cmdesc.CullMode = D3D11_CULL_BACK;
 
 	cmdesc.FrontCounterClockwise = true;
-	result = m_dx11device->CreateRasterizerState(&cmdesc, &CCWcullMode);
+	result = m_device->CreateRasterizerState(&cmdesc, &CCWcullMode);
 	CheckSuccess(result);
 
 	cmdesc.FrontCounterClockwise = false;
-	result = m_dx11device->CreateRasterizerState(&cmdesc, &CWcullMode);
+	result = m_device->CreateRasterizerState(&cmdesc, &CWcullMode);
 	CheckSuccess(result);
 
 	cmdesc.CullMode = D3D11_CULL_NONE;
-	result = m_dx11device->CreateRasterizerState(&cmdesc, &NoCull);
+	result = m_device->CreateRasterizerState(&cmdesc, &NoCull);
 	CheckSuccess(result);
 
 
 	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_dx11Context->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
+	m_deviceContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
 
 	return result;
 }
@@ -681,7 +682,7 @@ HRESULT Lime::DX11Graphics::CreateRTV()
 	result = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
 	CheckSuccess(result);
 	//Create our Render Target
-	result = m_dx11device->CreateRenderTargetView(BackBuffer, NULL, &renderTargetView);
+	result = m_device->CreateRenderTargetView(BackBuffer, NULL, &renderTargetView);
 	CheckSuccess(result);
 
 	BackBuffer->Release();
@@ -699,7 +700,7 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 	viewport.Height = (float)height;
 
 	//Set the Viewport
-	m_dx11Context->RSSetViewports(1, &viewport);
+	m_deviceContext->RSSetViewports(1, &viewport);
 }
 
 HRESULT Lime::DX11Graphics::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, ID3DBlob ** blob)

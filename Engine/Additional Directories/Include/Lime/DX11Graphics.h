@@ -8,6 +8,7 @@
 #include "TextController.h"
 #include "Lime.h"
 #include "D3Dcompiler.h"
+#include "DX11Texture.h"
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -52,7 +53,7 @@ namespace Lime
 		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
 		AppDLL_API ~DX11Graphics();
 		AppDLL_API bool DrawModel(std::shared_ptr<Model::Model3D>& model);
-		AppDLL_API bool DrawText(std::string text , std::shared_ptr<TextController>& controller);
+		AppDLL_API bool DrawText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		AppDLL_API Model::Texture LoadTextureFromFile(std::wstring filename);
 		AppDLL_API HRESULT CreateShaders(LPCWSTR vsPath, LPCWSTR psPath, D3D11_INPUT_ELEMENT_DESC* layout, size_t layoutSize);
@@ -77,7 +78,7 @@ namespace Lime
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
-		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, 
+		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
 			LPCSTR profile, ID3DBlob** blob);
 
 
@@ -100,8 +101,8 @@ namespace Lime
 		ID3D11Texture2D* depthStencilBuffer;
 		std::shared_ptr<Camera> m_camera;
 		ID3D11RasterizerState* WireFrame;
-		ID3D11Device* m_dx11device;
-		ID3D11DeviceContext* m_dx11Context;
+		ID3D11Device* m_device;
+		ID3D11DeviceContext* m_deviceContext;
 		D3D11_VIEWPORT viewport;
 		std::vector<std::shared_ptr<Model::Model3D>> m_models;
 		vertexInfo m_modelLib;
@@ -115,6 +116,8 @@ namespace Lime
 		WorldLight m_light;
 		UINT m_bufferCount;
 		bool m_isWireframe = false;
+
+		std::unique_ptr<DX11Texture> m_newTexture;
 	};
 
 

@@ -1,6 +1,9 @@
 #include "Camera.h"
 #include <glm\gtx\vector_angle.hpp>
 
+#undef near
+#undef far
+
 namespace Lime
 {
 
@@ -150,7 +153,7 @@ namespace Lime
 
     void Camera::CreateProjectionMatrix()
     {
-		m_info.m_projection = glm::infinitePerspective(m_info.m_fov, (float)m_info.m_xResolution/(float)m_info.m_yResolution, m_info.m_nearPlane);
+		m_info.m_projection = glm::infinitePerspective(m_info.m_fov, m_info.m_aspectRatio, m_info.m_nearPlane);
     }
 
     void Camera::CalculatePosition(float horizontalDistance, float verticalDistance)

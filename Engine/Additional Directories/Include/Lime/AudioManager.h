@@ -11,7 +11,7 @@
 //    public:
 //        AppDLL_API bool LoadWAV(std::string filePath);
 //        AppDLL_API void Play(bool statement);
-//        AppDLL_API bool Close();
+//        AppDLL_API bool ClearVertexBuffers();
 //    private:
 //        static void MyAudioCallback(void * userData, Uint8 * stream, int streamLength);
 //        bool CreateAudioDevice();

@@ -6,7 +6,7 @@
 //    {
 //        m_SDLWindow = nullptr;
 //    }
-//    int WindowApp::Initialize(std::string windowName, int windownWidth, int windowHeight, unsigned int flags)
+//    int WindowApp::CompileVertexData(std::string windowName, int windownWidth, int windowHeight, unsigned int flags)
 //    {
 //        Uint32 Currentflags = SDL_WINDOW_OPENGL;
 //        Currentflags |= flags;
@@ -59,7 +59,7 @@
 //            glClear(CLEAR_BUFFER_BITS);
 //    }
 //
-//    int WindowApp::Close()
+//    int WindowApp::ClearVertexBuffers()
 //    {
 //        SDL_DestroyWindow(m_SDLWindow);
 //        SDL_Quit();

@@ -12,11 +12,11 @@
 //    class SpriteBatch
 //    {
 //    public:
-//        AppDLL_API void Initialize(std::shared_ptr<Camera> camera, std::shared_ptr<ShaderProgram> shaders);
+//        AppDLL_API void CompileVertexData(std::shared_ptr<Camera> camera, std::shared_ptr<ShaderProgram> shaders);
 //        AppDLL_API void Begin();
-//        AppDLL_API void Draw(Model3D& model);
+//        AppDLL_API void Render(Model3D& model);
 //        AppDLL_API void End();
-//        AppDLL_API void Close();
+//        AppDLL_API void ClearVertexBuffers();
 //    private:
 //
 //        void CreateRenderBatch();

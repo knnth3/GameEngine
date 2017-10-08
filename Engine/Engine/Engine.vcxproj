@@ -173,7 +173,11 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="Collider_Sphere.cpp" />
     <ClCompile Include="DX11App.cpp" />
     <ClCompile Include="DX11Camera.cpp" />
+    <ClCompile Include="DX11DepthStencilState.cpp" />
     <ClCompile Include="DX11Graphics.cpp" />
+    <ClCompile Include="DX11Shader.cpp" />
+    <ClCompile Include="DX11Texture.cpp" />
+    <ClCompile Include="DX11BufferManager.cpp" />
     <ClCompile Include="DX11WindowApp.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -195,7 +199,11 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Collider_Sphere.h" />
     <ClInclude Include="DX11App.h" />
     <ClInclude Include="DX11Camera.h" />
+    <ClInclude Include="DX11DepthStencilState.h" />
     <ClInclude Include="DX11Graphics.h" />
+    <ClInclude Include="DX11Shader.h" />
+    <ClInclude Include="DX11Texture.h" />
+    <ClInclude Include="DX11BufferManager.h" />
     <ClInclude Include="DX11WindowApp.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Model.h" />
@@ -210,6 +218,12 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Xdata.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="PixelShader2D.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="shaders\FontPixelShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
@@ -233,6 +247,12 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="VertexShader2D.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

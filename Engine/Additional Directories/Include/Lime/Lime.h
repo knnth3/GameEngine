@@ -4,7 +4,12 @@
 #include <iostream>
 #include <string>
 #include <glm\glm.hpp>
+#include <comdef.h>
 
+//included libs
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 //For later use
 ////API Types

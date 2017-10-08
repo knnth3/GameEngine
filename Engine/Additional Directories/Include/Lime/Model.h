@@ -18,17 +18,12 @@ namespace Lime
 			MESH = 1
 		};
 
-		//Forward decls in Model
-		struct Vertex;
-		class MeshData;
-
-
-		typedef uint16_t Texture;
-		typedef short MeshID;
-		typedef const uint32_t c_uint;
-		typedef short ModelType;
-		typedef std::shared_ptr<MeshData> MeshData_ptr;
-		typedef std::shared_ptr<Vertex> Vertex_ptr;
+		struct MeshDefaultSettings
+		{
+			glm::vec3 scale;
+			glm::vec3 rotation;
+			glm::vec3 translation;
+		};
 
 		struct Vertex
 		{
@@ -37,8 +32,22 @@ namespace Lime
 			glm::vec3 m_normal;
 		};
 
+		struct Vertex2D
+		{
+			glm::vec2 m_position;
+			glm::vec2 m_uv;
+			glm::vec4 m_color;
+		};
+
+		typedef uint16_t Texture;
+		typedef short MeshID;
+		typedef const uint32_t c_uint;
+		typedef short ModelType;
+		typedef std::shared_ptr<Vertex> Vertex_ptr;
+
 		//-Class that handles each Polygon face on a mesh
 		//-Max Vertices == sizeof(uint32_t)
+		template<class T>
 		class Polygon
 		{
 			friend class MeshData;
@@ -49,7 +58,7 @@ namespace Lime
 
 		protected:
 			std::vector<uint32_t> m_indices;
-			std::vector<Vertex> m_vertices;
+			std::vector<T> m_vertices;
 		};
 
 		class MeshData
@@ -62,7 +71,7 @@ namespace Lime
 			uint32_t vertOffset = 0;
 			uint32_t indiciOffset = 0;
 		protected:
-			std::vector<Polygon> m_polygons;
+			std::vector<Polygon<Vertex>> m_polygons;
 		};
 
 		//-This class instantiates any object needed to be rendered to the screen.
@@ -72,6 +81,7 @@ namespace Lime
 		//and meters for length;
 		class Model3D
 		{
+			friend class vertexBuffer;
 			friend class Lime::DX11Graphics;
 			friend class Lime::TextInfo;
 		public:
@@ -103,7 +113,7 @@ namespace Lime
 
 		protected:
 			ModelType modelType = NONE;
-			MeshData_ptr m_mesh;
+			std::shared_ptr<MeshData> m_mesh;
 			void * m_ptr;
 		private:
 			void CreateLocalToWorld();
@@ -120,12 +130,27 @@ namespace Lime
 			uint16_t m_texture;
 		};
 
-
-		struct MeshDefaultSettings
+		class vertexBuffer
 		{
-			glm::vec3 scale;
-			glm::vec3 rotation;
-			glm::vec3 translation;
+		public:
+			AppDLL_API bool empty();
+			AppDLL_API void clear();
+			AppDLL_API size_t size();
+			AppDLL_API void AddModel(std::shared_ptr<Model::Model3D>& model);
+			AppDLL_API const void* VertexData();
+			AppDLL_API const void* IndexData();
+			AppDLL_API uint32_t VertexDataSize();
+			AppDLL_API uint32_t IndexDataSize();
+			//Operator overloads
+			AppDLL_API std::shared_ptr<Model::Model3D>& operator[] (const size_t index);
+		private:
+
+			int VertCountOffset = 0;
+			int IndCountOffset = 0;
+			std::vector<UINT> m_cachedIDs;
+			std::vector<Vertex> m_vertices;
+			std::vector<uint32_t> m_indices;
+			std::vector<std::shared_ptr<Model::Model3D>> m_models;
 		};
 
 		//Library that holds given mesh information
@@ -133,9 +158,9 @@ namespace Lime
 		{
 			friend class MeshLoader;
 		public:
-			AppDLL_API MeshID SaveMesh(const MeshData_ptr& mesh, const MeshDefaultSettings& setting);
+			AppDLL_API MeshID SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings& setting);
 		protected:
-			std::vector<MeshData_ptr> m_modelLibrary;
+			std::vector<std::shared_ptr<MeshData>> m_modelLibrary;
 			std::vector<MeshDefaultSettings> m_defaultSettings;
 		};
 
@@ -153,17 +178,17 @@ namespace Lime
 			AppDLL_API static MeshID LoadModel(const std::string& filename, ModelType type = Model::NONE);
 
 		protected:
-			static void GrabMeshData(MeshID id, MeshData_ptr& ptr);
+			static void GrabMeshData(MeshID id, std::shared_ptr<MeshData>& ptr);
 			static void GetDefaulMeshInfo(MeshID id, Model3D& ptr);
 
 		private:
 			//Mesh saving
-			static MeshID SaveInformation(MeshLibrary& library, const MeshData_ptr& data, const MeshDefaultSettings& settings);
+			static MeshID SaveInformation(MeshLibrary& library, const std::shared_ptr<MeshData>& data, const MeshDefaultSettings& settings);
 
 			//FBX file processing
 			static bool InitFBXObjects(FbxManager*& manager, FbxScene*& scene);
 			static bool LoadFBXSceneFromFile(FbxManager* manager, FbxScene* scene, const std::string& filename);
-			static void Create3DMeshFromFBX(FbxNode* pNode, MeshData_ptr& data, MeshDefaultSettings& settings, ModelType type);
+			static void Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings, ModelType type);
 			static bool GetFBXTextureCoordinates(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
 			static bool GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
 
