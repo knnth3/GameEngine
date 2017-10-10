@@ -1,6 +1,6 @@
 #pragma once
 #include <d3d11.h>
-#include "Lime.h"
+#include "Shared.h"
 
 namespace Lime
 {

@@ -15,7 +15,7 @@
 namespace Lime
 {
 	//Forward Decl
-	class DX11App;
+	class App;
 
     class InputManager
     {
@@ -30,7 +30,7 @@ namespace Lime
         AppDLL_API bool KeyStatus(unsigned int keyID);
         AppDLL_API bool KeyPressed(unsigned int keyID);
 	protected:
-		friend class DX11App;
+		friend class App;
 		void KeyDown(unsigned int keyID);
 		void KeyUp(unsigned int keyID);
 		void SetMouseCoords(short x, short y);

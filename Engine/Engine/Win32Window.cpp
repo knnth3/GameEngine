@@ -1,10 +1,10 @@
-#include "DX11WindowApp.h"
+#include "Win32Window.h"
 #include "DirectXMath.h"
 #include "Windowsx.h"
 
 
 
-Lime::DX11WindowApp::DX11WindowApp(LPCWSTR AppName, std::unique_ptr<DX11App> app)
+Lime::Win32Window::Win32Window(LPCWSTR AppName, std::unique_ptr<App>& app)
 {
 	m_appName = AppName;
 	WNDCLASSEX wc = { 0 };
@@ -15,7 +15,7 @@ Lime::DX11WindowApp::DX11WindowApp(LPCWSTR AppName, std::unique_ptr<DX11App> app
 	app = nullptr;
 }
 
-int Lime::DX11WindowApp::Initialize()
+int Lime::Win32Window::Initialize()
 {
 	if (m_application == nullptr)
 		return 1;
@@ -79,7 +79,7 @@ int Lime::DX11WindowApp::Initialize()
 	return 0;
 }
 
-Lime::DX11WindowApp::~DX11WindowApp()
+Lime::Win32Window::~Win32Window()
 {
 	// Fix the display settings if leaving full screen mode.
 	if (FULL_SCREEN)
@@ -96,7 +96,7 @@ Lime::DX11WindowApp::~DX11WindowApp()
 	m_hinstance = NULL;
 }
 
-bool Lime::DX11WindowApp::Run()
+int Lime::Win32Window::Run()
 {
 	MSG msg = {};
 	while (WM_QUIT != msg.message)
@@ -131,7 +131,7 @@ LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 	static bool s_fullscreen = false;
 	// TODO: Set s_fullscreen to true if defaulting to fullscreen.
 
-	auto app = reinterpret_cast<DX11App*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	auto app = reinterpret_cast<App*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
 	switch (message)
 	{

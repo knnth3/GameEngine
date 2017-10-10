@@ -9,7 +9,9 @@ Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11D
 	m_context = context;
 	m_vertLayout = nullptr;
 	m_vertexShader = nullptr;
+	m_geometryShader = nullptr;
 	m_pixelShader = nullptr;
+	m_hasGS = false;
 
 	m_layout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -22,7 +24,19 @@ HRESULT Lime::DX11Shader::Initialize()
 {
 	HRESULT result;
 	ID3DBlob *vsBlob = nullptr;
+	ID3DBlob *gsBlob = nullptr;
 	ID3DBlob *psBlob = nullptr;
+
+	if(m_hasGS)
+	{
+		result = CompileShader(m_gsPath, "main", "gs_5_0", &gsBlob);
+		CheckSuccess(result);
+
+		result = m_device->CreateGeometryShader(gsBlob->GetBufferPointer(), gsBlob->GetBufferSize(), NULL, &m_geometryShader);
+		CheckSuccess(result);
+
+		gsBlob->Release();
+	}
 
 	result = CompileShader(m_vsPath, "main", "vs_5_0", &vsBlob);
 	CheckSuccess(result);
@@ -49,6 +63,7 @@ HRESULT Lime::DX11Shader::Initialize()
 void Lime::DX11Shader::Close()
 {
 	CLOSE_COM_PTR(m_vertexShader);
+	CLOSE_COM_PTR(m_geometryShader);
 	CLOSE_COM_PTR(m_pixelShader);
 	CLOSE_COM_PTR(m_vertLayout);
 }
@@ -58,6 +73,8 @@ void Lime::DX11Shader::SetAsActive()
 	m_context->IASetInputLayout(m_vertLayout);
 	m_context->VSSetShader(m_vertexShader, 0, 0);
 	m_context->PSSetShader(m_pixelShader, 0, 0);
+	if (m_hasGS)
+		m_context->GSSetShader(m_geometryShader, 0, 0);
 }
 
 Lime::DX11Shader::~DX11Shader()

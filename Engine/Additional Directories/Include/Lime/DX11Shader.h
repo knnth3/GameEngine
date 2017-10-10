@@ -2,7 +2,7 @@
 #include <d3d11.h>
 #include <map>
 #include "D3Dcompiler.h"
-#include "Lime.h"
+#include "Shared.h"
 #include "DX11ConstantBuffer.h"
 
 namespace Lime
@@ -33,7 +33,9 @@ namespace Lime
 		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
 			LPCSTR profile, ID3DBlob** blob);
 
+		bool m_hasGS;
 		LPCWSTR m_vsPath;
+		LPCWSTR m_gsPath;
 		LPCWSTR m_psPath;
 
 		std::vector<D3D11_INPUT_ELEMENT_DESC> m_layout;
@@ -43,6 +45,7 @@ namespace Lime
 		ID3D11DeviceContext* m_context;
 		ID3D11InputLayout* m_vertLayout;
 		ID3D11VertexShader* m_vertexShader;
+		ID3D11GeometryShader* m_geometryShader;
 		ID3D11PixelShader* m_pixelShader;
 	};
 }

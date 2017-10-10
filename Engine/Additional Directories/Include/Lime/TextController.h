@@ -1,5 +1,5 @@
 #pragma once
-#include "Lime.h"
+#include "Shared.h"
 #include "Model.h"
 
 namespace Lime

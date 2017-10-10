@@ -1,24 +1,23 @@
 #pragma once
-#include <Lime\DX11App.h>
+#include <Lime\App.h>
 #include <Lime\InputManager.h>
 #include <chrono>
 
 using namespace Lime;
-class Game : public DX11App
+class Game : public App
 {
 public:
 	Game();
 
-	virtual void Initialize();
-	virtual void Tick();
-
 	//state changes
-	virtual void OnActivated();
-	virtual void OnDeactivated();
-	virtual void OnSuspending();
-	virtual void OnResuming();
-	virtual void OnWindowMoved();
-	virtual void OnWindowSizeChanged(int width, int height);
+	virtual void Tick();
+	virtual void OnInitialize() override;
+	virtual void OnActivated() override;
+	virtual void OnDeactivated() override;
+	virtual void OnSuspending() override;
+	virtual void OnResuming() override;
+	virtual void OnWindowMoved() override;
+	virtual void OnWindowSizeChanged(int width, int height) override;
 
 private:
 	void Update(float elapsed);

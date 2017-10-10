@@ -6,7 +6,7 @@
 #include <map>
 #include "Camera.h"
 #include "TextController.h"
-#include "Lime.h"
+#include "Shared.h"
 #include "D3Dcompiler.h"
 #include "DX11Texture.h"
 #include "DX11Shader.h"

@@ -4,7 +4,12 @@
 #include <iostream>
 #include <string>
 #include <glm\glm.hpp>
+#include <comdef.h>
 
+//included libs
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 //For later use
 ////API Types
@@ -13,7 +18,6 @@
 //#define API_OPENGL 0x02
 //#define API_INUSE API_NONE
 #define PI 3.1415927f
-#undef DrawText
 
 //OS Types
 #define OS_UNDEFINED 0x00
@@ -36,6 +40,7 @@
 
 
 #if PLATFORM == OS_WINDOWS
+#include "WindowsAdditionals.h"
 #endif
 
 
@@ -48,6 +53,10 @@
 
 namespace Lime
 {
+
+	void GetFileExt(const std::string& path, std::string& ext);
+
+
 	class WorldLight
 	{
 	public:

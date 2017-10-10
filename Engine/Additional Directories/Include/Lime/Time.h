@@ -1,6 +1,6 @@
 #pragma once
 #include <atomic>
-#include "Lime.h"
+#include "Shared.h"
 
 namespace Lime
 {

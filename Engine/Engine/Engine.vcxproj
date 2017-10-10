@@ -173,7 +173,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collider_Plane.cpp" />
     <ClCompile Include="Collider_Sphere.cpp" />
-    <ClCompile Include="DX11App.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="DX11Camera.cpp" />
     <ClCompile Include="DX11ConstantBuffer.cpp" />
     <ClCompile Include="DX11DepthStencilState.cpp" />
@@ -181,11 +181,12 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11Texture.cpp" />
     <ClCompile Include="DX11BufferManager.cpp" />
-    <ClCompile Include="DX11WindowApp.cpp" />
+    <ClCompile Include="Lime.cpp" />
+    <ClCompile Include="Win32Window.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
-    <ClCompile Include="Lime.cpp" />
+    <ClCompile Include="Shared.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="SpriteBatch.cpp" />
@@ -200,7 +201,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Collider_Plane.h" />
     <ClInclude Include="Collider_Sphere.h" />
-    <ClInclude Include="DX11App.h" />
+    <ClInclude Include="App.h" />
     <ClInclude Include="DX11Camera.h" />
     <ClInclude Include="DX11ConstantBuffer.h" />
     <ClInclude Include="DX11DepthStencilState.h" />
@@ -208,11 +209,12 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DX11BufferManager.h" />
-    <ClInclude Include="DX11WindowApp.h" />
+    <ClInclude Include="Win32Window.h" />
+    <ClInclude Include="Lime.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PhysicsEngine.h" />
-    <ClInclude Include="Lime.h" />
+    <ClInclude Include="Shared.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="SpriteBatch.h" />
@@ -234,6 +236,10 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shaders\GeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shaders\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

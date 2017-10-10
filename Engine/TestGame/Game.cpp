@@ -3,11 +3,11 @@
 using namespace Lime::Model;
 
 Game::Game() :
-	DX11App()
+	App()
 {
 }
 
-void Game::Initialize()
+void Game::OnInitialize()
 {
 	UINT width, height;
 	GetDefaultSize(width, height);
@@ -132,7 +132,7 @@ void Game::Update(float elapsed)
 	model2->Rotate(0.0f, -rot , 0.0f);
 
 	model1->SetColor(red,green, blue);
-	model2->SetColor(red, green, blue);
+	model2->SetColor(green, red, blue);
 
 	//Update the colors of our scene
 	red += colormodr * 0.00005f;

@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <map>
-#include "Lime.h"
+#include "Shared.h"
 #include "DX11ConstantBuffer.h"
 
 namespace Lime

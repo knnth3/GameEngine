@@ -3,7 +3,7 @@
 #include <glm\glm.hpp>
 #include <glm\gtx\transform.hpp>
 #include <glm\gtx\rotate_vector.hpp>
-#include "Lime.h"
+#include "Shared.h"
 #include "Model.h"
 
 typedef uint32_t UINT;
