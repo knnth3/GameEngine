@@ -4,7 +4,7 @@
 #include <glm\gtx\transform.hpp>
 #include <glm\gtx\rotate_vector.hpp>
 #include "Shared.h"
-#include "Model.h"
+#include "Model3D.h"
 
 typedef uint32_t UINT;
 

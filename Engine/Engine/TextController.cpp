@@ -1,9 +1,10 @@
 #include "TextController.h"
+#include "ModelLoader.h"
 
 Lime::TextInfo::TextInfo(std::string str)
 {
 	data = std::make_shared<Model::Model3D>(TextInfo::LoadModel());
-	data->m_modelType = Model::TEXT;
+	data->m_meshType = Model::TEXT;
 	data->m_ptr = this;
 	SetText(str);
 }
@@ -35,7 +36,7 @@ std::shared_ptr<Lime::Model::Model3D>& Lime::TextInfo::GetMesh()
 	return data;
 }
 
-Lime::Model::MeshID Lime::TextInfo::LoadModel()
+MeshID Lime::TextInfo::LoadModel()
 {
 	static bool isFirst = true;
 	static auto data = Model::MeshLoader::LoadModel("TextBox.fbx", Model::TEXT);

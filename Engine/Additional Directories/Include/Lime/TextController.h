@@ -1,6 +1,6 @@
 #pragma once
 #include "Shared.h"
-#include "Model.h"
+#include "Model3D.h"
 
 namespace Lime
 {
@@ -18,7 +18,7 @@ namespace Lime
 		std::shared_ptr<Model::Model3D>& GetMesh();
 
 	private:
-		static Model::MeshID LoadModel();
+		static MeshID LoadModel();
 
 	protected:
 		float middleX = 0.0f;

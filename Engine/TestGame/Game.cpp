@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Lime\ModelLoader.h"
 #include <Windows.h>
 using namespace Lime::Model;
 
@@ -17,33 +18,32 @@ void Game::OnInitialize()
 	start = std::chrono::system_clock::now();
 	end = start;
 
-	std::vector<Vertex> m_verties = 
-	{
-		{ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(300.0f, -300.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) }
-	};
-	std::vector<uint32_t> m_indices =
-	{
-		0,1,2,
-		3,4,5
-	};
+	//std::vector<Vertex> m_verties = 
+	//{
+	//	{ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+	//	{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+	//	{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+	//	{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+	//	{ glm::vec3(300.0f, -300.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
+	//	{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) }
+	//};
+	//std::vector<uint32_t> m_indices =
+	//{
+	//	0,1,2,
+	//	3,4,5
+	//};
+	//auto mesh2 = Model::MeshLoader::LoadModel(m_verties, m_indices);
 
 
 	auto mesh1 = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
-	auto mesh2 = Model::MeshLoader::LoadModel(m_verties, m_indices);
 	model1 = std::make_shared<Model3D>(mesh1);
 	model2 = std::make_shared<Model3D>(mesh1);
-	model3 = std::make_shared<Model3D>(mesh2);
-	model3->SetType(Model::MeshType::TWO_DIMENSION);
+	model3 = std::make_shared<Model2D>(glm::vec2(0.0f, 200.0f));
 	m_camera->AttachToModel(model2);
 	model1->SetPosition(0.0f, 3.0f, -15.0f);
-	m_graphicsDevice->AddModel(model1);
-	m_graphicsDevice->AddModel(model2);
-	m_graphicsDevice->AddModel(model3);
+	m_graphicsDevice->Add3DModel(model1);
+	m_graphicsDevice->Add3DModel(model2);
+	m_graphicsDevice->Add2DModel(model3);
 	model2->Scale(0.25f, 0.25f, 0.25f);
 	m_graphicsDevice->AddText("Loading...", controller);
 	controller->Position(glm::vec3(0.0f, 3.0f, 0.0f));
@@ -118,11 +118,15 @@ void Game::Update(float elapsed)
 	}
 	if (m_input->KeyStatus(0x51) == true) //Q
 	{
-		m_camera->Zoom(-camRot);
+		auto prev = model3->GetPosition();
+		prev.y += camRot * 20.0f;
+		model3->SetPosition(prev);
 	}
 	if (m_input->KeyStatus(0x45) == true) //E
 	{
-		m_camera->Zoom(camRot);
+		auto prev = model3->GetPosition();
+		prev.y += camRot * -20.0f;
+		model3->SetPosition(prev);
 	}
 	rot += 9.8f / 20.0f * elapsed;
 	if (rot > 6.28f)

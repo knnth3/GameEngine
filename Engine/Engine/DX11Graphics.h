@@ -12,6 +12,7 @@
 #include "DX11Shader.h"
 #include "DX11DepthStencilState.h"
 #include "DX11BufferManager.h"
+#include "VertexLibrary.h"
 
 #define Check(x, lpctstr) \
 	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
@@ -50,7 +51,8 @@ namespace Lime
 	public:
 		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
 		AppDLL_API ~DX11Graphics();
-		AppDLL_API bool AddModel(std::shared_ptr<Model::Model3D>& model);
+		AppDLL_API bool Add3DModel(std::shared_ptr<Model::Model3D>& model);
+		AppDLL_API bool Add2DModel(std::shared_ptr<Model::Model2D>& model);
 		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		AppDLL_API void Draw();
@@ -63,7 +65,7 @@ namespace Lime
 		void Close();
 		void RenderText(std::string text, std::shared_ptr<Model::Model3D>& model);
 		void RenderMesh(std::shared_ptr<Model::Model3D>& model);
-		void Render2DMesh(std::shared_ptr<Model::Model3D>& model);
+		void Render2DMesh(std::shared_ptr<Model::Model2D>& model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		void CreateBuffers();
 		void CreateConstBuffers();
@@ -77,6 +79,7 @@ namespace Lime
 		ID3D11RasterizerState* WireFrame;
 		ID3D11RasterizerState* m_cullBack;
 		bool m_isWireframe = false;
+		bool m_hasCreatedBuffers = false;
 
 		//New API
 		const UINT m_bufferCount;
@@ -84,7 +87,7 @@ namespace Lime
 		int m_windowWidth;
 		int m_windowHeight;
 		std::shared_ptr<Camera> m_camera;
-		Model::VertexLibrary m_newModelLib;
+		Model::VertexLibrary m_modelLib;
 		HINSTANCE m_hInstance;
 		D3D11_VIEWPORT m_viewport;
 		ID3D11Device* m_device;

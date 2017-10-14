@@ -15,7 +15,7 @@ struct VSOutput
 	//float4 color : TEXTCOLOR;
 };
 
-VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD)
+VSOutput main(float4 pos : POSITION, float2 inTexCoord : TEXCOORD, float3 normal : NORMAL)
 {
 
 	VSOutput output;

@@ -51,8 +51,12 @@
 #endif
 
 
+typedef short MeshID;
+typedef uint16_t Texture;
+typedef const uint32_t c_uint;
 namespace Lime
 {
+
 
 	void GetFileExt(const std::string& path, std::string& ext);
 

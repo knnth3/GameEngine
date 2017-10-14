@@ -17,74 +17,97 @@ Lime::DX11BufferManager::DX11BufferManager(ID3D11Device* device, ID3D11DeviceCon
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
 	m_cbManager = constbuff;
-	//Default Vertex BMBuffer Description
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = 0;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
+	m_isEmpty = true;
 
-	//Default Pixel BMBuffer Description
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = 0;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
+	//Default Vertex Buffer Description
+	m_vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_vertexBufferDesc.ByteWidth = 0;
+	m_vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_vertexBufferDesc.CPUAccessFlags = 0;
+	m_vertexBufferDesc.MiscFlags = 0;
+
+	//Default Pixel Buffer Description
+	m_indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_indexBufferDesc.ByteWidth = 0;
+	m_indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_indexBufferDesc.CPUAccessFlags = 0;
+	m_indexBufferDesc.MiscFlags = 0;
 }
 
 void Lime::DX11BufferManager::AddVertexData(const void* data, const uint32_t vertexSize, const uint32_t vertexBufferSize)
 {
-	vertexBufferData = { 0 };
-	vertexBufferData.pSysMem = data;
-	vertexBufferDesc.ByteWidth = vertexSize * vertexBufferSize;
-	stride = vertexSize;
+	if (vertexBufferSize)
+	{
+		m_vertexBufferData = { 0 };
+		m_vertexBufferData.pSysMem = data;
+		m_vertexBufferDesc.ByteWidth = vertexSize * vertexBufferSize;
+		stride3d = vertexSize;
+		m_isEmpty = false;
+	}
+
 }
 
 void Lime::DX11BufferManager::AddIndexData(const void * data, const uint32_t indexSize, const uint32_t indexBufferSize)
 {
-	indexBufferData = { 0 };
-	indexBufferData.pSysMem = data;
-	indexBufferDesc.ByteWidth = indexSize * indexBufferSize;
+	m_indexBufferData = { 0 };
+	m_indexBufferData.pSysMem = data;
+	m_indexBufferDesc.ByteWidth = indexSize * indexBufferSize;
 }
 
 void Lime::DX11BufferManager::SetVertexBufferDesc(const D3D11_BUFFER_DESC & desc)
 {
-	vertexBufferData = { 0 };
-	vertexBufferDesc = desc;
+	m_vertexBufferData = { 0 };
+	m_vertexBufferDesc = desc;
 }
 
 void Lime::DX11BufferManager::SetIndexBufferDesc(const D3D11_BUFFER_DESC & desc)
 {
-	indexBufferData = { 0 };
-	indexBufferDesc = desc;
+	m_indexBufferData = { 0 };
+	m_indexBufferDesc = desc;
 }
 
-void Lime::DX11BufferManager::CompileVertexData()
+void Lime::DX11BufferManager::CompileVertexData(const BufferTypes type)
 {
 	//ClearVertexBuffers before intialize for safety
 	ClearVertexBuffers();
 
-	HRESULT result;
-	result = m_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &m_vertexBuffer);
-	CheckSuccess(result);
-	result = m_device->CreateBuffer(&indexBufferDesc, &indexBufferData, &m_indexBuffer);
-	CheckSuccess(result);
-
-	SetAsActive();
+	if (!m_isEmpty)
+	{
+		HRESULT result;
+		result = m_device->CreateBuffer(&m_vertexBufferDesc, &m_vertexBufferData, &m_vertexBuffer);
+		CheckSuccess(result);
+		result = m_device->CreateBuffer(&m_indexBufferDesc, &m_indexBufferData, &m_indexBuffer);
+		CheckSuccess(result);
+	}
 }
 
-void Lime::DX11BufferManager::SetAsActive()
+void Lime::DX11BufferManager::SetAsActive(const BufferTypes type)
 {
 	UINT offset = 0;
-	m_context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	m_context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride3d, &offset);
 	m_context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	switch (type)
+	{
+	case BUFFER_2D:
+		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	case BUFFER_3D:
+		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	default:
+		break;
+	}
 }
 
 void Lime::DX11BufferManager::ClearVertexBuffers()
 {
 	CLOSE_COM_PTR(m_vertexBuffer);
 	CLOSE_COM_PTR(m_indexBuffer);
+}
+
+bool Lime::DX11BufferManager::IsBufferEmpty()
+{
+	return m_isEmpty;
 }
 
 void Lime::DX11BufferManager::CreateBuffer(const D3D11_BUFFER_DESC & desc, const std::string uniqueName, D3D11_SUBRESOURCE_DATA * data)
@@ -103,6 +126,12 @@ void Lime::DX11BufferManager::DrawIndexed(uint32_t size, uint32_t vertexOffset, 
 {
 	m_cbManager->ResetCounter();
 	m_context->DrawIndexed(size, vertexOffset, indexOffset);
+}
+
+void Lime::DX11BufferManager::Draw(uint32_t size, uint32_t offset)
+{
+	m_cbManager->ResetCounter();
+	m_context->Draw(size, offset);
 }
 
 Lime::DX11BufferManager::~DX11BufferManager()

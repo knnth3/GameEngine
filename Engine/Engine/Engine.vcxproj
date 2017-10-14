@@ -182,6 +182,10 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="DX11Texture.cpp" />
     <ClCompile Include="DX11BufferManager.cpp" />
     <ClCompile Include="Lime.cpp" />
+    <ClCompile Include="Model2D.cpp" />
+    <ClCompile Include="Model3D.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="VertexLibrary.cpp" />
     <ClCompile Include="Win32Window.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -209,6 +213,10 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11Texture.h" />
     <ClInclude Include="DX11BufferManager.h" />
+    <ClInclude Include="Model2D.h" />
+    <ClInclude Include="Model3D.h" />
+    <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="VertexLibrary.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="Lime.h" />
     <ClInclude Include="InputManager.h" />

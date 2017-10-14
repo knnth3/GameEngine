@@ -179,7 +179,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
 }
 
-void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model3D>& model)
+void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model2D>& model)
 {
 	m_2DmodelTexture->SetAsActive();
 	m_2DmodelShader->SetAsActive();
@@ -187,7 +187,6 @@ void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model3D>& model)
 	matrices.world = glm::transpose(model->GetModelMatrix());
 	matrices.view = glm::transpose(m_camera->GetIdentityMatrix());
 	matrices.projection = glm::transpose(m_camera->Get2DProjectionMatrix());
-	//matrices.cameraPos = m_camera->GetPosition();
 	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
@@ -198,9 +197,15 @@ void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model3D>& model)
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
 }
 
-bool Lime::DX11Graphics::AddModel(std::shared_ptr<Model::Model3D>& model)
+bool Lime::DX11Graphics::Add3DModel(std::shared_ptr<Model::Model3D>& model)
 {
-	m_newModelLib.AddModel(model);
+	m_modelLib.Add3DModel(model);
+	return true;
+}
+
+bool Lime::DX11Graphics::Add2DModel(std::shared_ptr<Model::Model2D>& model)
+{
+	m_modelLib.Add2DModel(model);
 	return true;
 }
 
@@ -208,46 +213,40 @@ bool Lime::DX11Graphics::AddText(std::string text, std::shared_ptr<TextControlle
 {
 	auto ctrler = std::make_shared<TextController>(text);
 	auto mesh = ctrler->GetInfo()->GetMesh();
-	AddModel(mesh);
+	Add3DModel(mesh);
 	controller = ctrler;
 	return true;
 }
 
 void Lime::DX11Graphics::Draw()
 {
-	static bool hasEntered = false;
-	if (!m_newModelLib.empty())
-	{
-		if (!hasEntered)
-		{
-			CreateBuffers();
-			hasEntered = true;
-		}
-	}
-	if (hasEntered && m_camera != nullptr)
+	CreateBuffers();
+	if (m_hasCreatedBuffers && m_camera != nullptr)
 	{
 		//Render 3D objects
+		m_bufferManager->SetAsActive(BufferTypes::BUFFER_3D);
 		m_dsState->SetDepthBufferStatus(true);
-		for (size_t index = 0; index < m_newModelLib.size(); index++)
+		for (size_t index = 0; index < m_modelLib.size(); index++)
 		{
-			Model::ModelType type = m_newModelLib[index]->m_modelType;
-			Model::Texture tex = m_newModelLib[index]->GetTexture();
+			Model::MeshType type = m_modelLib[index]->m_meshType;
+			Texture tex = m_modelLib[index]->GetTexture();
 			if (type == Lime::Model::TEXT)
 			{
-				auto ptr = reinterpret_cast<TextInfo*>(m_newModelLib[index]->m_ptr);
-				RenderText(ptr->GetText(), m_newModelLib[index]);
+				auto ptr = reinterpret_cast<TextInfo*>(m_modelLib[index]->m_ptr);
+				RenderText(ptr->GetText(), m_modelLib[index]);
 			}
-			else if (type == Lime::Model::MESH)
+			else if (type == Lime::Model::TRIANGLE)
 			{
-				RenderMesh(m_newModelLib[index]);
+				RenderMesh(m_modelLib[index]);
 			}
 		}
 
 		//Render 2D objects
+		m_bufferManager->SetAsActive(BufferTypes::BUFFER_2D);
 		m_dsState->SetDepthBufferStatus(false);
-		for (size_t index = 0; index < m_newModelLib.size2D(); index++)
+		for (size_t index = 0; index < m_modelLib.size2D(); index++)
 		{
-			Render2DMesh(m_newModelLib.at2D(index));
+			Render2DMesh(m_modelLib.at2D(index));
 		}
 	}
 	m_swapChain->Present(0, 0);
@@ -285,7 +284,7 @@ void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
 
 void Lime::DX11Graphics::Reset()
 {
-	m_newModelLib.clear();
+	m_modelLib.clear();
 }
 
 void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
@@ -295,9 +294,17 @@ void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)
 
 void Lime::DX11Graphics::CreateBuffers()
 {
-	m_bufferManager->AddVertexData(m_newModelLib.VertexData(), sizeof(Model::Vertex), m_newModelLib.VertexDataSize());
-	m_bufferManager->AddIndexData(m_newModelLib.IndexData(), sizeof(DWORD), m_newModelLib.IndexDataSize());
-	m_bufferManager->CompileVertexData();
+	static uint32_t buffSize2D = 0;
+	if (!m_modelLib.empty())
+	{
+		if (!m_hasCreatedBuffers)
+		{
+			m_bufferManager->AddVertexData(m_modelLib.VertexData(), sizeof(Model::Vertex), m_modelLib.VertexDataSize());
+			m_bufferManager->AddIndexData(m_modelLib.IndexData(), sizeof(DWORD), m_modelLib.IndexDataSize());
+			m_bufferManager->CompileVertexData(BufferTypes::BUFFER_GENERAL);
+			m_hasCreatedBuffers = true;
+		}
+	}
 }
 
 void Lime::DX11Graphics::CreateConstBuffers()
