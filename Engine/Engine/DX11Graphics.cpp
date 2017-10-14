@@ -53,6 +53,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	//Shaders
 	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
 	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
+	LPCWSTR gsPath = L"";
 	m_3DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
 	m_3DmodelShader->Initialize();
 
@@ -63,7 +64,8 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 
 	vsPath = L"shaders/VertexShader2D.hlsl";
 	psPath = L"shaders/PixelShader2D.hlsl";
-	m_2DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	gsPath = L"shaders/GeometryShader2D.hlsl";
+	m_2DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext, gsPath);
 	m_2DmodelShader->Initialize();
 
 	//Textures
@@ -88,12 +90,12 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	m_textShader->AttachConstBufferManager(m_cbManager);
 	D3D11_BUFFER_DESC txtbd = { 0 };
 	txtbd.Usage = D3D11_USAGE_DYNAMIC;
-	txtbd.ByteWidth = sizeof(TextBuffer);
+	txtbd.ByteWidth = sizeof(Float8);
 	txtbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	txtbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	txtbd.MiscFlags = 0;
 	txtbd.StructureByteStride = 0;
-	m_textShader->CreateConstantBuffer(txtbd, "Text");
+	m_textShader->CreateConstantBuffer(txtbd, "float8");
 
 	CreateConstBuffers();
 	CreateRenderStates();
@@ -125,7 +127,7 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 	m_textShader->SetAsActive();
 	for (auto x = 0; x < text.size(); x++)
 	{
-		TextBuffer textInfo;
+		Float8 textInfo;
 		MatrixBuffer matrices;
 
 		matrices.world = glm::transpose(model->GetModelMatrix());
@@ -137,9 +139,9 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		float currentElement = (float)x;
 		float character = (float)text.at(x);
 		float posOffset = 1.2f;
-		textInfo.PosAscii = glm::vec4(currentElement, character, posOffset, 0.0f);
-		textInfo.color = model->GetColor();
-		m_3DmodelShader->SetConstBufferData("Text", &textInfo, Lime::ShaderType::Vertex);
+		textInfo.one = glm::vec4(currentElement, character, posOffset, 0.0f);
+		textInfo.two = model->GetColor();
+		m_3DmodelShader->SetConstBufferData("float8", &textInfo, Lime::ShaderType::Vertex);
 
 		UINT size = (UINT)model->m_mesh->GetIndexCount();
 		UINT vertOff = model->m_mesh->vertOffset;
@@ -161,7 +163,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 	matrices.view = glm::transpose(m_camera->GetViewMatrix());
 	matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 	matrices.cameraPos = m_camera->GetPosition();
-	matrices.color = model->GetColor();
+	matrices.two = model->GetColor();
 	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	lightInfo.ambientColor = m_light.m_ambientColor;
@@ -187,7 +189,12 @@ void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model2D>& model)
 	matrices.world = glm::transpose(model->GetModelMatrix());
 	matrices.view = glm::transpose(m_camera->GetIdentityMatrix());
 	matrices.projection = glm::transpose(m_camera->Get2DProjectionMatrix());
-	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
+	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Geometry);
+
+	Float8 data;
+	data.one = model->GetColor();
+	data.two = { model->GetLength(), model->GetWidth(), 0.0f, 0.0f };
+	m_bufferManager->SetBufferData("float8", &data, Lime::ShaderType::Geometry);
 
 	UINT size = (UINT)model->m_mesh->GetIndexCount();
 	UINT vertOff = model->m_mesh->vertOffset;
@@ -250,6 +257,7 @@ void Lime::DX11Graphics::Draw()
 		}
 	}
 	m_swapChain->Present(0, 0);
+	ResetView();
 }
 
 void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
@@ -272,14 +280,11 @@ void Lime::DX11Graphics::Wireframe(bool statemnent)
 	m_isWireframe = statemnent;
 }
 
-void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
+void Lime::DX11Graphics::ClearScreen(glm::vec3 two)
 {
-	//Clear our backbuffer to the updated color
-	glm::vec4 bgColor(color, 1.0f);
+	//Clear our backbuffer to the updated two
+	glm::vec4 bgColor(two, 1.0f);
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, (float*)&bgColor);
-	m_dsState->ClearView();
-	m_dsState->SetAsActive();
-	m_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 void Lime::DX11Graphics::Reset()
@@ -400,4 +405,11 @@ void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
 void Lime::DX11Graphics::SetZBufferStatus(const bool value)
 {
 	m_dsState->SetDepthBufferStatus(value);
+}
+
+void Lime::DX11Graphics::ResetView()
+{
+	m_dsState->ClearView();
+	m_dsState->SetAsActive();
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 }

@@ -38,7 +38,8 @@ void Game::OnInitialize()
 	auto mesh1 = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
 	model1 = std::make_shared<Model3D>(mesh1);
 	model2 = std::make_shared<Model3D>(mesh1);
-	model3 = std::make_shared<Model2D>(glm::vec2(0.0f, 200.0f));
+	model3 = std::make_shared<Model2D>(glm::vec2(0.0f, 0.0f), (float)width, (float)height * 0.75f);
+	model3->SetColor(.0f, 1.0f, 0.0f, 0.4f);
 	m_camera->AttachToModel(model2);
 	model1->SetPosition(0.0f, 3.0f, -15.0f);
 	m_graphicsDevice->Add3DModel(model1);
@@ -92,6 +93,8 @@ void Game::OnWindowMoved()
 void Game::OnWindowSizeChanged(int width, int height)
 {
 	m_graphicsDevice->ResizeWindow(width, height);
+	model3->SetLength((float)width);
+	model3->SetWidth(height * 0.75f);
 }
 
 void Game::Update(float elapsed)

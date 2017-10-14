@@ -37,28 +37,8 @@ uint32_t Lime::Model::MeshData::GetIndexCount()
 Lime::Model::MeshData2D::MeshData2D()
 {
 	m_polygons.emplace_back();
-	m_polygons.emplace_back();
-	m_polygons[0].m_vertices =
-	{
-		{ glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) }
-	};
-	m_polygons[1].m_vertices =
-	{
-		{ glm::vec3(300.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(300.0f, -300.0f, 1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) },
-		{ glm::vec3(0.0f, -300.0f, 1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(-1.0f, 0.0f, 0.0f) }
-	};
-	m_polygons[0].m_indices =
-	{
-		0,1,2
-	};
-	m_polygons[1].m_indices =
-	{
-		3,4,5
-	};
-
+	m_polygons[0].m_vertices.emplace_back();
+	m_polygons[0].m_indices.emplace_back(0U);
 }
 
 void Lime::Model::MeshData2D::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices)

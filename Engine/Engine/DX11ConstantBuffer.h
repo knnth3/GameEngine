@@ -9,8 +9,9 @@ namespace Lime
 	enum class ShaderType
 	{
 		Unknown = 0,
-		Vertex = 1,
-		Pixel = 2
+		Vertex,
+		Pixel,
+		Geometry
 	};
 
 	class DX11ConstantBuffer
@@ -34,6 +35,7 @@ namespace Lime
 	private:
 		int m_vertexCounter;
 		int m_pixelCounter;
+		int m_geometryCounter;
 
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_context;

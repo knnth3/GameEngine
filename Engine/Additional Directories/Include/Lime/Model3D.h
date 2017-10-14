@@ -29,7 +29,7 @@ namespace Lime
 			AppDLL_API void RotateAtOrigin(float x, float y, float z);
 			AppDLL_API void SetColor(float r, float g, float b);
 			AppDLL_API void SetColor(float r, float g, float b, float a);
-			AppDLL_API void SetColor(glm::vec4 color);
+			AppDLL_API void SetColor(glm::vec4 two);
 			AppDLL_API void SetOpacity(float alpha);
 			AppDLL_API void SetOffset(float offset);
 			AppDLL_API void SetTexture(Texture tex);

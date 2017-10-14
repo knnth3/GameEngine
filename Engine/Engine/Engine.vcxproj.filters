@@ -220,7 +220,7 @@
     <FxCompile Include="shaders\VertexShader2D.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\GeometryShader.hlsl">
+    <FxCompile Include="shaders\GeometryShader2D.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

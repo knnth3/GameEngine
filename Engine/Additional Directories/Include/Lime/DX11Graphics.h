@@ -27,15 +27,15 @@ namespace Lime
 		glm::mat4 world;
 		glm::mat4 view;
 		glm::mat4 projection;
-		glm::vec4 color;
+		glm::vec4 two;
 		glm::vec3 cameraPos;
 		float padding;
 	};
 
-	struct TextBuffer
+	struct Float8
 	{
-		glm::vec4 PosAscii;
-		glm::vec4 color;
+		glm::vec4 one;
+		glm::vec4 two;
 	};
 	struct PF_PixelBuffer
 	{
@@ -58,7 +58,7 @@ namespace Lime
 		AppDLL_API void Draw();
 		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
 		AppDLL_API void Wireframe(bool statement);
-		AppDLL_API void ClearScreen(glm::vec3 color);
+		AppDLL_API void ClearScreen(glm::vec3 two);
 		AppDLL_API void Reset();
 	private:
 
@@ -74,7 +74,7 @@ namespace Lime
 		HRESULT CreateRTV();
 		void CreateViewport(const UINT width, const UINT height);
 		void SetZBufferStatus(const bool value);
-
+		void ResetView();
 
 		ID3D11RasterizerState* WireFrame;
 		ID3D11RasterizerState* m_cullBack;

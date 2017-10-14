@@ -1,17 +1,21 @@
 #include "DX11Shader.h"
 
 
-Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context)
+Lime::DX11Shader::DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context, const LPCWSTR gsPath)
 {
 	m_vsPath = vsPath;
 	m_psPath = psPath;
+	m_gsPath = gsPath;
 	m_device = device;
 	m_context = context;
 	m_vertLayout = nullptr;
 	m_vertexShader = nullptr;
 	m_geometryShader = nullptr;
 	m_pixelShader = nullptr;
-	m_hasGS = false;
+	if (m_gsPath[0] != '\0')
+		m_hasGS = true;
+	else
+		m_hasGS = false;
 
 	m_layout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -75,6 +79,8 @@ void Lime::DX11Shader::SetAsActive()
 	m_context->PSSetShader(m_pixelShader, 0, 0);
 	if (m_hasGS)
 		m_context->GSSetShader(m_geometryShader, 0, 0);
+	else
+		m_context->GSSetShader(NULL, 0, 0);
 }
 
 Lime::DX11Shader::~DX11Shader()

@@ -12,7 +12,7 @@ namespace Lime
 			friend class Lime::DX11Graphics;
 			friend class Lime::TextInfo;
 		public:
-			AppDLL_API Model2D(glm::vec2 pos, glm::vec4 color = {1.0f, 1.0f, 1.0f, 1.0f});
+			AppDLL_API Model2D(const glm::vec2 pos, const float length, const float width, const glm::vec4 two = {1.0f, 1.0f, 1.0f, 1.0f});
 			AppDLL_API void Scale(const float x, const float y, const float z);
 			AppDLL_API void Scale(glm::vec3 scale);
 			AppDLL_API void SetPosition(const float x, const float y);
@@ -24,10 +24,14 @@ namespace Lime
 			AppDLL_API void SetColor(glm::vec4 color);
 			AppDLL_API void SetOpacity(float alpha);
 			AppDLL_API void SetTexture(Texture tex);
+			AppDLL_API void SetLength(const float length);
+			AppDLL_API void SetWidth(const float width);
 			AppDLL_API glm::vec2 GetPosition()const;
 			AppDLL_API glm::mat4 GetModelMatrix();
 			AppDLL_API glm::vec4 GetColor();
 			AppDLL_API Texture GetTexture();
+			AppDLL_API float GetLength();
+			AppDLL_API float GetWidth();
 
 		protected:
 			MeshType m_meshType = MeshType::POINT;
@@ -44,6 +48,8 @@ namespace Lime
 			glm::vec4 m_color;
 			glm::vec2 m_position;
 			uint16_t m_texture;
+			float m_length;
+			float m_width;
 		};
 	}
 }

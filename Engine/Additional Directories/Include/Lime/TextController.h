@@ -31,7 +31,7 @@ namespace Lime
 	{
 	public:
 		AppDLL_API TextController(std::string str);
-		AppDLL_API void Color(glm::vec4 color);
+		AppDLL_API void Color(glm::vec4 two);
 		AppDLL_API void Position(glm::vec3 position);
 		AppDLL_API void Scale(glm::vec3 scale);
 		AppDLL_API void SetText(std::string text);

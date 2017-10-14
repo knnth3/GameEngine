@@ -54,6 +54,10 @@ void Lime::DX11ConstantBuffer::SetBufferData(const std::string & uniqueName, voi
 		m_context->PSSetConstantBuffers(m_pixelCounter, 1, &constBuffer);
 		m_pixelCounter++;
 		break;
+	case ShaderType::Geometry:
+		m_context->GSSetConstantBuffers(m_geometryCounter, 1, &constBuffer);
+		m_geometryCounter++;
+		break;
 	default:
 		break;
 	}
@@ -63,4 +67,5 @@ void Lime::DX11ConstantBuffer::ResetCounter()
 {
 	m_vertexCounter = 0;
 	m_pixelCounter = 0;
+	m_geometryCounter = 0;
 }

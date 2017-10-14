@@ -13,7 +13,7 @@ namespace Lime
 		friend class DX11Graphics;
 	public:
 		//Default layout is vec3, vec2, vec3
-		AppDLL_API DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context);
+		AppDLL_API DX11Shader(const LPCWSTR vsPath, const LPCWSTR psPath, ID3D11Device* device, ID3D11DeviceContext* context, const LPCWSTR gsPath = L"\0");
 		AppDLL_API HRESULT Initialize();
 		AppDLL_API void Close();
 		AppDLL_API void SetAsActive();

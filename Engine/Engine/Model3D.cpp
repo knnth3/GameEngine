@@ -81,9 +81,9 @@ void Lime::Model::Model3D::SetColor(float r, float g, float b, float a)
 	m_color = glm::vec4(r, g, b, a);
 }
 
-void Lime::Model::Model3D::SetColor(glm::vec4 color)
+void Lime::Model::Model3D::SetColor(glm::vec4 two)
 {
-	m_color = color;
+	m_color = two;
 }
 
 void Lime::Model::Model3D::SetOpacity(float alpha)

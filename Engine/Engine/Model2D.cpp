@@ -3,7 +3,7 @@
 
 
 
-Lime::Model::Model2D::Model2D(glm::vec2 pos, glm::vec4 color)
+Lime::Model::Model2D::Model2D(const glm::vec2 pos, const float length, const float width, const glm::vec4 two)
 {
 	m_outRotation = glm::mat4();
 	m_scaleMatrix = glm::mat4();
@@ -13,7 +13,9 @@ Lime::Model::Model2D::Model2D(glm::vec2 pos, glm::vec4 color)
 	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_mesh = std::make_shared<MeshData2D>();
 	m_position = { pos.x, pos.y };
-	m_color = color;
+	m_color = two;
+	m_length = length;
+	m_width = width;
 }
 
 void Lime::Model::Model2D::Scale(const float x, const float y, const float z)
@@ -72,6 +74,16 @@ void Lime::Model::Model2D::SetTexture(Texture tex)
 	m_texture = tex;
 }
 
+void Lime::Model::Model2D::SetLength(const float length)
+{
+	m_length = length;
+}
+
+void Lime::Model::Model2D::SetWidth(const float width)
+{
+	m_width = width;
+}
+
 glm::vec2 Lime::Model::Model2D::GetPosition() const
 {
 	return { m_position.x, -m_position.y };
@@ -91,6 +103,16 @@ glm::vec4 Lime::Model::Model2D::GetColor()
 Texture Lime::Model::Model2D::GetTexture()
 {
 	return m_texture;
+}
+
+float Lime::Model::Model2D::GetLength()
+{
+	return m_length;
+}
+
+float Lime::Model::Model2D::GetWidth()
+{
+	return m_width;
 }
 
 void Lime::Model::Model2D::CreateLocalToWorld()
