@@ -2,6 +2,7 @@
 #include "Shared.h"
 #include "DX11Graphics.h"
 #include "InputManager.h"
+#include "ModelLoader.h"
 
 namespace Lime
 {
@@ -22,7 +23,6 @@ namespace Lime
 		//Function for window to run on success.
 		void Init(HWND hwnd);
 
-		//Return 0 to close program.
 		AppDLL_API virtual void Tick() = 0;
 		AppDLL_API virtual void CloseApp() final;
 		AppDLL_API virtual void GetDefaultSize(UINT& width, UINT& height);

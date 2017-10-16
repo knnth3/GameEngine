@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;FBXSDK_SHARED;Engine_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Kenneth\Source\Repos\Game-Engine\Engine\DirectXTex-master\DirectXTex;$(SolutionDir)\Additional Directories\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)DirectXTex-master\DirectXTex;$(SolutionDir)Additional Directories\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,8 +120,8 @@
       <Command>copy "$(ProjectDir)*.h" "$(SolutionDir)Additional Directories\Include\Lime"
 copy "$(TargetDir)$(MSBuildProjectName).lib" "$(SolutionDir)Additional Directories\Library\$(PlatformArchitecture)\$(Configuration)\"
 copy "$(SolutionDir)Additional Directories\Runtime DLLs\*.dll" "$(TargetDir)"
-copy "$(ProjectDir)shaders\*.*" "$(TargetDir)\shaders\"
-copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
+copy "$(ProjectDir)shaders\*.*" "$(TargetDir)shaders\"
+copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)Dungeon\EngineAssets\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -185,6 +185,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="Model3D.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="VertexLibrary.cpp" />
     <ClCompile Include="Win32Window.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -216,6 +217,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Model2D.h" />
     <ClInclude Include="Model3D.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="VertexLibrary.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="Lime.h" />

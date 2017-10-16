@@ -8,7 +8,6 @@
 #include "TextController.h"
 #include "Shared.h"
 #include "D3Dcompiler.h"
-#include "DX11Texture.h"
 #include "DX11Shader.h"
 #include "DX11DepthStencilState.h"
 #include "DX11BufferManager.h"
@@ -108,11 +107,6 @@ namespace Lime
 		std::unique_ptr<DX11Shader> m_3DmodelShader;
 		std::unique_ptr<DX11Shader> m_2DmodelShader;
 		std::unique_ptr<DX11Shader> m_textShader;
-
-		//Textures
-		std::unique_ptr<DX11Texture> m_modelTexture;
-		std::unique_ptr<DX11Texture> m_2DmodelTexture;
-		std::unique_ptr<DX11Texture> m_textTexture;
 
 	};
 

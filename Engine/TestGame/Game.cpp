@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "Lime\ModelLoader.h"
 #include <Windows.h>
 using namespace Lime::Model;
 
@@ -38,7 +37,7 @@ void Game::OnInitialize()
 	auto mesh1 = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
 	model1 = std::make_shared<Model3D>(mesh1);
 	model2 = std::make_shared<Model3D>(mesh1);
-	model3 = std::make_shared<Model2D>(glm::vec2(0.0f, 0.0f), (float)width, (float)height * 0.75f);
+	model3 = std::make_shared<Model2D>(glm::vec2(100.0f, 100.0f), 200, 200);
 	model3->SetColor(.0f, 1.0f, 0.0f, 0.4f);
 	m_camera->AttachToModel(model2);
 	model1->SetPosition(0.0f, 3.0f, -15.0f);
@@ -93,8 +92,6 @@ void Game::OnWindowMoved()
 void Game::OnWindowSizeChanged(int width, int height)
 {
 	m_graphicsDevice->ResizeWindow(width, height);
-	model3->SetLength((float)width);
-	model3->SetWidth(height * 0.75f);
 }
 
 void Game::Update(float elapsed)
@@ -103,29 +100,29 @@ void Game::Update(float elapsed)
 	float camRotY = camRot;
 	if (camRotY >= 3.14f)
 		camRotY = -camRotY;
-	if (m_input->KeyStatus(0x41) == true) //A
+	if (m_input->KeyStatus(Lime::Key::A) == true) //A
 	{
 		m_camera->Rotate(camRot, 0.0f, 0.0f);
 	}
-	if (m_input->KeyStatus(0x44) == true) //D
+	if (m_input->KeyStatus(Lime::Key::D) == true) //D
 	{
 		m_camera->Rotate(-camRot, 0.0f, 0.0f);
 	}
-	if (m_input->KeyStatus(0x57) == true) //W
+	if (m_input->KeyStatus(Lime::Key::W) == true) //W
 	{
 		m_camera->Rotate(0.0f, camRot, 0.0f);
 	}
-	if (m_input->KeyStatus(0x53) == true) //S
+	if (m_input->KeyStatus(Lime::Key::S) == true) //S
 	{
 		m_camera->Rotate(0.0f, -camRot, 0.0f);
 	}
-	if (m_input->KeyStatus(0x51) == true) //Q
+	if (m_input->KeyStatus(Lime::Key::Q) == true) //Q
 	{
 		auto prev = model3->GetPosition();
 		prev.y += camRot * 20.0f;
 		model3->SetPosition(prev);
 	}
-	if (m_input->KeyStatus(0x45) == true) //E
+	if (m_input->KeyStatus(Lime::Key::E) == true) //E
 	{
 		auto prev = model3->GetPosition();
 		prev.y += camRot * -20.0f;
@@ -137,6 +134,7 @@ void Game::Update(float elapsed)
 
 	model1->RotateAtOrigin(0.0f, rot, 0.0f);
 	model2->Rotate(0.0f, -rot , 0.0f);
+	model3->Rotate(0.0f, 0.0f, rot);
 
 	model1->SetColor(red,green, blue);
 	model2->SetColor(green, red, blue);

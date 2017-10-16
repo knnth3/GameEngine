@@ -245,29 +245,11 @@ LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 		break;
 
 	case WM_LBUTTONDOWN:
-		switch (wParam)
-		{
-		case MK_RBUTTON:
-		case MK_MBUTTON:
-		case MK_LBUTTON:
-			app->KeyDown((unsigned int)wParam);
-			break;
-		default:
-			break;
-		}
+		app->KeyDown(0x01);
 		break;
 
 	case WM_LBUTTONUP:
-		switch (wParam)
-		{
-		case MK_RBUTTON:
-		case MK_MBUTTON:
-		case MK_LBUTTON:
-			app->KeyUp((unsigned int)wParam);
-			break;
-		default:
-			break;
-		}
+		app->KeyUp(0x01);
 		break;
 
 	case WM_MOUSEMOVE:

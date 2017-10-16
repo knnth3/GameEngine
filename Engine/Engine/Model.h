@@ -1,5 +1,6 @@
 #pragma once
 #include "Shared.h"
+#include "TextureManager.h"
 
 
 namespace Lime

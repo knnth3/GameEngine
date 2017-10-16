@@ -39,7 +39,7 @@ std::shared_ptr<Lime::Model::Model3D>& Lime::TextInfo::GetMesh()
 MeshID Lime::TextInfo::LoadModel()
 {
 	static bool isFirst = true;
-	static auto data = Model::MeshLoader::LoadModel("TextBox.fbx", Model::TEXT);
+	static auto data = Model::MeshLoader::LoadModel("EngineAssets/models/TextBox.fbx", Model::TEXT);
 	return data;
 }
 

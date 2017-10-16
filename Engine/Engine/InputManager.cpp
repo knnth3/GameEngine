@@ -116,18 +116,18 @@ namespace Lime
 
     void InputManager::KeyUp(unsigned int keyID)
     {
-        if (m_KeysDown[keyID] == true)
-            m_KeysPressed[keyID] = true;
+        if (m_KeysDown[(Key)keyID] == true)
+            m_KeysPressed[(Key)keyID] = true;
 
-        m_KeysDown[keyID] = false;
+        m_KeysDown[(Key)keyID] = false;
     }
 
 	void InputManager::KeyDown(unsigned int keyID)
     {
-        m_KeysDown[keyID] = true;
+        m_KeysDown[(Key)keyID] = true;
     }
 
-    bool InputManager::KeyStatus(unsigned int keyID)
+    bool InputManager::KeyStatus(Key keyID)
     {
         auto iterator = m_KeysDown.find(keyID);
         if (iterator != m_KeysDown.end())
@@ -136,7 +136,7 @@ namespace Lime
         }
         return false;
     }
-    AppDLL_API bool InputManager::KeyPressed(unsigned int keyID)
+    AppDLL_API bool InputManager::KeyPressed(Key keyID)
     {
         bool bWasPressed = m_KeysPressed[keyID];
         if(bWasPressed)

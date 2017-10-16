@@ -13,10 +13,11 @@ Lime::Model::Model3D::Model3D()
 	m_localToWorld = glm::mat4();
 	m_position = glm::vec3();
 	m_offset = glm::vec3();
-	m_texture = 0;
+	m_texture = -1;
 	m_mesh = nullptr;
 	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_bDraw = false;
 }
 
 Lime::Model::Model3D::Model3D(const MeshID id) :
@@ -25,9 +26,9 @@ Lime::Model::Model3D::Model3D(const MeshID id) :
 	AddMesh(id);
 }
 
-void Lime::Model::Model3D::SetType(Model::MeshType type)
+void Lime::Model::Model3D::Draw()
 {
-	m_meshType = type;
+	m_bDraw = true;
 }
 
 void Lime::Model::Model3D::Scale(const float x, const float y, const float z)
@@ -96,7 +97,7 @@ void Lime::Model::Model3D::SetOffset(float offset)
 	m_offset = glm::vec3(offset * m_scale.x, 0.0f, 0.0f);
 }
 
-void Lime::Model::Model3D::SetTexture(Texture tex)
+void Lime::Model::Model3D::SetTexture(TextureID tex)
 {
 	m_texture = tex;
 }
@@ -128,7 +129,7 @@ glm::vec4 Lime::Model::Model3D::GetColor()
 	return m_color;
 }
 
-Texture Lime::Model::Model3D::GetTexture()
+Lime::TextureID Lime::Model::Model3D::GetTexture()
 {
 	return m_texture;
 }

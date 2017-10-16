@@ -14,6 +14,18 @@
 
 namespace Lime
 {
+	enum Key
+	{
+		Left_Mouse_Button = 0x01,
+		A = 0x41,
+		D = 0x44,
+		W = 0x57,
+		S = 0x53,
+		Q = 0x51,
+		E = 0x45,
+	};
+
+
 	//Forward Decl
 	class App;
 
@@ -27,8 +39,8 @@ namespace Lime
         AppDLL_API glm::vec2 GetMouseCoords();
         AppDLL_API glm::vec3 GetMouse3DPosition();
         AppDLL_API glm::vec3 GetMouse3DPosition2();
-        AppDLL_API bool KeyStatus(unsigned int keyID);
-        AppDLL_API bool KeyPressed(unsigned int keyID);
+        AppDLL_API bool KeyStatus(Key keyID);
+        AppDLL_API bool KeyPressed(Key keyID);
 	protected:
 		friend class App;
 		void KeyDown(unsigned int keyID);
@@ -40,8 +52,8 @@ namespace Lime
         glm::vec4 GetEyeSpaceCoords(glm::vec4 mouseCoords);
         glm::vec3 GetWorldSpaceCoords(glm::vec4 eyeCoords);
 
-        std::unordered_map<unsigned int, bool> m_KeysDown;
-        std::unordered_map<unsigned int, bool> m_KeysPressed;
+        std::unordered_map<Key, bool> m_KeysDown;
+        std::unordered_map<Key, bool> m_KeysPressed;
         std::shared_ptr<Camera> m_Camera;
         glm::vec2 m_MouseCoords;
 		uint16_t m_screenWidth, m_screenHeight;

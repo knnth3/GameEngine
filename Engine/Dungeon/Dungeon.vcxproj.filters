@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main Game">
+      <UniqueIdentifier>{b0a9d74e-a645-4f39-bf1f-2ace1be0a51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{277f1c33-27f1-41be-864c-f5ecf2e96f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameState">
+      <UniqueIdentifier>{465dc38e-d054-4eea-9cc7-b093ed9d8b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameState\Main Menu">
+      <UniqueIdentifier>{3ca19104-9fd2-4dcc-b50a-ecfe3b5267d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Button">
+      <UniqueIdentifier>{08579910-7989-4553-a5b0-cbbf6e46788f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Main Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Dungeon.cpp">
+      <Filter>Main Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>GameState</Filter>
+    </ClCompile>
+    <ClCompile Include="GS_MainMenu.cpp">
+      <Filter>GameState\Main Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Button</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Dungeon.h">
+      <Filter>Main Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="GS_MainMenu.h">
+      <Filter>GameState\Main Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared.h">
+      <Filter>Main Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Button</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\textures\MainMenuBG.jpg">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\textures\buttons\Button_selected.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\textures\buttons\Button_unselected.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+  </ItemGroup>
+</Project>

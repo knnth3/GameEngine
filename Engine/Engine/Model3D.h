@@ -19,7 +19,8 @@ namespace Lime
 		public:
 			AppDLL_API Model3D();
 			AppDLL_API Model3D(const MeshID id);
-			AppDLL_API void SetType(Model::MeshType type);
+			//Make sure to add to Renderer to work
+			AppDLL_API void Draw();
 			AppDLL_API void Scale(const float x, const float y, const float z);
 			AppDLL_API void Scale(glm::vec3 scale);
 			AppDLL_API void SetPosition(const float x, const float y, const float z);
@@ -32,12 +33,12 @@ namespace Lime
 			AppDLL_API void SetColor(glm::vec4 two);
 			AppDLL_API void SetOpacity(float alpha);
 			AppDLL_API void SetOffset(float offset);
-			AppDLL_API void SetTexture(Texture tex);
+			AppDLL_API void SetTexture(TextureID tex);
 			AppDLL_API void AddMesh(MeshID id);
 			AppDLL_API glm::vec3 GetPosition()const;
 			AppDLL_API glm::mat4 GetModelMatrix();
 			AppDLL_API glm::vec4 GetColor();
-			AppDLL_API Texture GetTexture();
+			AppDLL_API TextureID GetTexture();
 
 			//Operator overloading
 			AppDLL_API Model3D& operator= (const Model3D& m) = default;
@@ -48,6 +49,7 @@ namespace Lime
 			MeshType m_meshType = NONE;
 			std::shared_ptr<MeshData> m_mesh;
 			void * m_ptr;
+			bool m_bDraw;
 		private:
 			void CreateLocalToWorld();
 			void RotateMatrix(glm::mat4& matrix, glm::vec3 rotations);
@@ -60,7 +62,7 @@ namespace Lime
 			glm::vec3 m_offset;
 			glm::vec3 m_scale;
 			glm::vec4 m_color;
-			uint16_t m_texture;
+			TextureID m_texture;
 		};
 	}
 }

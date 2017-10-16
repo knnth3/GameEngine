@@ -28,7 +28,7 @@ void main(point VSOutput input[1], inout TriangleStream<GSOutput> output)
 
 	float3 positions[6] = 
 	{ 
-		float3(0.0f, 0.0f, 1.0f), 
+		float3(-length/2.0f, width / 2.0f, 1.0f),
 		float3(length, 0.0f, 1.0f), 
 		float3(0.0f, -width, 1.0f),
 

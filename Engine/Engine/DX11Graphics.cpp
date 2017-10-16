@@ -51,27 +51,25 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	m_dsState->Initialize();
 
 	//Shaders
-	LPCWSTR vsPath = L"shaders/VertexShader.hlsl";
-	LPCWSTR psPath = L"shaders/PixelShader.hlsl";
+	LPCWSTR vsPath = L"EngineAssets/shaders/VertexShader.hlsl";
+	LPCWSTR psPath = L"EngineAssets/shaders/PixelShader.hlsl";
 	LPCWSTR gsPath = L"";
 	m_3DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
 	m_3DmodelShader->Initialize();
 
-	vsPath = L"shaders/FontVertexShader.hlsl";
-	psPath = L"shaders/FontPixelShader.hlsl";
+	vsPath = L"EngineAssets/shaders/FontVertexShader.hlsl";
+	psPath = L"EngineAssets/shaders/FontPixelShader.hlsl";
 	m_textShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
 	m_textShader->Initialize();
 
-	vsPath = L"shaders/VertexShader2D.hlsl";
-	psPath = L"shaders/PixelShader2D.hlsl";
-	gsPath = L"shaders/GeometryShader2D.hlsl";
+	vsPath = L"EngineAssets/shaders/VertexShader2D.hlsl";
+	psPath = L"EngineAssets/shaders/PixelShader2D.hlsl";
+	gsPath = L"EngineAssets/shaders/GeometryShader2D.hlsl";
 	m_2DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext, gsPath);
 	m_2DmodelShader->Initialize();
 
 	//Textures
-	m_textTexture = std::make_unique<DX11Texture>(L"SpriteSheetx200.dds", m_device, m_deviceContext);
-	m_modelTexture = std::make_unique<DX11Texture>(L"outUV.dds", m_device, m_deviceContext);
-	m_2DmodelTexture = std::make_unique<DX11Texture>(L"white.dds", m_device, m_deviceContext);
+	TextureManager::Initialize(m_device, m_deviceContext);
 
 	//Buffer Manager
 	m_cbManager = std::make_shared<DX11ConstantBuffer>(m_device, m_deviceContext);
@@ -123,7 +121,11 @@ void Lime::DX11Graphics::Close()
 
 void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Model3D>& model)
 {
-	m_textTexture->SetAsActive();
+	if (model->m_texture == -1)
+		TextureManager::SetDefaultActive(DefaultTextures::TEXT);
+	else
+		TextureManager::SetActive(model->m_texture);
+
 	m_textShader->SetAsActive();
 	for (auto x = 0; x < text.size(); x++)
 	{
@@ -154,7 +156,11 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 
 void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 {
-	m_modelTexture->SetAsActive();
+	if (model->m_texture == -1)
+		TextureManager::SetDefaultActive(DefaultTextures::MODEL);
+	else
+		TextureManager::SetActive(model->m_texture);
+
 	m_3DmodelShader->SetAsActive();
 
 	MatrixBuffer matrices;
@@ -183,7 +189,11 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 
 void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model2D>& model)
 {
-	m_2DmodelTexture->SetAsActive();
+	if (model->m_texture == -1)
+		TextureManager::SetDefaultActive(DefaultTextures::MODEL);
+	else
+		TextureManager::SetActive(model->m_texture);
+
 	m_2DmodelShader->SetAsActive();
 	MatrixBuffer matrices;
 	matrices.world = glm::transpose(model->GetModelMatrix());
@@ -235,16 +245,19 @@ void Lime::DX11Graphics::Draw()
 		m_dsState->SetDepthBufferStatus(true);
 		for (size_t index = 0; index < m_modelLib.size(); index++)
 		{
-			Model::MeshType type = m_modelLib[index]->m_meshType;
-			Texture tex = m_modelLib[index]->GetTexture();
-			if (type == Lime::Model::TEXT)
+			if (m_modelLib[index]->m_bDraw == true)
 			{
-				auto ptr = reinterpret_cast<TextInfo*>(m_modelLib[index]->m_ptr);
-				RenderText(ptr->GetText(), m_modelLib[index]);
-			}
-			else if (type == Lime::Model::TRIANGLE)
-			{
-				RenderMesh(m_modelLib[index]);
+				m_modelLib[index]->m_bDraw = false;
+				Model::MeshType type = m_modelLib[index]->m_meshType;
+				if (type == Lime::Model::TEXT)
+				{
+					auto ptr = reinterpret_cast<TextInfo*>(m_modelLib[index]->m_ptr);
+					RenderText(ptr->GetText(), m_modelLib[index]);
+				}
+				else if (type == Lime::Model::TRIANGLE)
+				{
+					RenderMesh(m_modelLib[index]);
+				}
 			}
 		}
 
@@ -253,7 +266,11 @@ void Lime::DX11Graphics::Draw()
 		m_dsState->SetDepthBufferStatus(false);
 		for (size_t index = 0; index < m_modelLib.size2D(); index++)
 		{
-			Render2DMesh(m_modelLib.at2D(index));
+			if (m_modelLib.at2D(index)->m_bDraw == true)
+			{
+				m_modelLib.at2D(index)->m_bDraw = false;
+				Render2DMesh(m_modelLib.at2D(index));
+			}
 		}
 	}
 	m_swapChain->Present(0, 0);
