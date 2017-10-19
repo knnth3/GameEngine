@@ -20,6 +20,9 @@ void Lime::Model::VertexLibrary::clear()
 	m_vertices.clear();
 	m_indices.clear();
 	m_3Dmodels.clear();
+	m_2Dmodels.clear();
+	VertCountOffset = 0;
+	IndCountOffset = 0;
 }
 
 size_t Lime::Model::VertexLibrary::size()

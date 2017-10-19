@@ -158,6 +158,7 @@
     <ClCompile Include="Dungeon.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GS_MainMenu.cpp" />
+    <ClCompile Include="GS_MapEditor.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="Dungeon.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GS_MainMenu.h" />
+    <ClInclude Include="GS_MapEditor.h" />
     <ClInclude Include="Shared.h" />
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,7 @@ namespace Lime
 		BUFFER_GENERAL = 0,
 		BUFFER_3D,
 		BUFFER_2D,
+		BUFFER_LINE
 	};
 
 

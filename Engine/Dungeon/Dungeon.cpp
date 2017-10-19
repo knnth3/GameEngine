@@ -1,4 +1,5 @@
 #include "Dungeon.h"
+#include "GS_MapEditor.h"
 
 
 
@@ -30,10 +31,11 @@ void Dungeon::Tick()
 void Dungeon::OnInitialize()
 {
 	UINT width, height;
-	GetDefaultSize(width, height);
+	GetWindowSize(width, height);
 	m_camera = std::make_shared<Lime::Camera>();
 	m_camera->Initialize(width, height);
 	m_graphicsDevice->AttatchCamera(m_camera);
+	m_input->LoadCamera(m_camera);
 	start = std::chrono::system_clock::now();
 	end = start;
 	m_state = std::make_unique<GameStates::MainMenu>(m_graphicsDevice);
@@ -68,18 +70,40 @@ void Dungeon::OnWindowSizeChanged(int width, int height)
 
 void Dungeon::Update(float elapsed)
 {
-	int result = m_state->Update(elapsed, m_input);
-	if (result)
+	using namespace GameStates;
+	States result = m_state->Update(elapsed, m_input);
+
+	//Gamestate changes
+	switch (result)
 	{
-		//Switch game states or close
-		switch (result)
-		{
-		case 0:
-			break;
-		default:
-			exit(0);
-			break;
-		}
+	case GameStates::CLOSE:
+		exit(0);
+		break;
+	case GameStates::RUNNING:
+		break;
+	case GameStates::MAIN_MENU:
+	{
+		m_state.release();
+		m_graphicsDevice->Reset();
+		m_state = std::make_unique<MainMenu>(m_graphicsDevice);
+		UINT width, height;
+		GetWindowSize(width, height);
+		m_state->Initialize(width, height);
+	}
+		break;
+	case GameStates::MAP_EDITOR:
+	{
+		m_state.release();
+		Lime::TextureManager::Clear();
+		m_graphicsDevice->Reset();
+		m_state = std::make_unique<MapEditor>(m_graphicsDevice, m_camera);
+		UINT width, height;
+		GetWindowSize(width, height);
+		m_state->Initialize(width, height);
+	}
+		break;
+	default:
+		break;
 	}
 }
 

@@ -26,7 +26,7 @@ namespace Lime
 		glm::mat4 world;
 		glm::mat4 view;
 		glm::mat4 projection;
-		glm::vec4 two;
+		glm::vec4 color;
 		glm::vec3 cameraPos;
 		float padding;
 	};
@@ -52,12 +52,13 @@ namespace Lime
 		AppDLL_API ~DX11Graphics();
 		AppDLL_API bool Add3DModel(std::shared_ptr<Model::Model3D>& model);
 		AppDLL_API bool Add2DModel(std::shared_ptr<Model::Model2D>& model);
+		AppDLL_API bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color);
 		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller);
 		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
 		AppDLL_API void Draw();
 		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
 		AppDLL_API void Wireframe(bool statement);
-		AppDLL_API void ClearScreen(glm::vec3 two);
+		AppDLL_API void ClearScreen(glm::vec3 color);
 		AppDLL_API void Reset();
 	private:
 
@@ -65,6 +66,7 @@ namespace Lime
 		void RenderText(std::string text, std::shared_ptr<Model::Model3D>& model);
 		void RenderMesh(std::shared_ptr<Model::Model3D>& model);
 		void Render2DMesh(std::shared_ptr<Model::Model2D>& model);
+		void RenderLine(std::shared_ptr<Model::Model3D>& model);
 		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
 		void CreateBuffers();
 		void CreateConstBuffers();
@@ -107,6 +109,7 @@ namespace Lime
 		std::unique_ptr<DX11Shader> m_3DmodelShader;
 		std::unique_ptr<DX11Shader> m_2DmodelShader;
 		std::unique_ptr<DX11Shader> m_textShader;
+		std::unique_ptr<DX11Shader> m_lineShader;
 
 	};
 

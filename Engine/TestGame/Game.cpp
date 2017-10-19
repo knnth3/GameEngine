@@ -34,10 +34,10 @@ void Game::OnInitialize()
 	//auto mesh2 = Model::MeshLoader::LoadModel(m_verties, m_indices);
 
 
-	auto mesh1 = Model::MeshLoader::LoadModel("Cube_TextureWrap.fbx");
+	auto mesh1 = Model::MeshLoader::LoadModel("Assets/Models/Cube_TextureWrap.fbx");
 	model1 = std::make_shared<Model3D>(mesh1);
 	model2 = std::make_shared<Model3D>(mesh1);
-	model3 = std::make_shared<Model2D>(glm::vec2(100.0f, 100.0f), 200, 200);
+	model3 = std::make_shared<Model2D>(glm::vec2(100.0f, 100.0f), 200.0f, 200.0f);
 	model3->SetColor(.0f, 1.0f, 0.0f, 0.4f);
 	m_camera->AttachToModel(model2);
 	model1->SetPosition(0.0f, 3.0f, -15.0f);
@@ -134,7 +134,7 @@ void Game::Update(float elapsed)
 
 	model1->RotateAtOrigin(0.0f, rot, 0.0f);
 	model2->Rotate(0.0f, -rot , 0.0f);
-	model3->Rotate(0.0f, 0.0f, rot);
+	model3->Rotate(rot);
 
 	model1->SetColor(red,green, blue);
 	model2->SetColor(green, red, blue);
@@ -155,7 +155,9 @@ void Game::Update(float elapsed)
 void Game::Render()
 {
 	Clear();
-
+	model1->Draw();
+	model2->Draw();
+	model3->Draw();
 	m_graphicsDevice->Draw();
 }
 

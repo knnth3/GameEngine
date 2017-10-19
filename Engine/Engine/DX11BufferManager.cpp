@@ -94,6 +94,9 @@ void Lime::DX11BufferManager::SetAsActive(const BufferTypes type)
 	case BUFFER_3D:
 		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		break;
+	case BUFFER_LINE:
+		m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
 	default:
 		break;
 	}

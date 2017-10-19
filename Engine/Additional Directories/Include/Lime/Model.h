@@ -16,7 +16,8 @@ namespace Lime
 			NONE = -1,
 			TEXT = 0,
 			TRIANGLE = 1,
-			POINT = 1
+			POINT = 2,
+			LINE = 3
 		};
 
 		struct Vertex
@@ -50,11 +51,13 @@ namespace Lime
 		public:
 			AppDLL_API void GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const;
 			AppDLL_API uint32_t GetIndexCount();
+			AppDLL_API float GetHeight();
 			uint32_t objectID = 0;
 			uint32_t vertOffset = 0;
 			uint32_t indiciOffset = 0;
 		protected:
 			std::vector<Polygon<Vertex>> m_polygons;
+			float m_height = 0.0f;
 		};
 
 		class MeshData2D

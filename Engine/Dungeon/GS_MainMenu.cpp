@@ -3,7 +3,7 @@
 
 using namespace Lime::Model;
 
-GameStates::MainMenu::MainMenu(std::unique_ptr<Lime::DX11Graphics>& rend)
+GameStates::MainMenu::MainMenu(std::shared_ptr<Lime::DX11Graphics>& rend)
 {
 	m_b1 = std::make_shared<Button>(100.0f, 100.0f, 100.0f, 30.0f);
 	auto id = Lime::TextureManager::CreateNewTexture(L"Assets/textures/MainMenuBG.dds");
@@ -19,7 +19,7 @@ GameStates::MainMenu::~MainMenu()
 {
 }
 
-int GameStates::MainMenu::Update(float time, std::unique_ptr<Lime::InputManager>& input)
+GameStates::States GameStates::MainMenu::Update(float time, std::shared_ptr<Lime::InputManager>& input)
 {
 	m_rad += 9.8f * time / 20.0f;
 	glm::vec2 mousePos = input->GetMouseCoords();
@@ -29,9 +29,9 @@ int GameStates::MainMenu::Update(float time, std::unique_ptr<Lime::InputManager>
 	Draw();
 
 	if(m_b1->IsClicked())
-		return -1;
+		return States::MAP_EDITOR;
 	else
-		return 0;
+		return States::RUNNING;
 }
 
 void GameStates::MainMenu::Initialize(int windowWidth, int windowHeight)

@@ -23,6 +23,7 @@ Lime::Model::Model3D::Model3D()
 Lime::Model::Model3D::Model3D(const MeshID id) :
 	Model3D()
 {
+	m_meshID = id;
 	AddMesh(id);
 }
 
@@ -33,16 +34,16 @@ void Lime::Model::Model3D::Draw()
 
 void Lime::Model::Model3D::Scale(const float x, const float y, const float z)
 {
-	m_scale = glm::vec3(x, y, z);
-	m_offset.x *= m_scale.x;
-	m_offset.y *= m_scale.y;
-	m_offset.z *= m_scale.z;
-	m_scaleMatrix = glm::scale(m_scale);
+	Scale(glm::vec3(x, y, z));
 }
 
 void Lime::Model::Model3D::Scale(glm::vec3 scale)
 {
 	m_scale = scale;
+	m_offset.x *= m_scale.x;
+	m_offset.y *= m_scale.y;
+	m_offset.z *= m_scale.z;
+	m_scaleMatrix = glm::scale(m_scale);
 }
 
 void Lime::Model::Model3D::SetPosition(const float x, const float y, const float z)
@@ -82,9 +83,9 @@ void Lime::Model::Model3D::SetColor(float r, float g, float b, float a)
 	m_color = glm::vec4(r, g, b, a);
 }
 
-void Lime::Model::Model3D::SetColor(glm::vec4 two)
+void Lime::Model::Model3D::SetColor(glm::vec4 color)
 {
-	m_color = two;
+	m_color = color;
 }
 
 void Lime::Model::Model3D::SetOpacity(float alpha)
@@ -118,6 +119,11 @@ glm::vec3 Lime::Model::Model3D::GetPosition() const
 	return m_position - m_offset;
 }
 
+glm::vec3 Lime::Model::Model3D::GetScale() const
+{
+	return m_scale;
+}
+
 glm::mat4 Lime::Model::Model3D::GetModelMatrix()
 {
 	CreateLocalToWorld();
@@ -134,8 +140,19 @@ Lime::TextureID Lime::Model::Model3D::GetTexture()
 	return m_texture;
 }
 
+MeshID Lime::Model::Model3D::GetMesh()
+{
+	return m_meshID;
+}
+
+float Lime::Model::Model3D::GetHeight() const
+{
+	return m_mesh->GetHeight();
+}
+
 void Lime::Model::Model3D::operator=(MeshID id)
 {
+	m_meshID = id;
 	AddMesh(id);
 }
 

@@ -25,7 +25,7 @@ namespace Lime
 
 		AppDLL_API virtual void Tick() = 0;
 		AppDLL_API virtual void CloseApp() final;
-		AppDLL_API virtual void GetDefaultSize(UINT& width, UINT& height);
+		AppDLL_API virtual void GetWindowSize(UINT& width, UINT& height);
 		AppDLL_API virtual void SetSize(UINT width, UINT height) final;
 
 		//state changes
@@ -44,8 +44,8 @@ namespace Lime
 		void SetWindowSize(UINT width, UINT height);
 
 		//Functions to manipulate Graphics API
-		std::unique_ptr<DX11Graphics> m_graphicsDevice;
-		std::unique_ptr<InputManager> m_input;
+		std::shared_ptr<DX11Graphics> m_graphicsDevice;
+		std::shared_ptr<InputManager> m_input;
 
 	private:
 

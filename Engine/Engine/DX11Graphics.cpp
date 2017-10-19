@@ -3,6 +3,7 @@
 #include <wchar.h>
 #include <stdlib.h>
 #include <stdlib.h>
+#include "ModelLoader.h"
 
 Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height):
 	m_bufferCount(3)
@@ -67,6 +68,11 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, cons
 	gsPath = L"EngineAssets/shaders/GeometryShader2D.hlsl";
 	m_2DmodelShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext, gsPath);
 	m_2DmodelShader->Initialize();
+
+	vsPath = L"EngineAssets/shaders/VertexShader_Line.hlsl";
+	psPath = L"EngineAssets/shaders/PixelShader_Line.hlsl";
+	m_lineShader = std::make_unique<DX11Shader>(vsPath, psPath, m_device, m_deviceContext);
+	m_lineShader->Initialize();
 
 	//Textures
 	TextureManager::Initialize(m_device, m_deviceContext);
@@ -169,7 +175,7 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 	matrices.view = glm::transpose(m_camera->GetViewMatrix());
 	matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 	matrices.cameraPos = m_camera->GetPosition();
-	matrices.two = model->GetColor();
+	matrices.color = model->GetColor();
 	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
 	lightInfo.ambientColor = m_light.m_ambientColor;
@@ -214,6 +220,26 @@ void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model2D>& model)
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
 }
 
+void Lime::DX11Graphics::RenderLine(std::shared_ptr<Model::Model3D>& model)
+{
+	TextureManager::SetDefaultActive(DefaultTextures::MODEL);
+	m_lineShader->SetAsActive();
+
+	MatrixBuffer matrices;
+	matrices.world = glm::transpose(model->GetModelMatrix());
+	matrices.view = glm::transpose(m_camera->GetViewMatrix());
+	matrices.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
+	matrices.color = model->GetColor();
+	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
+
+	UINT size = (UINT)model->m_mesh->GetIndexCount();
+	UINT vertOff = model->m_mesh->vertOffset;
+	UINT indOff = model->m_mesh->indiciOffset;
+
+	m_deviceContext->RSSetState(m_cullBack);
+	m_bufferManager->DrawIndexed(size, indOff, vertOff);
+}
+
 bool Lime::DX11Graphics::Add3DModel(std::shared_ptr<Model::Model3D>& model)
 {
 	m_modelLib.Add3DModel(model);
@@ -223,6 +249,17 @@ bool Lime::DX11Graphics::Add3DModel(std::shared_ptr<Model::Model3D>& model)
 bool Lime::DX11Graphics::Add2DModel(std::shared_ptr<Model::Model2D>& model)
 {
 	m_modelLib.Add2DModel(model);
+	return true;
+}
+
+bool Lime::DX11Graphics::Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color)
+{
+	auto mesh = Model::MeshLoader::CreateLine(pos1, pos2);
+	std::shared_ptr<Model::Model3D> line = std::make_shared<Model::Model3D>(mesh);
+	line->SetColor(color);
+	line->m_meshType = Lime::Model::LINE;
+	line->m_bDraw = true;
+	m_modelLib.Add3DModel(line);
 	return true;
 }
 
@@ -257,6 +294,13 @@ void Lime::DX11Graphics::Draw()
 				else if (type == Lime::Model::TRIANGLE)
 				{
 					RenderMesh(m_modelLib[index]);
+				}
+				else if (type == Lime::Model::LINE)
+				{
+					m_bufferManager->SetAsActive(BufferTypes::BUFFER_LINE);
+					RenderLine(m_modelLib[index]);
+					m_modelLib[index]->m_bDraw = true;
+					m_bufferManager->SetAsActive(BufferTypes::BUFFER_3D);
 				}
 			}
 		}
@@ -297,16 +341,19 @@ void Lime::DX11Graphics::Wireframe(bool statemnent)
 	m_isWireframe = statemnent;
 }
 
-void Lime::DX11Graphics::ClearScreen(glm::vec3 two)
+void Lime::DX11Graphics::ClearScreen(glm::vec3 color)
 {
 	//Clear our backbuffer to the updated two
-	glm::vec4 bgColor(two, 1.0f);
+	glm::vec4 bgColor(color, 1.0f);
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView, (float*)&bgColor);
 }
 
 void Lime::DX11Graphics::Reset()
 {
+	m_hasCreatedBuffers = false;
 	m_modelLib.clear();
+	Model::MeshLoader::Clear();
+	Lime::TextureManager::Clear();
 }
 
 void Lime::DX11Graphics::AttatchCamera(std::shared_ptr<Camera>& ptr)

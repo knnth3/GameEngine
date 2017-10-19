@@ -30,15 +30,18 @@ namespace Lime
 			AppDLL_API void RotateAtOrigin(float x, float y, float z);
 			AppDLL_API void SetColor(float r, float g, float b);
 			AppDLL_API void SetColor(float r, float g, float b, float a);
-			AppDLL_API void SetColor(glm::vec4 two);
+			AppDLL_API void SetColor(glm::vec4 color);
 			AppDLL_API void SetOpacity(float alpha);
 			AppDLL_API void SetOffset(float offset);
 			AppDLL_API void SetTexture(TextureID tex);
 			AppDLL_API void AddMesh(MeshID id);
 			AppDLL_API glm::vec3 GetPosition()const;
+			AppDLL_API glm::vec3 GetScale()const;
 			AppDLL_API glm::mat4 GetModelMatrix();
 			AppDLL_API glm::vec4 GetColor();
 			AppDLL_API TextureID GetTexture();
+			AppDLL_API MeshID GetMesh();
+			AppDLL_API float GetHeight()const;
 
 			//Operator overloading
 			AppDLL_API Model3D& operator= (const Model3D& m) = default;
@@ -63,6 +66,7 @@ namespace Lime
 			glm::vec3 m_scale;
 			glm::vec4 m_color;
 			TextureID m_texture;
+			MeshID m_meshID;
 		};
 	}
 }

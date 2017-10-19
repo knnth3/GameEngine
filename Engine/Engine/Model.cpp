@@ -34,6 +34,11 @@ uint32_t Lime::Model::MeshData::GetIndexCount()
 		return 0u;
 }
 
+float Lime::Model::MeshData::GetHeight()
+{
+	return m_height;
+}
+
 Lime::Model::MeshData2D::MeshData2D()
 {
 	m_polygons.emplace_back();

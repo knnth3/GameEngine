@@ -70,6 +70,32 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::vector<Vertex>& verts, cons
 	return SaveInformation(MESHLIB, mesh, settings);
 }
 
+MeshID Lime::Model::MeshLoader::CreateLine(glm::vec3 pos1, glm::vec3 pos2)
+{
+	std::shared_ptr<MeshData> mesh = std::make_shared<MeshData>();
+	MeshDefaultSettings settings = {};
+	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	Polygon<Vertex> poly;
+	poly.m_vertices = 
+	{
+			{ pos1, glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f) },
+			{ pos2, glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f) },
+	};
+	poly.m_indices =
+	{
+		0,1
+	};
+	mesh->m_polygons.push_back(poly);
+
+	return SaveInformation(MESHLIB, mesh, settings);
+}
+
+void Lime::Model::MeshLoader::Clear()
+{
+	MESHLIB.Clear();
+}
+
 void Lime::Model::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<MeshData> & ptr)
 {
 	try
@@ -186,6 +212,7 @@ void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_pt
 	ENFORCE_SUCCESS(mesh, true, return);
 
 	//Populate MeshData with FBX data
+	float height = 0.0f;
 	c_uint totalPolygonCount = mesh->GetPolygonCount();
 	int totalIndexCount = 0;
 	for (uint32_t polyIndex = 0; polyIndex < totalPolygonCount; polyIndex++)
@@ -199,6 +226,9 @@ void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_pt
 			int currentVertIndex = mesh->GetPolygonVertex(polyIndex, vertexIndex);
 			auto& fbxVert = mesh->GetControlPointAt(currentVertIndex);
 			vert.m_position = FbxVec4ToGlmVec3(fbxVert);
+			if (vert.m_position.y > height)
+				height = vert.m_position.y;
+
 			ENFORCE_SUCCESS(GetFBXTextureCoordinates(mesh, vert, totalIndexCount), true, return);
 			ENFORCE_SUCCESS(GetFBXMeshNormals(mesh, vert, totalIndexCount), true, return);
 
@@ -211,6 +241,7 @@ void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_pt
 		tempdata->m_polygons.push_back(poly);
 	}
 	data = tempdata;
+	data->m_height = height;
 
 	//Get Default Settings
 	settings.scale = FbxVec4ToGlmVec3(pNode->LclScaling.Get());
@@ -329,4 +360,10 @@ MeshID Lime::Model::MeshLibrary::SaveMesh(const std::shared_ptr<MeshData>& mesh,
 	//TODO:
 	//Output log information that MeshLibrary is corrupt
 	return result;
+}
+
+void Lime::Model::MeshLibrary::Clear()
+{
+	m_modelLibrary.clear();
+	m_defaultSettings.clear();
 }

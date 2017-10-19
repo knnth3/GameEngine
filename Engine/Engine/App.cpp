@@ -24,7 +24,7 @@ void Lime::App::CloseApp()
 	PostQuitMessage(0);
 }
 
-void Lime::App::GetDefaultSize(UINT& width, UINT& height)
+void Lime::App::GetWindowSize(UINT& width, UINT& height)
 {
 	width = m_width;
 	height = m_height;

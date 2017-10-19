@@ -10,11 +10,11 @@ namespace GameStates
 		public GameState
 	{
 	public:
-		MainMenu(std::unique_ptr<Lime::DX11Graphics>& rend);
+		MainMenu(std::shared_ptr<Lime::DX11Graphics>& rend);
 		~MainMenu();
 
 		//Function called every frame
-		virtual int Update(float time, std::unique_ptr<Lime::InputManager>& input) override;
+		virtual States Update(float time, std::shared_ptr<Lime::InputManager>& input) override;
 
 		//State Changes
 		virtual void Initialize(int windowWidth, int windowHeight) override;

@@ -22,6 +22,7 @@ namespace Lime
 			friend class MeshLoader;
 		public:
 			AppDLL_API MeshID SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings& setting);
+			AppDLL_API void Clear();
 		protected:
 			std::vector<std::shared_ptr<MeshData>> m_modelLibrary;
 			std::vector<MeshDefaultSettings> m_defaultSettings;
@@ -41,6 +42,8 @@ namespace Lime
 			//--Must be Quadrangulated
 			AppDLL_API static MeshID LoadModel(const std::string& filename, MeshType type = Model::NONE);
 			AppDLL_API static MeshID LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices);
+			AppDLL_API static MeshID CreateLine(glm::vec3 pos1, glm::vec3 pos2);
+			AppDLL_API static void Clear();
 
 		protected:
 			static void GrabMeshData(MeshID id, std::shared_ptr<MeshData>& ptr);

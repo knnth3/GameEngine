@@ -48,9 +48,9 @@ Lime::TextController::TextController(std::string str)
 	info = std::make_shared<TextInfo>(str);
 }
 
-void Lime::TextController::Color(glm::vec4 two)
+void Lime::TextController::Color(glm::vec4 color)
 {
-	info->data->SetColor(two.r, two.g, two.b, two.a);
+	info->data->SetColor(color.r, color.g, color.b, color.a);
 }
 
 void Lime::TextController::Position(glm::vec3 position)

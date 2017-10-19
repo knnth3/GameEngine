@@ -10,7 +10,7 @@ namespace Lime
 
 	void Camera::Initialize(UINT windowWidth, UINT windowHeight)
 	{
-		m_info.m_distanceFromObject = 20.0f;
+		m_info.m_distanceFromObject = 600.0f;
 		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_info.m_upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 		SetResolution(windowWidth, windowHeight);
@@ -95,14 +95,14 @@ namespace Lime
 
     void Camera::Zoom(float x)
     {
-		float maxZoomOut = 30.0f;
-		float maxZoomIn = 1.5f;
+		float maxZoomOut = 700.0f;
+		float maxZoomIn = 300.0f;
 
 		m_info.m_distanceFromObject += x;
         if (m_info.m_distanceFromObject < maxZoomIn)
 			m_info.m_distanceFromObject = maxZoomIn;
-   //     else if (m_info.m_distanceFromObject > maxZoomOut)
-			//m_info.m_distanceFromObject = maxZoomOut;
+        else if (m_info.m_distanceFromObject > maxZoomOut)
+			m_info.m_distanceFromObject = maxZoomOut;
     }
 
 	void Camera::AddPitch(float pitch)
@@ -188,13 +188,18 @@ namespace Lime
     {
 		if (m_info.m_model != nullptr)
 		{
+			glm::vec3 charScale = m_info.m_model->GetScale();
+			glm::vec3 charPos = m_info.m_model->GetPosition();
+			float height = m_info.m_model->GetHeight();
+			charPos.y += height *0.5f * charScale.y;
+
 			float theta = m_info.m_angleAroundPlayer;
 			float offsetX = horizontalDistance * sinf(theta);
 			float offsetZ = horizontalDistance * cosf(theta);
 			m_info.m_rotation.y = PI - m_info.m_angleAroundPlayer;
-			m_info.m_position.x = m_info.m_model->GetPosition().x - offsetX;
-			m_info.m_position.y = m_info.m_model->GetPosition().y + verticalDistance;
-			m_info.m_position.z = -m_info.m_model->GetPosition().z - offsetZ;
+			m_info.m_position.x = charPos.x - offsetX;
+			m_info.m_position.y = charPos.y + verticalDistance;
+			m_info.m_position.z = -charPos.z - offsetZ;
 			if (!m_info.m_bPlayerAttached)
 			{
 				AddPitch(PI/4);

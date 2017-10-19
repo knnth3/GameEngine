@@ -229,6 +229,12 @@
     <FxCompile Include="shaders\GeometryShader2D.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+    <FxCompile Include="shaders\PixelShader_Line.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\VertexShader_Line.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="textures\white.png">

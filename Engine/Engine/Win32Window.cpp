@@ -273,7 +273,7 @@ LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 				UINT height = 600;
 				if (app)
 				{
-					app->GetDefaultSize(width, height);
+					app->GetWindowSize(width, height);
 					RECT rc;
 					rc.top = 0;
 					rc.left = 0;
