@@ -6,7 +6,7 @@
 #include "Shared.h"
 #include "Model3D.h"
 
-typedef uint32_t UINT;
+typedef uint32_t uint32_t;
 
 namespace Lime
 {
@@ -25,8 +25,8 @@ namespace Lime
 		glm::vec3 m_targetPos = glm::vec3(0.0f);
 		glm::vec3 m_upDirection = glm::vec3(0.0f);
 		glm::vec3 m_rotation = glm::vec3(0.0f);
-		UINT m_xResolution = 0;
-		UINT m_yResolution = 0;
+		uint32_t m_xResolution = 0;
+		uint32_t m_yResolution = 0;
 		std::shared_ptr<Model::Model3D> m_model = nullptr;
 		bool m_bPlayerAttached = false;
 	};
@@ -35,7 +35,7 @@ namespace Lime
     {
     public:
         AppDLL_API Camera() = default;
-        AppDLL_API void Initialize(UINT windowWidth, UINT windowHeight);
+        AppDLL_API void Initialize(uint32_t windowWidth, uint32_t windowHeight);
         AppDLL_API void AttachToModel(std::shared_ptr<Model::Model3D>& model);
         AppDLL_API void SetViewDistance(float near, float far);
         AppDLL_API void SetFOV(float fov);
@@ -43,7 +43,7 @@ namespace Lime
         AppDLL_API void SetPosition(glm::vec3 position);
 		AppDLL_API void Rotate(float x, float y, float z);
         AppDLL_API void SetRotation(glm::vec3 rotation);
-        AppDLL_API void SetResolution(UINT width, UINT height);
+        AppDLL_API void SetResolution(uint32_t width, uint32_t height);
         AppDLL_API void Zoom(float x);
         AppDLL_API void AddPitch(float pitch);
         AppDLL_API void AddYaw(float yaw);

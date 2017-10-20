@@ -83,7 +83,7 @@ void Lime::DX11BufferManager::CompileVertexData(const BufferTypes type)
 
 void Lime::DX11BufferManager::SetAsActive(const BufferTypes type)
 {
-	UINT offset = 0;
+	uint32_t offset = 0;
 	m_context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride3d, &offset);
 	m_context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	switch (type)

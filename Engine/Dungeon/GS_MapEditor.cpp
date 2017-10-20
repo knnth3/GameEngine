@@ -4,7 +4,7 @@
 #define BLOCK_RADIUS 12.5f
 #define BLOCK_HEIGHT Meter * 0.5f
 
-GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::DX11Graphics>& rend, std::shared_ptr<Lime::Camera>& camera)
+GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::RenderBatch>& rend, std::shared_ptr<Lime::Camera>& camera)
 {
 	m_camera = camera;
 	m_render = rend;
@@ -20,7 +20,7 @@ GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::DX11Graphics>& rend, std:
 	m_cursor->Scale(radius, height, radius);
 	m_cursor->SetPosition(Meter * 0.5f, Meter * 0.25f, Meter * 0.5f);
 	rend->Add3DModel(m_user);
-	CreateFloor(10, 10, id, rend);
+	CreateFloor(10, 10, id);
 
 
 	float length = Meter * 5.0f;
@@ -104,7 +104,7 @@ void GameStates::MapEditor::Draw()
 	}
 }
 
-void GameStates::MapEditor::CreateFloor(int length, int width, Lime::TextureID id, std::shared_ptr<Lime::DX11Graphics>& rend)
+void GameStates::MapEditor::CreateFloor(int length, int width, Lime::TextureID id)
 {
 	auto texture = Lime::TextureManager::CreateNewTexture(L"Assets/textures/image1.dds");
 
@@ -123,7 +123,7 @@ void GameStates::MapEditor::CreateFloor(int length, int width, Lime::TextureID i
 			m_floor[x][y]->Scale(10.0f, 2.5f, 10.0f);
 			m_floor[x][y]->SetPosition(alignPos + posX - offsetX, Meter * -0.125f, alignPos + posY - offsety);
 			m_floor[x][y]->SetTexture(texture);
-			rend->Add3DModel(m_floor[x][y]);
+			m_render->Add3DModel(m_floor[x][y]);
 		}
 	}
 }

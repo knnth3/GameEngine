@@ -1,5 +1,4 @@
 #pragma once
-#include "Win32Window.h"
 #include "App.h"
 
 namespace Lime

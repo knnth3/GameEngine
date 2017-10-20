@@ -3,13 +3,8 @@
 #include <memory>
 #include <iostream>
 #include <string>
+#include <map>
 #include <glm\glm.hpp>
-#include <comdef.h>
-
-//included libs
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dcompiler.lib")
 
 //For later use
 ////API Types
@@ -40,7 +35,18 @@
 
 
 #if PLATFORM == OS_WINDOWS
+//included libs
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "opengl32.lib")
+//Included headers
+#include <comdef.h>
+#include <d3d11.h>
 #include "WindowsAdditionals.h"
+#include "D3Dcompiler.h"
+#else
+#pragma comment(lib, "opengl32.lib")
 #endif
 
 

@@ -27,7 +27,7 @@ namespace Lime
 		private:
 			int VertCountOffset = 0;
 			int IndCountOffset = 0;
-			std::vector<UINT> m_cachedIDs;
+			std::vector<uint32_t> m_cachedIDs;
 			std::vector<Vertex> m_vertices;
 			std::vector<uint32_t> m_indices;
 			std::vector<std::shared_ptr<Model::Model3D>> m_3Dmodels;

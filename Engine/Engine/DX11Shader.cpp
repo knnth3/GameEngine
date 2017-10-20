@@ -54,7 +54,7 @@ HRESULT Lime::DX11Shader::Initialize()
 	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &m_pixelShader);
 	CheckSuccess(result);
 
-	result = m_device->CreateInputLayout(m_layout.data(), (UINT)m_layout.size(), vsBlob->GetBufferPointer(),
+	result = m_device->CreateInputLayout(m_layout.data(), (uint32_t)m_layout.size(), vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(), &m_vertLayout);
 	CheckSuccess(result);
 
@@ -123,7 +123,7 @@ HRESULT Lime::DX11Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
 
 	*blob = nullptr;
 
-	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+	uint32_t flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif

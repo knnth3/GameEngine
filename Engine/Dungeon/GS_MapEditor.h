@@ -17,7 +17,7 @@ namespace GameStates
 	{
 	public:
 
-		MapEditor(std::shared_ptr<Lime::DX11Graphics>& rend, std::shared_ptr<Lime::Camera>& camera);
+		MapEditor(std::shared_ptr<Lime::RenderBatch>& rend, std::shared_ptr<Lime::Camera>& camera);
 
 		//Function called every frame
 		virtual States Update(float time, std::shared_ptr<Lime::InputManager>& input) override;
@@ -31,7 +31,7 @@ namespace GameStates
 		void Draw();
 
 	private:
-		void CreateFloor(int length, int width, Lime::TextureID id, std::shared_ptr<Lime::DX11Graphics>& rend);
+		void CreateFloor(int length, int width, Lime::TextureID id);
 		void UpdateCursor(float time, std::shared_ptr<Lime::InputManager>& input);
 		void AddNewBlock(std::shared_ptr<Lime::Model::Model3D>& model);
 
@@ -42,7 +42,7 @@ namespace GameStates
 
 		std::vector<std::vector<std::shared_ptr<Lime::Model::Model3D>>> m_floor;
 		std::vector<std::shared_ptr<Lime::Model::Model3D>> m_newBlocks;
-		std::shared_ptr<Lime::DX11Graphics> m_render;
+		std::shared_ptr<Lime::RenderBatch> m_render;
 	};
 
 }

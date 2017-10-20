@@ -10,7 +10,7 @@ Game::Game() :
 void Game::OnInitialize()
 {
 	UINT width, height;
-	GetDefaultSize(width, height);
+	this->GetWindowSize(width, height);
 	m_camera = std::make_shared<Lime::Camera>();
 	m_camera->Initialize(width, height);
 	m_graphicsDevice->AttatchCamera(m_camera);

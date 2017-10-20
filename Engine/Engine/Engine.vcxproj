@@ -185,6 +185,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="Model2D.cpp" />
     <ClCompile Include="Model3D.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="RenderBatch.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="VertexLibrary.cpp" />
     <ClCompile Include="Win32Window.cpp" />
@@ -217,6 +218,8 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Model2D.h" />
     <ClInclude Include="Model3D.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="RenderBatch.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="VertexLibrary.h" />
     <ClInclude Include="Win32Window.h" />
@@ -293,6 +296,9 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ProjectReference Include="..\DirectXTex-master\DirectXTex\DirectXTex_Desktop_2017_Win10.vcxproj">
       <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

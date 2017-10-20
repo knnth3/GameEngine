@@ -10,7 +10,7 @@ namespace GameStates
 		public GameState
 	{
 	public:
-		MainMenu(std::shared_ptr<Lime::DX11Graphics>& rend);
+		MainMenu(std::shared_ptr<Lime::RenderBatch>& rend);
 		~MainMenu();
 
 		//Function called every frame

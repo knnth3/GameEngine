@@ -3,7 +3,7 @@
 
 using namespace Lime::Model;
 
-GameStates::MainMenu::MainMenu(std::shared_ptr<Lime::DX11Graphics>& rend)
+GameStates::MainMenu::MainMenu(std::shared_ptr<Lime::RenderBatch>& rend)
 {
 	m_b1 = std::make_shared<Button>(100.0f, 100.0f, 100.0f, 30.0f);
 	auto id = Lime::TextureManager::CreateNewTexture(L"Assets/textures/MainMenuBG.dds");

@@ -119,7 +119,7 @@ int Lime::Win32Window::Run()
 	return (int)msg.wParam;
 }
 
-LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Lime::WinProc::WindowProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam)
 {
 	bool isCharUp = false;
 	PAINTSTRUCT ps;
@@ -269,8 +269,8 @@ LRESULT Lime::WinProc::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 				SetWindowLongPtr(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 				SetWindowLongPtr(hWnd, GWL_EXSTYLE, 0);
 
-				UINT width = 800;
-				UINT height = 600;
+				uint32_t width = 800;
+				uint32_t height = 600;
 				if (app)
 				{
 					app->GetWindowSize(width, height);

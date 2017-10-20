@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "ModelLoader.h"
 
-Lime::DX11Graphics::DX11Graphics(const HWND window, const UINT width, const UINT height):
+Lime::DX11Graphics::DX11Graphics(const HWND window, const uint32_t width, const uint32_t height):
 	m_bufferCount(3)
 {
 	m_windowWidth = width;
@@ -20,7 +20,7 @@ Lime::DX11Graphics::~DX11Graphics()
 	Close();
 }
 
-HRESULT Lime::DX11Graphics::Initialize(const HWND window, const UINT width, const UINT height)
+HRESULT Lime::DX11Graphics::Initialize(const HWND window, const uint32_t width, const uint32_t height)
 {
 	HRESULT result;
 	DXGI_MODE_DESC bufferDesc = { 0 };
@@ -151,9 +151,9 @@ void Lime::DX11Graphics::RenderText(std::string text, std::shared_ptr<Model::Mod
 		textInfo.two = model->GetColor();
 		m_3DmodelShader->SetConstBufferData("float8", &textInfo, Lime::ShaderType::Vertex);
 
-		UINT size = (UINT)model->m_mesh->GetIndexCount();
-		UINT vertOff = model->m_mesh->vertOffset;
-		UINT indOff = model->m_mesh->indiciOffset;
+		uint32_t size = (uint32_t)model->m_mesh->GetIndexCount();
+		uint32_t vertOff = model->m_mesh->vertOffset;
+		uint32_t indOff = model->m_mesh->indiciOffset;
 
 		m_deviceContext->RSSetState(m_cullBack);
 		m_bufferManager->DrawIndexed(size, indOff, vertOff);
@@ -185,9 +185,9 @@ void Lime::DX11Graphics::RenderMesh(std::shared_ptr<Model::Model3D>& model)
 	lightInfo.specularPower = m_light.m_specularPower;
 	m_3DmodelShader->SetConstBufferData("Light", &lightInfo, Lime::ShaderType::Pixel);
 
-	UINT size = (UINT)model->m_mesh->GetIndexCount();
-	UINT vertOff = model->m_mesh->vertOffset;
-	UINT indOff = model->m_mesh->indiciOffset;
+	uint32_t size = (uint32_t)model->m_mesh->GetIndexCount();
+	uint32_t vertOff = model->m_mesh->vertOffset;
+	uint32_t indOff = model->m_mesh->indiciOffset;
 
 	m_deviceContext->RSSetState(m_cullBack);
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
@@ -212,9 +212,9 @@ void Lime::DX11Graphics::Render2DMesh(std::shared_ptr<Model::Model2D>& model)
 	data.two = { model->GetLength(), model->GetWidth(), 0.0f, 0.0f };
 	m_bufferManager->SetBufferData("float8", &data, Lime::ShaderType::Geometry);
 
-	UINT size = (UINT)model->m_mesh->GetIndexCount();
-	UINT vertOff = model->m_mesh->vertOffset;
-	UINT indOff = model->m_mesh->indiciOffset;
+	uint32_t size = (uint32_t)model->m_mesh->GetIndexCount();
+	uint32_t vertOff = model->m_mesh->vertOffset;
+	uint32_t indOff = model->m_mesh->indiciOffset;
 
 	m_deviceContext->RSSetState(m_cullBack);
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
@@ -232,9 +232,9 @@ void Lime::DX11Graphics::RenderLine(std::shared_ptr<Model::Model3D>& model)
 	matrices.color = model->GetColor();
 	m_bufferManager->SetBufferData("Matrix", &matrices, Lime::ShaderType::Vertex);
 
-	UINT size = (UINT)model->m_mesh->GetIndexCount();
-	UINT vertOff = model->m_mesh->vertOffset;
-	UINT indOff = model->m_mesh->indiciOffset;
+	uint32_t size = (uint32_t)model->m_mesh->GetIndexCount();
+	uint32_t vertOff = model->m_mesh->vertOffset;
+	uint32_t indOff = model->m_mesh->indiciOffset;
 
 	m_deviceContext->RSSetState(m_cullBack);
 	m_bufferManager->DrawIndexed(size, indOff, vertOff);
@@ -321,7 +321,7 @@ void Lime::DX11Graphics::Draw()
 	ResetView();
 }
 
-void Lime::DX11Graphics::ResizeWindow(const UINT width, const UINT height)
+void Lime::DX11Graphics::ResizeWindow(const uint32_t width, const uint32_t height)
 {
 	HRESULT result;
 	//Reset all objects that use window size
@@ -452,7 +452,7 @@ HRESULT Lime::DX11Graphics::CreateRTV()
 	return result;
 }
 
-void Lime::DX11Graphics::CreateViewport(const UINT width, const UINT height)
+void Lime::DX11Graphics::CreateViewport(const uint32_t width, const uint32_t height)
 {
 	m_viewport = { 0 };
 	m_viewport.MinDepth = 0.0f;

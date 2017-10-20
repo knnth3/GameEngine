@@ -12,7 +12,7 @@ namespace Lime
 	class WinProc
 	{
 	public:
-		AppDLL_API static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		AppDLL_API static LRESULT CALLBACK WindowProc(HWND hWnd, uint32_t message, WPARAM wParam, LPARAM lParam);
 	};
 
 	class Win32Window

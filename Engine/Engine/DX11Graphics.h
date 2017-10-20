@@ -1,23 +1,5 @@
 #pragma once
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "D3DCompiler.lib")
-#include <d3d11.h>
-#include <comdef.h>
-#include <map>
-#include "Camera.h"
-#include "TextController.h"
-#include "Shared.h"
-#include "D3Dcompiler.h"
-#include "DX11Shader.h"
-#include "DX11DepthStencilState.h"
-#include "DX11BufferManager.h"
-#include "VertexLibrary.h"
-
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
-
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
+#include "RenderBatch.h"
 
 namespace Lime
 {
@@ -45,21 +27,22 @@ namespace Lime
 		float specularPower;
 	};
 
-	class DX11Graphics
+	class DX11Graphics :
+		public RenderBatch
 	{
 	public:
-		AppDLL_API DX11Graphics(const HWND window, const UINT width, const UINT height);
+		AppDLL_API DX11Graphics(const HWND window, const uint32_t width, const uint32_t height);
 		AppDLL_API ~DX11Graphics();
-		AppDLL_API bool Add3DModel(std::shared_ptr<Model::Model3D>& model);
-		AppDLL_API bool Add2DModel(std::shared_ptr<Model::Model2D>& model);
-		AppDLL_API bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color);
-		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller);
-		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr);
-		AppDLL_API void Draw();
-		AppDLL_API void ResizeWindow(const UINT width, const UINT height);
-		AppDLL_API void Wireframe(bool statement);
-		AppDLL_API void ClearScreen(glm::vec3 color);
-		AppDLL_API void Reset();
+		AppDLL_API bool Add3DModel(std::shared_ptr<Model::Model3D>& model) override;
+		AppDLL_API bool Add2DModel(std::shared_ptr<Model::Model2D>& model) override;
+		AppDLL_API bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color) override;
+		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller) override;
+		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr) override;
+		AppDLL_API void Draw() override;
+		AppDLL_API void ResizeWindow(const uint32_t width, const uint32_t height) override;
+		AppDLL_API void Wireframe(bool statement) override;
+		AppDLL_API void ClearScreen(glm::vec3 color) override;
+		AppDLL_API void Reset() override;
 	private:
 
 		void Close();
@@ -67,13 +50,13 @@ namespace Lime
 		void RenderMesh(std::shared_ptr<Model::Model3D>& model);
 		void Render2DMesh(std::shared_ptr<Model::Model2D>& model);
 		void RenderLine(std::shared_ptr<Model::Model3D>& model);
-		HRESULT Initialize(const HWND window, const UINT width, const UINT height);
+		HRESULT Initialize(const HWND window, const uint32_t width, const uint32_t height);
 		void CreateBuffers();
 		void CreateConstBuffers();
 		HRESULT CreateRenderStates();
 		HRESULT CreateBlendState();
 		HRESULT CreateRTV();
-		void CreateViewport(const UINT width, const UINT height);
+		void CreateViewport(const uint32_t width, const uint32_t height);
 		void SetZBufferStatus(const bool value);
 		void ResetView();
 
@@ -83,7 +66,7 @@ namespace Lime
 		bool m_hasCreatedBuffers = false;
 
 		//New API
-		const UINT m_bufferCount;
+		const uint32_t m_bufferCount;
 		WorldLight m_light;
 		int m_windowWidth;
 		int m_windowHeight;

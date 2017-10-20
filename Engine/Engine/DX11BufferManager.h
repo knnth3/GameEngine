@@ -40,7 +40,7 @@ namespace Lime
 
 	private:
 		bool m_isEmpty;
-		UINT stride3d;
+		uint32_t stride3d;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_context;
 		D3D11_BUFFER_DESC m_vertexBufferDesc;

@@ -8,7 +8,7 @@
 namespace Lime
 {
 
-	void Camera::Initialize(UINT windowWidth, UINT windowHeight)
+	void Camera::Initialize(uint32_t windowWidth, uint32_t windowHeight)
 	{
 		m_info.m_distanceFromObject = 600.0f;
 		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -84,7 +84,7 @@ namespace Lime
 		m_info.m_rotation = rotation;
 	}
 
-	void Camera::SetResolution(UINT width, UINT height)
+	void Camera::SetResolution(uint32_t width, uint32_t height)
 	{
         m_info.m_xResolution = width;
         m_info.m_yResolution = height;

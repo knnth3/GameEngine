@@ -3,7 +3,8 @@
 
 
 
-Dungeon::Dungeon()
+Dungeon::Dungeon():
+	App(Lime::GRAPHICS_API::DIRECTX_11)
 {
 }
 
@@ -34,11 +35,11 @@ void Dungeon::OnInitialize()
 	GetWindowSize(width, height);
 	m_camera = std::make_shared<Lime::Camera>();
 	m_camera->Initialize(width, height);
-	m_graphicsDevice->AttatchCamera(m_camera);
+	m_renderBatch->AttatchCamera(m_camera);
 	m_input->LoadCamera(m_camera);
 	start = std::chrono::system_clock::now();
 	end = start;
-	m_state = std::make_unique<GameStates::MainMenu>(m_graphicsDevice);
+	m_state = std::make_unique<GameStates::MainMenu>(m_renderBatch);
 	m_state->Initialize(width, height);
 }
 
@@ -64,7 +65,7 @@ void Dungeon::OnWindowMoved()
 
 void Dungeon::OnWindowSizeChanged(int width, int height)
 {
-	m_graphicsDevice->ResizeWindow(width, height);
+	m_renderBatch->ResizeWindow(width, height);
 	m_state->OnWindowResize(width, height);
 }
 
@@ -84,8 +85,8 @@ void Dungeon::Update(float elapsed)
 	case GameStates::MAIN_MENU:
 	{
 		m_state.release();
-		m_graphicsDevice->Reset();
-		m_state = std::make_unique<MainMenu>(m_graphicsDevice);
+		m_renderBatch->Reset();
+		m_state = std::make_unique<MainMenu>(m_renderBatch);
 		UINT width, height;
 		GetWindowSize(width, height);
 		m_state->Initialize(width, height);
@@ -95,8 +96,8 @@ void Dungeon::Update(float elapsed)
 	{
 		m_state.release();
 		Lime::TextureManager::Clear();
-		m_graphicsDevice->Reset();
-		m_state = std::make_unique<MapEditor>(m_graphicsDevice, m_camera);
+		m_renderBatch->Reset();
+		m_state = std::make_unique<MapEditor>(m_renderBatch, m_camera);
 		UINT width, height;
 		GetWindowSize(width, height);
 		m_state->Initialize(width, height);
@@ -111,10 +112,10 @@ void Dungeon::Render()
 {
 	Clear();
 
-	m_graphicsDevice->Draw();
+	m_renderBatch->Draw();
 }
 
 void Dungeon::Clear()
 {
-	m_graphicsDevice->ClearScreen(glm::vec3(0.3f, 0.3f, 0.7f));
+	m_renderBatch->ClearScreen(glm::vec3(0.3f, 0.3f, 0.7f));
 }
