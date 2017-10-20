@@ -1,8 +1,8 @@
 #include "GS_MapEditor.h"
 #include <Lime\ModelLoader.h>
 
-#define Meter 100.0f
-
+#define BLOCK_RADIUS 12.5f
+#define BLOCK_HEIGHT Meter * 0.5f
 
 GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::DX11Graphics>& rend, std::shared_ptr<Lime::Camera>& camera)
 {
@@ -15,7 +15,9 @@ GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::DX11Graphics>& rend, std:
 	m_camera->AttachToModel(m_user);
 
 	m_cursor = std::make_shared<Lime::Model::Model3D>(id);
-	m_cursor->Scale(5.0f, 10.0f, 5.0f);
+	float radius = BLOCK_RADIUS / m_cursor->GetHeight();
+	float height = BLOCK_HEIGHT / m_cursor->GetHeight();
+	m_cursor->Scale(radius, height, radius);
 	m_cursor->SetPosition(Meter * 0.5f, Meter * 0.25f, Meter * 0.5f);
 	rend->Add3DModel(m_user);
 	CreateFloor(10, 10, id, rend);
@@ -43,32 +45,28 @@ GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lim
 	static float total = 0.0f;
 	UpdateCursor(time, input);
 	camRot = 9.8f / 2.0f * time;
-	if (input->KeyStatus(Lime::Key::A) == true) //A
+	if (input->KeyStatus(Lime::Key::A) == true)
 	{
 		m_camera->Rotate(camRot, 0.0f, 0.0f);
 	}
-	if (input->KeyStatus(Lime::Key::D) == true) //D
+	if (input->KeyStatus(Lime::Key::D) == true)
 	{
 		m_camera->Rotate(-camRot, 0.0f, 0.0f);
 	}
-	if (input->KeyStatus(Lime::Key::W) == true) //W
+	if (input->KeyStatus(Lime::Key::W) == true)
 	{
 		m_camera->Rotate(0.0f, camRot, 0.0f);
 	}
-	if (input->KeyStatus(Lime::Key::S) == true) //S
+	if (input->KeyStatus(Lime::Key::S) == true)
 	{
 		m_camera->Rotate(0.0f, -camRot, 0.0f);
 	}
-	if (input->KeyStatus(Lime::Key::Q) == true) //Q
+	if (input->KeyStatus(Lime::Key::Q) == true)
 	{
-		//total += -camRot;
-		//m_user->Scale(total, total, total);
 		m_camera->Zoom(-camRot * 100.0f);
 	}
-	if (input->KeyStatus(Lime::Key::E) == true) //E
+	if (input->KeyStatus(Lime::Key::E) == true)
 	{
-		//total += camRot;
-		//m_user->Scale(total, total, total);
 		m_camera->Zoom(camRot * 100.0f);
 	}
 
@@ -132,8 +130,8 @@ void GameStates::MapEditor::CreateFloor(int length, int width, Lime::TextureID i
 
 void GameStates::MapEditor::UpdateCursor(float time, std::shared_ptr<Lime::InputManager>& input)
 {
-	static float alignPos = (Meter * 0.25f);
-	static float slices = Meter * 0.5f;
+	static float alignPos = BLOCK_RADIUS;
+	static float slices = BLOCK_RADIUS * 2.0f;
 	static float color = 0.0f;
 	float posX;
 	float posY;
@@ -194,8 +192,7 @@ void GameStates::MapEditor::AddNewBlock(std::shared_ptr<Lime::Model::Model3D>& m
 	auto newBlock = std::make_shared<Lime::Model::Model3D>(model->GetMesh());
 	newBlock->SetColor(model->GetColor());
 	auto scale = model->GetScale();
-	auto scale2 = glm::vec3(5.0f, 10.0f, 5.0f);
-	newBlock->Scale(scale2);
+	newBlock->Scale(scale);
 	newBlock->SetPosition(model->GetPosition());
 	m_newBlocks.push_back(newBlock);
 	m_render->Add3DModel(newBlock);
