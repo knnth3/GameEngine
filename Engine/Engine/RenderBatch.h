@@ -13,6 +13,9 @@ namespace Lime
 	class RenderBatch
 	{
 	public:
+		//Used for OpenGl in windows
+		virtual bool PreInitialize(const void* window);
+		virtual bool Initialize(const void* window, const uint32_t width, const uint32_t height);
 		virtual bool Add3DModel(std::shared_ptr<Model::Model3D>& model) = 0;
 		virtual bool Add2DModel(std::shared_ptr<Model::Model2D>& model) = 0;
 		virtual bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color) = 0;

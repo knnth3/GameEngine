@@ -224,7 +224,6 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="resource.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="VertexLibrary.h" />
-    <ClInclude Include="wglext.h" />
     <ClInclude Include="Win32Window.h" />
     <ClInclude Include="Lime.h" />
     <ClInclude Include="InputManager.h" />

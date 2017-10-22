@@ -5,14 +5,10 @@
 #include <stdlib.h>
 #include "ModelLoader.h"
 
-Lime::DX11Graphics::DX11Graphics(const HWND window, const uint32_t width, const uint32_t height):
+Lime::DX11Graphics::DX11Graphics():
 	m_bufferCount(3)
 {
-	m_windowWidth = width;
-	m_windowHeight = height;
 	m_hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(NULL));
-	HRESULT result = Initialize(window, width, height);
-	CheckSuccess(result);
 }
 
 Lime::DX11Graphics::~DX11Graphics()
@@ -20,9 +16,12 @@ Lime::DX11Graphics::~DX11Graphics()
 	Close();
 }
 
-HRESULT Lime::DX11Graphics::Initialize(const HWND window, const uint32_t width, const uint32_t height)
+bool Lime::DX11Graphics::Initialize(const void * window, const uint32_t width, const uint32_t height)
 {
-	HRESULT result;
+	m_windowWidth = width;
+	m_windowHeight = height;
+
+	bool status;
 	DXGI_MODE_DESC bufferDesc = { 0 };
 
 	bufferDesc.Width = width;
@@ -37,19 +36,28 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const uint32_t width, 
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = m_bufferCount;
-	swapChainDesc.OutputWindow = window;
+	swapChainDesc.OutputWindow = (HWND)window;
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
+	HRESULT result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL,
 		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
-	CheckSuccess(result);
+	if (result != S_OK)
+	{
+		CheckSuccess(result);
+		return false;
+	}
+
 	//Create our BackBuffer
 	CreateRTV();
 
 	//Depth stencil state
 	m_dsState = std::make_unique<DX11DepthStencilState>(m_windowWidth, m_windowHeight, m_device, m_deviceContext, m_renderTargetView);
-	m_dsState->Initialize();
+	status = m_dsState->Initialize();
+	if (!status)
+	{
+		return false;
+	}
 
 	//Shaders
 	LPCWSTR vsPath = L"EngineAssets/shaders/VertexShader.hlsl";
@@ -107,7 +115,7 @@ HRESULT Lime::DX11Graphics::Initialize(const HWND window, const uint32_t width, 
 	CreateBlendState();
 	m_deviceContext->RSSetState(m_cullBack);
 
-	return result;
+	return status;
 }
 
 void Lime::DX11Graphics::Close()

@@ -1,5 +1,18 @@
 #include "App.h"
 
+#if PLATFORM == OS_WINDOWS
+
+#include "DX11Graphics.h"
+#include "OpenGLGraphics.h"
+
+#else
+
+#include "OpenGLGraphics.h"
+#endif
+
+
+
+
 
 Lime::App::App(const GRAPHICS_API api)
 {
@@ -17,21 +30,32 @@ Lime::App::~App()
 {
 }
 
-void Lime::App::Init(void* hwnd)
+bool Lime::App::InitializeGraphics(void * hwnd)
 {
-
 #if PLATFORM == OS_WINDOWS
-	HWND m_hwnd = (HWND)hwnd;
-	if(m_type == Lime::GRAPHICS_API::DIRECTX_11)
-		m_renderBatch = std::make_unique<DX11Graphics>(m_hwnd, m_width, m_height);
-	else
-		m_renderBatch = std::make_unique<DX11Graphics>(m_hwnd, m_width, m_height);
+	if (m_type == Lime::GRAPHICS_API::DIRECTX_11)
+		m_renderBatch = std::make_unique<DX11Graphics>();
+	else if (m_type == Lime::GRAPHICS_API::OPENGL_4_0)
+		m_renderBatch = std::make_unique<OpenGLGraphics>();
 #else
-	m_renderBatch = std::make_unique<DX11Graphics>(m_hwnd, m_width, m_height);
+	m_renderBatch = std::make_unique<OpenGLGraphics>();
+
 #endif
 
-	m_input = std::make_unique<InputManager>();
-	OnInitialize();
+	return m_renderBatch->PreInitialize(hwnd);
+}
+
+bool Lime::App::Initialize(void* hwnd)
+{
+	bool result;
+	result = m_renderBatch->Initialize(hwnd, m_width, m_height);
+	if (result)
+	{
+		m_input = std::make_unique<InputManager>();
+		OnInitialize();
+		m_isInitialized =  true;
+	}
+	return result;
 }
 
 void Lime::App::CloseApp()
@@ -50,6 +74,11 @@ void Lime::App::SetSize(uint32_t width, uint32_t height)
 	m_width = width;
 	m_height = height;
 
+}
+
+Lime::GRAPHICS_API Lime::App::GetAPI()
+{
+	return m_type;
 }
 
 void Lime::App::KeyUp(unsigned int Key)
@@ -71,4 +100,9 @@ void Lime::App::SetWindowSize(uint32_t width, uint32_t height)
 {
 	m_width = width;
 	m_height = height;
+}
+
+bool Lime::App::IsInitialized()
+{
+	return m_isInitialized;
 }

@@ -8,7 +8,7 @@ namespace Lime
 	{
 	public:
 		DX11DepthStencilState(uint16_t windowWidth, uint16_t windowHeight, ID3D11Device* device, ID3D11DeviceContext* context, ID3D11RenderTargetView* rtv);
-		void Initialize();
+		bool Initialize();
 		void OnWindowResize(ID3D11RenderTargetView* rtv, uint16_t windowWidth, uint16_t windowHeight);
 		void SetAsActive();
 		void ClearView();

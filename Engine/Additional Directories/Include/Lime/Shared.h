@@ -39,14 +39,13 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "opengl32.lib")
 //Included headers
 #include <comdef.h>
 #include <d3d11.h>
 #include "WindowsAdditionals.h"
 #include "D3Dcompiler.h"
 #else
-#pragma comment(lib, "opengl32.lib")
+//Stuff for other operating systems
 #endif
 
 

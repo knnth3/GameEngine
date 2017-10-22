@@ -28,12 +28,6 @@ private:
 	std::shared_ptr<Camera> m_camera;
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
-	std::shared_ptr<Model::Model3D> model1;
-	std::shared_ptr<Model::Model3D> model2;
-	std::shared_ptr<Model::Model2D> model3;
-	std::shared_ptr<TextController> controller;
-	float camRot = 0.0f;
-	float rot = 0.0f;
 	float red = 0.0f;
 	float green = 0.0f;
 	float blue = 0.0f;

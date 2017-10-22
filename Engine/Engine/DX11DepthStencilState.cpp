@@ -79,24 +79,42 @@ Lime::DX11DepthStencilState::DX11DepthStencilState(uint16_t windowWidth, uint16_
 
 }
 
-void Lime::DX11DepthStencilState::Initialize()
+bool Lime::DX11DepthStencilState::Initialize()
 {
 	HRESULT result;
 
-
 	result = m_device->CreateDepthStencilState(&m_2DdepthStencilDesc, &m_2DdepthStencilState);
-	CheckSuccess(result);
+	if (result != S_OK)
+	{
+		CheckSuccess(result);
+		return false;
+	}
 
 	result = m_device->CreateDepthStencilState(&m_3DdepthStencilDesc, &m_3DdepthStencilState);
-	CheckSuccess(result);
+	if (result != S_OK)
+	{
+		CheckSuccess(result);
+		return false;
+	}
 
 	result = m_device->CreateTexture2D(&m_depthBufferDesc, NULL, &m_depthStencilBuffer);
-	CheckSuccess(result);
+	if (result != S_OK)
+	{
+		CheckSuccess(result);
+		return false;
+	}
 
 	result = m_device->CreateDepthStencilView(m_depthStencilBuffer, &m_depthStencilViewDesc, &m_depthStencilView);
-	CheckSuccess(result);
+	if (result != S_OK)
+	{
+		CheckSuccess(result);
+		return false;
+	}
 
-	SetAsActive();
+	if (result == S_OK)
+		SetAsActive();
+
+	return true;
 }
 
 void Lime::DX11DepthStencilState::OnWindowResize(ID3D11RenderTargetView* rtv, uint16_t windowWidth, uint16_t windowHeight)

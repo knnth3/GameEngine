@@ -31,18 +31,19 @@ namespace Lime
 		public RenderBatch
 	{
 	public:
-		AppDLL_API DX11Graphics(const HWND window, const uint32_t width, const uint32_t height);
+		AppDLL_API DX11Graphics();
 		AppDLL_API ~DX11Graphics();
-		AppDLL_API bool Add3DModel(std::shared_ptr<Model::Model3D>& model) override;
-		AppDLL_API bool Add2DModel(std::shared_ptr<Model::Model2D>& model) override;
-		AppDLL_API bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color) override;
-		AppDLL_API bool AddText(std::string text, std::shared_ptr<TextController>& controller) override;
-		AppDLL_API void AttatchCamera(std::shared_ptr<Camera>& ptr) override;
-		AppDLL_API void Draw() override;
-		AppDLL_API void ResizeWindow(const uint32_t width, const uint32_t height) override;
-		AppDLL_API void Wireframe(bool statement) override;
-		AppDLL_API void ClearScreen(glm::vec3 color) override;
-		AppDLL_API void Reset() override;
+		AppDLL_API virtual bool Initialize(const void* window, const uint32_t width, const uint32_t height) override;
+		AppDLL_API virtual bool Add3DModel(std::shared_ptr<Model::Model3D>& model) override;
+		AppDLL_API virtual bool Add2DModel(std::shared_ptr<Model::Model2D>& model) override;
+		AppDLL_API virtual bool Add3DLine(glm::vec3 pos1, glm::vec3 pos2, glm::vec4 color) override;
+		AppDLL_API virtual bool AddText(std::string text, std::shared_ptr<TextController>& controller) override;
+		AppDLL_API virtual void AttatchCamera(std::shared_ptr<Camera>& ptr) override;
+		AppDLL_API virtual void Draw() override;
+		AppDLL_API virtual void ResizeWindow(const uint32_t width, const uint32_t height) override;
+		AppDLL_API virtual void Wireframe(bool statement) override;
+		AppDLL_API virtual void ClearScreen(glm::vec3 color) override;
+		AppDLL_API virtual void Reset() override;
 	private:
 
 		void Close();
@@ -50,7 +51,6 @@ namespace Lime
 		void RenderMesh(std::shared_ptr<Model::Model3D>& model);
 		void Render2DMesh(std::shared_ptr<Model::Model2D>& model);
 		void RenderLine(std::shared_ptr<Model::Model3D>& model);
-		HRESULT Initialize(const HWND window, const uint32_t width, const uint32_t height);
 		void CreateBuffers();
 		void CreateConstBuffers();
 		HRESULT CreateRenderStates();

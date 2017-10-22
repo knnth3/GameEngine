@@ -221,9 +221,6 @@
     <ClInclude Include="OpenGLGraphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wglext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\PixelShader.hlsl">
