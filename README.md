@@ -1,2 +1,5 @@
 # Game-Engine
-A c++ DLL  project to support the production of a game
+This project is an engine that currently uses the DirectX 11 API and the OpenGL 4.1 API.
+
+It's a very basic implementation that is work in progress.
+To test it out, clone and open the sln file in Visual Studios
