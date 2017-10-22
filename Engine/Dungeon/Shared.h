@@ -1,4 +1,4 @@
 #pragma once
 #include <memory>
 
-#define Meter 100.0f
+#define METER 100.0f

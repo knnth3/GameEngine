@@ -4,6 +4,10 @@
 #include <Lime\DX11Graphics.h>
 #include <Lime\Model2D.h>
 
+//Main menu implementation
+//Inherits from GameState
+//Contains a basic implementation that will be replaced in the future
+
 namespace GameStates
 {
 	class MainMenu :
@@ -26,8 +30,7 @@ namespace GameStates
 		void Draw();
 
 	private:
-		std::shared_ptr<Lime::Model::Model2D> m_test;
-		std::shared_ptr<Lime::Model::Model2D> m_test2;
+		std::shared_ptr<Lime::Model::Model2D> m_background;
 		std::shared_ptr<Button> m_b1;
 
 		float m_rad = 0.0f;

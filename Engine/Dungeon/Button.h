@@ -3,6 +3,9 @@
 #include <Lime\Model2D.h>
 #include <Lime\DX11Graphics.h>
 
+//Simple logical implementation of a button for the Lime Engine
+//uses a 2D Model to represent the button visual
+
 class Button
 {
 public:

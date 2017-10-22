@@ -16,6 +16,7 @@ Button::Button(float x, float y, float length, float width)
 	m_bReleased = false;
 }
 
+//Checks for collision based off 2D of bounding box
 void Button::Update(glm::vec2 mousePos, bool mouseButtonDown)
 {
 	float maxX = m_pos.x + (m_length *0.5f);

@@ -2,7 +2,9 @@
 #include "GS_MapEditor.h"
 
 
-
+//App has an initializer and it must be called
+//It can be done so by using [ :ClassName() ] in the initialize of the current
+//-object before the braces
 Dungeon::Dungeon():
 	App(Lime::GRAPHICS_API::DIRECTX_11)
 {
@@ -12,6 +14,8 @@ Dungeon::~Dungeon()
 {
 }
 
+//Tick is called by the OS every frame
+//Anything that is time related is done here
 void Dungeon::Tick()
 {
 	static int count = 0;
@@ -29,6 +33,7 @@ void Dungeon::Tick()
 	Render();
 }
 
+//Initializes the Required camera, gamestate and starts the timer
 void Dungeon::OnInitialize()
 {
 	UINT width, height;
@@ -63,12 +68,13 @@ void Dungeon::OnWindowMoved()
 {
 }
 
+//Grabs the new window size and sends it to the render batch and the gamestate
 void Dungeon::OnWindowSizeChanged(int width, int height)
 {
 	m_renderBatch->ResizeWindow(width, height);
 	m_state->OnWindowResize(width, height);
 }
-
+//Checks the gamestate return value and responds accordingly
 void Dungeon::Update(float elapsed)
 {
 	using namespace GameStates;
@@ -78,7 +84,9 @@ void Dungeon::Update(float elapsed)
 	switch (result)
 	{
 	case GameStates::CLOSE:
-		exit(0);
+		//Function to close app
+		//Should only be called here
+		this->CloseApp();
 		break;
 	case GameStates::RUNNING:
 		break;
@@ -108,6 +116,7 @@ void Dungeon::Update(float elapsed)
 	}
 }
 
+//Draws to the backbuffer and then switches it to the front
 void Dungeon::Render()
 {
 	Clear();
@@ -115,6 +124,7 @@ void Dungeon::Render()
 	m_renderBatch->Draw();
 }
 
+//Optional* cleares the back buffer before drawing
 void Dungeon::Clear()
 {
 	m_renderBatch->ClearScreen(glm::vec3(0.3f, 0.3f, 0.7f));
