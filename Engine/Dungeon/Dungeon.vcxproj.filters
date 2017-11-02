@@ -54,7 +54,9 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DungeonMapTileset.cpp" />
+    <ClCompile Include="DungeonMapTileset.cpp">
+      <Filter>DMT Filetype</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dungeon.h">
@@ -81,7 +83,9 @@
     <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DungeonMapTileset.h" />
+    <ClInclude Include="DungeonMapTileset.h">
+      <Filter>DMT Filetype</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\textures\MainMenuBG.jpg">

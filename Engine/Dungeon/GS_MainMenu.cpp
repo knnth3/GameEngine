@@ -37,7 +37,7 @@ GameStates::States GameStates::MainMenu::Update(float time, std::shared_ptr<Lime
 
 	//If the button is clicked, load the map editor
 	if(m_b1->IsClicked())
-		return States::SCENE_MANAGER;
+		return States::MAP_EDITOR;
 	else
 		return States::RUNNING;
 }

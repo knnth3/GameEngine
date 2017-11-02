@@ -1,5 +1,6 @@
 #include "GS_MapEditor.h"
 #include <Lime\ModelLoader.h>
+#include "DungeonMapTileset.h"
 
 //These are macros and can replace any "hard-coding" with a variable name that will be replaced
 //-by the c++ compliler in compile time
@@ -51,6 +52,14 @@ GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lim
 	{
 		m_camera->Zoom(camRot * 100.0f);
 	}
+	if (input->KeyPressed(Lime::Key::P))
+	{
+		DMT outFile;
+		outFile.version = 1;
+		outFile.AddData(m_map);
+		FileManager::WriteFile("testFile.txt", outFile);
+		return SCENE_MANAGER;
+	}
 
 	Draw();
 
@@ -61,23 +70,18 @@ GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lim
 //All initialization of complidated logic goes in here
 void GameStates::MapEditor::Initialize(int windowWidth, int windowHeight)
 {
-	//New mesh IDs are made for the objects in the scene
+	//Load in a mesh with this function, an id is returned that's basically like a pointer to the mesh
 	//The mesh loader can only open .fbx files although .obj files can be converted to .fbx
-	//Later, a .obj reader will be implemented
-	//****!The auto variable type is new to c++. It can be used to replace any type name with someting that is easy to type*****
-	//-Auto in this case represents a MeshID. You can definitely write MeshID instead of auto (and is encouraged) but sometimes names are
-	//-too long to type so auto is preffered
-	//-The downside is that auto makes it harder to follow code
-	auto id = Lime::Model::MeshLoader::LoadModel("Assets/Models/Cube_TextureWrap.fbx");
+	MeshID id = Lime::Model::MeshLoader::LoadModel("Assets/Models/Cube_TextureWrap.fbx");
 	MeshID modelMesh = Lime::Model::MeshLoader::LoadModel("Assets/Models/Model_Girl.fbx");
 
 	//m_user is a 3D-Model and requires a mesh for its constructor
-	//Since this will represent the character in this scene, use the camera's ->AttachToModel(model)
-	//-This tells the camera to follow/rotate around the selected model
 	m_user = std::make_shared<Lime::Model::Model3D>(modelMesh);
+
 	//A 3D-Model has a handful of useful functions to utilize
-	//Scale is one of many. Remember a scale of 1 is default
 	m_user->Scale(20.0f, 20.0f, 20.0f);
+
+	//The camera will now rotate around this model
 	m_camera->AttachToModel(m_user);
 
 	//Cursor is also a 3D-Model and will be created the exact same as the model
@@ -107,7 +111,6 @@ void GameStates::MapEditor::Initialize(int windowWidth, int windowHeight)
 	CreateFloor(10, 10, id);
 
 	//!Important! - every model must be passed to the render batch if it's gong to be drawn to the screen
-	//-It cannot draw anything it doesn't know about
 	m_render->Add3DModel(m_user);
 	m_render->Add3DModel(m_cursor);
 }
@@ -122,48 +125,29 @@ void GameStates::MapEditor::OnWindowResize(int width, int height)
 {
 }
 
-//Call all the objects that want to be drawn ->Draw() function provided in every Model
-//--Call only if you want to draw the object this frame
 void GameStates::MapEditor::Draw()
 {
+	//Call all the objects that want to be drawn ->Draw() function provided in every Model
 	m_user->Draw();
 	m_cursor->Draw();
 
-	//Uses iterator ptrs (Part of the STL library) to go through every object in the vector
-	//More information about this can be found online and by watching this video
-	//https://www.youtube.com/watch?v=h5aFJJp1Stw
-	for (auto x : m_floor)
-	{
-		for (auto y : x)
-		{
-			y->Draw();
-		}
-	}
-	for (auto x : m_newBlocks)
+	for (auto x : m_map)
 	{
 		x->Draw();
 	}
 }
 
-//Creates the floor (the objects that have the 4 as a texture)
 void GameStates::MapEditor::CreateFloor(int length, int width, MeshID id)
 {
-	//Textures can be created with the TextureManager
-	//Can use auto here if desired
-	//-an ID with -1 is default for a white texture and does not need to be set on a model if desired
+	//Textures can be created with the TextureManager, if no texture is provided to a model, it will default to a white color
 	Lime::TextureID texture = Lime::TextureManager::CreateNewTexture(L"Assets/textures/image1.dds");
 
 	//Logic
 
-	//Offset for each block from the center (0,0,0)
+	//Offset for each block from (0,0,0)
 	float alignPos = (METER * 0.5f);
-	//Resize the vector to fit *length* vectors
-	m_floor.resize(length);
 	for (int x = 0; x < length; x++)
 	{
-		//Resize the vector to fit *width* objects
-		//every ptr to a 3D model is initialized to be null
-		m_floor[x].resize(width, nullptr);
 		for (int y = 0; y < width; y++)
 		{
 			//Set the settings for every element in the 2d vector
@@ -172,22 +156,22 @@ void GameStates::MapEditor::CreateFloor(int length, int width, MeshID id)
 			float posX = float(x) * METER;
 			float posY = float(y) * METER;
 
-			//Create new 3D objects to fill the 2D vector
-			m_floor[x][y] = std::make_shared<Lime::Model::Model3D>(id);
-			m_floor[x][y]->Scale(10.0f, 2.5f, 10.0f);
-			m_floor[x][y]->SetPosition(alignPos + posX - offsetX, METER * -0.125f, alignPos + posY - offsety);
-			m_floor[x][y]->SetTexture(texture);
+			//Creates a floor tile and adds it to the map
+			auto tile = std::make_shared<Lime::Model::Model3D>(id);
+			tile->Scale(10.0f, 2.5f, 10.0f);
+			tile->SetPosition(alignPos + posX - offsetX, METER * -0.125f, alignPos + posY - offsety);
+			tile->SetTexture(texture);
 
-			//Dont forget to add to render batch
-			m_render->Add3DModel(m_floor[x][y]);
+			//Add to render batch
+			m_render->Add3DModel(tile);
+			m_map.push_back(tile);
 		}
 	}
 }
 
 void GameStates::MapEditor::UpdateCursor(float time, std::shared_ptr<Lime::InputManager>& input)
 {
-	//Static means the variable will stay relevant even after the end of the function and will
-	//-have it's prev value if called again
+	//Static means the variable will stay relevant even after the end of the function
 	static float alignPos = BLOCK_RADIUS;
 	static float slices = BLOCK_RADIUS * 2.0f;
 	static float color = 0.0f;
@@ -254,9 +238,9 @@ void GameStates::MapEditor::AddNewBlock(std::shared_ptr<Lime::Model::Model3D>& m
 	newBlock->Scale(scale);
 	newBlock->SetPosition(model->GetPosition());
 
-	//Adds to the new block vector described in the header file
-	m_newBlocks.push_back(newBlock);
-
 	//Needs to be added to the render batch
 	m_render->Add3DModel(newBlock);
+
+	//Adds to the new block vector described in the header file
+	m_map.push_back(newBlock);
 }

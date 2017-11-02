@@ -115,7 +115,7 @@ void Dungeon::Update(float elapsed)
 	{
 		m_state.release();
 		m_renderBatch->Reset();
-		m_state = std::make_unique<SceneManager>();
+		m_state = std::make_unique<SceneManager>(m_renderBatch, m_camera);
 		UINT width, height;
 		GetWindowSize(width, height);
 		m_state->Initialize(width, height);

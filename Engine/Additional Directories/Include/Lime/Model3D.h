@@ -42,6 +42,7 @@ namespace Lime
 			AppDLL_API TextureID GetTexture();
 			AppDLL_API MeshID GetMesh();
 			AppDLL_API float GetHeight()const;
+			AppDLL_API void GetMeshData(std::vector<Lime::Model::Vertex>& vertices, std::vector<uint32_t>& indices) const;
 
 			//Operator overloading
 			AppDLL_API Model3D& operator= (const Model3D& m) = default;

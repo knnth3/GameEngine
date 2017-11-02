@@ -23,6 +23,7 @@ namespace Lime
 		S = 0x53,
 		Q = 0x51,
 		E = 0x45,
+		P = 0x50,
 	};
 
 

@@ -54,22 +54,20 @@ namespace GameStates
 		//-Do not forget to initialze each variable
 		//-Sometimes it's not nessesary but for most cases zero-ing the object doesnt hurt
 		float camRot = 0.0f;
+
 		//The model that the user is using
 		std::shared_ptr<Lime::Model::Model3D> m_user;
+
 		//The cursor that follows the mouse in the game
 		std::shared_ptr<Lime::Model::Model3D> m_cursor;
+
 		//Currently Active camera (User)
 		std::shared_ptr<Lime::Camera> m_camera;
 
-		//A list of all the models that creat the floor
-		//It is organized like a 2d grid
-		std::vector<std::vector<std::shared_ptr<Lime::Model::Model3D>>> m_floor;
-		//All blocks added with the AddNewBlock function go in here
-		std::vector<std::shared_ptr<Lime::Model::Model3D>> m_newBlocks;
+		//All tiles go in here
+		std::vector<std::shared_ptr<Lime::Model::Model3D>> m_map;
+
 		//The render batch is what is used to print objects to the screen
-		//It containes many useful functions to do so
-		//It requires all geometry to be passed into it before it can draw anything
-		//-Any that is not added with EX: ->Add3DModel(model) will not be rendered
 		std::shared_ptr<Lime::RenderBatch> m_render;
 	};
 

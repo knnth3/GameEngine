@@ -150,6 +150,11 @@ float Lime::Model::Model3D::GetHeight() const
 	return m_mesh->GetHeight();
 }
 
+void Lime::Model::Model3D::GetMeshData(std::vector<Lime::Model::Vertex>& vertices, std::vector<uint32_t>& indices) const
+{
+	m_mesh->GetBuffers(vertices, indices);
+}
+
 void Lime::Model::Model3D::operator=(MeshID id)
 {
 	m_meshID = id;
