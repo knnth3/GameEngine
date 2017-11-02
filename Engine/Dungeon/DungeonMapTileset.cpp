@@ -8,12 +8,40 @@ using namespace std;
 #define SIZEOF_OBJECT3D_HEADER sizeof(uint32_t) + (2 * sizeof(glm::vec3))
 #define LATEST_DMT_VERSION 1
 
+#if PLATFORM == OS_WINDOWS
+#endif;
+
 bool FileManager::WriteFile(const std::string filepath, const DMT& outFile)
 {
 	ofstream file;
 	file.open(filepath, ios::out | ios::binary);
 	if (!file)
-		return false;
+	{
+		//Grab the folder path
+		size_t found = filepath.find_last_of("/\\");
+		if (found > 0)
+		{
+			string path = filepath.substr(0, found);
+			wstring wide(path.begin(), path.end());
+
+#if PLATFORM == OS_WINDOWS
+#include <Lime\WindowsAdditionals.h>
+
+			//Try to create the directory (it might not exist)
+			if (CreateDirectory(wide.c_str(), NULL))
+			{
+				file.open(filepath, ios::out | ios::binary);
+				if (!file)
+					return false;
+			}
+			else
+			{
+				auto result = GetLastErrorAsString();
+				return false;
+			}
+#endif
+		}
+	}
 
 	//Wite DMT header to file
 	if (!file.write((const char*)&outFile, SIZEOF_DMT_HEADER))

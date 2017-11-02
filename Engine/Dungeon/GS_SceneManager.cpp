@@ -5,7 +5,7 @@
 SceneManager::SceneManager(std::shared_ptr<Lime::RenderBatch>& rend, std::shared_ptr<Lime::Camera>& camera)
 {
 	DMT inFile;
-	FileManager::LoadFile("testFile.txt", inFile);
+	FileManager::LoadFile("Maps/Level1.dmt", inFile);
 
 	for (auto x : inFile.objects)
 	{

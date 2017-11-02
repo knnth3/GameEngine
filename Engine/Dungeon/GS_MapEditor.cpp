@@ -2,27 +2,19 @@
 #include <Lime\ModelLoader.h>
 #include "DungeonMapTileset.h"
 
-//These are macros and can replace any "hard-coding" with a variable name that will be replaced
-//-by the c++ compliler in compile time
-//More information can be found online
-//These shouldnt be used unless you have a good grasp on the subject
-//If so, make them capital only to distinguish them easily
-#define BLOCK_RADIUS 12.5f
+//Macros
+#define BLOCK_RADIUS 25.0f
 #define BLOCK_HEIGHT METER * 0.5f
 
 GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::RenderBatch>& rend, std::shared_ptr<Lime::Camera>& camera)
 {
-	//All objects described in the header file is zero-ed or set in here
-	//Ptrs to the active camera and render batch is obtained from the constructor
 	m_camera = camera;
 	m_render = rend;
 }
 
 //This function can be used for pretty much anything that should be calculated every frame
-//Here I poll for the user input and update the cursor
 //There are different type of return values it can return
 //They can be found in the Gamestates::States struct located in the GameState header file
-//If intellisense is available, just type GameStates::States:: and the options will appear
 GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lime::InputManager>& input)
 {
 	static float total = 0.0f;
@@ -55,9 +47,8 @@ GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lim
 	if (input->KeyPressed(Lime::Key::P))
 	{
 		DMT outFile;
-		outFile.version = 1;
 		outFile.AddData(m_map);
-		FileManager::WriteFile("testFile.txt", outFile);
+		FileManager::WriteFile("Maps/Level1.dmt", outFile);
 		return SCENE_MANAGER;
 	}
 
