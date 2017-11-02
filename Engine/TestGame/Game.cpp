@@ -3,7 +3,7 @@
 using namespace Lime::Model;
 
 Game::Game() :
-	App(GRAPHICS_API::OPENGL_4_0)
+	App(GRAPHICS_API::DIRECTX_11)
 {
 }
 
@@ -77,5 +77,5 @@ void Game::Render()
 
 void Game::Clear()
 {
-	m_renderBatch->ClearScreen(glm::vec3(0.5f, 0.5f, 0.5f));
+	m_renderBatch->ClearScreen(glm::vec3(red, green, blue));
 }

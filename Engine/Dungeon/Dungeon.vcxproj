@@ -156,17 +156,23 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Dungeon.cpp" />
+    <ClCompile Include="DungeonMapTileset.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GS_MainMenu.cpp" />
     <ClCompile Include="GS_MapEditor.cpp" />
+    <ClCompile Include="GS_SceneManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Dungeon.h" />
+    <ClInclude Include="DungeonMapTileset.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GS_MainMenu.h" />
     <ClInclude Include="GS_MapEditor.h" />
+    <ClInclude Include="GS_SceneManager.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shared.h" />
   </ItemGroup>
   <ItemGroup>

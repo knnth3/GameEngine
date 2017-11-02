@@ -1,12 +1,13 @@
 #include "Dungeon.h"
 #include "GS_MapEditor.h"
+#include "GS_SceneManager.h"
 
 
 //App has an initializer and it must be called
 //It can be done so by using [ :ClassName() ] in the initialize of the current
 //-object before the braces
 Dungeon::Dungeon():
-	App(Lime::GRAPHICS_API::DIRECTX_11)
+	App(Lime::GRAPHICS_API::DIRECTX_11) 
 {
 }
 
@@ -103,9 +104,18 @@ void Dungeon::Update(float elapsed)
 	case GameStates::MAP_EDITOR:
 	{
 		m_state.release();
-		Lime::TextureManager::Clear();
 		m_renderBatch->Reset();
 		m_state = std::make_unique<MapEditor>(m_renderBatch, m_camera);
+		UINT width, height;
+		GetWindowSize(width, height);
+		m_state->Initialize(width, height);
+	}
+		break;
+	case GameStates::SCENE_MANAGER:
+	{
+		m_state.release();
+		m_renderBatch->Reset();
+		m_state = std::make_unique<SceneManager>();
 		UINT width, height;
 		GetWindowSize(width, height);
 		m_state->Initialize(width, height);

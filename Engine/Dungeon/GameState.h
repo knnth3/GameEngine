@@ -16,8 +16,9 @@ namespace GameStates
 	{
 		CLOSE = -1,
 		RUNNING = 0,
-		MAIN_MENU= 1,
-		MAP_EDITOR = 2
+		MAIN_MENU = 1,
+		MAP_EDITOR = 2,
+		SCENE_MANAGER = 3,
 	};
 }
 

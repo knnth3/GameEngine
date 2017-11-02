@@ -19,6 +19,15 @@
     <Filter Include="GameState\Map Editor">
       <UniqueIdentifier>{6c5e77ea-573c-4893-996b-5687c309df66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameState\Scene Manager">
+      <UniqueIdentifier>{c99bc13c-db3f-4efd-8391-10eef5a92531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{51b3466b-1139-43af-86e2-7135edb9b8db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DMT Filetype">
+      <UniqueIdentifier>{bd08e960-0df7-46be-b983-0c6d3cfbe80b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -39,6 +48,13 @@
     <ClCompile Include="GS_MapEditor.cpp">
       <Filter>GameState\Map Editor</Filter>
     </ClCompile>
+    <ClCompile Include="GS_SceneManager.cpp">
+      <Filter>GameState\Scene Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonMapTileset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dungeon.h">
@@ -59,6 +75,13 @@
     <ClInclude Include="GS_MapEditor.h">
       <Filter>GameState\Map Editor</Filter>
     </ClInclude>
+    <ClInclude Include="GS_SceneManager.h">
+      <Filter>GameState\Scene Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonMapTileset.h" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\textures\MainMenuBG.jpg">
