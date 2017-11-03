@@ -1,198 +1,223 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Render Batch">
+      <UniqueIdentifier>{a21ba7e6-aaf3-4bb5-87b5-fa12dc55dacd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Vertex Library">
+      <UniqueIdentifier>{b63dc32a-c08f-4ec3-8515-ba082cdd6441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Camera">
+      <UniqueIdentifier>{031929cf-dce7-4f41-aeef-789f7b4b3af1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lime">
+      <UniqueIdentifier>{f948eed4-2dfb-4f81-a56f-e34adcdf32d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{340c73a7-2500-4b91-9ba3-a0e30b6a5cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows API">
+      <UniqueIdentifier>{3675327c-78b8-4734-9fff-cc8b770431bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Text">
+      <UniqueIdentifier>{1780d32c-3dcd-4bf7-a1d4-01edba036cef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{76460e56-f486-4a27-a9ee-1d35c3ff3ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Batch\Graphics API">
+      <UniqueIdentifier>{af876b83-ea20-4e21-8967-87d16cd56ab5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Batch\Graphics API\OpenGL">
+      <UniqueIdentifier>{68ed4ab2-7d2f-4187-ac61-1a27653444f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render Batch\Graphics API\DirectX">
+      <UniqueIdentifier>{a33d26b3-24fe-4df9-b25f-a1b7e8540e93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{3ed0eb13-5cb6-41e3-840f-e39faed6c029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Images">
+      <UniqueIdentifier>{e812adbb-7307-467d-adde-3d08a800fa6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11DepthStencilState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11BufferManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DX11ConstantBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shared.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Lime</Filter>
     </ClCompile>
     <ClCompile Include="Lime.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Lime</Filter>
     </ClCompile>
-    <ClCompile Include="ModelLoader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Shared.cpp">
+      <Filter>Lime</Filter>
     </ClCompile>
-    <ClCompile Include="Model3D.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="VertexLibrary.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Model2D.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Model3D.cpp">
+      <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="RenderBatch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="TextController.cpp">
+      <Filter>Text</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11BufferManager.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11ConstantBuffer.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11DepthStencilState.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Graphics.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Shader.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLGraphics.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Render Batch\Graphics API\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderBatch.cpp">
+      <Filter>Render Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexLibrary.cpp">
+      <Filter>Vertex Library</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Window.cpp">
+      <Filter>Windows API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11DepthStencilState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11BufferManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11ConstantBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsAdditionals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shared.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model3D.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="RenderBatch.h">
+      <Filter>Render Batch</Filter>
     </ClInclude>
     <ClInclude Include="VertexLibrary.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vertex Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Lime.h">
+      <Filter>Lime</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Model2D.h">
-      <Filter>Header Files</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Model3D.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAdditionals.h">
+      <Filter>Windows API</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Lime</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Window.h">
+      <Filter>Windows API</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared.h">
+      <Filter>Lime</Filter>
+    </ClInclude>
+    <ClInclude Include="TextController.h">
+      <Filter>Text</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Lime</Filter>
     </ClInclude>
-    <ClInclude Include="RenderBatch.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11BufferManager.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11ConstantBuffer.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11DepthStencilState.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Graphics.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Shader.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLGraphics.h">
-      <Filter>Header Files</Filter>
+      <Filter>Render Batch\Graphics API\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Render Batch\Graphics API\DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders\PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
     <FxCompile Include="shaders\FontPixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\FontVertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\PixelShader2D.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\VertexShader2D.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\GeometryShader2D.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\PixelShader.hlsl">
+      <Filter>Assets\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\PixelShader_Line.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\PixelShader2D.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\VertexShader.hlsl">
+      <Filter>Assets\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="shaders\VertexShader_Line.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets\Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ImageContentTask Include="textures\white.png">
-      <Filter>Resource Files</Filter>
-    </ImageContentTask>
+    <FxCompile Include="shaders\VertexShader2D.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Assets</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="textures\white.png">
+      <Filter>Assets\Images</Filter>
+    </ImageContentTask>
   </ItemGroup>
 </Project>

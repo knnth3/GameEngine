@@ -170,7 +170,6 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="DX11Camera.cpp" />
     <ClCompile Include="DX11ConstantBuffer.cpp" />
     <ClCompile Include="DX11DepthStencilState.cpp" />
     <ClCompile Include="DX11Graphics.cpp" />
@@ -194,7 +193,6 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="App.h" />
-    <ClInclude Include="DX11Camera.h" />
     <ClInclude Include="DX11ConstantBuffer.h" />
     <ClInclude Include="DX11DepthStencilState.h" />
     <ClInclude Include="DX11Graphics.h" />
