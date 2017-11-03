@@ -7,6 +7,9 @@ using namespace DirectX;
 
 Lime::DX11Texture::DX11Texture(const LPCWSTR filepath, ID3D11Device* device, ID3D11DeviceContext* context)
 {
+	m_bIsValid = false;
+	m_texture = nullptr;
+	m_samplerState = nullptr;
 	m_filepath = filepath;
 	m_device = device;
 	m_context = context;
@@ -14,6 +17,11 @@ Lime::DX11Texture::DX11Texture(const LPCWSTR filepath, ID3D11Device* device, ID3
 		CreateSamplerSate();
 
 	Initialize();
+}
+
+bool Lime::DX11Texture::IsValid()
+{
+	return m_bIsValid;
 }
 
 void Lime::DX11Texture::SetAsActive()
@@ -51,6 +59,7 @@ void Lime::DX11Texture::Initialize()
 		ScratchImage finalImage;
 		result = CreateShaderResourceView(m_device, srcImage.GetImages(), srcImage.GetImageCount(), srcImage.GetMetadata(), &m_texture);
 		CheckSuccess(result);
+		m_bIsValid = true;
 	}
 }
 

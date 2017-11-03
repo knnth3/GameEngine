@@ -1,19 +1,24 @@
 #include "TextureManager.h"
 static Lime::TextureManager mngr;
 
-Lime::TextureID Lime::TextureManager::CreateNewTexture(const LPCWSTR filepath)
+Lime::TextureID Lime::TextureManager::CreateNewTexture(const std::wstring filepath)
 {
 	TextureID ID = -1;
-	try
+	if(!filepath.empty())
 	{
-		auto newTexture = std::make_unique<DX11Texture>(filepath, mngr.m_device, mngr.m_context);
-		mngr.m_textures.emplace_back(nullptr);
-		ID = (TextureID)mngr.m_textures.size() - 1;
-		newTexture.swap(mngr.m_textures[(size_t)ID]);
-	}
-	catch (const std::exception&)
-	{
-		//TODO: Do something
+		auto result = mngr.m_filepaths.find(filepath);
+		if (result == mngr.m_filepaths.end())
+		{
+			auto newTexture = std::make_unique<DX11Texture>(filepath.c_str(), mngr.m_device, mngr.m_context);
+			if (newTexture->IsValid())
+			{
+				ID = (TextureID)mngr.m_textures.size();
+				mngr.m_filepaths.emplace(filepath, ID);
+				mngr.m_textures.emplace_back(newTexture.release());
+			}
+		}
+		else
+			ID = result->second;
 	}
 
 	return ID;
@@ -34,6 +39,25 @@ void Lime::TextureManager::SetActive(TextureID ID)
 void Lime::TextureManager::Clear()
 {
 	mngr.m_textures.clear();
+	mngr.m_filepaths.clear();
+}
+
+std::string Lime::TextureManager::GetFilePath(TextureID id)
+{
+	std::string result;
+	if (mngr.m_filepaths.size() > id && id >= 0)
+	{
+		std::wstring original;
+		auto texture = mngr.m_filepaths.begin();
+		std::advance(texture, id);
+		if (texture != mngr.m_filepaths.end())
+		{
+			original = texture->first;
+			result = std::string(original.begin(), original.end());
+		}
+	}
+
+	return result;
 }
 
 void Lime::TextureManager::Initialize(ID3D11Device * device, ID3D11DeviceContext * context)

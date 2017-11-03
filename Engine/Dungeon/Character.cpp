@@ -61,7 +61,7 @@ void Character::MovePlayer(float time)
 Character_Info::Character_Info()
 {
 	isMoving = false;
-	move_speed = 9.8f * METER;
+	move_speed = 5.0f * METER;
 	current_health = 100;
 	max_health = 100;
 	character_name = "None";

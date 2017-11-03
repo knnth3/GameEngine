@@ -26,13 +26,23 @@ void Scenes::Scene_Level1::Initialize()
 	render->Reset();
 	MeshLoader::Clear();
 
-	for (auto x : inFile.objects)
+	for (auto x : inFile.instances)
 	{
-		m_map.emplace_back(make_shared<Model3D>(MeshLoader::LoadModel(x.vertices, x.indices)));
+		auto object = inFile.objects[x.objectID];
+		auto textureFilepath = inFile.textures[x.textureID];
+		wstring textureWFilepath(textureFilepath.data.begin(), textureFilepath.data.end());
+		Lime::TextureID texture = -1;
+		//if (!textureWFilepath.empty())
+		//	texture = Lime::TextureManager::CreateNewTexture(textureWFilepath.c_str());
+		texture = Lime::TextureManager::CreateNewTexture(textureWFilepath.c_str());
+
+		auto currentModel = make_shared<Model3D>(MeshLoader::LoadModel(object.vertices, object.indices, "Cube"));
+		m_map.push_back(currentModel);
 		auto & model = m_map.at(m_map.size() - 1);
 		model->SetPosition(x.position);
 		model->Scale(x.scale);
-		model->SetColor(0.7f, 0.7f, 0.9f);
+		model->SetColor(1.0f, 1.0f, 0.2f);
+		model->SetTexture(texture);
 		render->Add3DModel(model);
 	}
 
@@ -61,11 +71,11 @@ void Scenes::Scene_Level1::ProcessInput(float time, std::shared_ptr<Lime::InputM
 	float camRot = 9.8f / 2.0f * time;
 	auto camera = this->GetCamera();
 	auto character = this->GetCharacter();
-	if (input->KeyPressed(Lime::Key::Left_Mouse_Button) == true)
+	if (input->KeyStatus(Lime::Key::Left_Mouse_Button) == true)
 	{
-		glm::vec3 mousePos = input->GetMouse3DPosition();
-		cout <<"Mouse Position: ("<< mousePos.x << ", " << mousePos.y << ", " << mousePos.z << ")" << endl;
-		character->SetDestination(mousePos);
+		//glm::vec3 mousePos = input->GetMouse3DPosition();
+		//cout <<"Mouse Position: ("<< mousePos.x << ", " << mousePos.y << ", " << mousePos.z << ")" << endl;
+		character->SetDestination(input->GetMouse3DPosition());
 	}
 	if (input->KeyStatus(Lime::Key::A) == true)
 	{

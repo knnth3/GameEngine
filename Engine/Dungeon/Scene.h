@@ -23,20 +23,28 @@
 //void LoadFile(shared_ptr<Lime::RenderBatch>& rend, shared_ptr<Lime::Camera>& camera)
 //{
 //	DMT inFile;
-//	vector<shared_ptr<Model3D>> m_map;
 //	FileManager::LoadFile("Maps/Level1.dmt", inFile);
+//	auto render = this->GetRender();
+//	auto camera = this->GetCamera();
 //
-//	for (auto x : inFile.objects)
+//	m_map.clear();
+//	render->Reset();
+//	MeshLoader::Clear();
+//
+//	for (auto x : inFile.instances)
 //	{
-//		m_map.emplace_back(make_shared<Model3D>(MeshLoader::LoadModel(x.vertices, x.indices)));
+//		auto object = inFile.objects[x.objectID];
+//		auto textureFilepath = inFile.textures[x.textureID];
+//		wstring textureWFilepath(textureFilepath.data.begin(), textureFilepath.data.end());
+//
+//		Lime::TextureID texture = Lime::TextureManager::CreateNewTexture(textureWFilepath.c_str());
+//		m_map.emplace_back(make_shared<Model3D>(MeshLoader::LoadModel(object.vertices, object.indices)));
 //		auto & model = m_map.at(m_map.size() - 1);
-//		model->SetPosition(x.position);
-//		model->Scale(x.scale);
-//		rend->Add3DModel(model);
-//	}
-//	if (m_map.size() > 0)
-//	{
-//		camera->AttachToModel(m_map[0]);
+//		model->SetPosition(object.position);
+//		model->Scale(object.scale);
+//		model->SetColor(0.7f, 0.7f, 0.9f);
+//		model->SetTexture(texture);
+//		render->Add3DModel(model);
 //	}
 //
 //}

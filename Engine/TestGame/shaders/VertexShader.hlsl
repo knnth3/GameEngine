@@ -51,7 +51,7 @@ VSOutput main( VSInput input )
 	worldPosition = mul(input.position, worldMatrix);
 
 	// Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
-	output.viewDirection =  -(cameraPos.xyz - worldPosition.xyz);
+	output.viewDirection = worldPosition.xyz - cameraPos.xyz;
 
 	// Normalize the viewing direction vector.
 	output.viewDirection = normalize(output.viewDirection);

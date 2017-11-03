@@ -4,9 +4,9 @@
 #include <sys/stat.h>
 
 using namespace std;
-#define SIZEOF_DMT_HEADER 3 * sizeof(uint32_t)
-#define SIZEOF_OBJECT3D_HEADER sizeof(uint32_t) + (2 * sizeof(glm::vec3))
-#define LATEST_DMT_VERSION 1
+#define SIZEOF_DMT_HEADER 4 * sizeof(uint32_t)
+#define SIZEOF_OBJECT3D_HEADER sizeof(uint32_t)
+#define LATEST_DMT_VERSION 2
 
 #if PLATFORM == OS_WINDOWS
 #endif;
@@ -53,7 +53,7 @@ bool FileManager::WriteFile(const std::string filepath, const DMT& outFile)
 	//Write object data to file
 	for (auto x : outFile.objects)
 	{
-		if (!file.write((const char*)&x, x.headerSize()))
+		if (!file.write((const char*)&x, SIZEOF_OBJECT3D_HEADER))
 		{
 			file.close();
 			return false;
@@ -66,6 +66,16 @@ bool FileManager::WriteFile(const std::string filepath, const DMT& outFile)
 		}
 
 		if (!file.write((const char*)x.indices.data(), x.indicesSize()))
+		{
+			file.close();
+			return false;
+		}
+	}
+
+	//Write instance data to file
+	for (auto x : outFile.instances)
+	{
+		if (!file.write((const char*)&x, sizeof(x)))
 		{
 			file.close();
 			return false;
@@ -114,6 +124,13 @@ bool FileManager::LoadFile(const std::string filepath, DMT& inFile)
 		return false;
 	}
 
+	//Check the version before reading
+	if (inFile.version != LATEST_DMT_VERSION)
+	{
+		file.close();
+		return false;
+	}
+
 	//Load in Objects
 	for (size_t x = 0; x < inFile.nObjects; x++)
 	{
@@ -141,6 +158,18 @@ bool FileManager::LoadFile(const std::string filepath, DMT& inFile)
 		}
 
 		inFile.objects.push_back(obj);
+	}
+
+	//Load in Instances
+	for (size_t x = 0; x < inFile.nInstances; x++)
+	{
+		ObjInstance instance;
+		if (!file.read((char*)&instance, sizeof(instance)))
+		{
+			file.close();
+			return false;
+		}
+		inFile.instances.push_back(instance);
 	}
 
 	//Load in textures
@@ -176,26 +205,69 @@ DMT::DMT()
 
 void DMT::AddData(const std::vector<std::shared_ptr<Lime::Model::Model3D>>& data)
 {
-	nObjects = (uint32_t)data.size();
-
+	std::unordered_map<MeshID, uint32_t> addedMeshes;
+	std::unordered_map<Lime::TextureID, uint32_t> addedTextures;
 	//Convert all the models into objects
 	for (auto x : data)
 	{
-		Object_3D obj;
-		x->GetMeshData(obj.vertices, obj.indices);
-		obj.nVertices = (uint32_t)obj.vertices.size();
-		obj.position = x->GetPosition();
-		obj.scale = x->GetScale();
-		objects.push_back(obj);
-	}
+		ObjInstance inst;
+		MeshID currentMesh = x->GetMesh();
+		inst.position = x->GetPosition();
+		inst.scale = x->GetScale();
+		Lime::TextureID currentTexture = x->GetTexture();
+		if (currentTexture == -1)
+		{
+			bool bAdded = false;
+		}
+		bool bAdded = false;
+		//Add objects
+		for (auto y : addedMeshes)
+		{
+			if (y.first == currentMesh)
+			{
+				inst.objectID = y.second;
+				bAdded = true;
+				break;
+			}
+		}
+		if (!bAdded)
+		{
+			Object_3D obj;
+			x->GetMeshData(obj.vertices, obj.indices);
+			obj.nVertices = (uint32_t)obj.vertices.size();
+			inst.objectID = (uint32_t)objects.size();
+			addedMeshes.emplace(currentMesh, (uint32_t)objects.size());
+			objects.push_back(obj);
+			bAdded = false;
+		}
+		bAdded = false;
 
-	//Add textures in
-	//textures = 
-	//{
-	//	string("Hello World!"),
-	//	string("How are you?")
-	//};
-	//nTextures = textures.size();
+		//Add textures
+		for (auto y : addedTextures)
+		{
+			if (y.first == currentTexture)
+			{
+				inst.textureID = y.second;
+				bAdded = true;
+				break;
+			}
+		}
+		if (!bAdded)
+		{
+			inst.textureID = (uint32_t)textures.size();
+			addedTextures.emplace(currentTexture, (uint32_t)textures.size());
+			textures.push_back(Lime::TextureManager::GetFilePath(x->GetTexture()));
+			bAdded = false;
+		}
+		bAdded = false;
+
+		//Add polled instance
+		instances.push_back(inst);
+	}
+	//Set header
+	nTextures = (uint32_t)textures.size();
+	nInstances = (uint32_t)instances.size();
+	nObjects = (uint32_t)objects.size();
 }
 
 size_t DMT::Size()
@@ -223,17 +295,6 @@ size_t Object_3D::size()
 	totalSize += sizeof(glm::vec3) * 2;
 	//vertices
 	totalSize += sizeof(Lime::Model::Vertex) * vertices.size();
-
-	return totalSize;
-}
-
-size_t Object_3D::headerSize()
-{
-	size_t totalSize = 0;
-	//nVertices
-	totalSize += sizeof(uint32_t);
-	//Position + Scale
-	totalSize += sizeof(glm::vec3) * 2;
 
 	return totalSize;
 }

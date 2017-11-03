@@ -25,10 +25,17 @@ namespace Lime
 			AppDLL_API MeshLibrary();
 			AppDLL_API MeshID SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings& setting);
 			AppDLL_API void Clear();
+
+			//Returns -1 if not found
+			AppDLL_API MeshID IsFilepathQuerried(const std::string filepath);
+			AppDLL_API MeshID IsKeyNameQuerried(const std::string filepath);
+
 		protected:
 			std::shared_ptr<MeshData> m_default;
 			std::vector<std::shared_ptr<MeshData>> m_modelLibrary;
 			std::vector<MeshDefaultSettings> m_defaultSettings;
+			std::map<std::string, MeshID> m_filepaths;
+			std::map<std::string, MeshID> m_keyNames;
 		};
 
 
@@ -44,7 +51,7 @@ namespace Lime
 			//-Model Reqs:
 			//--Must be Triangulated
 			AppDLL_API static MeshID LoadModel(const std::string& filename);
-			AppDLL_API static MeshID LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices);
+			AppDLL_API static MeshID LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices, const std::string uniqueName);
 			AppDLL_API static MeshID CreateLine(glm::vec3 pos1, glm::vec3 pos2);
 			AppDLL_API static void Clear();
 

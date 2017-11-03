@@ -17,57 +17,70 @@ static MeshLibrary MESHLIB;
 
 MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename)
 {
-	MeshID result = -1;
-	std::string ext;
-	GetFileExt(filename, ext);
-	//Proccess fbx files
-	if (ext.compare("fbx") == 0)
+	MeshID result = MESHLIB.IsFilepathQuerried(filename);
+	if (result == -1)
 	{
-		FbxManager* fbxManager = NULL;
-		FbxScene* scene = NULL;
-
-		ENFORCE_SUCCESS(InitFBXObjects(fbxManager, scene), true, goto close);
-		ENFORCE_SUCCESS(LoadFBXSceneFromFile(fbxManager, scene, filename), true, goto close);
-
-		//Can have multilpe nodes although this program only loads the first node
-		FbxNode* node = scene->GetRootNode()->GetChild(0);
-		if (node)
+		std::string ext;
+		GetFileExt(filename, ext);
+		//Proccess fbx files
+		if (ext.compare("fbx") == 0)
 		{
-			std::shared_ptr<MeshData> mesh = nullptr;
-			MeshDefaultSettings settings = {};
+			FbxManager* fbxManager = NULL;
+			FbxScene* scene = NULL;
 
-			//Populates structures above and saves the to a desired MeshLibrary.
-			Create3DMeshFromFBX(node, mesh, settings);
-			if (mesh != nullptr)
-				result = SaveInformation(MESHLIB, mesh, settings);
+			ENFORCE_SUCCESS(InitFBXObjects(fbxManager, scene), true, goto close);
+			ENFORCE_SUCCESS(LoadFBXSceneFromFile(fbxManager, scene, filename), true, goto close);
+
+			//Can have multilpe nodes although this program only loads the first node
+			FbxNode* node = scene->GetRootNode()->GetChild(0);
+			if (node)
+			{
+				std::shared_ptr<MeshData> mesh = nullptr;
+				MeshDefaultSettings settings = {};
+
+				//Populates structures above and saves the to a desired MeshLibrary.
+				Create3DMeshFromFBX(node, mesh, settings);
+				if (mesh != nullptr)
+				{
+					result = SaveInformation(MESHLIB, mesh, settings);
+					MESHLIB.m_filepaths.emplace(filename, result);
+				}
+			}
+
+		close:
+			fbxManager->Destroy();
+
 		}
-
-	close:
-		fbxManager->Destroy();
-
 	}
+
 	return result;
 }
 
-MeshID Lime::Model::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices)
+MeshID Lime::Model::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices, const std::string uniqueName)
 {
-	std::shared_ptr<MeshData> mesh = std::make_shared<MeshData>();
-	MeshDefaultSettings settings = {};
-	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	int counter = 0;
-	for (int x = 0; x < (int)(verts.size() / 3); x++)
+	MeshID result = MESHLIB.IsKeyNameQuerried(uniqueName);
+	if(result == -1)
 	{
-		Polygon<Vertex> p;
-		p.m_vertices.insert(p.m_vertices.end(), verts.begin() + counter, verts.begin() + counter + 3);
-		p.m_indices.insert(p.m_indices.end(), indices.begin() + counter, indices.begin() + counter + 3);
+		std::shared_ptr<MeshData> mesh = std::make_shared<MeshData>();
+		MeshDefaultSettings settings = {};
+		settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
-		mesh->m_polygons.push_back(p);
-		counter += 3;
+		int counter = 0;
+		for (int x = 0; x < (int)(verts.size() / 3); x++)
+		{
+			Polygon<Vertex> p;
+			p.m_vertices.insert(p.m_vertices.end(), verts.begin() + counter, verts.begin() + counter + 3);
+			p.m_indices.insert(p.m_indices.end(), indices.begin() + counter, indices.begin() + counter + 3);
+
+			mesh->m_polygons.push_back(p);
+			counter += 3;
+		}
+
+		result = SaveInformation(MESHLIB, mesh, settings);
+		MESHLIB.m_keyNames.emplace(uniqueName, result);
 	}
 
-
-	return SaveInformation(MESHLIB, mesh, settings);
+	return result;
 }
 
 MeshID Lime::Model::MeshLoader::CreateLine(glm::vec3 pos1, glm::vec3 pos2)
@@ -372,4 +385,32 @@ void Lime::Model::MeshLibrary::Clear()
 {
 	m_modelLibrary.clear();
 	m_defaultSettings.clear();
+	m_filepaths.clear();
+	m_keyNames.clear();
+}
+
+MeshID Lime::Model::MeshLibrary::IsFilepathQuerried(const std::string filepath)
+{
+	MeshID ID = -1;
+	if (!filepath.empty())
+	{
+		auto result = m_filepaths.find(filepath);
+		if (result != m_filepaths.end())
+			ID = result->second;
+	}
+
+	return ID;
+}
+
+MeshID Lime::Model::MeshLibrary::IsKeyNameQuerried(const std::string filepath)
+{
+	MeshID ID = -1;
+	if (!filepath.empty())
+	{
+		auto result = m_keyNames.find(filepath);
+		if (result != m_keyNames.end())
+			ID = result->second;
+	}
+
+	return ID;
 }

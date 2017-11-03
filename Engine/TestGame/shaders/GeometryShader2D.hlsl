@@ -29,12 +29,22 @@ void main(point VSOutput input[1], inout TriangleStream<GSOutput> output)
 	float3 positions[6] = 
 	{ 
 		float3(-length/2.0f, width / 2.0f, 1.0f),
-		float3(length, 0.0f, 1.0f), 
-		float3(0.0f, -width, 1.0f),
+		float3(length/2.0f, width / 2.0f, 1.0f),
+		float3(-length / 2.0f, -width / 2.0f, 1.0f),
 
-		float3(length, 0.0f, 1.0f),
-		float3(length, -width, 1.0f),
-		float3(0.0f, -width, 1.0f)
+		float3(length / 2.0f, width / 2.0f, 1.0f),
+		float3(length / 2.0f, -width / 2.0f, 1.0f),
+		float3(-length / 2.0f, -width / 2.0f, 1.0f)
+	};
+	float2 uvs[6] =
+	{
+		float2(0.0f, 0.0f),
+		float2(1.0f, 0.0f),
+		float2(0.0f, 1.0f),
+
+		float2(1.0f, 0.0f),
+		float2(1.0f, 1.0f),
+		float2(0.0f, 1.0f),
 	};
 	for (uint i = 0; i < 6; i++)
 	{
@@ -44,7 +54,7 @@ void main(point VSOutput input[1], inout TriangleStream<GSOutput> output)
 		element.position = mul(float4( pos, 1.0f ), worldMatrix);
 		element.position = mul(element.position, viewMatrix);
 		element.position = mul(element.position, projectionMatrix);
-		element.uv = input[0].uv;
+		element.uv = uvs[i];
 		element.color = color;
 		output.Append(element);
 	}

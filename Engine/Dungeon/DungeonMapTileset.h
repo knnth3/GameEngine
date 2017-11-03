@@ -5,15 +5,19 @@
 struct Object_3D
 {
 	size_t size();
-	size_t headerSize();
 	size_t vertSize();
 	size_t indicesSize();
 
 	uint32_t nVertices;
-	glm::vec3 position;
-	glm::vec3 scale;
 	std::vector<Lime::Model::Vertex> vertices;
 	std::vector<uint32_t> indices;
+};
+struct ObjInstance
+{
+	uint32_t objectID;
+	uint32_t textureID;
+	glm::vec3 position;
+	glm::vec3 scale;
 };
 
 struct DMT_STRING
@@ -37,10 +41,11 @@ public:
 	/////////Header///////////////
 	uint32_t version;
 	uint32_t nObjects;
+	uint32_t nInstances;
 	uint32_t nTextures;
 	//////////////////////////////
-
 	std::vector<Object_3D> objects;
+	std::vector<ObjInstance> instances;
 	std::vector<DMT_STRING> textures;
 
 };
