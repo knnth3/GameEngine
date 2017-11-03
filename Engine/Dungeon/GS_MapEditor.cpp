@@ -17,7 +17,6 @@ GameStates::MapEditor::MapEditor(std::shared_ptr<Lime::RenderBatch>& rend, std::
 //They can be found in the Gamestates::States struct located in the GameState header file
 GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lime::InputManager>& input)
 {
-	static float total = 0.0f;
 	UpdateCursor(time, input);
 	camRot = 9.8f / 2.0f * time;
 	if (input->KeyStatus(Lime::Key::A) == true)

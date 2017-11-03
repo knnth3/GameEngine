@@ -7,6 +7,10 @@ SceneManager::SceneManager(std::unique_ptr<Scene>& beginScene)
 	m_onSuspend = nullptr;
 	m_active = nullptr;
 	m_active.swap(beginScene);
+	Character_Info info;
+	info.player_name = "Developer";
+	info.character_name = "Alfie";
+	m_character = std::make_shared<Character>(info);
 }
 
 SceneManager::~SceneManager()
@@ -35,12 +39,13 @@ GameStates::States SceneManager::Update(float time, std::shared_ptr<Lime::InputM
 			break;
 
 		case RunState::INITIALIZE:
-			m_active->Init();
+			input->Reset();
+			m_active->Init(m_character);
 			m_active->SetWindowDimensions(m_windowWidth, m_windowHeight);
 			m_onSuspend.swap(m_active->GetLoadingScene());
 			if (m_onSuspend)
 			{
-				m_onSuspend->Init();
+				m_onSuspend->Init(m_character);
 				m_active->SetWindowDimensions(m_windowWidth, m_windowHeight);
 			}
 			break;

@@ -43,6 +43,7 @@ namespace Lime
         AppDLL_API glm::vec3 GetMouse3DPosition2();
         AppDLL_API bool KeyStatus(Key keyID);
         AppDLL_API bool KeyPressed(Key keyID);
+		AppDLL_API void Reset();
 	protected:
 		friend class App;
 		void KeyDown(unsigned int keyID);
@@ -59,13 +60,6 @@ namespace Lime
         std::shared_ptr<Camera> m_Camera;
         glm::vec2 m_MouseCoords;
 		uint16_t m_screenWidth, m_screenHeight;
-
-#if PLATFORM == OS_WINDOWS
-		IDirectInput8* m_directInput;
-		IDirectInputDevice8* m_keyboard;
-		IDirectInputDevice8* m_mouse;
-		DIMOUSESTATE m_mouseState;
-#endif
 
     };
 

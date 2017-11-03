@@ -19,6 +19,7 @@ public:
 private:
 	uint32_t m_windowWidth;
 	uint32_t m_windowHeight;
+	std::shared_ptr<Character> m_character;
 	std::unique_ptr<Scene> m_onSuspend;
 	std::unique_ptr<Scene> m_active;
 

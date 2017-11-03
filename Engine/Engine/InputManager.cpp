@@ -6,9 +6,6 @@ namespace Lime
 
     InputManager::InputManager()
     {
-		m_directInput = NULL;
-		m_keyboard = NULL;
-		m_mouse = NULL;
         m_MouseCoords = glm::vec2(0.0f, 0.0f);
         m_Camera = nullptr;
     }
@@ -61,6 +58,7 @@ namespace Lime
         float DotPt2 = glm::dot(mousePosition, planeNormal);
         float distanceToPlane = 0.0f - (DotPt1 / DotPt2);
         glm::vec3 mouse3Dposition = origin + (mousePosition * distanceToPlane);
+		mousePosition.y = 0.0f;
         return mouse3Dposition;
     }
 
@@ -70,6 +68,7 @@ namespace Lime
         glm::vec3 mousePos = GetMouseCoordsWorldSpace();
         float t = -cameraPos.y / mousePos.y;
         glm::vec3 mousePosition = cameraPos + (mousePos * t);
+		mousePosition.y = 0.0f;
         return mousePosition;
 
     }
@@ -138,10 +137,18 @@ namespace Lime
     }
     AppDLL_API bool InputManager::KeyPressed(Key keyID)
     {
-        bool bWasPressed = m_KeysPressed[keyID];
-        if(bWasPressed)
-            m_KeysPressed[keyID] = false;
-
-        return bWasPressed;
+		bool bPressed = false;
+		auto result = m_KeysPressed.find(keyID);
+		if (result != m_KeysPressed.end())
+		{
+			bPressed  = result->second;
+			result->second = false;
+		}
+        return bPressed;
     }
+	void InputManager::Reset()
+	{
+		m_KeysDown.clear();
+		m_KeysPressed.clear();
+	}
 }

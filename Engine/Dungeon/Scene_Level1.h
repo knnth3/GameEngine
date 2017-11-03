@@ -15,6 +15,11 @@ namespace Scenes
 		virtual void Update(float time, std::shared_ptr<Lime::InputManager>& input) override;
 
 	private:
+		//Private Funcions
+		void Draw();
+		void ProcessInput(float time, std::shared_ptr<Lime::InputManager>& input);
+
+		//Private variables
 		std::vector<std::shared_ptr<Lime::Model::Model3D>> m_map;
 
 	};

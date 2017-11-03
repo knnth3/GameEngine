@@ -44,6 +44,7 @@
 
 
 #include "GameState.h"
+#include "Character.h"
 #include <Lime\RenderBatch.h>
 
 
@@ -68,7 +69,7 @@ public:
 	void SetWindowDimensions(const int windowWidth, const int windowHeight);
 	const RunState GetCurrentSate();
 	void SetCurrentState(RunState state);
-	void Init();
+	void Init(std::shared_ptr<Character>& character);
 
 	//Overload functions
 	virtual void Initialize() = 0;
@@ -85,10 +86,12 @@ protected:
 	const uint32_t GetWindowHeight();
 	std::shared_ptr<Lime::RenderBatch> GetRender();
 	std::shared_ptr<Lime::Camera> GetCamera();
+	std::shared_ptr<Character> GetCharacter();
 
 private:
 	std::shared_ptr<Lime::RenderBatch> m_render;
 	std::shared_ptr<Lime::Camera> m_camera;
+	std::shared_ptr<Character> m_character;
 	RunState m_currentState;
 	uint32_t m_windowWidth;
 	uint32_t m_windowHeight;

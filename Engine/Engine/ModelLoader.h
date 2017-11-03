@@ -17,13 +17,16 @@ namespace Lime
 
 
 		//Library that holds given mesh information
+		//Default ID = -1 will load a cube
 		class MeshLibrary
 		{
 			friend class MeshLoader;
 		public:
+			AppDLL_API MeshLibrary();
 			AppDLL_API MeshID SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings& setting);
 			AppDLL_API void Clear();
 		protected:
+			std::shared_ptr<MeshData> m_default;
 			std::vector<std::shared_ptr<MeshData>> m_modelLibrary;
 			std::vector<MeshDefaultSettings> m_defaultSettings;
 		};
@@ -39,8 +42,8 @@ namespace Lime
 			//-Currently only supports fbx files
 			//-Only loads the last model in a scene
 			//-Model Reqs:
-			//--Must be Quadrangulated
-			AppDLL_API static MeshID LoadModel(const std::string& filename, MeshType type = Model::NONE);
+			//--Must be Triangulated
+			AppDLL_API static MeshID LoadModel(const std::string& filename);
 			AppDLL_API static MeshID LoadModel(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices);
 			AppDLL_API static MeshID CreateLine(glm::vec3 pos1, glm::vec3 pos2);
 			AppDLL_API static void Clear();
@@ -56,7 +59,7 @@ namespace Lime
 			//FBX file processing
 			static bool InitFBXObjects(FbxManager*& manager, FbxScene*& scene);
 			static bool LoadFBXSceneFromFile(FbxManager* manager, FbxScene* scene, const std::string& filename);
-			static void Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings, MeshType type);
+			static void Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings);
 			static bool GetFBXTextureCoordinates(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
 			static bool GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int totalIndexCount);
 

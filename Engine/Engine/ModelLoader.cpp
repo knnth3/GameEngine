@@ -15,7 +15,7 @@ using namespace std;
 
 static MeshLibrary MESHLIB;
 
-MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, MeshType type)
+MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename)
 {
 	MeshID result = -1;
 	std::string ext;
@@ -37,7 +37,7 @@ MeshID Lime::Model::MeshLoader::LoadModel(const std::string& filename, MeshType 
 			MeshDefaultSettings settings = {};
 
 			//Populates structures above and saves the to a desired MeshLibrary.
-			Create3DMeshFromFBX(node, mesh, settings, type);
+			Create3DMeshFromFBX(node, mesh, settings);
 			if (mesh != nullptr)
 				result = SaveInformation(MESHLIB, mesh, settings);
 		}
@@ -98,14 +98,10 @@ void Lime::Model::MeshLoader::Clear()
 
 void Lime::Model::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<MeshData> & ptr)
 {
-	try
-	{
+	if (MESHLIB.m_modelLibrary.size() > id && id >= 0)
 		ptr = MESHLIB.m_modelLibrary.at(id);
-	}
-	catch (exception e)
-	{
-		ptr = std::make_shared<MeshData>();
-	}
+	else
+		ptr = MESHLIB.m_default;
 }
 
 void Lime::Model::MeshLoader::GetDefaulMeshInfo(MeshID id, Model3D & ptr)
@@ -205,7 +201,7 @@ bool Lime::Model::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScen
 	return true;
 }
 
-void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings, MeshType type)
+void Lime::Model::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<MeshData>& data, MeshDefaultSettings& settings)
 {
 	auto tempdata = std::make_shared<MeshData>();
 	FbxMesh* mesh = pNode->GetMesh();
@@ -342,6 +338,16 @@ glm::vec3 Lime::Model::MeshLoader::FbxVec4ToGlmVec3(const FbxVector4& in)
 	output.y = (float)in.mData[1];
 	output.z = (float)in.mData[2];
 	return output;
+}
+
+Lime::Model::MeshLibrary::MeshLibrary()
+{
+	MeshID result = MeshLoader::LoadModel("Assets/Models/Cube_TextureWrap.fbx");
+	if (result != -1)
+	{
+		m_default = m_modelLibrary[result];
+		m_modelLibrary.clear();
+	}
 }
 
 MeshID Lime::Model::MeshLibrary::SaveMesh(const std::shared_ptr<MeshData>& mesh, const MeshDefaultSettings & setting)

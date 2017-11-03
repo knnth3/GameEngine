@@ -106,11 +106,10 @@ void Lime::Model::Model3D::SetTexture(TextureID tex)
 void Lime::Model::Model3D::AddMesh(MeshID id)
 {
 	MeshLoader::GrabMeshData(id, m_mesh);
-	if (id > -1)
+	m_meshType = TRIANGLE;
+	if (id != -1)
 	{
-		//Possibly implement this later
 		MeshLoader::GetDefaulMeshInfo(id, *this);
-		m_meshType = TRIANGLE;
 	}
 }
 

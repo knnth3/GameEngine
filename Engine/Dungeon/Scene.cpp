@@ -24,9 +24,12 @@ const RunState Scene::GetCurrentSate()
 	return m_currentState;
 }
 
-void Scene::Init()
+void Scene::Init(std::shared_ptr<Character>& character)
 {
 	Initialize();
+	m_character = character;
+	m_camera->AttachToModel(character->m_model);
+	m_render->Add3DModel(character->m_model);
 	m_currentState = RunState::UPDATE;
 }
 
@@ -58,6 +61,11 @@ std::shared_ptr<Lime::RenderBatch> Scene::GetRender()
 std::shared_ptr<Lime::Camera> Scene::GetCamera()
 {
 	return m_camera;
+}
+
+std::shared_ptr<Character> Scene::GetCharacter()
+{
+	return m_character;
 }
 
 void Scene::SetCurrentState(RunState state)

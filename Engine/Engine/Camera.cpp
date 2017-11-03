@@ -194,7 +194,7 @@ namespace Lime
 			m_info.m_rotation.y = PI - m_info.m_angleAroundPlayer;
 			m_info.m_position.x = charPos.x - offsetX;
 			m_info.m_position.y = charPos.y + verticalDistance;
-			m_info.m_position.z = -charPos.z - offsetZ;
+			m_info.m_position.z = charPos.z - offsetZ;
 		}
     }
 
