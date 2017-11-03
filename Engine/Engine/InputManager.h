@@ -24,6 +24,7 @@ namespace Lime
 		Q = 0x51,
 		E = 0x45,
 		P = 0x50,
+		ESC = 0x1B,
 	};
 
 

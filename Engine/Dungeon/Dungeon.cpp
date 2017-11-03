@@ -1,6 +1,7 @@
 #include "Dungeon.h"
 #include "GS_MapEditor.h"
 #include "GS_SceneManager.h"
+#include "Scene_Level1.h"
 
 
 //App has an initializer and it must be called
@@ -115,7 +116,11 @@ void Dungeon::Update(float elapsed)
 	{
 		m_state.release();
 		m_renderBatch->Reset();
-		m_state = std::make_unique<SceneManager>(m_renderBatch, m_camera);
+
+		//!!!Set the first scene's type here!!!!
+		std::unique_ptr<Scene> beginScene = std::make_unique<Scenes::Scene_Level1>(m_renderBatch, m_camera);
+
+		m_state = std::make_unique<SceneManager>(beginScene);
 		UINT width, height;
 		GetWindowSize(width, height);
 		m_state->Initialize(width, height);

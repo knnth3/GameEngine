@@ -1,33 +1,12 @@
 #include "GS_SceneManager.h"
-#include "DungeonMapTileset.h"
-#include <Lime\ModelLoader.h>
 
-SceneManager::SceneManager(std::shared_ptr<Lime::RenderBatch>& rend, std::shared_ptr<Lime::Camera>& camera)
-{
-	DMT inFile;
-	FileManager::LoadFile("Maps/Level1.dmt", inFile);
 
-	for (auto x : inFile.objects)
-	{
-		m_map.emplace_back(std::make_shared<Lime::Model::Model3D>(Lime::Model::MeshLoader::LoadModel(x.vertices, x.indices)));
-		auto & model = m_map.at(m_map.size() - 1);
-		model->SetPosition(x.position);
-		model->Scale(x.scale);
-		rend->Add3DModel(model);
-	}
-	if (m_map.size() > 0)
-	{
-		camera->AttachToModel(m_map[0]);
-	}
 
-}
-
-SceneManager::SceneManager(std::unique_ptr<Scene>& loadingScene, std::unique_ptr<Scene>& activeScene)
+SceneManager::SceneManager(std::unique_ptr<Scene>& beginScene)
 {
 	m_onSuspend = nullptr;
 	m_active = nullptr;
-	m_onSuspend.swap(loadingScene);
-	m_active.swap(activeScene);
+	m_active.swap(beginScene);
 }
 
 SceneManager::~SceneManager()
@@ -36,15 +15,60 @@ SceneManager::~SceneManager()
 
 GameStates::States SceneManager::Update(float time, std::shared_ptr<Lime::InputManager>& input)
 {
-	for (auto x : m_map)
-		x->Draw();
+	GameStates::States result = GameStates::States::RUNNING;
+	if (m_active)
+	{
+		switch (m_active->GetCurrentSate())
+		{
+		case RunState::PAUSE:
+		case RunState::RESUME:
+			m_active->SetCurrentState(RunState::UPDATE);
+			if (m_onSuspend)
+				m_active.swap(m_onSuspend);
+			break;
 
+		case RunState::CLOSE:
+			result = GameStates::States::CLOSE;
 
-	return GameStates::States::RUNNING;
+		case RunState::UPDATE:
+			m_active->Update(time, input);
+			break;
+
+		case RunState::INITIALIZE:
+			m_active->Init();
+			m_active->SetWindowDimensions(m_windowWidth, m_windowHeight);
+			m_onSuspend.swap(m_active->GetLoadingScene());
+			if (m_onSuspend)
+			{
+				m_onSuspend->Init();
+				m_active->SetWindowDimensions(m_windowWidth, m_windowHeight);
+			}
+			break;
+
+		case RunState::NEW_SCENE:
+			m_active->SetCurrentState(RunState::UPDATE);
+		{
+			auto newScene = m_active->GetNewScene();
+			if (newScene)
+				m_active.swap(newScene);
+		}
+			break;
+
+		case RunState::MAIN_MENU:
+			result = GameStates::States::MAIN_MENU;
+			break;
+
+		default:
+			break;
+		}
+	}
+	return result;
 }
 
-void SceneManager::Initialize(int windowWidth, int windowHeight)
+void SceneManager::Initialize(const int windowWidth, const int windowHeight)
 {
+	m_windowWidth = windowWidth;
+	m_windowHeight = windowHeight;
 }
 
 void SceneManager::Close()
@@ -53,4 +77,7 @@ void SceneManager::Close()
 
 void SceneManager::OnWindowResize(int width, int height)
 {
+	Initialize(width, height);
+	if (m_active)
+		m_active->SetWindowDimensions(width, height);
 }

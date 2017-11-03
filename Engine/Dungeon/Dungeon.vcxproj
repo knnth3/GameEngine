@@ -163,6 +163,8 @@
     <ClCompile Include="GS_SceneManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Scene_Level1.cpp" />
+    <ClCompile Include="Scene_Loading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -173,6 +175,8 @@
     <ClInclude Include="GS_MapEditor.h" />
     <ClInclude Include="GS_SceneManager.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Scene_Level1.h" />
+    <ClInclude Include="Scene_Loading.h" />
     <ClInclude Include="Shared.h" />
   </ItemGroup>
   <ItemGroup>

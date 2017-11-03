@@ -49,7 +49,10 @@ GameStates::States GameStates::MapEditor::Update(float time, std::shared_ptr<Lim
 		DMT outFile;
 		outFile.AddData(m_map);
 		FileManager::WriteFile("Maps/Level1.dmt", outFile);
-		return SCENE_MANAGER;
+	}
+	if (input->KeyPressed(Lime::Key::ESC))
+	{
+		return MAIN_MENU;
 	}
 
 	Draw();

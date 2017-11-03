@@ -13,6 +13,8 @@ namespace Lime
 		m_info.m_distanceFromObject = 600.0f;
 		m_info.m_targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		m_info.m_upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
+		m_info.m_rotation.x = PI / 4;
+		m_info.m_angleAroundPlayer;
 		SetResolution(windowWidth, windowHeight);
 		Create3DProjectionMatrix();
 		Create2DProjectionMatrix();
@@ -20,6 +22,9 @@ namespace Lime
 
 	void Camera::AttachToModel(std::shared_ptr<Model::Model3D>& model)
 	{
+		m_info.m_distanceFromObject = 600.0f;
+		m_info.m_angleAroundPlayer = 0.0f;
+		m_info.m_rotation = { PI / 4.0f, 0.0f, 0.0f};
 		m_info.m_model = model;
 	}
 
@@ -104,16 +109,6 @@ namespace Lime
         else if (m_info.m_distanceFromObject > maxZoomOut)
 			m_info.m_distanceFromObject = maxZoomOut;
     }
-
-	void Camera::AddPitch(float pitch)
-	{
-		m_info.m_rotation.x += pitch;
-	}
-
-	void Camera::AddYaw(float yaw)
-	{
-		m_info.m_angleAroundPlayer += yaw;
-	}
 
     glm::vec3 Camera::GetPosition()
     {
@@ -200,12 +195,6 @@ namespace Lime
 			m_info.m_position.x = charPos.x - offsetX;
 			m_info.m_position.y = charPos.y + verticalDistance;
 			m_info.m_position.z = -charPos.z - offsetZ;
-			if (!m_info.m_bPlayerAttached)
-			{
-				AddPitch(PI/4);
-				AddYaw(PI);
-				m_info.m_bPlayerAttached = true;
-			}
 		}
     }
 

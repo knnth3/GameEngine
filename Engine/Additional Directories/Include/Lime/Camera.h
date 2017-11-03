@@ -28,7 +28,6 @@ namespace Lime
 		uint32_t m_xResolution = 0;
 		uint32_t m_yResolution = 0;
 		std::shared_ptr<Model::Model3D> m_model = nullptr;
-		bool m_bPlayerAttached = false;
 	};
 
     class Camera
@@ -45,8 +44,6 @@ namespace Lime
         AppDLL_API void SetRotation(glm::vec3 rotation);
         AppDLL_API void SetResolution(uint32_t width, uint32_t height);
         AppDLL_API void Zoom(float x);
-        AppDLL_API void AddPitch(float pitch);
-        AppDLL_API void AddYaw(float yaw);
         AppDLL_API glm::vec3 GetPosition();
         AppDLL_API glm::mat4 GetViewMatrix();
 		AppDLL_API glm::mat4 GetIdentityMatrix();

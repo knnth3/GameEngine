@@ -32,6 +32,7 @@ namespace GameStates
 	private:
 		std::shared_ptr<Lime::Model::Model2D> m_background;
 		std::shared_ptr<Button> m_b1;
+		std::shared_ptr<Button> m_b2;
 
 		float m_rad = 0.0f;
 

@@ -28,6 +28,12 @@
     <Filter Include="DMT Filetype">
       <UniqueIdentifier>{bd08e960-0df7-46be-b983-0c6d3cfbe80b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene\Loading">
+      <UniqueIdentifier>{a4cb3b36-f0db-46a7-a7f1-33e792f08812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Level1">
+      <UniqueIdentifier>{65202917-bdb7-45b8-a82e-781b6eb2c0d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -57,6 +63,12 @@
     <ClCompile Include="DungeonMapTileset.cpp">
       <Filter>DMT Filetype</Filter>
     </ClCompile>
+    <ClCompile Include="Scene_Loading.cpp">
+      <Filter>Scene\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Level1.cpp">
+      <Filter>Scene\Level1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dungeon.h">
@@ -80,11 +92,17 @@
     <ClInclude Include="GS_SceneManager.h">
       <Filter>GameState\Scene Manager</Filter>
     </ClInclude>
+    <ClInclude Include="DungeonMapTileset.h">
+      <Filter>DMT Filetype</Filter>
+    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DungeonMapTileset.h">
-      <Filter>DMT Filetype</Filter>
+    <ClInclude Include="Scene_Loading.h">
+      <Filter>Scene\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Level1.h">
+      <Filter>Scene\Level1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

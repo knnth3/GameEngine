@@ -8,6 +8,7 @@ GameStates::MainMenu::MainMenu(std::shared_ptr<Lime::RenderBatch>& rend)
 {
 	//Make an new button
 	m_b1 = std::make_shared<Button>(100.0f, 100.0f, 100.0f, 30.0f);
+	m_b2 = std::make_shared<Button>(100.0f, 140.0f, 100.0f, 30.0f);
 	//Make a new texture
 	auto id = Lime::TextureManager::CreateNewTexture(L"Assets/textures/MainMenuBG.dds");
 
@@ -18,6 +19,7 @@ GameStates::MainMenu::MainMenu(std::shared_ptr<Lime::RenderBatch>& rend)
 	//Add all models relevant to render batch
 	rend->Add2DModel(m_background);
 	rend->Add2DModel(m_b1->GetModel());
+	rend->Add2DModel(m_b2->GetModel());
 }
 
 GameStates::MainMenu::~MainMenu()
@@ -32,12 +34,15 @@ GameStates::States GameStates::MainMenu::Update(float time, std::shared_ptr<Lime
 	glm::vec2 mousePos = input->GetMouseCoords();
 	bool bLMBDown = input->KeyStatus(Lime::Key::Left_Mouse_Button);
 	m_b1->Update(mousePos, bLMBDown);
+	m_b2->Update(mousePos, bLMBDown);
 
 	Draw();
 
 	//If the button is clicked, load the map editor
 	if(m_b1->IsClicked())
 		return States::MAP_EDITOR;
+	else if (m_b2->IsClicked())
+		return States::SCENE_MANAGER;
 	else
 		return States::RUNNING;
 }
@@ -67,4 +72,5 @@ void GameStates::MainMenu::Draw()
 {
 	m_background->Draw();
 	m_b1->Draw();
+	m_b2->Draw();
 }
