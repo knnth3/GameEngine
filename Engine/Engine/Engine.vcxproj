@@ -168,11 +168,7 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="Collider_Plane.cpp" />
-    <ClCompile Include="Collider_Sphere.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DX11Camera.cpp" />
     <ClCompile Include="DX11ConstantBuffer.cpp" />
@@ -192,22 +188,11 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClCompile Include="Win32Window.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="Shared.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="SkyBox.cpp" />
-    <ClCompile Include="SpriteBatch.cpp" />
     <ClCompile Include="TextController.cpp" />
-    <ClCompile Include="Time.cpp" />
-    <ClCompile Include="WindowApp.cpp" />
-    <ClCompile Include="Xdata.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="Collider_Plane.h" />
-    <ClInclude Include="Collider_Sphere.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="DX11Camera.h" />
     <ClInclude Include="DX11ConstantBuffer.h" />
@@ -228,16 +213,9 @@ copy "$(ProjectDir)shaders\*.*" "$(SolutionDir)TestGame\shaders\"</Command>
     <ClInclude Include="Lime.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="Shared.h" />
-    <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="SkyBox.h" />
-    <ClInclude Include="SpriteBatch.h" />
     <ClInclude Include="TextController.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="WindowApp.h" />
     <ClInclude Include="WindowsAdditionals.h" />
-    <ClInclude Include="Xdata.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\FontPixelShader.hlsl">
