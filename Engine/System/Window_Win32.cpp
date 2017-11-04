@@ -89,7 +89,7 @@ bool System::Window_Win32::Initialize()
 	{
 		return false;
 	}
-
+	m_application->SetHandle(m_hwnd);
 	m_application->OnInitialize();
 
 	// Bring the window up on the screen and set it as main focus.

@@ -5,6 +5,7 @@ System::App::App()
 {
 	m_width = 0;
 	m_height = 0;
+	m_handle = nullptr;
 }
 
 void System::App::CloseApp()
@@ -22,4 +23,14 @@ void System::App::SetWindowSize(uint32_t width, uint32_t height)
 {
 	m_width = width;
 	m_height = height;
+}
+
+void * System::App::GetHandle()
+{
+	return m_handle;
+}
+
+void System::App::SetHandle(void * handle)
+{
+	m_handle = handle;
 }
