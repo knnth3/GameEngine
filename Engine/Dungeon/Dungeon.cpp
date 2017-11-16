@@ -20,15 +20,16 @@ Dungeon::~Dungeon()
 //Anything that is time related is done here
 void Dungeon::Tick()
 {
-	static int count = 0;
-	count++;
+	static float count = 0.0f;
 	end = std::chrono::system_clock::now();
 	std::chrono::duration<float> time = end - start;
 	start = end;
-	if (count >= 1000)
+	count += time.count();
+	if (count >= 1)
 	{
 		m_fps = (int)(1.0f / time.count());
-		count = 0;
+		count = 0.0f;
+		cout << m_fps << endl;
 	}
 	Update(time.count());
 
