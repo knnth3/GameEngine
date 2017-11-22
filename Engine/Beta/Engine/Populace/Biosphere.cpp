@@ -1,61 +1,49 @@
 #include "Biosphere.h"
-#include <JSON\json.hpp>
 #include <fstream>
 
 using json = nlohmann::json;
 
 PL::Biosphere::Biosphere(std::string Folder):
-	m_folder(Folder)
+	m_folder(Folder),
+	m_filename("\\PL_DAT.json")
 {
 	m_bClose = false;
 	m_bSave = false;
+	m_bClearDead = false;
 }
 
-PL_Actor_ID PL::Biosphere::SpawnActor(const std::string name)
+void PL::Biosphere::SpawnActor(const std::string name)
 {
 	std::lock_guard<std::mutex> lock(m_threadLock);
-	if (m_actors.size() < MAX_ACTORS_PER_SCENE)
-	{
-		m_actors.emplace_back(name);
-		return (PL_Actor_ID)m_actors.size() - 1;
-	}
-	return ACTOR_ID_NONVALID;
+	m_actors.emplace(name, name);
 }
 
-bool PL::Biosphere::GetActor(const PL_Actor_ID id, PL_ActorData& data)
+bool PL::Biosphere::GetActor(const std::string name, PL_ActorData& data)
 {
 	std::lock_guard<std::mutex> lock(m_threadLock);
-	if (m_actors.size() > id && id >= 0)
+	auto actor = m_actors.find(name);
+	if (actor != m_actors.end())
 	{
 		//Populate data with actor stats
-		data.Name = m_actors[id].GetName();
-		data.MaxHealth = m_actors[id].GetMaxHealth();
-		data.CurrentHealth = m_actors[id].GetCurrentHealth();
+		data = actor->second;
 		return true;
 	}
 	return false;
+}
+
+void PL::Biosphere::GetAllActors(std::vector<PL_ActorData>& data)
+{
+	std::lock_guard<std::mutex> lock(m_threadLock);
+	for (auto actor : m_actors)
+		data.emplace_back(actor.second);
 }
 
 void PL::Biosphere::Update()
 {
 	while (!m_bClose)
 	{
-		if (m_bSave)
-		{
-			json file;
-			PL_ActorData data;
-			if (GetActor(0, data))
-			{
-				file["Name"] = data.Name;
-				file["Max Health"] = data.MaxHealth;
-				file["Current Health"] = data.CurrentHealth;
-				std::string path = m_folder + "\\pretty.json";
-				std::ofstream o(path);
-				o << std::setw(4) << file << std::endl;
-				o.close();
-			}
-			m_bSave = false;
-		}
+		ClearDead();
+		Save();
 	}
 }
 
@@ -64,7 +52,69 @@ void PL::Biosphere::Close()
 	m_bClose = true;
 }
 
+bool PL::Biosphere::KillActor(const std::string name)
+{
+	std::lock_guard<std::mutex> lock(m_threadLock);
+	auto actor = m_actors.find(name);
+	if (actor != m_actors.end())
+	{
+		actor->second.SetLivingStatus(false);
+		return true;
+	}
+
+	return false;
+}
+
+void PL::Biosphere::ClearDeadActors()
+{
+	m_bClearDead = true;
+}
+
+bool PL::Biosphere::GiveItem(const std::string name, const PL_Item item)
+{
+	std::lock_guard<std::mutex> lock(m_threadLock);
+	auto actor = m_actors.find(name);
+	if (actor != m_actors.end())
+	{
+		actor->second.AddItem(item);
+		return true;
+	}
+	return false;
+}
+
 void PL::Biosphere::WriteToDisk()
 {
 	m_bSave = true;
+}
+
+void PL::Biosphere::ClearDead()
+{
+	if (m_bClearDead)
+	{
+		std::vector<std::string> m_deadActors;
+		for (auto actor : m_actors)
+			if (actor.second.IsAlive())
+				m_deadActors.push_back(actor.first);
+
+		for (auto name : m_deadActors)
+			m_actors.erase(name);
+
+		m_bClearDead = false;
+	}
+}
+
+void PL::Biosphere::Save()
+{
+	if (m_bSave)
+	{
+		json file;
+		std::string path = m_folder + m_filename;
+		std::vector<PL_ActorData> data;
+		GetAllActors(data);
+		file = json{ "Actors", data };
+		std::ofstream o(path);
+		o << std::setw(4) << file << std::endl;
+		o.close();
+		m_bSave = false;
+	}
 }

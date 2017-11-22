@@ -1,4 +1,7 @@
 #pragma once
+#ifndef NOMINMAX
+# define NOMINMAX
+#endif
 #include <Lime_Engine\EngineApp.h>
 #include <Lime_Engine\Cube.h>
 #include <Lime_Engine\Lime_String.h>
@@ -26,7 +29,6 @@ private:
 	int m_fps = 0;
 	float movespeed;
 	bool stress;
-	PL_Actor_ID m_id;
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
 

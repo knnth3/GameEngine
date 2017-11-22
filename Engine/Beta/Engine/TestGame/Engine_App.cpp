@@ -1,7 +1,7 @@
 #include "Engine_App.h"
-
 using namespace Graphics;
 using namespace std;
+
 Engine_App::Engine_App(uint16_t windowWidth, uint16_t windowHeight, std::string programPath):
 	EngineApp(windowWidth, windowHeight, programPath)
 {
@@ -10,7 +10,15 @@ Engine_App::Engine_App(uint16_t windowWidth, uint16_t windowHeight, std::string 
 	bool result = PL_Initialize(programPath);
 	if (!result)
 		CloseApp();
-	m_id = PL_CreateActor("Eric");
+	PL_Item cheese;
+	cheese.Name = "Cheddar";
+	cheese.Type = "Food";
+	cheese.Weight = 5;
+	PL_CreateActor("Eric");
+	PL_CreateActor("Alfie");
+	PL_CreateActor("Jordan");
+	PL_CreateActor("Megan");
+	PL_GiveItem("Alfie", cheese);
 }
 
 void Engine_App::OnStartUp()
@@ -42,8 +50,8 @@ void Engine_App::OnStartUp()
 
 void Engine_App::OnShutdown()
 {
-	PL::PL_ActorData data;
-	bool result = PL_GetActorData(m_id, data);
+	PL_ActorData data;
+	bool result = PL_GetActorData("Eric", data);
 	if (result)
 	{
 		cout << data.Name << endl;

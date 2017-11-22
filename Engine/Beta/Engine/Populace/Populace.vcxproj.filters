@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Biosphere">
+      <UniqueIdentifier>{dfcf805b-fb60-48ed-a939-4b92951aa808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Main Functions">
+      <UniqueIdentifier>{4ec8ede2-846d-4c80-94e2-5517e672fad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actors">
+      <UniqueIdentifier>{8d480fcc-c005-42b5-9f9a-59a613add36b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Items">
+      <UniqueIdentifier>{c518819e-65f9-4186-851c-4aa2357b3c8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DLLSettings.h">
@@ -27,16 +39,22 @@
     <ClInclude Include="Biosphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PL_Item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Biosphere.cpp">
+      <Filter>Source Files\Biosphere</Filter>
     </ClCompile>
     <ClCompile Include="Populace.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Main Functions</Filter>
     </ClCompile>
-    <ClCompile Include="Biosphere.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Item.cpp">
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

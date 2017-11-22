@@ -3,21 +3,10 @@
 #include <mutex>
 #include <atomic>
 #include "Actor.h"
-#define MAX_ACTORS_PER_SCENE 100
-#define ACTOR_ID_NONVALID -1
 
-
-typedef int16_t PL_Actor_ID;
 
 namespace PL
 {
-	struct PL_ActorData
-	{
-
-		std::string Name;
-		int16_t MaxHealth;
-		int16_t CurrentHealth;
-	};
 
 	class Biosphere
 	{
@@ -25,24 +14,32 @@ namespace PL
 		Biosphere(std::string Folder);
 
 		//Access functions
-		PL_Actor_ID SpawnActor(const std::string name);
-		bool GetActor(const PL_Actor_ID id, PL_ActorData& data);
+		void SpawnActor(const std::string name);
+		bool GetActor(const std::string name, PL_ActorData& data);
+		void GetAllActors(std::vector<PL_ActorData>& data);
 
 		//Update
 		void Update();
 		void Close();
+		bool KillActor(const std::string name);
+		void ClearDeadActors();
+		bool GiveItem(const std::string name, const PL_Item item);
 
 		//Save
 		void WriteToDisk();
 
 
 	private:
+		void ClearDead();
+		void Save();
 
 		const std::string m_folder;
+		const std::string m_filename;
 		std::atomic_bool m_bClose;
 		std::atomic_bool m_bSave;
+		std::atomic_bool m_bClearDead;
 		std::mutex m_threadLock;
-		std::vector<PL_Actor> m_actors;
+		std::map<std::string, PL_Actor> m_actors;
 
 	};
 }
