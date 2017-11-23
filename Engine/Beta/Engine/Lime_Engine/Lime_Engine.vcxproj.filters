@@ -63,6 +63,9 @@
     <ClInclude Include="Lime_String.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NVIDIA_PhysX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DllSettings.cpp">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="Lime_String.cpp">
       <Filter>Source Files\Text\String</Filter>
+    </ClCompile>
+    <ClCompile Include="NVIDIA_PhysX.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@ PL::PL_Actor::PL_Actor(std::string name)
 	m_name = name;
 	m_maxHealth = 100;
 	m_currentHealth = m_maxHealth;
+	m_bAlive = true;
 }
 
 std::string PL::PL_Actor::GetName()
