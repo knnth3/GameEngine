@@ -20,11 +20,13 @@ int main(int argc, char **argv)
 	//return result;
 
 	//Tests Populace API (Everything has PL_ as prefix)
-	PL_Initialize(EXE_PATH);
+	PL_Initialize("Asgaurd");
 
 	//Create Actors
-	PL_CreateActor("Eric");
-	PL_CreateActor("Alfie");
+	if (!PL_CreateActor("Eric"))
+		cout << "-Actor Eric  already exists." << endl;
+	if(!PL_CreateActor("Alfie"))
+		cout << "-Actor Alfie already exists." << endl;
 
 	//Poll Actor Data for usage
 	PL_ActorData data;

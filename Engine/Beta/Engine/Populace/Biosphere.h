@@ -11,7 +11,7 @@ namespace PL
 	class Biosphere
 	{
 	public:
-		Biosphere(std::string Folder);
+		Biosphere(const std::string Folder, const std::string domain);
 
 		//Access functions
 		bool SpawnActor(const std::string name);

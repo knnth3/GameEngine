@@ -27,32 +27,32 @@ PL_Item::PL_Item(std::string name, std::string type, std::string desc, uint16_t 
 	m_price = price;
 }
 
-std::string PL_Item::GetName()
+std::string PL_Item::GetName()const
 {
 	return m_name;
 }
 
-std::string PL_Item::GetDesc()
+std::string PL_Item::GetDesc()const
 {
 	return m_desc;
 }
 
-std::string PL_Item::GetType()
+std::string PL_Item::GetType()const
 {
 	return m_type;
 }
 
-uint16_t PL_Item::GetWeight()
+uint16_t PL_Item::GetWeight()const
 {
 	return m_weight;
 }
 
-float PL_Item::GetPrice()
+float PL_Item::GetPrice()const
 {
 	return m_price;
 }
 
-PL_Item_Desc PL_Item::GetItemDesc()
+PL_Item_Desc PL_Item::GetItemDesc()const
 {
 	PL_Item_Desc desc;
 	desc.Name = m_name;

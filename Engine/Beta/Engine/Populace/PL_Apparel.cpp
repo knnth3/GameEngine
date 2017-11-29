@@ -44,6 +44,11 @@ bool PL::PL_Apparel::IsShield() const
 	return m_bIsShield;
 }
 
+bool PL::PL_Apparel::LoadJSON(const json & j)
+{
+	return false;
+}
+
 void PL::PL_Apparel::SetArmorBonus( unsigned int armor )
 {
 	m_armorBonus = armor;

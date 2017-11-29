@@ -3,12 +3,11 @@
 #include <fstream>
 
 using json = nlohmann::json;
-#define PL_ACTORDATA "Actors.json"
 
-PL::Biosphere::Biosphere(std::string Folder):
-	m_folder(Folder + "\\")
+PL::Biosphere::Biosphere(const std::string Folder, const std::string domain):
+	m_folder(Folder)
 {
-	PL_Library::Initialize(m_folder);
+	PL_Library::Initialize(m_folder, domain);
 	m_bClose = false;
 	m_bSave = false;
 	m_bClearDead = false;

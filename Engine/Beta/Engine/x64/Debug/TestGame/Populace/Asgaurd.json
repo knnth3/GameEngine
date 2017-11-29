@@ -1,0 +1,18 @@
+{
+    "Actors": [
+        {
+            "Alive": true,
+            "Current Health": 100,
+            "Max Health": 100,
+            "Name": "Alfie",
+            "Wealth": 0.0
+        },
+        {
+            "Alive": true,
+            "Current Health": 100,
+            "Max Health": 100,
+            "Name": "Eric",
+            "Wealth": 0.0
+        }
+    ]
+}

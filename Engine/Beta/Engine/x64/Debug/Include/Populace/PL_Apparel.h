@@ -26,6 +26,7 @@ namespace PL
 		bool IsShield()const;
 
 		//Set Functions
+		bool LoadJSON(const json& j);
 		void SetArmorBonus(unsigned int armor);
 
 

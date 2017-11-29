@@ -13,12 +13,12 @@ public:
 	PL_DLL_API PL_Item();
 	PL_DLL_API PL_Item(std::string name, std::string type, std::string desc,
 		uint16_t weight, float price);
-	PL_DLL_API virtual std::string GetName();
-	PL_DLL_API virtual std::string GetDesc();
-	PL_DLL_API virtual std::string GetType();
-	PL_DLL_API virtual uint16_t GetWeight();
-	PL_DLL_API virtual float GetPrice();
-	PL_DLL_API virtual PL_Item_Desc GetItemDesc()final;
+	PL_DLL_API virtual std::string GetName()const;
+	PL_DLL_API virtual std::string GetDesc()const;
+	PL_DLL_API virtual std::string GetType()const;
+	PL_DLL_API virtual uint16_t GetWeight()const;
+	PL_DLL_API virtual float GetPrice()const;
+	PL_DLL_API virtual PL_Item_Desc GetItemDesc()const final;
 
 protected:
 	PL_DLL_API virtual void SetName(std::string name)final;

@@ -7,7 +7,7 @@ Engine_App::Engine_App(uint16_t windowWidth, uint16_t windowHeight, std::string 
 {
 	movespeed = 1.0f;
 	stress = false;
-	bool result = PL_Initialize(programPath);
+	bool result = PL_Initialize("Asgaurd");
 	if (!result)
 		CloseApp();
 	PL_Item_Desc cheese;

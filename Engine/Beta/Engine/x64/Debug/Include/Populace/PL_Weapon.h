@@ -20,6 +20,7 @@ namespace PL
 		bool IsOneHanded()const;
 
 		//SetFunctions
+		bool LoadJSON(const json& j);
 		void Wear(unsigned int durabilty);
 		void Break();
 		void Fix();

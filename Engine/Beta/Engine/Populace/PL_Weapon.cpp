@@ -40,6 +40,11 @@ bool PL::PL_Weapon::IsOneHanded()const
 	return m_bOneHanded;
 }
 
+bool PL::PL_Weapon::LoadJSON(const json & j)
+{
+	return false;
+}
+
 void PL::PL_Weapon::Wear(unsigned int durabilty)
 {
 	m_currentDurability -= durabilty;
@@ -61,4 +66,5 @@ void PL::to_json(json & j, const PL_Weapon & p)
 
 void PL::from_json(const json & j, PL_Weapon & item)
 {
+	item.LoadJSON(j);
 }

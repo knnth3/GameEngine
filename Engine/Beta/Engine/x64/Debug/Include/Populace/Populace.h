@@ -5,9 +5,9 @@
 
 
 
-PL_DLL_API inline bool PL_Initialize(std::string directory);
+PL_DLL_API inline bool PL_Initialize(const std::string DomainName);
 PL_DLL_API inline void PL_Close();
-PL_DLL_API inline void PL_CreateActor(std::string name);
+PL_DLL_API inline bool PL_CreateActor(std::string name);
 PL_DLL_API inline bool PL_KillActor(std::string name);
 PL_DLL_API inline bool PL_GetActorData(const std::string name, PL_ActorData& data);
 PL_DLL_API inline void PL_ClearDeadActors();

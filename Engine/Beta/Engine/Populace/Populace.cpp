@@ -2,15 +2,23 @@
 #include <future>
 
 
-bool PL_Initialize(std::string directory)
+bool PL_Initialize(const std::string DomainName)
 {
+	//Get the path that the exe is running in
+	HMODULE hModule = GetModuleHandleW(NULL);
+	WCHAR path[MAX_PATH];
+	int bytes = GetModuleFileName(hModule, path, MAX_PATH);
+	if (bytes == 0)
+		return false;
+
+	std::string directory = PL::ToString(path);
 	size_t pos = directory.find_last_of('\\');
 	std::string dir(directory.begin(), directory.begin() + pos);
-	std::string folderName = dir + "\\Populace";
+	std::string folderName = dir + "\\Populace\\";
 	if (!PL::CreateDir(folderName))
 		return false;
 
-	PL::m_biosphere = new PL::Biosphere(folderName);
+	PL::m_biosphere = new PL::Biosphere(folderName, DomainName);
 	PL::m_thread = std::thread(PL::Update_Biosphere);
 	return true;
 }
@@ -26,9 +34,9 @@ void PL_Close()
 	delete PL::m_biosphere;
 }
 
-void PL_CreateActor(std::string name)
+bool PL_CreateActor(std::string name)
 {
-	PL::m_biosphere->SpawnActor(name);
+	return PL::m_biosphere->SpawnActor(name);
 }
 
 bool PL_KillActor(std::string name)
