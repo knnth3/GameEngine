@@ -16,6 +16,7 @@ namespace PL
 		static bool GiveApparel(std::string actor, std::string item);
 		static bool GiveWeapon(std::string actor, std::string item);
 		static bool CreateActor(std::string name);
+		static bool CreateActor(PL_ActorData data);
 		static void ClearDeadActors();
 		static void Save();
 
@@ -38,5 +39,7 @@ namespace PL
 		static std::map<std::string, PL_Actor> m_actors;
 		static std::map<std::string, PL_Transport> m_transportations;
 	};
+
+	void SaveJSON(const json& j, const std::string filename);
 }
 

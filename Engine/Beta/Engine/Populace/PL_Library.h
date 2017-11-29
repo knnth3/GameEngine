@@ -39,5 +39,7 @@ namespace PL
 		static std::map<std::string, PL_Actor> m_actors;
 		static std::map<std::string, PL_Transport> m_transportations;
 	};
+
+	void SaveJSON(const json& j, const std::string filename);
 }
 

@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Mounts &amp; Transportation">
       <UniqueIdentifier>{abdd041f-f952-4c8a-bb73-98a639ead8be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Biosphere\Database">
+      <UniqueIdentifier>{25259604-3032-4451-8523-48ded39b0f91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DLLSettings.h">
@@ -96,7 +99,7 @@
       <Filter>Source Files\Mounts &amp; Transportation</Filter>
     </ClCompile>
     <ClCompile Include="PL_Library.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Biosphere\Database</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

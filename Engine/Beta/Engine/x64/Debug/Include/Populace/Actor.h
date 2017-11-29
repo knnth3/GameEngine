@@ -16,8 +16,12 @@ enum PL_EQUIPMENT_SLOT
 
 struct PL_ActorData
 {
+	PL_DLL_API PL_ActorData();
+	PL_DLL_API bool LoadJSON(const json& j);
+
 	bool IsAlive;
 	std::string Name;
+	float Wealth;
 	int16_t MaxHealth;
 	int16_t CurrentHealth;
 	PL_Item_Desc Armor;
@@ -36,18 +40,19 @@ namespace PL
 	public:
 		PL_Actor();
 		PL_Actor(std::string name);
+		PL_Actor(PL_ActorData data);
 
 		//Get Functions
+		bool IsAlive();
 		std::string GetName();
 		int16_t GetCurrentHealth();
 		int16_t GetMaxHealth();
-		bool IsAlive();
 		PL_ActorData GetActorData();
 
 		//Set Functions
-		bool AddItem(const PL_Item item);
 		void AddMount(const PL_Transport mount);
 		void SetLivingStatus(const bool val);
+		bool AddItem(const PL_Item item);
 		bool Equip(std::string name, PL_EQUIPMENT_SLOT slot);
 		bool Mount(std::string name);
 
@@ -70,3 +75,4 @@ namespace PL
 
 //JSON
 void to_json(json& j, const PL_ActorData& p);
+void from_json(const json& j, PL_ActorData& item);

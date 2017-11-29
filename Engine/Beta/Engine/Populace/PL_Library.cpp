@@ -176,12 +176,7 @@ void PL::PL_Library::SaveActors()
 	{
 		json j;
 		j[x.second.GetName()] = x.second.GetActorData();
-		std::ofstream file(m_folder + PL_ACTOR_DIR + x.second.GetName() +".json");
-		if (file)
-		{
-			file << j << std::endl;
-			file.close();
-		}
+		SaveJSON(j, m_folder + PL_ACTOR_DIR + x.second.GetName() + ".json");
 	}
 }
 
@@ -191,12 +186,7 @@ void PL::PL_Library::SaveApparel()
 	{
 		json j;
 		j[x.second.GetName()] = x.second;
-		std::ofstream file(m_folder + PL_APPAREL_DIR + x.second.GetName() + ".json");
-		if (file)
-		{
-			file << j << std::endl;
-			file.close();
-		}
+		SaveJSON(j, m_folder + PL_APPAREL_DIR + x.second.GetName() + ".json");
 	}
 }
 
@@ -206,12 +196,7 @@ void PL::PL_Library::SaveWeapons()
 	{
 		json j;
 		j[x.second.GetName()] = x.second;
-		std::ofstream file(m_folder + PL_WEAPON_DIR + x.second.GetName() + ".json");
-		if (file)
-		{
-			file << j << std::endl;
-			file.close();
-		}
+		SaveJSON(j, m_folder + PL_WEAPON_DIR + x.second.GetName() + ".json");
 	}
 }
 
@@ -265,4 +250,14 @@ void PL::PL_Library::LoadWeapon(std::string filepath)
 
 void PL::PL_Library::LoadApparel(std::string filepath)
 {
+}
+
+void PL::SaveJSON(const json & j, const std::string filename)
+{
+	std::ofstream file(filename);
+	if (file)
+	{
+		file << std::setw(4) << j << std::endl;
+		file.close();
+	}
 }

@@ -51,7 +51,7 @@ inline bool PL_GiveItem(const std::string name, const PL_Item_Desc item)
 	return PL::m_biosphere->GiveItem(name, item);
 }
 
-void PL_WriteToDisk()
+void PL_Save()
 {
 	PL::m_biosphere->Save();
 }

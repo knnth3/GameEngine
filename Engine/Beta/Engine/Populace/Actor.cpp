@@ -24,6 +24,12 @@ PL::PL_Actor::PL_Actor(PL_ActorData data)
 	m_name = data.Name;
 }
 
+bool PL::PL_Actor::IsAlive()
+{
+	return m_bAlive;
+}
+
+
 std::string PL::PL_Actor::GetName()
 {
 	return m_name;
@@ -37,11 +43,6 @@ int16_t PL::PL_Actor::GetCurrentHealth()
 int16_t PL::PL_Actor::GetMaxHealth()
 {
 	return m_maxHealth;
-}
-
-bool PL::PL_Actor::IsAlive()
-{
-	return m_bAlive;
 }
 
 PL_ActorData PL::PL_Actor::GetActorData()
@@ -65,14 +66,6 @@ PL_ActorData PL::PL_Actor::GetActorData()
 	return data;
 }
 
-bool PL::PL_Actor::AddItem(const PL_Item item)
-{
-	//Logic for adding items in here
-	//Ex: check for sufficient space/weight capacity
-	m_inventory.emplace_back(new PL_Item(item));
-	return true;
-}
-
 void PL::PL_Actor::AddMount(const PL_Transport mount)
 {
 	m_transports.emplace_back(new PL_Transport(mount));
@@ -81,6 +74,14 @@ void PL::PL_Actor::AddMount(const PL_Transport mount)
 void PL::PL_Actor::SetLivingStatus(const bool val)
 {
 	m_bAlive = val;
+}
+
+bool PL::PL_Actor::AddItem(const PL_Item item)
+{
+	//Logic for adding items in here
+	//Ex: check for sufficient space/weight capacity
+	m_inventory.emplace_back(new PL_Item(item));
+	return true;
 }
 
 bool PL::PL_Actor::Equip(std::string name, PL_EQUIPMENT_SLOT slot)
@@ -153,9 +154,11 @@ void to_json(json& j, const PL_ActorData & p)
 		{ "Name", p.Name },
 		{ "Max Health", p.MaxHealth },
 		{ "Current Health", p.CurrentHealth },
+		{ "Wealth", p.Wealth },
 		{ "Alive", p.IsAlive },
 	};
-	//Extra Information
+
+	//Extra(optional) Information
 	if (!p.Inventory.empty())
 		j["Inventory"] = p.Inventory;
 	if (!p.Armor.Name.empty())
@@ -176,18 +179,29 @@ void from_json(const json & j, PL_ActorData & item)
 	item.LoadJSON(j);
 }
 
+PL_ActorData::PL_ActorData()
+{
+	IsAlive = true;
+	Name = "";
+	Wealth = 0.0f;
+	MaxHealth = 0;
+	CurrentHealth = 0;
+}
+
 bool PL_ActorData::LoadJSON(const json & j)
 {
 	//Make sure the file is valid
 	if (!PL::json_contains(j, "Name") ||
 		!PL::json_contains(j, "Max Health") ||
 		!PL::json_contains(j, "Current Health") ||
+		!PL::json_contains(j, "Wealth") ||
 		!PL::json_contains(j, "Alive"))
 		return false;
 
 	Name = j["Name"].get<std::string>();
-	MaxHealth = j["Max Health"].get<std::string>();
-	m_price = j["Current Health"].get<float>();
-	al = j["Alive"].get<unsigned int>();
+	MaxHealth = j["Max Health"].get<int>();
+	CurrentHealth = j["Current Health"].get<int>();
+	Wealth = j["Wealth"].get<float>();
+	IsAlive = j["Alive"].get<unsigned int>();
 	return true;
 }

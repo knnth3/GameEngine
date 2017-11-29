@@ -57,7 +57,7 @@ void Engine_App::OnShutdown()
 		cout << "Current Health: " << data.CurrentHealth << endl;
 		cout << "Total Health: " << data.MaxHealth << endl;
 	}
-	PL_WriteToDisk();
+	PL_Save();
 	PL_Close();
 }
 
