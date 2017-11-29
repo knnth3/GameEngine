@@ -156,13 +156,23 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Biosphere.h" />
     <ClInclude Include="DLLSettings.h" />
+    <ClInclude Include="PL_Apparel.h" />
+    <ClInclude Include="PL_Consumable.h" />
     <ClInclude Include="PL_Item.h" />
+    <ClInclude Include="PL_Library.h" />
+    <ClInclude Include="PL_Transport.h" />
+    <ClInclude Include="PL_Weapon.h" />
     <ClInclude Include="Populace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Biosphere.cpp" />
+    <ClCompile Include="PL_Apparel.cpp" />
+    <ClCompile Include="PL_Consumable.cpp" />
     <ClCompile Include="PL_Item.cpp" />
+    <ClCompile Include="PL_Library.cpp" />
+    <ClCompile Include="PL_Transport.cpp" />
+    <ClCompile Include="PL_Weapon.cpp" />
     <ClCompile Include="Populace.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -25,6 +25,18 @@
     <Filter Include="Source Files\Items">
       <UniqueIdentifier>{c518819e-65f9-4186-851c-4aa2357b3c8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Items\Weapons">
+      <UniqueIdentifier>{4eb6119c-efa3-4e33-b4ad-b95e93a67438}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Items\Apparel">
+      <UniqueIdentifier>{4780125e-ea22-49de-8cc4-ce240d2744e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Items\Consumable">
+      <UniqueIdentifier>{e854be06-e41d-4d26-bb80-cf04b7c74f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mounts &amp; Transportation">
+      <UniqueIdentifier>{abdd041f-f952-4c8a-bb73-98a639ead8be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DLLSettings.h">
@@ -42,6 +54,21 @@
     <ClInclude Include="PL_Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PL_Consumable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PL_Weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PL_Apparel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PL_Transport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PL_Library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Biosphere.cpp">
@@ -55,6 +82,21 @@
     </ClCompile>
     <ClCompile Include="PL_Item.cpp">
       <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Consumable.cpp">
+      <Filter>Source Files\Items\Consumable</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Weapon.cpp">
+      <Filter>Source Files\Items\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Apparel.cpp">
+      <Filter>Source Files\Items\Apparel</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Transport.cpp">
+      <Filter>Source Files\Mounts &amp; Transportation</Filter>
+    </ClCompile>
+    <ClCompile Include="PL_Library.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

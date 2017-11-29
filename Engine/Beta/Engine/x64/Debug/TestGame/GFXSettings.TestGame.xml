@@ -9,23 +9,23 @@
 		<EXECCMD Value="TestGame.exe" />
 	</APPLICATION>
 	<GAMESETTINGS>
-		<RESOLUTION Width="1920" Height="1440" RefreshRate="60">
+		<RESOLUTION Width="1600" Height="1200" RefreshRate="60">
 			<ENUM Width="800" Height="600" RefreshRate="60" />
 			<ENUM Width="1024" Height="768" RefreshRate="60" />
 			<ENUM Width="1600" Height="1200" RefreshRate="60" />
 			<ENUM Width="1920" Height="1440" RefreshRate="60" />
 		</RESOLUTION>
-		<OPTION Name="Test_INT" Registered="True" Type="Integer" Value="222">
+		<OPTION Name="Test_INT" Registered="True" Type="Integer" Value="253">
 			<RANGE MinValue="0" MaxValue="0" NumSteps="-1" />
 		</OPTION>
-		<OPTION Name="Test_FLOAT" Registered="True" Type="Float" Value="222.5">
+		<OPTION Name="Test_FLOAT" Registered="True" Type="Float" Value="253.5">
 			<RANGE MinValue="0" MaxValue="0" NumSteps="-1" />
 		</OPTION>
-		<OPTION Name="Test_ENUM" Registered="True" Type="Enum" Value="Value2">
+		<OPTION Name="Test_ENUM" Registered="True" Type="Enum" Value="Value3">
 			<ENUM EnumValue="Value1" />
 			<ENUM EnumValue="Value2" />
 			<ENUM EnumValue="Value3" />
 		</OPTION>
-		<OPTION Name="Test_BOOL" Registered="True" Type="Bool" Value="false" />
+		<OPTION Name="Test_BOOL" Registered="True" Type="Bool" Value="true" />
 	</GAMESETTINGS>
 </GSA_SDK>

@@ -96,7 +96,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Graphics/Graphics.lib;System/System.lib;NVIDIA_PhysX/PhysX3CHECKED_x64.dll;NVIDIA_PhysX/PhysX3CommonCHECKED_x64.dll;NVIDIA_PhysX/PxFoundationCHECKED_x64.dll;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Graphics/Graphics.lib;System/System.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>del "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\*.h"
@@ -143,7 +143,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>Graphics/Graphics.lib;System/System.lib;NVIDIA_PhysX/PhysX3CHECKED_x64.dll;NVIDIA_PhysX/PhysX3CommonCHECKED_x64.dll;NVIDIA_PhysX/PxFoundationCHECKED_x64.dll;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Graphics/Graphics.lib;System/System.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

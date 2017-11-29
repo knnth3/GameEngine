@@ -14,32 +14,29 @@ namespace PL
 		Biosphere(std::string Folder);
 
 		//Access functions
-		void SpawnActor(const std::string name);
+		bool SpawnActor(const std::string name);
 		bool GetActor(const std::string name, PL_ActorData& data);
-		void GetAllActors(std::vector<PL_ActorData>& data);
 
 		//Update
 		void Update();
 		void Close();
 		bool KillActor(const std::string name);
 		void ClearDeadActors();
-		bool GiveItem(const std::string name, const PL_Item item);
+		bool GiveItem(const std::string name, const PL_Item_Desc item);
 
 		//Save
-		void WriteToDisk();
+		void Save();
 
 
 	private:
 		void ClearDead();
-		void Save();
+		void WriteToDisk();
 
 		const std::string m_folder;
-		const std::string m_filename;
 		std::atomic_bool m_bClose;
 		std::atomic_bool m_bSave;
 		std::atomic_bool m_bClearDead;
 		std::mutex m_threadLock;
-		std::map<std::string, PL_Actor> m_actors;
 
 	};
 }

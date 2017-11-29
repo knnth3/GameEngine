@@ -10,10 +10,9 @@ Engine_App::Engine_App(uint16_t windowWidth, uint16_t windowHeight, std::string 
 	bool result = PL_Initialize(programPath);
 	if (!result)
 		CloseApp();
-	PL_Item cheese;
+	PL_Item_Desc cheese;
 	cheese.Name = "Cheddar";
 	cheese.Type = "Food";
-	cheese.Weight = 5;
 	PL_CreateActor("Eric");
 	PL_CreateActor("Alfie");
 	PL_CreateActor("Jordan");

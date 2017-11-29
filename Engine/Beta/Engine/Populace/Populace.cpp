@@ -1,6 +1,5 @@
 #include "Populace.h"
 #include <future>
-#include <Windows.h>
 
 
 bool PL_Initialize(std::string directory)
@@ -8,14 +7,12 @@ bool PL_Initialize(std::string directory)
 	size_t pos = directory.find_last_of('\\');
 	std::string dir(directory.begin(), directory.begin() + pos);
 	std::string folderName = dir + "\\Populace";
-	if (CreateDirectory(PL::ToWstring(folderName).c_str(), NULL) ||
-		ERROR_ALREADY_EXISTS == GetLastError())
-	{
-		PL::m_biosphere = new PL::Biosphere(folderName);
-		PL::m_thread = std::thread(PL::Update_Biosphere);
-		return true;
-	}
-	return false;
+	if (!PL::CreateDir(folderName))
+		return false;
+
+	PL::m_biosphere = new PL::Biosphere(folderName);
+	PL::m_thread = std::thread(PL::Update_Biosphere);
+	return true;
 }
 
 void PL_Close()
@@ -49,14 +46,14 @@ inline void PL_ClearDeadActors()
 	PL::m_biosphere->ClearDeadActors();
 }
 
-inline bool PL_GiveItem(const std::string name, const PL_Item item)
+inline bool PL_GiveItem(const std::string name, const PL_Item_Desc item)
 {
 	return PL::m_biosphere->GiveItem(name, item);
 }
 
 void PL_WriteToDisk()
 {
-	PL::m_biosphere->WriteToDisk();
+	PL::m_biosphere->Save();
 }
 
 void PL::Update_Biosphere()
