@@ -28,6 +28,12 @@ int main(int argc, char **argv)
 	if(!PL_CreateActor("Alfie"))
 		cout << "-Actor Alfie already exists." << endl;
 
+	PL_Item_Desc desc;
+	desc.Name = "Wooden Longsword";
+	desc.Type = "Weapon";
+	if(!PL_GiveItem("Eric", desc))
+		cout << "-Wooden Longsword is not a valid weapon." << endl;
+
 	//Poll Actor Data for usage
 	PL_ActorData data;
 	bool result =  PL_GetActorData("Eric", data);

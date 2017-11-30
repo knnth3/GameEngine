@@ -4,35 +4,17 @@ PL::PL_Weapon::PL_Weapon()
 {
 	m_bOneHanded = true;
 	m_damage = 0;
-	m_durability = 0;
-	m_currentDurability = 0;
 }
 
 PL::PL_Weapon::PL_Weapon(bool oneHnaded, unsigned int damage, unsigned int durability)
 {
 	m_bOneHanded = oneHnaded;
 	m_damage = damage;
-	m_durability = durability;
-	m_currentDurability = m_durability;
 }
 
 unsigned int PL::PL_Weapon::GetDamage()const
 {
-	if (m_currentDurability == 0)
-		return 0;
 	return m_damage;
-}
-
-unsigned int PL::PL_Weapon::GetDurability()const
-{
-	return m_currentDurability;
-}
-
-bool PL::PL_Weapon::IsBroken()const
-{
-	if (m_currentDurability == 0)
-		return true;
-	return false;
 }
 
 bool PL::PL_Weapon::IsOneHanded()const
@@ -42,26 +24,25 @@ bool PL::PL_Weapon::IsOneHanded()const
 
 bool PL::PL_Weapon::LoadJSON(const json & j)
 {
-	return false;
-}
+	//Make sure the file is valid
+	if (!PL::json_contains(j, "One-Handed") ||
+		!PL::json_contains(j, "Damage"))
+		return false;
 
-void PL::PL_Weapon::Wear(unsigned int durabilty)
-{
-	m_currentDurability -= durabilty;
-}
+	if (!this->PL_Item::LoadJSON(j))
+		return false;
 
-void PL::PL_Weapon::Break()
-{
-	m_currentDurability = 0;
-}
+	m_bOneHanded = j["One-Handed"].get<bool>();
+	m_damage = j["Damage"].get<unsigned int>();
 
-void PL::PL_Weapon::Fix()
-{
-	m_currentDurability = m_durability;
+	return true;
 }
 
 void PL::to_json(json & j, const PL_Weapon & p)
 {
+	j = p.GetBaseJSON();
+	j["One-Handed"] = p.IsOneHanded();
+	j["Damage"] = p.GetDamage();
 }
 
 void PL::from_json(const json & j, PL_Weapon & item)

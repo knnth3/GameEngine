@@ -15,22 +15,15 @@ namespace PL
 
 		//Get Functions
 		unsigned int GetDamage()const;
-		unsigned int GetDurability()const;
-		bool IsBroken()const;
 		bool IsOneHanded()const;
 
 		//SetFunctions
 		bool LoadJSON(const json& j);
-		void Wear(unsigned int durabilty);
-		void Break();
-		void Fix();
 
 	private:
 
 		bool m_bOneHanded;
 		unsigned int m_damage;
-		unsigned int m_durability;
-		unsigned int m_currentDurability;
 	};
 
 	void to_json(json& j, const PL_Weapon& p);

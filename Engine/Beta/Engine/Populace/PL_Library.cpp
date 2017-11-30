@@ -16,13 +16,13 @@ bool PL::PL_Library::Initialize(const std::string folder, const std::string doma
 	m_domain = domain;
 	m_folder = folder;
 
+	//Load add-ons
+	LoadAddons();
+
 	//Load save data
 	json j;
 	if (LoadJSON(j, m_folder + m_domain + PL_DATA_EXT))
 		ProcessJSON(j);
-
-	//Load add-ons
-	LoadAddons();
 	return true;
 }
 
