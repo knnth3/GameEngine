@@ -31,10 +31,9 @@ private:
 	bool stress;
 	std::chrono::system_clock::time_point start;
 	std::chrono::system_clock::time_point end;
-
-	std::vector<Graphics::Model> m_models;
-	std::shared_ptr<Shapes::Cube> m_cube;
-	Lime_String m_str;
 	Lime_String m_fpsStr;
+
+	//Your objects here
+	std::shared_ptr<Shapes::Cube> m_cube;
 };
 

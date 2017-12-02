@@ -253,7 +253,7 @@ Graphics::CameraSettings::CameraSettings()
 	m_nearPlane = 1.0f;
 	m_farPlane = 0.0f;
 	m_distanceFromObject = 600.0f;
-	m_angleAroundPlayer = 0.0f;
+	m_angleAroundPlayer = PI;
 	m_cameraHeight = METER * 0.5f;
 	m_view = glm::mat4(0.0f);
 	m_3Dprojection = glm::mat4(0.0f);

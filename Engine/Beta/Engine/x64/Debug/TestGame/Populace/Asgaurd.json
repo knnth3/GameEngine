@@ -10,14 +10,22 @@
         {
             "Alive": true,
             "Current Health": 100,
-            "Inventory": [
-                {
-                    "Name": "Wooden Longsword",
-                    "Type": "Weapon"
-                }
-            ],
             "Max Health": 100,
             "Name": "Eric",
+            "Wealth": 0.0
+        },
+        {
+            "Alive": true,
+            "Current Health": 100,
+            "Max Health": 100,
+            "Name": "Jordan",
+            "Wealth": 0.0
+        },
+        {
+            "Alive": true,
+            "Current Health": 100,
+            "Max Health": 100,
+            "Name": "Megan",
             "Wealth": 0.0
         }
     ],
