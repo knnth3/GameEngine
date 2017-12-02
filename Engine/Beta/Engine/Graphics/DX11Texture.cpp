@@ -51,19 +51,19 @@ void Graphics::DX11Texture::Initialize()
 	if (_wcsicmp(ext, L".dds") == 0)
 	{
 		result = LoadFromDDSFile(m_filepath, DDS_FLAGS_NONE, nullptr, srcImage);
-		CheckSuccess(result);
+		CheckSuccess(result, m_filepath);
 	}
 	else
 	{
 		result = LoadFromWICFile(m_filepath, DDS_FLAGS_NONE, nullptr, srcImage);
-		CheckSuccess(result);
+		CheckSuccess(result, m_filepath);
 	}
 	if (SUCCEEDED(result))
 	{
 		ScratchImage secondary;
 		ScratchImage finalImage;
 		result = CreateShaderResourceView(m_device, srcImage.GetImages(), srcImage.GetImageCount(), srcImage.GetMetadata(), &m_texture);
-		CheckSuccess(result);
+		CheckSuccess(result, m_filepath);
 		m_bIsValid = true;
 	}
 }
@@ -80,6 +80,6 @@ void Graphics::DX11Texture::CreateSamplerSate()
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	HRESULT result = m_device->CreateSamplerState(&sampDesc, &m_samplerState);
-	CheckSuccess(result);
+	CheckSuccess(result, L"Sampler State");
 	m_context->PSSetSamplers(0, 1, &m_samplerState);
 }

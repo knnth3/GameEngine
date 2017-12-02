@@ -114,6 +114,10 @@ void Graphics::DX11Graphics::ProcessObject_3DTriangles(BatchInfo& info)
 	if (!m_shaderManager->SetActive("3D"))
 		return;
 
+	//Set the relevant rss
+	if (!m_RSSManager->SetActive("3D"))
+		return;
+
 	//Turn on the buffer if off
 	m_depthStencilState->SetDepthBufferStatus(true);
 
@@ -133,6 +137,10 @@ void Graphics::DX11Graphics::ProcessObject_2DTriangles(BatchInfo & info)
 
 	//Set the relevant shader active(if not already set)
 	if (!m_shaderManager->SetActive("2D"))
+		return;
+
+	//Set the relevant rss
+	if (!m_RSSManager->SetActive("2D"))
 		return;
 
 	//Turn on the buffer if off
@@ -176,10 +184,10 @@ void Graphics::DX11Graphics::CreateShaders()
 {
 	std::wstring path;
 
-	path = L"EngineAssets/shaders/3D Shader.hlsl";
+	path = L"Assets/shaders/3D Shader.hlsl";
 	m_shaderManager->CreateShader("3D", path);
 
-	path = L"EngineAssets/shaders/2D Shader.hlsl";
+	path = L"Assets/shaders/2D Shader.hlsl";
 	m_shaderManager->CreateShader("2D", path);
 }
 
@@ -198,23 +206,34 @@ void Graphics::DX11Graphics::CreateConstBuffers()
 bool Graphics::DX11Graphics::CreateRSSStates()
 {
 	bool result = false;
-	// Setup the raster description which will determine how and what polygons will be drawn.
 	RSSSettings rasterDesc;
+
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = true;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	result = m_RSSManager->CreateRSS(rasterDesc, "3D");
+
+
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.FrontCounterClockwise = true;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
 	result = m_RSSManager->CreateRSS(rasterDesc, "2D");
 
-	// Setup the raster description which will determine how and what polygons will be drawn.
+
 	rasterDesc;
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
@@ -222,14 +241,14 @@ bool Graphics::DX11Graphics::CreateRSSStates()
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.FrontCounterClockwise = true;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
 	result = m_RSSManager->CreateRSS(rasterDesc, "Wireframe");
 
+
+	result = m_RSSManager->SetActive("3D");
 	return result;
 }
 
@@ -265,5 +284,5 @@ bool Graphics::DX11Graphics::SetRSStyleActive(RSS_STYLES style)
 void Graphics::DX11Graphics::SetActiveTexture(TextureID id)
 {
 	if(!DX11TextureManager::SetActive(id))
-		DX11TextureManager::SetDefaultActive(DefaultTextures::MODEL);
+		DX11TextureManager::SetDefaultActive();
 }

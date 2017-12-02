@@ -4,6 +4,7 @@ Graphics::DX11RasterStateManager::DX11RasterStateManager(ID3D11Device * device, 
 {
 	m_device = device;
 	m_context = context;
+	m_active = "";
 }
 
 Graphics::DX11RasterStateManager::~DX11RasterStateManager()
@@ -50,9 +51,13 @@ bool Graphics::DX11RasterStateManager::CreateRSS(const RSSSettings settings, std
 
 bool Graphics::DX11RasterStateManager::SetActive(std::string uniqueName)
 {
+	if (m_active.compare(uniqueName) == 0)
+		return true;
+
 	auto rss = m_RSStates.find(uniqueName);
 	if (rss != m_RSStates.end())
 	{
+		m_active = uniqueName;
 		m_context->RSSetState(rss->second);
 		return true;
 	}

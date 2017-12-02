@@ -31,6 +31,7 @@ namespace Graphics
 
 	private:
 
+		std::string m_active;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_context;
 		std::map<std::string, ID3D11RasterizerState*> m_RSStates;

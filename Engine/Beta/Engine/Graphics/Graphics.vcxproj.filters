@@ -179,7 +179,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\TestGame\EngineAssets\shaders\2D Shader.hlsl" />
-    <None Include="..\TestGame\EngineAssets\shaders\3D Shader.hlsl" />
+    <None Include="..\TestGame\Assets\Shaders\2D Shader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\TestGame\Assets\Shaders\3D Shader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

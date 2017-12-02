@@ -1,15 +1,5 @@
 #include "DX11DepthStencilState.h"
 
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
-
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
-
-#define CLOSE_COM_PTR(ptr) \
-	if(ptr) { ptr->Release(); ptr = nullptr;}
-
-
 Graphics::DX11DepthStencilState::DX11DepthStencilState(uint16_t windowWidth, uint16_t windowHeight, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView* rtv)
 {
 	m_windowWidth = windowWidth;
@@ -87,28 +77,28 @@ bool Graphics::DX11DepthStencilState::Initialize()
 	result = m_device->CreateDepthStencilState(&m_2DdepthStencilDesc, &m_2DdepthStencilState);
 	if (result != S_OK)
 	{
-		CheckSuccess(result);
+		CheckSuccess(result, L"Depth Stencil State");
 		return false;
 	}
 
 	result = m_device->CreateDepthStencilState(&m_3DdepthStencilDesc, &m_3DdepthStencilState);
 	if (result != S_OK)
 	{
-		CheckSuccess(result);
+		CheckSuccess(result, L"Depth Stencil State");
 		return false;
 	}
 
 	result = m_device->CreateTexture2D(&m_depthBufferDesc, NULL, &m_depthStencilBuffer);
 	if (result != S_OK)
 	{
-		CheckSuccess(result);
+		CheckSuccess(result, L"Depth Stencil State");
 		return false;
 	}
 
 	result = m_device->CreateDepthStencilView(m_depthStencilBuffer, &m_depthStencilViewDesc, &m_depthStencilView);
 	if (result != S_OK)
 	{
-		CheckSuccess(result);
+		CheckSuccess(result, L"Depth Stencil State");
 		return false;
 	}
 

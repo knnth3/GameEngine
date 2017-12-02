@@ -86,7 +86,7 @@ void LIME_ENGINE::Lime_Char::SetTexture()
 {
 	if (m_textureID == -1)
 		m_textureID = DX11TextureManager::CreateNewTexture
-		("EngineAssets/textures/SpriteSheetx200.dds");
+		("Assets/textures/SpriteSheetx200.dds");
 
 	m_glyph.SetTexture(m_textureID);
 }

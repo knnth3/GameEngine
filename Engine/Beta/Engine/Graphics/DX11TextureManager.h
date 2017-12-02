@@ -7,12 +7,6 @@ namespace Graphics
 {
 	typedef int32_t TextureID;
 
-	enum class DefaultTextures
-	{
-		MODEL,
-		TEXT
-	};
-
 	class DX11TextureManager
 	{
 	public:
@@ -24,7 +18,7 @@ namespace Graphics
 
 		//Sets default Textures for fallback
 		GRAPHICS_DLL_API static void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
-		GRAPHICS_DLL_API static void SetDefaultActive(DefaultTextures type);
+		GRAPHICS_DLL_API static void SetDefaultActive();
 
 	private:
 		std::wstring MultiByteToWideChar(std::string str);
@@ -32,7 +26,6 @@ namespace Graphics
 		TextureID m_active;
 		std::unordered_map<std::wstring, TextureID> m_filepaths;
 		std::unique_ptr<DX11Texture> m_defaultModelTexture;
-		std::unique_ptr<DX11Texture> m_defaultTextTexture;
 		std::vector<std::unique_ptr<DX11Texture>> m_textures;
 		ID3D11Device* m_device;
 		ID3D11DeviceContext* m_context;

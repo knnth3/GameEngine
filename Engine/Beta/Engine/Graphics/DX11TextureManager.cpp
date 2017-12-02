@@ -8,7 +8,6 @@ Graphics::DX11TextureManager::DX11TextureManager()
 	m_device = nullptr;
 	m_context = nullptr;
 	m_defaultModelTexture = nullptr;
-	m_defaultTextTexture = nullptr;
 }
 
 Graphics::TextureID Graphics::DX11TextureManager::CreateNewTexture(const std::string filePath)
@@ -51,7 +50,7 @@ bool Graphics::DX11TextureManager::SetActive(TextureID ID)
 	}
 	else
 	{
-		SetDefaultActive(DefaultTextures::MODEL);
+		SetDefaultActive();
 		mngr.m_active = -1;
 		success = true;
 	}
@@ -86,23 +85,12 @@ void Graphics::DX11TextureManager::Initialize(ID3D11Device * device, ID3D11Devic
 {
 	mngr.m_device = device;
 	mngr.m_context = context;
-	mngr.m_defaultModelTexture = std::make_unique<DX11Texture>(L"EngineAssets/textures/white.dds", device, context);
-	mngr.m_defaultTextTexture = std::make_unique<DX11Texture>(L"EngineAssets/textures/SpriteSheetx200.dds", device, context);
+	mngr.m_defaultModelTexture = std::make_unique<DX11Texture>(L"Assets/textures/white.dds", device, context);
 }
 
-void Graphics::DX11TextureManager::SetDefaultActive(DefaultTextures type)
+void Graphics::DX11TextureManager::SetDefaultActive()
 {
-	switch (type)
-	{
-	case DefaultTextures::MODEL:
-		mngr.m_defaultModelTexture->SetAsActive();
-		break;
-	case DefaultTextures::TEXT:
-		mngr.m_defaultTextTexture->SetAsActive();
-		break;
-	default:
-		break;
-	}
+	mngr.m_defaultModelTexture->SetAsActive();
 }
 
 std::wstring Graphics::DX11TextureManager::MultiByteToWideChar(std::string str)

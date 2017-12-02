@@ -27,7 +27,7 @@ void Graphics::DX11ConstantBuffer::CreateBuffer(const D3D11_BUFFER_DESC & desc, 
 	HRESULT result;
 	ID3D11Buffer* constBuffer = nullptr;
 	result = m_device->CreateBuffer(&desc, NULL, &constBuffer);
-	CheckSuccess(result);
+	CheckSuccess(result, L"Constant Buffer");
 
 	m_constBuffers.insert(std::pair<std::string, ID3D11Buffer*>(uniqueName, constBuffer));
 	m_constBufferSizes.insert(std::pair<std::string, uint32_t>(uniqueName, desc.ByteWidth));
@@ -40,7 +40,7 @@ void Graphics::DX11ConstantBuffer::SetBufferData(const std::string & uniqueName,
 	ID3D11Buffer* constBuffer = m_constBuffers[uniqueName];
 	uint32_t bufferSize = m_constBufferSizes[uniqueName];
 	result = m_context->Map(constBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	CheckSuccess(result);
+	CheckSuccess(result, L"Map Constant Buffer");
 	memcpy(mappedResource.pData, data, bufferSize);
 	m_context->Unmap(constBuffer, 0);
 

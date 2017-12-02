@@ -197,11 +197,8 @@ bool Graphics::DirectX11API::Initialize(void* handle, unsigned int screenWidth, 
 	}
 
 	// Create the rasterizer state.
-	result = CreateRSS();
-	if (FAILED(result))
-	{
-		return false;
-	}
+	CreateRSS();
+
 	result = CreateBlendState();
 	if (FAILED(result))
 	{
@@ -312,7 +309,7 @@ void Graphics::DirectX11API::SetWindowSize(uint16_t width, uint16_t height)
 		//Reset all objects that use window indexCount
 		m_renderTargetView->Release();
 		result = m_swapChain->ResizeBuffers(m_nOfBuffers, width, height, DXGI_FORMAT_UNKNOWN, NULL);
-		CheckSuccess(result);
+		CheckSuccess(result, L"Swap chain");
 	
 		CreateRTV();
 		m_depthStencilState->OnWindowResize(m_renderTargetView, width, height);
@@ -339,30 +336,10 @@ std::shared_ptr<Graphics::DX11RasterStateManager> Graphics::DirectX11API::GetRas
 	return m_RSSManager;
 }
 
-HRESULT Graphics::DirectX11API::CreateRSS()
+void Graphics::DirectX11API::CreateRSS()
 {
 	//Create the manager that will handle all raster state data
 	m_RSSManager = std::make_shared<DX11RasterStateManager>(m_device, m_deviceContext);
-
-	// Setup the raster description which will determine how and what polygons will be drawn.
-	RSSSettings rasterDesc;
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = true;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	// Create the rasterizer state from the description we just filled out.
-	bool result = m_RSSManager->CreateRSS(rasterDesc, "Default");
-	if (result)
-		m_RSSManager->SetActive("Default");
-
-	return result;
 }
 
 HRESULT Graphics::DirectX11API::CreateRTV()
@@ -442,7 +419,7 @@ HRESULT Graphics::DirectX11API::CreateBlendState()
 	blendDesc.RenderTarget[0] = rtbd;
 
 	result = m_device->CreateBlendState(&blendDesc, &Transparency);
-	CheckSuccess(result);
+	CheckSuccess(result, L"Blend state");
 
 	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_deviceContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);

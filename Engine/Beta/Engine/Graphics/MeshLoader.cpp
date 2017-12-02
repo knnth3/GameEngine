@@ -136,7 +136,14 @@ bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::sh
 
 	//Can contain warnings as well
 	if (!err.empty())
-		std::cerr << err << std::endl;
+	{
+
+#if PLATFORM == OS_WINDOWS
+		wstring msg = wstring(err.begin(), err.end());
+		MessageBox(NULL, msg.c_str(), L"Error", MB_ICONEXCLAMATION);
+#endif
+
+	}
 
 	if (!ret)
 		return false;

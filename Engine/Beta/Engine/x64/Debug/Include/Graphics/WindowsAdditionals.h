@@ -1,19 +1,13 @@
 #pragma once
 
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
+#define Check(x, lpctstr, message) \
+	if(!(x)) { MessageBox(0, lpctstr, message, MB_OK);}
 
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
+#define CheckSuccess(hresult, message) \
+	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage(), message);}
 
 #define CLOSE_COM_PTR(ptr) \
 	if(ptr) { ptr->Release(); ptr = nullptr;}
-
-#define Check(x, lpctstr) \
-	if(!(x)) { MessageBox(0, lpctstr, L"Error", MB_OK);}
-
-#define CheckSuccess(hresult) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage());}
 
 
 

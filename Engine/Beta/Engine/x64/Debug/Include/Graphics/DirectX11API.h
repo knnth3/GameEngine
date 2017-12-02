@@ -32,7 +32,7 @@ namespace Graphics
 		virtual std::shared_ptr<DX11RasterStateManager> GetRasterStateManager() override;
 
 	private:
-		HRESULT CreateRSS();
+		void CreateRSS();
 		HRESULT CreateRTV();
 		bool CreateDepthStenciState(int screenWidth, int screenHeight);
 		void CreateBufferManager();

@@ -95,7 +95,7 @@ void LIME_ENGINE::Console::ShiftOtherStrings()
 	if (m_strings.size() == 10)
 		m_strings.pop_front();
 
-	for (auto x : m_strings)
+	for (auto& x : m_strings)
 		x.Move(0.0f, -x[0].GetWidth());
 }
 

@@ -30,29 +30,29 @@ HRESULT Graphics::DX11Shader::Initialize()
 	if (m_hasGS)
 	{
 		result = CompileShader(m_filePath, "gsMain", "gs_5_0", &gsBlob);
-		CheckSuccess(result);
+		CheckSuccess(result, m_filePath);
 
 		result = m_device->CreateGeometryShader(gsBlob->GetBufferPointer(), gsBlob->GetBufferSize(), NULL, &m_geometryShader);
-		CheckSuccess(result);
+		CheckSuccess(result, m_filePath);
 
 		gsBlob->Release();
 	}
 
 	result = CompileShader(m_filePath, "vsMain", "vs_5_0", &vsBlob);
-	CheckSuccess(result);
+	CheckSuccess(result, m_filePath);
 
 	result = CompileShader(m_filePath, "psMain", "ps_5_0", &psBlob);
-	CheckSuccess(result);
+	CheckSuccess(result, m_filePath);
 
 	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &m_vertexShader);
-	CheckSuccess(result);
+	CheckSuccess(result, m_filePath);
 
 	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &m_pixelShader);
-	CheckSuccess(result);
+	CheckSuccess(result, m_filePath);
 
 	result = m_device->CreateInputLayout(m_layout.data(), (uint32_t)m_layout.size(), vsBlob->GetBufferPointer(),
 		vsBlob->GetBufferSize(), &m_vertLayout);
-	CheckSuccess(result);
+	CheckSuccess(result, m_filePath);
 
 	vsBlob->Release();
 	psBlob->Release();
