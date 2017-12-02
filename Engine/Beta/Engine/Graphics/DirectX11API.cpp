@@ -220,9 +220,6 @@ bool Graphics::DirectX11API::Initialize(void* handle, unsigned int screenWidth, 
 	SetViewPort(screenWidth, screenHeight);
 
 
-
-
-
 	return true;
 }
 
@@ -355,7 +352,7 @@ HRESULT Graphics::DirectX11API::CreateRSS()
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.FrontCounterClockwise = true;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;

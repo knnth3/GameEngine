@@ -89,7 +89,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;MAERICENGINE_EXPORTS;_WINDOWS;_USRDLL;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;MAERICENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -135,7 +135,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;MAERICENGINE_EXPORTS;_WINDOWS;_USRDLL;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;MAERICENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

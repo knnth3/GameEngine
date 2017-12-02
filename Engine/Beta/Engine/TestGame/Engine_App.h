@@ -47,6 +47,7 @@ private:
 	Lime_String m_fpsStr;
 
 	//Your objects here
+	Graphics::Model m_sphere;
 	std::shared_ptr<Shapes::Cube> m_cube;
 };
 

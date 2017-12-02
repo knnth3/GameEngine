@@ -27,6 +27,7 @@ struct VSInput
 struct VSOutput
 {
 	float4 position : SV_POSITION;
+	float3 normal : NORMAL;
 	float4 color : COLOR;
 };
 
@@ -42,6 +43,13 @@ VSOutput vsMain(VSInput input)
 	output.position = mul(inpos, instances[input.instanceID].worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
+
+	output.normal = input.normal;
+	// Calculate the position of the vertex against the world, view, and projection matrices.
+	//output.normal = mul(normal, instances[input.instanceID].worldMatrix);
+	//output.normal = mul(output.normal, viewMatrix);
+	//output.normal = mul(output.normal, projectionMatrix);
+
 	output.color = instances[input.instanceID].color;
 
 	return output;
@@ -58,8 +66,15 @@ SamplerState ObjSamplerState;
 
 float4 psMain(VSOutput input) : SV_TARGET
 {
-
-	return input.color;
+	static const float PI = 3.14159265f;
+	float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
+	float3 lightColor = float3(1.0f, 1.0f, 1.0f);
+	float3 lightDirection = float3(0.0f, 1.0f, 0.0f);
+	float3 NDotL = dot(input.normal, lightDirection);
+	float3 diffuse = (lightColor * NDotL) / PI;
+	float4 finalColor = input.color * float4(diffuse, 1.0f);
+	//return finalColor + ambient;
+	return float4(input.normal, 1.0f);
 }
 
 //------------------------Pixel Shader------------------------------------

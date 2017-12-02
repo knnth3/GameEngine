@@ -179,11 +179,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\TestGame\EngineAssets\shaders\2D Shader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="..\TestGame\EngineAssets\shaders\3D Shader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
+    <None Include="..\TestGame\EngineAssets\shaders\2D Shader.hlsl" />
+    <None Include="..\TestGame\EngineAssets\shaders\3D Shader.hlsl" />
   </ItemGroup>
 </Project>

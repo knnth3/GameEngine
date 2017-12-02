@@ -4,6 +4,7 @@
 Graphics::VertexManager::VertexManager(const uint16_t maxInstances):
 	m_maxInstances(maxInstances)
 {
+	MeshLoader::Initialize();
 	m_bNewBatch = false;
 }
 

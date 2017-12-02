@@ -152,7 +152,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);FBXSDK_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -201,7 +201,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);FBXSDK_SHARED</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

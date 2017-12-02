@@ -1,56 +1,41 @@
 #include "MeshLoader.h"
 
-//-Checks a functions return value agains desired result
-//-does whatever instructed to do on fail;
-#define ENFORCE_SUCCESS(function, desiredResult, whatToDoOnFail) \
-		if (!desiredResult == function) { whatToDoOnFail; }
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tinyobjloader\tiny_obj_loader.h>
 
-#ifdef IOS_REF
-#undef  IOS_REF
-#define IOS_REF(fbxManager) (*(fbxManager->GetIOSettings()))
-#endif
 
 using namespace Graphics;
 using namespace std;
+bool Graphics::MeshLoader::m_bIsInit = false;
+std::shared_ptr<Mesh> Graphics::MeshLoader::m_default;
+std::vector<std::shared_ptr<Mesh>> Graphics::MeshLoader::m_modelLibrary;
+std::vector<MeshDefaultSettings> Graphics::MeshLoader::m_defaultSettings;
+std::map<std::string, MeshID> Graphics::MeshLoader::m_filepaths;
+std::map<std::string, MeshID> Graphics::MeshLoader::m_keyNames;
 
-static MeshLibrary MESHLIB;
 
-Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string& filename)
+bool Graphics::MeshLoader::Initialize()
 {
-	MeshID result = MESHLIB.IsFilepathQuerried(filename);
-	if (result == -1)
+	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.obj");
+	if (defaultMesh == -1)
+		return false;
+
+	m_default = m_modelLibrary[defaultMesh];
+	Clear();
+	m_bIsInit = true;
+	return true;
+}
+
+Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string filename)
+{
+	MeshID result;
+	if (!IsFilepathQuerried(filename, result))
 	{
 		std::string ext;
 		GetFileExt(filename, ext);
-		//Proccess fbx files
-		if (ext.compare("fbx") == 0)
-		{
-			FbxManager* fbxManager = NULL;
-			FbxScene* scene = NULL;
 
-			ENFORCE_SUCCESS(InitFBXObjects(fbxManager, scene), true, goto close);
-			ENFORCE_SUCCESS(LoadFBXSceneFromFile(fbxManager, scene, filename), true, goto close);
-
-			//Can have multilpe nodes although this program only loads the first node
-			FbxNode* node = scene->GetRootNode()->GetChild(0);
-			if (node)
-			{
-				std::shared_ptr<Mesh> mesh = nullptr;
-				MeshDefaultSettings settings = {};
-
-				//Populates structures above and saves the to a desired MeshLibrary.
-				Create3DMeshFromFBX(node, mesh, settings);
-				if (mesh != nullptr)
-				{
-					result = SaveInformation(MESHLIB, mesh, settings);
-					MESHLIB.m_filepaths.emplace(filename, result);
-				}
-			}
-
-		close:
-			fbxManager->Destroy();
-
-		}
+		if(ext.compare("obj") == 0)
+			result = ProcessOBJFile(filename);
 	}
 
 	return result;
@@ -58,8 +43,8 @@ Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string& filename)
 
 Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
 {
-	MeshID result = MESHLIB.IsKeyNameQuerried(uniqueName);
-	if(result == -1)
+	MeshID result;
+	if(!IsKeyNameQuerried(uniqueName, result))
 	{
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 		MeshDefaultSettings settings = {};
@@ -70,8 +55,8 @@ Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& vert
 		p.m_indices.insert(p.m_indices.end(), indices.begin(), indices.end());
 		mesh->m_polygons.push_back(p);
 
-		result = SaveInformation(MESHLIB, mesh, settings);
-		MESHLIB.m_keyNames.emplace(uniqueName, result);
+		result = SaveInformation(mesh, settings);
+		m_keyNames.emplace(uniqueName, result);
 	}
 
 	return result;
@@ -95,261 +80,115 @@ Graphics::MeshID Graphics::MeshLoader::CreateLine(glm::vec3 pos1, glm::vec3 pos2
 	};
 	mesh->m_polygons.push_back(poly);
 
-	return SaveInformation(MESHLIB, mesh, settings);
+	return SaveInformation(mesh, settings);
 }
 
 void Graphics::MeshLoader::Clear()
 {
-	MESHLIB.Clear();
+	m_modelLibrary.clear();
+	m_defaultSettings.clear();
+	m_filepaths.clear();
+	m_keyNames.clear();
 }
 
 void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 {
-	if (MESHLIB.m_modelLibrary.size() > id && id >= 0)
-		ptr = MESHLIB.m_modelLibrary.at(id);
+	if (m_modelLibrary.size() > id && id >= 0)
+		ptr = m_modelLibrary.at(id);
 	else
-		ptr = MESHLIB.m_default;
+		ptr = m_default;
 }
 
 void Graphics::MeshLoader::GetDefaulMeshInfo(MeshID id, MeshDefaultSettings& settings)
 {
-	if(MESHLIB.m_defaultSettings.size() > id)
-		settings = MESHLIB.m_defaultSettings.at(id);
+	if(m_defaultSettings.size() > id)
+		settings = m_defaultSettings.at(id);
 }
 
-Graphics::MeshID Graphics::MeshLoader::SaveInformation(MeshLibrary & library, const std::shared_ptr<Mesh> & data, const MeshDefaultSettings & settings)
+Graphics::MeshID Graphics::MeshLoader::SaveInformation(const std::shared_ptr<Mesh> & data, const MeshDefaultSettings & settings)
 {
-	return library.SaveMesh(data, settings);
+	return SaveMesh(data, settings);
 }
 
-bool Graphics::MeshLoader::InitFBXObjects(FbxManager *& manager, FbxScene *& scene)
+Graphics::MeshID Graphics::MeshLoader::ProcessOBJFile(const std::string filename)
 {
-	manager = FbxManager::Create();
-	if (!manager)
-		return false;
+	Graphics::MeshID result = -1;
+	auto mesh = std::make_shared<Mesh>();
+	MeshDefaultSettings settings = {};
+	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	//Gets the current version of the fbx sdk
-	//fbxManager->GetVersion();
-	FbxIOSettings* ios = FbxIOSettings::Create(manager, IOSROOT);
-	manager->SetIOSettings(ios);
-
-	scene = FbxScene::Create(manager, "Imported scene");
-	if (!scene)
-		return false;
-
-	return true;
-}
-
-bool Graphics::MeshLoader::LoadFBXSceneFromFile(FbxManager * manager, FbxScene * scene, const std::string & filename)
-{
-	//GetVersion for error checking
-	//FbxManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
-	FbxImporter* fileReader = FbxImporter::Create(manager, "Fbx FileReader");
-	const bool importStatus = fileReader->Initialize(filename.c_str(), -1, manager->GetIOSettings());
-	if (!importStatus)
+	if (CreateMeshFromOBJ(filename, mesh, settings))
 	{
-		//Gets the error from load fail
-		//FbxString error = fileReader->GetStatus().GetErrorString();
-		//FBXSDK_printf("Call to FbxImporter::CompileBatchData() failed.\n");
-		//FBXSDK_printf("Error returned: %s\n\n", error.BMBuffer());
-
-		if (fileReader->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
-		{
-			//FBXSDK_printf("FBX file format version for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
-			//FBXSDK_printf("FBX file format version for file '%s' is %d.%d.%d\n\n", pFilename, lFileMajor, lFileMinor, lFileRevision);
-		}
-
-		return false;
+		result = SaveInformation(mesh, settings);
+		m_filepaths.emplace(filename, result);
 	}
 
-	//Check the Autodesk file type
-	if (fileReader->IsFBX())
+	return result;
+}
+
+bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::shared_ptr<Mesh>& data, MeshDefaultSettings & settings)
+{
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string err;
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str());
+
+	//Can contain warnings as well
+	if (!err.empty())
+		std::cerr << err << std::endl;
+
+	if (!ret)
+		return false;
+
+	//Shapes contains all objects in scene
+	for (size_t s = 0; s < shapes.size(); s++)
 	{
-		bool success = fileReader->Import(scene);
-		if (!success)
+		size_t index_offset = 0;
+		//Go through all faces of the shape
+		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
 		{
-			//Access files that have passwords
-			if (fileReader->GetStatus().GetCode() == FbxStatus::ePasswordError)
+			Polygon poly;
+			int fv = shapes[s].mesh.num_face_vertices[f];
+
+			//Go through all vertices in face
+			for (size_t v = 0; v < fv; v++)
 			{
-				//char lPassword[1024];
-				//do
-				//{
-				//	//Used to implement password
-				//	FBXSDK_printf("Please enter password: ");
+				//Prefix definitions:
+				//	tinyobj::real_t = float
+				//	v = pos coord
+				//	n = normal
+				//	t = texture coord
+				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
 
-				//	lPassword[0] = '\0';
+				//Make sure the obj file contains the correct perams
+				if (idx.normal_index < 0 || idx.texcoord_index < 0 || idx.vertex_index < 0)
+					return false;
 
-				//	FBXSDK_CRT_SECURE_NO_WARNING_BEGIN
-				//		scanf("%s", lPassword);
-				//	FBXSDK_CRT_SECURE_NO_WARNING_END
+				Vertex vert;
+				vert.m_position.x = attrib.vertices[3 * idx.vertex_index + 0];
+				vert.m_position.y = attrib.vertices[3 * idx.vertex_index + 1];
+				vert.m_position.z = attrib.vertices[3 * idx.vertex_index + 2];
 
-				//		FbxString lString(lPassword);
+				vert.m_normal.x = attrib.normals[3 * idx.normal_index + 0];
+				vert.m_normal.y = attrib.normals[3 * idx.normal_index + 1];
+				vert.m_normal.z = attrib.normals[3 * idx.normal_index + 2];
 
-				//	IOS_REF(manager).SetStringProp(IMP_FBX_PASSWORD, lString);
-				//	IOS_REF(manager).SetBoolProp(IMP_FBX_PASSWORD_ENABLE, true);
+				vert.m_uv.x = attrib.texcoords[2 * idx.texcoord_index + 0];
+				vert.m_uv.y = attrib.texcoords[2 * idx.texcoord_index + 1];
 
-				//	success = fileReader->Import(scene);
-				//} while (!success);
-				return false;
+				poly.m_vertices.push_back(vert);
+				poly.m_indices.push_back(Graphics::Index(index_offset + v));
 			}
-			else
-				return false;
+			index_offset += fv;
+			data->m_polygons.push_back(poly);
 		}
+
 	}
-	fileReader->Destroy();
 	return true;
 }
 
-void Graphics::MeshLoader::Create3DMeshFromFBX(FbxNode* pNode, std::shared_ptr<Mesh>& data, MeshDefaultSettings& settings)
-{
-	auto tempdata = std::make_shared<Mesh>();
-	FbxMesh* mesh = pNode->GetMesh();
-	ENFORCE_SUCCESS(mesh, true, return);
-
-	//Populate Mesh with FBX data
-	float height = 0.0f;
-	const unsigned int totalPolygonCount = mesh->GetPolygonCount();
-	int totalIndexCount = 0;
-	for (uint32_t polyIndex = 0; polyIndex < totalPolygonCount; polyIndex++)
-	{
-		Polygon poly;
-		int polyVertexCount = mesh->GetPolygonSize(polyIndex);
-		ENFORCE_SUCCESS(polyVertexCount, 3, return);
-		for (int vertexIndex = 0; vertexIndex < polyVertexCount; vertexIndex++)
-		{
-			Vertex vert;
-			int currentVertIndex = mesh->GetPolygonVertex(polyIndex, vertexIndex);
-			auto& fbxVert = mesh->GetControlPointAt(currentVertIndex);
-			vert.m_position = FbxVec4ToGlmVec3(fbxVert);
-			if (vert.m_position.y > height)
-				height = vert.m_position.y;
-
-			ENFORCE_SUCCESS(GetFBXTextureCoordinates(mesh, vert, totalIndexCount), true, return);
-			ENFORCE_SUCCESS(GetFBXMeshNormals(mesh, vert, totalIndexCount), true, return);
-
-			poly.m_vertices.push_back(vert);
-			totalIndexCount++;
-		}
-		poly.m_indices.push_back(totalIndexCount - 3);
-		poly.m_indices.push_back(totalIndexCount - 1);
-		poly.m_indices.push_back(totalIndexCount - 2);
-		tempdata->m_polygons.push_back(poly);
-	}
-	data = tempdata;
-	data->m_height = height;
-
-	//Get DEFAULT Settings
-	settings.scale = FbxVec4ToGlmVec3(pNode->LclScaling.Get());
-	settings.rotation = FbxVec4ToGlmVec3(pNode->LclRotation.Get());
-	settings.rotation.x = -glm::radians(settings.rotation.x);
-	settings.rotation.y = glm::radians(settings.rotation.y);
-	settings.rotation.z = glm::radians(settings.rotation.z);
-	settings.translation = FbxVec4ToGlmVec3(pNode->LclTranslation.Get());
-}
-
-bool Graphics::MeshLoader::GetFBXTextureCoordinates(FbxMesh * mesh, Vertex& vert, int totalIndexCount)
-{
-	//Implement logging for error cases
-	bool result = false;
-	FbxStringList uvSetNameList;
-	mesh->GetUVSetNames(uvSetNameList);
-
-	//Only grabbing the first uv set
-	const char* uvSetName = uvSetNameList.GetStringAt(0);
-	FbxGeometryElementUV* uvElement = mesh->GetElementUV(uvSetName);
-
-	//Set the search mode to grab data fast as we are not going to modify it
-	uvElement->SetMappingMode(FbxLayerElement::EMappingMode::eByPolygonVertex);
-	uvElement->SetReferenceMode(FbxLayerElement::EReferenceMode::eDirect);
-
-	// only support mapping mode eByPolygonVertex and eByControlPoint
-	switch (uvElement->GetMappingMode())
-	{
-		//Implement for later use
-	case FbxGeometryElement::eByControlPoint:
-		break;
-
-	case FbxGeometryElement::eByPolygonVertex:
-		switch (uvElement->GetReferenceMode())
-		{
-		case FbxGeometryElement::eDirect:
-		{
-			int uvIndex = uvElement->GetIndexArray().GetAt(totalIndexCount);
-			FbxVector2 uv = uvElement->GetDirectArray().GetAt(uvIndex);
-			vert.m_uv.x = (float)uv[0];
-			vert.m_uv.y = 1 - (float)uv[1];
-			result = true;
-
-		}
-		break;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	return result;
-}
-
-bool Graphics::MeshLoader::GetFBXMeshNormals(FbxMesh* mesh, Vertex& vert, int totalIndexCount)
-{
-	//Implement logging for error cases
-	bool result = false;
-
-	//Grab the first normal set
-	FbxGeometryElementNormal* vertexNormal = mesh->GetElementNormal(0);
-
-	//Set the search mode to grab data fast as we are not going to modify it
-	vertexNormal->SetMappingMode(FbxLayerElement::EMappingMode::eByPolygonVertex);
-	vertexNormal->SetReferenceMode(FbxLayerElement::EReferenceMode::eDirect);
-
-	switch (vertexNormal->GetMappingMode())
-	{
-		//Implement for later use
-	case FbxGeometryElement::eByControlPoint:
-		break;
-
-	case FbxGeometryElement::eByPolygonVertex:
-		switch (vertexNormal->GetReferenceMode())
-		{
-		case FbxGeometryElement::eDirect:
-		{
-			int uvIndex = vertexNormal->GetIndexArray().GetAt(totalIndexCount);
-			FbxVector4 normal = vertexNormal->GetDirectArray().GetAt(totalIndexCount);
-			vert.m_normal = FbxVec4ToGlmVec3(normal);
-			//Invert the output to work with DirectX coordinate system
-			vert.m_normal = -vert.m_normal;
-			result = true;
-		}
-		break;
-		}
-		break;
-	}
-
-	return result;
-}
-
-glm::vec3 Graphics::MeshLoader::FbxVec4ToGlmVec3(const FbxVector4& in)
-{
-	glm::vec3 output;
-	output.x = (float)in.mData[0];
-	output.y = (float)in.mData[1];
-	output.z = (float)in.mData[2];
-	return output;
-}
-
-Graphics::MeshLibrary::MeshLibrary()
-{
-	MeshID result = MeshLoader::LoadModel("Assets/Models/Cube_TextureWrap.fbx");
-	if (result != -1)
-	{
-		m_default = m_modelLibrary[result];
-		Clear();
-	}
-}
-
-Graphics::MeshID Graphics::MeshLibrary::SaveMesh(const std::shared_ptr<Mesh>& mesh, const MeshDefaultSettings & setting)
+Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh, const MeshDefaultSettings & setting)
 {
 	MeshID result = -1;
 	size_t models = m_modelLibrary.size();
@@ -367,36 +206,34 @@ Graphics::MeshID Graphics::MeshLibrary::SaveMesh(const std::shared_ptr<Mesh>& me
 	return result;
 }
 
-void Graphics::MeshLibrary::Clear()
+bool Graphics::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID & result)
 {
-	m_modelLibrary.clear();
-	m_defaultSettings.clear();
-	m_filepaths.clear();
-	m_keyNames.clear();
-}
-
-Graphics::MeshID Graphics::MeshLibrary::IsFilepathQuerried(const std::string filepath)
-{
-	MeshID ID = -1;
+	result = -1;
 	if (!filepath.empty())
 	{
-		auto result = m_filepaths.find(filepath);
-		if (result != m_filepaths.end())
-			ID = result->second;
+		auto found = m_filepaths.find(filepath);
+		if (found != m_filepaths.end())
+		{
+			result = found->second;
+			return true;
+		}
 	}
 
-	return ID;
+	return false;
 }
 
-Graphics::MeshID Graphics::MeshLibrary::IsKeyNameQuerried(const std::string filepath)
+bool Graphics::MeshLoader::IsKeyNameQuerried(const std::string filepath, MeshID & result)
 {
-	MeshID ID = -1;
+	result = -1;
 	if (!filepath.empty())
 	{
-		auto result = m_keyNames.find(filepath);
-		if (result != m_keyNames.end())
-			ID = result->second;
+		auto found = m_keyNames.find(filepath);
+		if (found != m_keyNames.end())
+		{
+			result = found->second;
+			return true;
+		}
 	}
 
-	return ID;
+	return false;
 }

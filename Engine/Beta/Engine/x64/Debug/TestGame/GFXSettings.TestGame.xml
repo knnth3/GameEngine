@@ -3,29 +3,29 @@
 	<APPLICATION>
 		<DISPLAYNAME Value="GsaSimpleApp" />
 		<VERSIONNAME Value="1.0.0.0" />
-		<INSTALLPATH Value="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine\x64\Debug\TestGame\" />
-		<CONFIGPATH Value="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine\x64\Debug\TestGame\" />
+		<INSTALLPATH Value="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine\x64\Debug\TestGame\" />
+		<CONFIGPATH Value="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine\x64\Debug\TestGame\" />
 		<EXECUTABLE Value="TestGame" />
 		<EXECCMD Value="TestGame.exe" />
 	</APPLICATION>
 	<GAMESETTINGS>
-		<RESOLUTION Width="1600" Height="1200" RefreshRate="60">
+		<RESOLUTION Width="1024" Height="768" RefreshRate="60">
 			<ENUM Width="800" Height="600" RefreshRate="60" />
 			<ENUM Width="1024" Height="768" RefreshRate="60" />
 			<ENUM Width="1600" Height="1200" RefreshRate="60" />
 			<ENUM Width="1920" Height="1440" RefreshRate="60" />
 		</RESOLUTION>
-		<OPTION Name="Test_INT" Registered="True" Type="Integer" Value="269">
+		<OPTION Name="Test_INT" Registered="True" Type="Integer" Value="340">
 			<RANGE MinValue="0" MaxValue="0" NumSteps="-1" />
 		</OPTION>
-		<OPTION Name="Test_FLOAT" Registered="True" Type="Float" Value="269.5">
+		<OPTION Name="Test_FLOAT" Registered="True" Type="Float" Value="340.5">
 			<RANGE MinValue="0" MaxValue="0" NumSteps="-1" />
 		</OPTION>
-		<OPTION Name="Test_ENUM" Registered="True" Type="Enum" Value="Value1">
+		<OPTION Name="Test_ENUM" Registered="True" Type="Enum" Value="Value3">
 			<ENUM EnumValue="Value1" />
 			<ENUM EnumValue="Value2" />
 			<ENUM EnumValue="Value3" />
 		</OPTION>
-		<OPTION Name="Test_BOOL" Registered="True" Type="Bool" Value="true" />
+		<OPTION Name="Test_BOOL" Registered="True" Type="Bool" Value="false" />
 	</GAMESETTINGS>
 </GSA_SDK>

@@ -61,11 +61,11 @@ void Graphics::Camera::Rotate(float x, float y, float z)
 	m_currentSettings.m_rotation.x += x;
 	m_currentSettings.m_angleAroundPlayer -= y;
 
-	if (m_currentSettings.m_rotation.x > xLimitUp)
-		m_currentSettings.m_rotation.x = xLimitUp;
+	//if (m_currentSettings.m_rotation.x > xLimitUp)
+	//	m_currentSettings.m_rotation.x = xLimitUp;
 
-	if (m_currentSettings.m_rotation.x < xLimitDown)
-		m_currentSettings.m_rotation.x = xLimitDown;
+	//if (m_currentSettings.m_rotation.x < xLimitDown)
+	//	m_currentSettings.m_rotation.x = xLimitDown;
 
 	if (m_currentSettings.m_angleAroundPlayer >= circle)
 		m_currentSettings.m_angleAroundPlayer -= circle;
