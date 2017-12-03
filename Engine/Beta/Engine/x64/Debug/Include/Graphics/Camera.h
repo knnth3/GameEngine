@@ -50,6 +50,7 @@ namespace Graphics
 		GRAPHICS_DLL_API float GetFarPlane();
 		GRAPHICS_DLL_API unsigned int GetWindowWidth();
 		GRAPHICS_DLL_API unsigned int GetWindowHeight();
+		GRAPHICS_DLL_API void EnforceBounds(bool val);
 	private:
 		void SetAngeInBounds(float& angle);
 		void CalculateAspectRatio();
@@ -60,6 +61,7 @@ namespace Graphics
 		float CalculateHorisDistance();
 		void CalculatePosition(float horizontalDistance, float verticalDistance);
 
+		bool m_bUsingBounds;
 		CameraSettings m_defaultSettings;
 		CameraSettings m_currentSettings;
 	};

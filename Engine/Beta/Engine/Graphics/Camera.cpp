@@ -61,11 +61,14 @@ void Graphics::Camera::Rotate(float x, float y, float z)
 	m_currentSettings.m_rotation.x += x;
 	m_currentSettings.m_angleAroundPlayer -= y;
 
-	//if (m_currentSettings.m_rotation.x > xLimitUp)
-	//	m_currentSettings.m_rotation.x = xLimitUp;
+	if (m_bUsingBounds)
+	{
+		if (m_currentSettings.m_rotation.x > xLimitUp)
+			m_currentSettings.m_rotation.x = xLimitUp;
 
-	//if (m_currentSettings.m_rotation.x < xLimitDown)
-	//	m_currentSettings.m_rotation.x = xLimitDown;
+		if (m_currentSettings.m_rotation.x < xLimitDown)
+			m_currentSettings.m_rotation.x = xLimitDown;
+	}
 
 	if (m_currentSettings.m_angleAroundPlayer >= circle)
 		m_currentSettings.m_angleAroundPlayer -= circle;
@@ -98,10 +101,14 @@ void Graphics::Camera::Zoom(float x)
 	float maxZoomIn = 300.0f;
 
 	m_currentSettings.m_distanceFromObject += x;
-	if (m_currentSettings.m_distanceFromObject < maxZoomIn)
-		m_currentSettings.m_distanceFromObject = maxZoomIn;
-	else if (m_currentSettings.m_distanceFromObject > maxZoomOut)
-		m_currentSettings.m_distanceFromObject = maxZoomOut;
+
+	if (m_bUsingBounds)
+	{
+		if (m_currentSettings.m_distanceFromObject < maxZoomIn)
+			m_currentSettings.m_distanceFromObject = maxZoomIn;
+		else if (m_currentSettings.m_distanceFromObject > maxZoomOut)
+			m_currentSettings.m_distanceFromObject = maxZoomOut;
+	}
 }
 
 glm::vec3 Graphics::Camera::GetPosition()
@@ -147,6 +154,11 @@ unsigned int Graphics::Camera::GetWindowWidth()
 unsigned int Graphics::Camera::GetWindowHeight()
 {
 	return m_currentSettings.m_yResolution;
+}
+
+void Graphics::Camera::EnforceBounds(bool val)
+{
+	m_bUsingBounds = val;
 }
 
 void Graphics::Camera::SetAngeInBounds(float & angle)

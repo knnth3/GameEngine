@@ -86,6 +86,7 @@ void Graphics::DX11TextureManager::Initialize(ID3D11Device * device, ID3D11Devic
 	mngr.m_device = device;
 	mngr.m_context = context;
 	mngr.m_defaultModelTexture = std::make_unique<DX11Texture>(L"Assets/textures/white.dds", device, context);
+	mngr.m_defaultModelTexture->SetAsActive();
 }
 
 void Graphics::DX11TextureManager::SetDefaultActive()

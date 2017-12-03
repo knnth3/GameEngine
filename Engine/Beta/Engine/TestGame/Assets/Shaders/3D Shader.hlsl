@@ -27,7 +27,9 @@ struct VSInput
 struct VSOutput
 {
 	float4 position : SV_POSITION;
+	float3 pos : POSITION;
 	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 	float4 color : COLOR;
 };
 
@@ -36,14 +38,16 @@ VSOutput vsMain(VSInput input)
 {
 	VSOutput output;
 
-	// Change the position vector to be 4 units for proper matrix calculations.
-	float4 inpos = float4(input.position, 1.0f);
+	float4 position = float4(input.position, 1.0f);
+	position = mul(position, instances[input.instanceID].worldMatrix);
+	output.pos = position.xyz;
+	position = mul(position, viewMatrix);
+	position = mul(position, projectionMatrix);
+	output.position = position;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(inpos, instances[input.instanceID].worldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
-	output.normal = input.normal;
+	output.normal = mul(input.normal, (float3x3)instances[input.instanceID].worldMatrix);
+	output.normal = normalize(output.normal);
+	output.uv = input.uv;
 	output.color = instances[input.instanceID].color;
 
 	return output;
@@ -60,8 +64,13 @@ SamplerState ObjSamplerState;
 
 float4 psMain(VSOutput input) : SV_TARGET
 {
+	float4 tex = ObjTexture.Sample(ObjSamplerState, input.uv);
+	float3 lightPos = float3(0.0f, 500.0f, 0.0f);
+	float3 lightVec = normalize(lightPos - input.pos);
+	float brightness = saturate(dot(input.normal, lightVec));
+	float4 color = float4(input.color.xyz * brightness, input.color.w);
 
-	return float4(input.normal, 1.0f);
+	return tex * color;
 }
 
 //------------------------Pixel Shader------------------------------------
