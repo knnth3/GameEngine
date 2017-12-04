@@ -49,3 +49,4 @@
 
 # Exceptions
 !**/Runtime Dlls/*.dll
+/Engine/Beta/Engine_UWP/TestGame_UWP/Assets/**.obj

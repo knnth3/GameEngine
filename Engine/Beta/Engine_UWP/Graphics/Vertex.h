@@ -1,0 +1,14 @@
+#pragma once
+#include "DllSettings.h"
+
+namespace Graphics
+{
+	struct Vertex
+	{
+		glm::vec3 m_position;
+		glm::vec2 m_uv;
+		glm::vec4 m_normal;
+		glm::vec3 m_tangent;
+		glm::vec3 m_binormal;
+	};
+}
