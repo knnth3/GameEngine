@@ -10,109 +10,109 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>91df5725-616f-4be3-88db-4745d2759674</PackageIdentityName>
     <PackageIdentityPublisher>CN=Kenneth</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath></PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\TestGame_UWP\AppX</LayoutDir>
+    <LayoutDir>D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppX</LayoutDir>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\TestGame_UWP\AppxManifest.xml">
+    <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
       <PackagePath>TestGame_UWP.exe</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
       <PackagePath>TestGame_UWP.winmd</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\Default\diffuse.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\diffuse.png">
       <PackagePath>Assets\textures\Default\diffuse.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\Default\emissive.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\emissive.png">
       <PackagePath>Assets\textures\Default\emissive.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\Default\metallic.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\metallic.png">
       <PackagePath>Assets\textures\Default\metallic.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\Default\normal.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\normal.png">
       <PackagePath>Assets\textures\Default\normal.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\Default\roughness.png">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\roughness.png">
       <PackagePath>Assets\textures\Default\roughness.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\image1.dds">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\image1.dds">
       <PackagePath>Assets\textures\image1.dds</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\image2.dds">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\image2.dds">
       <PackagePath>Assets\textures\image2.dds</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\SpriteSheetx200.dds">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\SpriteSheetx200.dds">
       <PackagePath>Assets\textures\SpriteSheetx200.dds</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\white.dds">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\white.dds">
       <PackagePath>Assets\textures\white.dds</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\textures\grass.jpg">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Shaders\2D Shader.hlsl">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Shaders\3D Shader.hlsl">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Shaders\3D Shader.hlsl">
       <PackagePath>Assets\Shaders\3D Shader.hlsl</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Models\Cube.obj">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Models\Cube.obj">
       <PackagePath>Assets\Models\Cube.obj</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Models\Sphere.obj">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Models\Sphere.obj">
       <PackagePath>Assets\Models\Sphere.obj</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\TestGame_UWP\Assets\Models\Sphere_smooth.obj">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Models\Sphere_smooth.obj">
       <PackagePath>Assets\Models\Sphere_smooth.obj</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.16299.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Desktop\New folder\Engine_UWP\x64\Debug\TestGame_UWP\resources.pri">
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>

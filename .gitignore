@@ -44,9 +44,7 @@
 *.suo
 
 # unwanted files
-**/zip-directories
-/Engine/Engine/audio/song2.wav
 
-# Exceptions
-!**/Runtime Dlls/*.dll
-/Engine/Beta/Engine_UWP/TestGame_UWP/Assets/**.obj
+#Exceptions
+!/Engine/Beta/Engine/TestGame/Assets/**/*.obj
+!/Engine/Beta/Engine_UWP/TestGame_UWP/Assets/**/*.obj
