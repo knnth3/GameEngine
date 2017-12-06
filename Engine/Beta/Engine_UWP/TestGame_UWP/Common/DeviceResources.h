@@ -27,7 +27,7 @@ namespace DX
 		void Present();
 
 		//Inherited
-		virtual void BeginScene(float r, float g, float b)override;
+		virtual void ClearScreen(float r, float g, float b) override;
 
 		// The size of the render target, in pixels.
 		Windows::Foundation::Size	GetOutputSize() const					{ return m_outputSize; }

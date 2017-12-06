@@ -31,6 +31,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap:Capability Name="objects3D" />
   </Capabilities>
   <build:Metadata>
     <build:Item Name="cl.exe" Version="19.11.25547.0 built by: VCTOOLSRELESC" />

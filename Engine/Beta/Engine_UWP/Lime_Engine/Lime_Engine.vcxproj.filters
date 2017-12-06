@@ -22,48 +22,27 @@
     <Filter Include="Source Files\Main Application">
       <UniqueIdentifier>{3f33ce52-a15e-416f-9230-c3563162d6c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shapes &amp; other models">
-      <UniqueIdentifier>{fc742d8e-aac2-4e09-a0dc-72dd77e01fbf}</UniqueIdentifier>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{3b691ceb-8418-42c5-8319-f6f59650eba1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shapes &amp; other models\Square">
-      <UniqueIdentifier>{8492e8ba-5716-4fff-ad74-23be8895c0d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shapes &amp; other models\Cube">
-      <UniqueIdentifier>{4fb70fe6-b76e-4d97-840e-357bb1fed369}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Text">
-      <UniqueIdentifier>{cfa47f96-b2a7-4d8e-88b1-8557bed50b11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Text\Character">
-      <UniqueIdentifier>{2fc5364a-5171-4aa3-a2e0-62f071ab7e7a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Text\String">
-      <UniqueIdentifier>{76e14d7d-6d5c-4ef2-bccd-358adf5b0fe6}</UniqueIdentifier>
+    <Filter Include="Source Files\Timer">
+      <UniqueIdentifier>{b6a25544-f499-4a20-bb45-592ee54789de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DllSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="InputManager.h">
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="EngineApp.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Main Application</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Console.h">
+      <Filter>Source Files\Console</Filter>
     </ClInclude>
-    <ClInclude Include="Square.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DllSettings.h">
+      <Filter>Source Files\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="Lime_Char.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lime_String.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NVIDIA_PhysX.h">
+    <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,19 +56,10 @@
     <ClCompile Include="EngineApp.cpp">
       <Filter>Source Files\Main Application</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Source Files\Shapes &amp; other models\Cube</Filter>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Square.cpp">
-      <Filter>Source Files\Shapes &amp; other models\Square</Filter>
-    </ClCompile>
-    <ClCompile Include="Lime_Char.cpp">
-      <Filter>Source Files\Text\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Lime_String.cpp">
-      <Filter>Source Files\Text\String</Filter>
-    </ClCompile>
-    <ClCompile Include="NVIDIA_PhysX.cpp">
+    <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

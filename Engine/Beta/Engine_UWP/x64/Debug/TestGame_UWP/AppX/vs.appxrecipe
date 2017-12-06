@@ -18,7 +18,7 @@
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
     <LayoutDir>D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppX</LayoutDir>
-    <RegisteredManifestChecksum>9323920005C54AE552536F826C7A0786119207E066F0B2A4E60CA95557FB4388</RegisteredManifestChecksum>
+    <RegisteredManifestChecksum>DE01F11A76046A3D27787A8F0C54A934E0E4D60CF1D00E070F36FBF5FAF40FF3</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>91df5725-616f-4be3-88db-4745d2759674_1.0.0.0_x64__3qa0hgc3q8b7w</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>91df5725-616f-4be3-88db-4745d2759674_3qa0hgc3q8b7w!App</RegisteredUserModeAppID>
     <RegisteredPackageID>91df5725-616f-4be3-88db-4745d2759674</RegisteredPackageID>
@@ -30,17 +30,17 @@
     <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-04T11:48:02.331</Modified>
+      <Modified>2017-12-06T00:44:30.323</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
       <PackagePath>TestGame_UWP.exe</PackagePath>
-      <Modified>2017-12-04T15:55:46.397</Modified>
+      <Modified>2017-12-06T00:40:48.551</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
       <PackagePath>TestGame_UWP.winmd</PackagePath>
-      <Modified>2017-12-03T16:30:21.462</Modified>
+      <Modified>2017-12-05T14:42:51.302</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
@@ -96,6 +96,14 @@
       <PackagePath>Assets\textures\Default\roughness.png</PackagePath>
       <Modified>2017-12-03T11:50:19.642</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <PackagePath>Graphics.dll</PackagePath>
+      <Modified>2017-12-06T00:01:08.961</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <PackagePath>Lime_Engine.dll</PackagePath>
+      <Modified>2017-12-06T00:01:21.036</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
       <Modified>2017-11-04T12:19:47.223</Modified>
@@ -119,10 +127,6 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
       <Modified>2017-11-04T12:19:47.231</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
-      <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-04T15:55:31.504</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>
@@ -151,7 +155,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-04T11:48:02.115</Modified>
+      <Modified>2017-12-06T00:44:30.090</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

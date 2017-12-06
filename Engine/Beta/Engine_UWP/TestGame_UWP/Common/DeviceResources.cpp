@@ -83,7 +83,8 @@ DX::DeviceResources::DeviceResources() :
 {
 	CreateDeviceIndependentResources();
 	CreateDeviceResources();
-	this->Graphics::GraphicsDevice::Initialize(
+
+	this->Initialize(
 		GetD3DDevice(), GetD3DDeviceContext(),
 		GetDWriteFactory(), GetD2DFactory(), GetD2DDeviceContext());
 }
@@ -454,7 +455,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	// Grayscale text anti-aliasing is recommended for all Windows Store apps.
 	m_d2dContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
 	GetCamera()->SetResolution((uint32_t)m_logicalSize.Width, (uint32_t)m_logicalSize.Height);
-	ResizeSpriteBatch_2D(m_logicalSize.Width, m_logicalSize.Height);
+	this->SetWindowDimensions(m_logicalSize.Width, m_logicalSize.Height);
 }
 
 // Determine the dimensions of the render target and whether it will be scaled down.
@@ -656,9 +657,8 @@ void DX::DeviceResources::Present()
 	}
 }
 
-void DX::DeviceResources::BeginScene(float r, float g, float b)
+void DX::DeviceResources::ClearScreen(float r, float g, float b)
 {
-	this->Graphics::GraphicsDevice::BeginScene(r, g, b);
 	// Reset the viewport to target the whole screen.
 	m_d3dContext->RSSetViewports(1, &GetScreenViewport());
 

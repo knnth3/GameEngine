@@ -12,31 +12,6 @@ Graphics::RenderBatch_2D::RenderBatch_2D(IDWriteFactory3 * writeFactory, ID2D1Fa
 
 void Graphics::RenderBatch_2D::Initialize()
 {
-	ZeroMemory(&m_textMetrics, sizeof(DWRITE_TEXT_METRICS));
-
-	// Create device independent resources
-	ComPtr<IDWriteTextFormat> textFormat;
-	ThrowIfFailed(
-		m_writeFactory->CreateTextFormat(
-			L"Segoe UI",
-			nullptr,
-			DWRITE_FONT_WEIGHT_LIGHT,
-			DWRITE_FONT_STYLE_NORMAL,
-			DWRITE_FONT_STRETCH_NORMAL,
-			32.0f,
-			L"en-US",
-			&textFormat
-		)
-	);
-
-	ThrowIfFailed(
-		textFormat.As(&m_textFormat)
-	);
-
-	ThrowIfFailed(
-		m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
-	);
-
 	ThrowIfFailed(
 		m_2DFactory->CreateDrawingStateBlock(&m_stateBlock)
 	);
@@ -49,20 +24,23 @@ void Graphics::RenderBatch_2D::CreateDeviceDependentResources()
 	ThrowIfFailed(
 		m_2DDeviceContext->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			&m_whiteBrush)
+			&m_defualtBrush)
 	);
 
-	ThrowIfFailed(
-		m_2DDeviceContext->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::Black, 0.5f),
-			&m_blackBrush
-		)
-	);
+	for (auto& brush : m_solidBrushes)
+		brush.second.Reset();
+	m_solidBrushes.clear();
+
+	for (auto& colors : m_brushColors)
+		CreateNewBrush(colors.first, colors.second, false);
+
 }
 
 void Graphics::RenderBatch_2D::ReleaseDeviceDependentResources()
 {
-	m_whiteBrush.Reset();
+	m_defualtBrush.Reset();
+	for (auto& brush : m_solidBrushes)
+		brush.second.Reset();
 }
 
 void Graphics::RenderBatch_2D::SetDimensions(float width, float height)
@@ -73,6 +51,8 @@ void Graphics::RenderBatch_2D::SetDimensions(float width, float height)
 
 void Graphics::RenderBatch_2D::BeginScene()
 {
+	// Set tranform on window orientation change
+	//m_2DDeviceContext->SetTransform(m_deviceResources->GetOrientationTransform2D());
 	m_2DDeviceContext->SaveDrawingState(m_stateBlock.Get());
 	m_2DDeviceContext->BeginDraw();
 }
@@ -92,74 +72,88 @@ void Graphics::RenderBatch_2D::EndScene()
 
 void Graphics::RenderBatch_2D::Draw(const Text & t)
 {
-	ComPtr<IDWriteTextLayout> textLayout;
-	ThrowIfFailed(
-		m_writeFactory->CreateTextLayout(
-			t.c_str(),
-			(uint32_t)t.length(),
-			m_textFormat.Get(),
-			240.0f, // Max width of the input text.
-			50.0f, // Max height of the input text.
-			&textLayout
-		)
-	);
-	DWRITE_TEXT_METRICS metrics;
-	textLayout->GetMetrics(&metrics);
+	auto format = TextStyleLib::GetFormat(t.GetFormatName());
+	if (format)
+	{
+		auto bounds = t.GetBounds();
+		ComPtr<IDWriteTextLayout> textLayout;
+		ThrowIfFailed(
+			m_writeFactory->CreateTextLayout(
+				t.c_str(),
+				(uint32_t)t.length(),
+				format.Get(),
+				bounds.x, // Max width of the input text.
+				bounds.y, // Max height of the input text.
+				&textLayout
+			)
+		);
+		DWRITE_TEXT_METRICS metrics;
+		textLayout->GetMetrics(&metrics);
 
-	ThrowIfFailed(
-		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
-	);
-	//m_2DDeviceContext->SetTransform(m_deviceResources->GetOrientationTransform2D());
-	m_2DDeviceContext->SetTransform(t.GetTranslation());
-	m_2DDeviceContext->DrawTextLayout(
-		D2D1::Point2F(0.f, 0.f),
-		textLayout.Get(),
-		m_whiteBrush.Get()
+		auto& brush = GetBrush(t.GetBrushName());
+		m_2DDeviceContext->DrawTextLayout(
+			t.GetPosition(),
+			textLayout.Get(),
+			brush.Get()
+		);
+	}
+}
+
+void Graphics::RenderBatch_2D::Draw(const Square & s)
+{
+	auto& brush = GetBrush(s.GetBrushName());
+	m_2DDeviceContext->FillRectangle(s.GetRectBounds(), brush.Get());
+}
+
+void Graphics::RenderBatch_2D::Draw(const Line & l)
+{
+	auto& brush = GetBrush(l.GetBrushName());
+	m_2DDeviceContext->DrawLine(
+		l.GetPointOne(),
+		l.GetPointTwo(),
+		brush.Get(),
+		l.GetStrokeWidth()
 	);
 }
 
-void Graphics::RenderBatch_2D::Render()
+void Graphics::RenderBatch_2D::CreateNewBrush(std::string uniqueName, glm::vec4 color, bool newColor)
 {
+	auto& found = m_solidBrushes.find(uniqueName);
+	if (found != m_solidBrushes.end())
+		found->second.Reset();
+
+	if (!newColor)
+		m_brushColors[uniqueName] = color;
+
+	m_solidBrushes[uniqueName] = nullptr;
+	D2D1_COLOR_F brush;
+	brush.r = color.r;
+	brush.g = color.g;
+	brush.b = color.b;
+	brush.a = color.a;
 	ThrowIfFailed(
-		m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
+		m_2DDeviceContext->CreateSolidColorBrush(
+			brush,
+			&m_solidBrushes[uniqueName]
+		)
 	);
+}
 
-	// Draw a grid background.
-	int width = static_cast<int>(m_windowWidth);
-	int height = static_cast<int>(m_windowHeight);
+void Graphics::RenderBatch_2D::DeleteBrush(std::string uniqueName)
+{
+	auto& found = m_solidBrushes.find(uniqueName);
+	if (found != m_solidBrushes.end())
+		found->second.Reset();
 
-	for (int x = 0; x < width; x += 10)
+	m_solidBrushes.erase(uniqueName);
+}
+
+Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> Graphics::RenderBatch_2D::GetBrush(std::string uniqueName)
+{
+	auto& found = m_solidBrushes.find(uniqueName);
+	if (found != m_solidBrushes.end())
 	{
-		m_2DDeviceContext->DrawLine(
-			D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
-			D2D1::Point2F(static_cast<FLOAT>(x), m_windowHeight),
-			m_whiteBrush.Get(),
-			0.5f
-		);
+		return found->second;
 	}
-
-	for (int y = 0; y < height; y += 10)
-	{
-		m_2DDeviceContext->DrawLine(
-			D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
-			D2D1::Point2F(m_windowWidth, static_cast<FLOAT>(y)),
-			m_whiteBrush.Get(),
-			0.5f
-		);
-	}
-
-	m_2DDeviceContext->DrawTextLayout(
-		D2D1::Point2F(0.f, 0.f),
-		m_textLayout.Get(),
-		m_whiteBrush.Get()
-	);
-
-	D2D1_RECT_F rectangle1 = D2D1::RectF(
-		m_windowWidth / 2 - 50.0f,
-		m_windowHeight / 2 - 50.0f,
-		m_windowWidth / 2 + 50.0f,
-		m_windowHeight / 2 + 50.0f
-	);
-
-	m_2DDeviceContext->FillRectangle(rectangle1, m_blackBrush.Get());
+	return m_defualtBrush;
 }

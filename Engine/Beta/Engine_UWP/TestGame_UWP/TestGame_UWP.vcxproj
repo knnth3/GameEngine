@@ -37,6 +37,7 @@
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ProjectName>TestGame_UWP</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -210,6 +211,14 @@ copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Graphics\*.dll" "$(Ou
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
+    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
     <None Include="Assets\textures\bg1.dds">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
@@ -263,14 +272,17 @@ copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Graphics\*.dll" "$(Ou
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Common\DeviceResources.h" />
+    <ClInclude Include="Common\InputController.h" />
+    <ClInclude Include="TestGame.h" />
     <ClInclude Include="TestGame_UWPMain.h" />
     <ClInclude Include="Common\DirectXHelper.h" />
-    <ClInclude Include="Common\StepTimer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Common\DeviceResources.cpp" />
+    <ClCompile Include="Common\InputController.cpp" />
+    <ClCompile Include="TestGame.cpp" />
     <ClCompile Include="TestGame_UWPMain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -285,9 +297,6 @@ copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Graphics\*.dll" "$(Ou
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="TestGame_UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

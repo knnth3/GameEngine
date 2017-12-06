@@ -14,9 +14,6 @@
     <ClInclude Include="Common\DirectXHelper.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\StepTimer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -56,16 +53,35 @@
     <Filter Include="Content\Dlls">
       <UniqueIdentifier>{5c97f336-db72-4ca5-86a6-6b2948a623b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lower Level app">
+      <UniqueIdentifier>{12d4ceb2-7a5a-4a75-b36f-d350c2227802}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="TestGame_UWPMain.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Common\InputController.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Lower Level app</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame_UWPMain.cpp">
+      <Filter>Lower Level app</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
-    <ClInclude Include="TestGame_UWPMain.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Common\InputController.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Lower Level app</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame_UWPMain.h">
+      <Filter>Lower Level app</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -77,9 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TestGame_UWP_TemporaryKey.pfx" />
-    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
-      <Filter>Content\Dlls</Filter>
-    </None>
     <None Include="Assets\Shaders\2D Shader.hlsl">
       <Filter>Content\Shaders</Filter>
     </None>
@@ -127,6 +140,12 @@
     </None>
     <None Include="Assets\textures\Default\diffuse.png">
       <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <Filter>Content\Dlls</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <Filter>Content\Dlls</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@ using namespace concurrency;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Input;
 using namespace Windows::System;
@@ -36,11 +37,11 @@ App::App() :
 }
 
 // The first method called when the IFrameworkView is being created.
-void App::Initialize(CoreApplicationView^ applicationView)
+void App::Initialize(CoreApplicationView^ appView)
 {
 	// Register event handlers for app lifecycle. This example includes Activated, so that we
 	// can make the CoreWindow active and start rendering on the window.
-	applicationView->Activated +=
+		appView->Activated +=
 		ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
 
 	CoreApplication::Suspending +=
@@ -57,6 +58,7 @@ void App::Initialize(CoreApplicationView^ applicationView)
 // Called when the CoreWindow object is created (or re-created).
 void App::SetWindow(CoreWindow^ window)
 {
+
 	window->SizeChanged += 
 		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
 

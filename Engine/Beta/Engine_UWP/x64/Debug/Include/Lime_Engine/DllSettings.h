@@ -10,7 +10,7 @@ namespace LIME_ENGINE
 {
 
 
-#ifdef MAERICENGINE_EXPORTS
+#ifdef LIME_ENGINE_EXPORTS
 #define ENGINE_DLL_API __declspec(dllexport)
 #else
 #define ENGINE_DLL_API __declspec(dllimport)

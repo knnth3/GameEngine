@@ -22,7 +22,7 @@ reversion_wrapper<T> reverse(T&& iterable) { return { iterable }; }
 Graphics::RenderBatch::RenderBatch(std::shared_ptr<DX11BufferManager>& bufferManager, std::shared_ptr<DX11ShaderManager>& shaderManager,
 	std::shared_ptr<DX11RasterStateManager>& rssManager)
 {
-	m_bDrawReversed = false;
+	m_bWireframe = false;
 	m_bufferManager = bufferManager;
 	m_shaderManager = shaderManager;
 	m_RSSManager = rssManager;
@@ -46,9 +46,9 @@ void Graphics::RenderBatch::AddModel(Model& model)
 	m_vertexManager->AddModel(model);
 }
 
-void Graphics::RenderBatch::DrawBackToFront(bool value)
+void Graphics::RenderBatch::Wireframe(bool value)
 {
-	m_bDrawReversed = value;
+	m_bWireframe = value;
 }
 
 void Graphics::RenderBatch::Draw()
@@ -86,22 +86,19 @@ void Graphics::RenderBatch::ProcessObjects(Batch & batch)
 
 		ProcessObject_3DTriangles(batch.info);
 	}
-	else if (batch.info.Style == TRIANGLE_2D)
-	{
-		batchInfo.projection = m_camera->Get2DProjectionMatrix();
-
-		for (size_t index = 0; index < batch.data.size(); index++)
-			batchInfo.instances[index] = batch.data[index];
-		m_bufferManager->SetConstantBufferData("BatchInfo", &batchInfo, Graphics::ShaderType::Vertex);
-
-		ProcessObject_2DTriangles(batch.info);
-	}
 }
 
 void Graphics::RenderBatch::ProcessObject_3DTriangles(BatchInfo& info)
 {
 	//Set the relevant texture active(if not already set)
 	SetActiveTexture(info.Texture);
+
+	std::string rss = "3D";
+	if (m_bWireframe)
+		rss = "Wireframe";
+
+	if (!m_RSSManager->SetActive(rss))
+		return;
 
 	//Set the relevant shader active(if not already set)
 	if (!m_shaderManager->SetActive("3D"))
@@ -113,24 +110,6 @@ void Graphics::RenderBatch::ProcessObject_3DTriangles(BatchInfo& info)
 		info.InstanceCount, 
 		info.StartIndexLocation, 
 		info.BaseVertexLocation, 
-		0);
-}
-
-void Graphics::RenderBatch::ProcessObject_2DTriangles(BatchInfo & info)
-{
-	//Set the relevant texture active(if not already set)
-	SetActiveTexture(info.Texture);
-
-	//Set the relevant shader active(if not already set)
-	if (!m_shaderManager->SetActive("2D"))
-		return;
-
-	//Draw batch of instanced objects
-	m_bufferManager->DrawIndexedInstanced(
-		info.IndexCountPerInstance,
-		info.InstanceCount,
-		info.StartIndexLocation,
-		info.BaseVertexLocation,
 		0);
 }
 
@@ -204,8 +183,21 @@ bool Graphics::RenderBatch::CreateRSSStates()
 	settings.MultisampleEnable = false;
 	settings.ScissorEnable = false;
 	settings.SlopeScaledDepthBias = 0.0f;
-
 	result = m_RSSManager->CreateRSS(settings, "3D");
+
+	//Wireframe
+	settings.AntialiasedLineEnable = false;
+	settings.CullMode = D3D11_CULL_NONE;
+	settings.DepthBias = 0;
+	settings.DepthBiasClamp = 0.0f;
+	settings.DepthClipEnable = true;
+	settings.FillMode = D3D11_FILL_WIREFRAME;
+	settings.FrontCounterClockwise = true;
+	settings.MultisampleEnable = false;
+	settings.ScissorEnable = false;
+	settings.SlopeScaledDepthBias = 0.0f;
+	result = m_RSSManager->CreateRSS(settings, "Wireframe");
+
 	result = m_RSSManager->SetActive("3D");
 	return result;
 }

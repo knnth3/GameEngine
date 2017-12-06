@@ -73,6 +73,12 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\Default\roughness.png">
       <PackagePath>Assets\textures\Default\roughness.png</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <PackagePath>Graphics.dll</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <PackagePath>Lime_Engine.dll</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
     </AppxPackagedFile>
@@ -90,9 +96,6 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
-      <PackagePath>Graphics.dll</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>

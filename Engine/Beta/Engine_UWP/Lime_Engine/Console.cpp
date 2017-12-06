@@ -1,57 +1,48 @@
 #include "Console.h"
-#include "Square.h"
 
 
 using namespace Graphics;
-LIME_ENGINE::Console::Console(const uint16_t windowWidth)
+
+LIME_ENGINE::Console::Console(std::shared_ptr<GraphicsDevice>& graphicsDevice)
 {
 	m_bActive = false;
-	m_length = float(windowWidth);
-	m_width = 330; //About 11 characters in width
-	m_model = Shapes::Square(m_length, m_width);
-	m_model.SetColor(0.0f, 0.0f, 0.0f, 1.0f);
+	m_graphics = graphicsDevice;
+	m_graphics->GetWindowDimensions(m_width, m_height);
+	m_height *= 0.5f;
+	m_background = Square(m_width, m_height, 0.0f, 0.0f);
+	CreateCommonBrushes();
+	m_background.SetBrush("Console");
 }
 
-LIME_ENGINE::Console::~Console()
+void LIME_ENGINE::Console::Log(std::wstring text)
 {
+	Log(text, "Console_Text");
 }
 
-void LIME_ENGINE::Console::Log(std::string text, float opacity)
+void LIME_ENGINE::Console::Log(std::wstring text, std::string brushName)
 {
-	Log(text, LOG_WHITE, opacity);
-}
-
-void LIME_ENGINE::Console::Log(std::string text, ENGINE_COLORS color, float opacity)
-{
-	Log(text, EvaluateColor(color), opacity);
-}
-
-void LIME_ENGINE::Console::Log(std::string text, glm::vec3 color, float opacity)
-{
-	Log(text, color.r, color.g, color.b, opacity);
-}
-
-void LIME_ENGINE::Console::Log(std::string text, float red, float green, float blue, float opacity)
-{
-	//Thread-Safe
-	float alpha_val = opacity * m_model.GetColor().a;
-	Lime_String str = text;
-	str.SetColor(red, green, blue);
-	str.SetOpacity(alpha_val);
-	str.SetPosition(0.0f, m_width - str[0].GetWidth());
+	//Thread-Safe yet
+	Text str;
+	str = text;
+	str.SetBounds(m_width, 40);
+	str.SetPosition(0.0f, m_height - str.GetBounds().y);
+	str.SetBrush(brushName);
 	std::lock_guard<std::mutex> lock(m_mutex);
 	ShiftOtherStrings();
 	m_strings.emplace_back(str);
-
 }
 
-void LIME_ENGINE::Console::RenderConsole(std::shared_ptr<Graphics::GraphicsDevice>& device)
+void LIME_ENGINE::Console::Update()
 {
-	if (m_bActive)
+}
+
+void LIME_ENGINE::Console::Render()
+{
+	if (m_bActive && m_graphics)
 	{
+		m_graphics->Draw(m_background);
 		for (auto str : m_strings)
-			str.Draw(device);
-		device->Draw(m_model);
+			m_graphics->Draw(str);
 	}
 }
 
@@ -65,29 +56,30 @@ void LIME_ENGINE::Console::Switch()
 	m_bActive = !m_bActive;
 }
 
-void LIME_ENGINE::Console::SetBackground(Graphics::TextureID id)
+void LIME_ENGINE::Console::UpdateDimensions(float width, float height)
 {
-	m_model.SetTexture(id);
+	m_width = width;
+	m_height = height * 0.5f;
+	m_background.SetDimensions(m_width, m_height);
+	int count = (int)m_strings.size();
+	for (auto& str : m_strings)
+		str.SetPosition(0.0f, m_height - (str.GetBounds().y * count--));
 }
 
-void LIME_ENGINE::Console::SetOpacity(float value)
+void LIME_ENGINE::Console::SetTextColor(glm::vec4 color)
 {
-	m_model.SetOpacity(value);
+	m_graphics->CreateNew2DBrush("Console_Text", color);
 }
 
-void LIME_ENGINE::Console::SetColor(ENGINE_COLORS color)
+void LIME_ENGINE::Console::SetBGColor(glm::vec4 color)
 {
-	SetColor(EvaluateColor(color));
+	m_graphics->CreateNew2DBrush("Console", color);
 }
 
-void LIME_ENGINE::Console::SetColor(glm::vec3 color)
+void LIME_ENGINE::Console::CreateCommonBrushes()
 {
-	SetColor(color.r, color.g, color.b);
-}
-
-void LIME_ENGINE::Console::SetColor(float red, float green, float blue)
-{
-	m_model.SetColor(red, green, blue);
+	m_graphics->CreateNew2DBrush("Console", glm::vec4(0.0f, 0.0f, 0.0f, 0.5f));
+	m_graphics->CreateNew2DBrush("Console_Text", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
 void LIME_ENGINE::Console::ShiftOtherStrings()
@@ -96,7 +88,7 @@ void LIME_ENGINE::Console::ShiftOtherStrings()
 		m_strings.pop_front();
 
 	for (auto& x : m_strings)
-		x.Move(0.0f, -x[0].GetWidth());
+		x.SetPosition(0.0f, x.GetPosition().y - x.GetBounds().y);
 }
 
 glm::vec3 LIME_ENGINE::Console::EvaluateColor(ENGINE_COLORS color)

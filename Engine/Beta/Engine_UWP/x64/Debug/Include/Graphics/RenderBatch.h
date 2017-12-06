@@ -27,7 +27,7 @@ namespace Graphics
 		void Reset();
 		bool Initialize(std::shared_ptr<Camera>& camera);
 		void AddModel(Model& model);
-		void DrawBackToFront(bool value);
+		void Wireframe(bool value);
 		void Draw();
 
 	private:
@@ -35,7 +35,6 @@ namespace Graphics
 
 		//Rendering
 		void ProcessObject_3DTriangles(BatchInfo & info);
-		void ProcessObject_2DTriangles(BatchInfo & info);
 
 		bool FillBuffers();
 		void CreateShaders();
@@ -44,7 +43,7 @@ namespace Graphics
 		bool CreateRSSStates();
 
 		//New API
-		bool m_bDrawReversed;
+		bool m_bWireframe;
 		std::shared_ptr<Camera> m_camera;
 		std::shared_ptr<VertexManager> m_vertexManager;
 		std::shared_ptr<DX11BufferManager> m_bufferManager;

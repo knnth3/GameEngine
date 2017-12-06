@@ -23,6 +23,7 @@
     <ClInclude Include="DX11BufferManager.h" />
     <ClInclude Include="DX11ConstantBuffer.h" />
     <ClInclude Include="DX11RasterStateManager.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Polygon.h" />
     <ClInclude Include="RenderBatch.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="DX11BufferManager.cpp" />
     <ClCompile Include="DX11ConstantBuffer.cpp" />
     <ClCompile Include="DX11RasterStateManager.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Polygon.cpp" />
     <ClCompile Include="RenderBatch.cpp" />

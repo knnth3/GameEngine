@@ -20,6 +20,7 @@ namespace TestGame_UWP
 		virtual void Uninitialize();
 
 	protected:
+
 		// Application lifecycle event handlers.
 		void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args);
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ args);

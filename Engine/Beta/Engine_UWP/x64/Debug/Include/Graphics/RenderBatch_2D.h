@@ -1,5 +1,7 @@
 #pragma once
 #include "Text.h"
+#include "Shape_Square.h"
+#include "Line.h"
 
 namespace Graphics
 {
@@ -14,9 +16,14 @@ namespace Graphics
 		GRAPHICS_DLL_API void BeginScene();
 		GRAPHICS_DLL_API void EndScene();
 		GRAPHICS_DLL_API void Draw(const Text& t);
-		GRAPHICS_DLL_API void Render();
+		GRAPHICS_DLL_API void Draw(const Square& s);
+		GRAPHICS_DLL_API void Draw(const Line& l);
+		GRAPHICS_DLL_API void CreateNewBrush(std::string uniqueName, glm::vec4 color, bool newColor = true);
+		GRAPHICS_DLL_API void DeleteBrush(std::string uniqueName);
 
 	private:
+		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> GetBrush(std::string uniqueName);
+
 		// Cached pointer to device resources.
 		IDWriteFactory3* m_writeFactory;
 		ID2D1Factory3* m_2DFactory;
@@ -25,13 +32,10 @@ namespace Graphics
 		// Resources related to text rendering.
 		float m_windowWidth;
 		float m_windowHeight;
-		std::wstring                                    m_text;
-		DWRITE_TEXT_METRICS	                            m_textMetrics;
-		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>    m_whiteBrush;
-		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>    m_blackBrush;
+		std::map<std::string, glm::vec4> m_brushColors;
+		std::map<std::string, Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> m_solidBrushes;
+		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_defualtBrush;
 		Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock1> m_stateBlock;
-		Microsoft::WRL::ComPtr<IDWriteTextLayout3>      m_textLayout;
-		Microsoft::WRL::ComPtr<IDWriteTextFormat2>      m_textFormat;
 	};
 
 }
