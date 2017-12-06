@@ -67,7 +67,6 @@ bool Graphics::DX11Texture::LoadTexture(LPCWSTR filepath, ID3D11ShaderResourceVi
 	if (result)
 	{
 		ScratchImage secondary;
-		ScratchImage finalImage;
 		hr = CreateShaderResourceView(m_device, srcImage.GetImages(), srcImage.GetImageCount(), srcImage.GetMetadata(), &target);
 		result = CheckSuccess(hr, filepath);
 	}

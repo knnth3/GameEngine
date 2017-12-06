@@ -21,7 +21,8 @@ void Graphics::GraphicsDevice::BeginScene(float r, float g, float b)
 
 bool Graphics::GraphicsDevice::Initialize(
 	ID3D11Device3* device_3D, ID3D11DeviceContext3* context_3D,
-	IDWriteFactory3* writeFactory, ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D)
+	IDWriteFactory3* writeFactory,
+	ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D, IWICImagingFactory2* wicFactory)
 {
 	TextStyleLib::Initialize(writeFactory);
 	bool result = false;
@@ -30,7 +31,7 @@ bool Graphics::GraphicsDevice::Initialize(
 	m_shaderManager = std::shared_ptr<DX11ShaderManager>(new DX11ShaderManager(device_3D, context_3D));
 	m_RSSManager = std::shared_ptr<DX11RasterStateManager>(new DX11RasterStateManager(device_3D, context_3D));
 	m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(m_bufferManager, m_shaderManager, m_RSSManager));
-	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, deviceContext_2D));
+	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, deviceContext_2D, wicFactory));
 
 	result = m_renderBatch->Initialize(m_camera);
 	if (result)
@@ -106,6 +107,11 @@ void Graphics::GraphicsDevice::GetWindowDimensions(float & x, float & y)
 void Graphics::GraphicsDevice::CreateNew2DBrush(std::string uniqueName, glm::vec4 color)
 {
 	m_renderBatch_2D->CreateNewBrush(uniqueName, color);
+}
+
+void Graphics::GraphicsDevice::CreateNew2DBrush(std::string uniqueName, std::string filename)
+{
+	m_renderBatch_2D->CreateNewImageBrush(uniqueName, filename);
 }
 
 void Graphics::GraphicsDevice::Delete2DBrush(std::string uniqueName)

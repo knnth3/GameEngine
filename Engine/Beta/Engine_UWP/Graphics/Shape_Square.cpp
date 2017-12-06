@@ -4,17 +4,20 @@ Graphics::Square::Square()
 {
 	SetWidth(0.0f);
 	SetHeight(0.0f);
+	SetBitmapOpacity(1.0f);
 }
 
 Graphics::Square::Square(float width, float height)
 {
 	SetDimensions(width, height);
+	SetBitmapOpacity(1.0f);
 }
 
 Graphics::Square::Square(float width, float height, float x, float y)
 {
 
 	SetSettings(width, height, x, y);
+	SetBitmapOpacity(1.0f);
 }
 
 float Graphics::Square::GetWidth()const
@@ -40,6 +43,16 @@ D2D1_RECT_F Graphics::Square::GetRectBounds()const
 std::string Graphics::Square::GetBrushName()const
 {
 	return m_brush;
+}
+
+float Graphics::Square::GetBitmapOpacity() const
+{
+	return bmpOpacity;
+}
+
+void Graphics::Square::SetBitmapOpacity(float val)
+{
+	bmpOpacity = val;
 }
 
 void Graphics::Square::SetBrush(std::string uniqueName)

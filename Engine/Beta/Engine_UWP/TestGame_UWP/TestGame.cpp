@@ -48,7 +48,7 @@ void TestGame::OnUpdate()
 void TestGame::OnRender()
 {
 	// Render the scene objects.
-	// Order does mater for	2D objects
+	// Order does matter for 2D objects
 	auto graphics = this->GetGraphicsDevice();
 	auto timer = this->GetTimer();
 	Text t;

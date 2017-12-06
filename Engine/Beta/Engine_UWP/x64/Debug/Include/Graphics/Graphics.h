@@ -9,7 +9,8 @@ namespace Graphics
 	protected:
 		GRAPHICS_DLL_API virtual bool Initialize(
 			ID3D11Device3* device_3D, ID3D11DeviceContext3* context_3D,
-			IDWriteFactory3* writeFactory, ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D)final;
+			IDWriteFactory3* writeFactory, 
+			ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D, IWICImagingFactory2* wicFactory)final;
 
 		GRAPHICS_DLL_API virtual void SetWindowDimensions(float x, float y)final;
 		GRAPHICS_DLL_API virtual void Close()final;
@@ -30,6 +31,7 @@ namespace Graphics
 		GRAPHICS_DLL_API virtual void ReleaseDeviceDependentResources()final;
 		GRAPHICS_DLL_API virtual void GetWindowDimensions(float& x, float& y)final;
 		GRAPHICS_DLL_API virtual void CreateNew2DBrush(std::string uniqueName, glm::vec4 color)final;
+		GRAPHICS_DLL_API virtual void CreateNew2DImageBrush(std::string uniqueName, std::string filename)final;
 		GRAPHICS_DLL_API virtual void Delete2DBrush(std::string uniqueName)final;
 		GRAPHICS_DLL_API virtual void Wireframe(bool val)final;
 

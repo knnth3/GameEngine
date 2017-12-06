@@ -86,7 +86,7 @@ DX::DeviceResources::DeviceResources() :
 
 	this->Initialize(
 		GetD3DDevice(), GetD3DDeviceContext(),
-		GetDWriteFactory(), GetD2DFactory(), GetD2DDeviceContext());
+		GetDWriteFactory(), GetD2DFactory(), GetD2DDeviceContext(), GetWicImagingFactory());
 }
 
 // Configures resources that don't depend on the Direct3D device.

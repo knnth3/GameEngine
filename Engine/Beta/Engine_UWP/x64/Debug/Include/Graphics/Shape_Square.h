@@ -17,8 +17,10 @@ namespace Graphics
 		GRAPHICS_DLL_API glm::vec2 GetPosition()const;
 		GRAPHICS_DLL_API D2D1_RECT_F GetRectBounds()const;
 		GRAPHICS_DLL_API std::string GetBrushName()const;
+		GRAPHICS_DLL_API float GetBitmapOpacity()const;
 
 		//Set
+		GRAPHICS_DLL_API void SetBitmapOpacity(float val);
 		GRAPHICS_DLL_API void SetBrush(std::string uniqueName);
 		GRAPHICS_DLL_API void SetSettings(float width, float height, float x, float y);
 		GRAPHICS_DLL_API void SetDimensions(float width, float height);
@@ -30,6 +32,7 @@ namespace Graphics
 	private:
 		void CreateRectBounds();
 
+		float bmpOpacity;
 		float m_width;
 		float m_height;
 		glm::vec2 m_position;

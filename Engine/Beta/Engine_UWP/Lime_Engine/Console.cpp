@@ -12,6 +12,7 @@ LIME_ENGINE::Console::Console(std::shared_ptr<GraphicsDevice>& graphicsDevice)
 	m_background = Square(m_width, m_height, 0.0f, 0.0f);
 	CreateCommonBrushes();
 	m_background.SetBrush("Console");
+	m_background.SetBitmapOpacity(0.5f);
 }
 
 void LIME_ENGINE::Console::Log(std::wstring text)

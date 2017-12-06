@@ -36,7 +36,7 @@
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
       <PackagePath>TestGame_UWP.exe</PackagePath>
-      <Modified>2017-12-06T00:40:48.551</Modified>
+      <Modified>2017-12-06T16:22:13.648</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
       <PackagePath>TestGame_UWP.winmd</PackagePath>
@@ -98,11 +98,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-06T00:01:08.961</Modified>
+      <Modified>2017-12-06T16:21:54.361</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-06T00:01:21.036</Modified>
+      <Modified>2017-12-06T16:22:02.208</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
