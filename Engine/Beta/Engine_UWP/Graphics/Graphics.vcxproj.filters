@@ -71,6 +71,12 @@
     <Filter Include="Source Files\Graphics\RenderBatch\2D">
       <UniqueIdentifier>{f7de91af-8125-459f-908d-c948b7a3d340}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics\RenderBatch\2D\Brushes">
+      <UniqueIdentifier>{da6d8979-bddb-43b5-92c3-3c0448a598b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\RenderBatch\2D\Effects">
+      <UniqueIdentifier>{7c4e7b79-c856-4b70-916a-313bc88adbe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11BufferManager.h">
@@ -139,6 +145,12 @@
     <ClInclude Include="Line.h">
       <Filter>Source Files\Models\2D\Line</Filter>
     </ClInclude>
+    <ClInclude Include="BrushManager.h">
+      <Filter>Source Files\Graphics\RenderBatch\2D\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect_2D.h">
+      <Filter>Source Files\Graphics\RenderBatch\2D\Effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -203,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="Line.cpp">
       <Filter>Source Files\Models\2D\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="BrushManager.cpp">
+      <Filter>Source Files\Graphics\RenderBatch\2D\Brushes</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect_2D.cpp">
+      <Filter>Source Files\Graphics\RenderBatch\2D\Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

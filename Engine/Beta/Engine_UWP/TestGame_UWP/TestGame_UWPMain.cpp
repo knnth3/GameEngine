@@ -16,9 +16,6 @@ using namespace LIME_ENGINE;
 TestGame_UWPMain::TestGame_UWPMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources)
 {
-	//Set Default window Dimensions
-	ApplicationView::PreferredLaunchViewSize = Size(800, 600);
-	ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
 
 	// Register to be notified if the Device is lost or recreated
 	m_deviceResources->RegisterDeviceNotify(this);
@@ -27,16 +24,16 @@ TestGame_UWPMain::TestGame_UWPMain(const std::shared_ptr<DX::DeviceResources>& d
 	m_controller->Active(true);
 	m_controller->ShowCursor();
 
-	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
-	// e.g. for 60 FPS fixed timestep update logic, call:
-	/*
-	m_timer.SetFixedTimeStep(true);
-	m_timer.SetTargetElapsedSeconds(1.0 / 60);
-	*/
 	std::shared_ptr<GraphicsDevice> m_graphics = m_deviceResources;
 	m_timer = std::shared_ptr<StepTimer>(new StepTimer());
 	m_engineApp = std::make_unique<TestGame>(m_graphics, m_controller->GetManager(), m_timer);
 	m_engineApp->Initialize();
+
+	//Set Default window Dimensions
+	float defaultWidth, defaultHeight;
+	m_engineApp->GetDefaultDimensions(defaultWidth, defaultHeight);
+	ApplicationView::PreferredLaunchViewSize = Size(defaultWidth, defaultHeight);
+	ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
 	CreateWindowSizeDependentResources();
 }
 
@@ -49,11 +46,7 @@ TestGame_UWPMain::~TestGame_UWPMain()
 // Updates application state when the window size changes (e.g. device orientation change)
 void TestGame_UWPMain::CreateWindowSizeDependentResources() 
 {
-	auto dims = m_deviceResources->GetLogicalSize();
-	m_str.SetPosition(100, 100);
-	float width, height;
-	m_deviceResources->GetWindowDimensions(width, height);
-	m_engineApp->SetDimensions(width, height);
+	m_engineApp->UpdateDimensions();
 }
 
 // Updates the application state once per frame.
@@ -64,15 +57,9 @@ void TestGame_UWPMain::Update()
 	{
 		SwitchFullscreen();
 	}
-
-	static float rotation = 0.0f;
 	// Update scene objects.
 	m_timer->Tick([&]()
 	{
-		// TODO: Replace this with your app's content update functions.
-		uint32 fps = m_timer->GetFramesPerSecond();
-		m_str = (fps > 0) ? std::to_wstring(fps) + L" FPS" : L" - FPS";
-		rotation += (float)m_timer->GetElapsedSeconds();
 		m_engineApp->Tick();
 	});
 }

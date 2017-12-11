@@ -8,6 +8,7 @@ std::map<std::string, Microsoft::WRL::ComPtr<IDWriteTextFormat2>> Graphics::Text
 Graphics::Text::Text()
 {
 	SetPosition(0.0f, 0.0f);
+	SetBrush(-1);
 }
 
 Graphics::Text::Text(std::wstring str, std::string style):
@@ -15,6 +16,7 @@ Graphics::Text::Text(std::wstring str, std::string style):
 {
 	this->insert(this->begin(), str.begin(), str.end());
 	SetFormat(style);
+	SetBrush(-1);
 }
 
 Graphics::Text::Text(std::string str, std::string style):
@@ -22,6 +24,7 @@ Graphics::Text::Text(std::string str, std::string style):
 {
 	this->insert(this->begin(), str.begin(), str.end());
 	SetFormat(style);
+	SetBrush(-1);
 }
 
 void Graphics::Text::SetFormat(std::string style)
@@ -58,9 +61,9 @@ void Graphics::Text::SetBounds(float width, float height)
 	m_bounds = { width, height };
 }
 
-void Graphics::Text::SetBrush(std::string uniqueName)
+void Graphics::Text::SetBrush(int ID)
 {
-	m_brush = uniqueName;
+	m_brush = ID;
 }
 
 std::string Graphics::Text::GetFormatName()const
@@ -78,7 +81,7 @@ glm::vec2 Graphics::Text::GetBounds()const
 	return m_bounds;
 }
 
-std::string Graphics::Text::GetBrushName() const
+int Graphics::Text::GetBrush() const
 {
 	return m_brush;
 }
@@ -99,8 +102,8 @@ bool Graphics::TextStyleLib::Initialize(IDWriteFactory3 * writeFactory)
 	{
 		m_factory = writeFactory;
 		TextFormat t;
-		t.FontFamilyName = L"Segoe UI";
-		t.FontSize = 32.0f;
+		t.FontFamilyName = L"Imprint MT Shadow";
+		t.FontSize = 20.0f;
 		return CreateNewFormat("Default", t);
 	}
 	return false;

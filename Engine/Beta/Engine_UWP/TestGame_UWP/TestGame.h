@@ -6,7 +6,7 @@ class TestGame:
 {
 public:
 	TestGame(std::shared_ptr<Graphics::GraphicsDevice>& graphicsDevice,
-		std::shared_ptr<InputManager>& inputManager,
+		std::shared_ptr<LIME_ENGINE::InputManager>& inputManager,
 		std::shared_ptr<LIME_ENGINE::StepTimer>& timer);
 
 	//Virtual
@@ -18,7 +18,7 @@ public:
 	virtual void OnSuspending()override;
 	virtual void OnResuming()override;
 	virtual void OnWindowMoved()override;
-	virtual void OnWindowSizeChanged(float width, float height)override;
+	virtual void OnWindowSizeChanged()override;
 	virtual void OnShutdown()override;
 
 private:

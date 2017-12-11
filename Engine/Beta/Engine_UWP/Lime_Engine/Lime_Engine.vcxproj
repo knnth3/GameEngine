@@ -155,6 +155,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
     <ClInclude Include="DllSettings.h" />
     <ClInclude Include="EngineApp.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="EngineResources.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
@@ -162,6 +163,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
     <ClCompile Include="DllSettings.cpp" />
     <ClCompile Include="EngineApp.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="EngineResources.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>

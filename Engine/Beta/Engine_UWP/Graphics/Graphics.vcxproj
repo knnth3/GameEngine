@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BrushManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DX11BufferManager.h" />
     <ClInclude Include="DX11ConstantBuffer.h" />
     <ClInclude Include="DX11RasterStateManager.h" />
+    <ClInclude Include="Effect_2D.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Polygon.h" />
@@ -43,10 +45,12 @@
     <ClInclude Include="WindowsAdditionals.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BrushManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DX11BufferManager.cpp" />
     <ClCompile Include="DX11ConstantBuffer.cpp" />
     <ClCompile Include="DX11RasterStateManager.cpp" />
+    <ClCompile Include="Effect_2D.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Polygon.cpp" />
@@ -157,7 +161,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dwrite.lib;windowscodecs.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwrite.lib;dxguid.lib;windowscodecs.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -215,7 +219,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dwrite.lib;windowscodecs.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwrite.lib;dxguid.lib;windowscodecs.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

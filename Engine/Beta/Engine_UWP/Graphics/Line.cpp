@@ -4,20 +4,21 @@
 
 Graphics::Line::Line()
 {
-	SetPointOne(D2D1::Point2F());
-	SetPointTwo(D2D1::Point2F());
-	m_strokeWidth = 0.5f;
+	SetPoints(D2D1::Point2F(), D2D1::Point2F());
+	SetStrokeWidth(0.5f);
+	SetBrush(-1);
 }
 
 Graphics::Line::Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2)
 {
 	SetPoints(p1, p2);
-	m_strokeWidth = 0.5f;
+	SetStrokeWidth(0.5f);
+	SetBrush(-1);
 }
 
-void Graphics::Line::SetBrush(std::string uniqueName)
+void Graphics::Line::SetBrush(int ID)
 {
-	m_brush = uniqueName;
+	m_brush = ID;
 }
 
 void Graphics::Line::SetPointOne(D2D1_POINT_2F p1)
@@ -51,7 +52,7 @@ D2D1_POINT_2F Graphics::Line::GetPointTwo()const
 	return m_point2;
 }
 
-std::string Graphics::Line::GetBrushName()const
+int Graphics::Line::GetBrush()const
 {
 	return m_brush;
 }

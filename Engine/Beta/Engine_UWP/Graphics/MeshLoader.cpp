@@ -130,9 +130,8 @@ bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::sh
 {
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
 	std::string err;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str());
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, nullptr, &err, filename.c_str());
 
 	//Can contain warnings as well
 	if (!err.empty())
@@ -188,7 +187,7 @@ bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::sh
 				poly.m_indices.push_back(Graphics::Index(index_offset + v));
 			}
 			index_offset += fv;
-			CalculateTangentBinormal(poly);
+			/*CalculateTangentBinormal(poly);*/
 			data->m_polygons.push_back(poly);
 		}
 

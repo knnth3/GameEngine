@@ -16,7 +16,7 @@ Graphics::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 void Graphics::GraphicsDevice::BeginScene(float r, float g, float b)
 {
 	m_renderBatch_2D->BeginScene();
-	this->ClearScreen(r, g, b);
+	m_renderBatch_2D->ClearScreen(r, g, b);
 }
 
 bool Graphics::GraphicsDevice::Initialize(
@@ -26,16 +26,16 @@ bool Graphics::GraphicsDevice::Initialize(
 {
 	TextStyleLib::Initialize(writeFactory);
 	bool result = false;
-	m_constBuffer = std::shared_ptr<DX11ConstantBuffer>(new DX11ConstantBuffer(device_3D, context_3D));
-	m_bufferManager = std::shared_ptr<DX11BufferManager>(new DX11BufferManager(device_3D, context_3D, m_constBuffer));
-	m_shaderManager = std::shared_ptr<DX11ShaderManager>(new DX11ShaderManager(device_3D, context_3D));
-	m_RSSManager = std::shared_ptr<DX11RasterStateManager>(new DX11RasterStateManager(device_3D, context_3D));
-	m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(m_bufferManager, m_shaderManager, m_RSSManager));
+	//m_constBuffer = std::shared_ptr<DX11ConstantBuffer>(new DX11ConstantBuffer(device_3D, context_3D));
+	//m_bufferManager = std::shared_ptr<DX11BufferManager>(new DX11BufferManager(device_3D, context_3D, m_constBuffer));
+	//m_shaderManager = std::shared_ptr<DX11ShaderManager>(new DX11ShaderManager(device_3D, context_3D));
+	//m_RSSManager = std::shared_ptr<DX11RasterStateManager>(new DX11RasterStateManager(device_3D, context_3D));
+	//m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(m_bufferManager, m_shaderManager, m_RSSManager));
 	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, deviceContext_2D, wicFactory));
 
-	result = m_renderBatch->Initialize(m_camera);
-	if (result)
-		result = TextureLoader::Initialize(device_3D, context_3D);
+	//result = m_renderBatch->Initialize(m_camera);
+	//if (result)
+	//	result = TextureLoader::Initialize(device_3D, context_3D);
 
 	m_renderBatch_2D->Initialize();
 	return result;
@@ -55,7 +55,7 @@ void Graphics::GraphicsDevice::Close()
 
 void Graphics::GraphicsDevice::EndScene()
 {
-	m_renderBatch->Draw();
+	//m_renderBatch->Draw();
 	m_renderBatch_2D->EndScene();
 }
 
@@ -70,7 +70,7 @@ void Graphics::GraphicsDevice::GetVideoCardInfo(std::string& name, int& memory)
 
 void Graphics::GraphicsDevice::Draw(Model& model)
 {
-	m_renderBatch->AddModel(model);
+	//m_renderBatch->AddModel(model);
 }
 
 void Graphics::GraphicsDevice::Draw(const Text & str)
@@ -78,9 +78,9 @@ void Graphics::GraphicsDevice::Draw(const Text & str)
 	m_renderBatch_2D->Draw(str);
 }
 
-void Graphics::GraphicsDevice::Draw(const Square & sqr)
+void Graphics::GraphicsDevice::Draw(const Square & sqr, bool background)
 {
-	m_renderBatch_2D->Draw(sqr);
+	m_renderBatch_2D->Draw(sqr, background);
 }
 
 void Graphics::GraphicsDevice::Draw(const Line & lne)
@@ -104,22 +104,13 @@ void Graphics::GraphicsDevice::GetWindowDimensions(float & x, float & y)
 	y = m_WindowHeight;
 }
 
-void Graphics::GraphicsDevice::CreateNew2DBrush(std::string uniqueName, glm::vec4 color)
-{
-	m_renderBatch_2D->CreateNewBrush(uniqueName, color);
-}
-
-void Graphics::GraphicsDevice::CreateNew2DBrush(std::string uniqueName, std::string filename)
-{
-	m_renderBatch_2D->CreateNewImageBrush(uniqueName, filename);
-}
-
-void Graphics::GraphicsDevice::Delete2DBrush(std::string uniqueName)
-{
-	m_renderBatch_2D->DeleteBrush(uniqueName);
-}
-
 void Graphics::GraphicsDevice::Wireframe(bool val)
 {
-	m_renderBatch->Wireframe(val);
+	//m_renderBatch->Wireframe(val);
+}
+
+void Graphics::GraphicsDevice::Reset()
+{
+	//m_renderBatch->Reset();
+	//m_camera->Reset();
 }

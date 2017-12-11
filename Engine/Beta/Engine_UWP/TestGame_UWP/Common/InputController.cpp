@@ -12,6 +12,7 @@ using namespace Windows::Foundation;
 using namespace Windows::Devices::Input;
 using namespace Windows::Gaming::Input;
 using namespace Windows::System;
+using namespace LIME_ENGINE;
 
 // Analog control deadzone definitions. Tune these values to adjust the size of the deadzone.
 // Thumbstick range in each dimension is defined as [-1, 1].

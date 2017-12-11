@@ -25,15 +25,13 @@ namespace Graphics
 		GRAPHICS_DLL_API virtual std::shared_ptr<Camera> GetCamera()final;
 		GRAPHICS_DLL_API virtual void Draw(Model& model)final;
 		GRAPHICS_DLL_API virtual void Draw(const Text& str);
-		GRAPHICS_DLL_API virtual void Draw(const Square& sqr);
+		GRAPHICS_DLL_API virtual void Draw(const Square& sqr, bool background = false);
 		GRAPHICS_DLL_API virtual void Draw(const Line& lne);
 		GRAPHICS_DLL_API virtual void CreateDeviceDependentResources()final;
 		GRAPHICS_DLL_API virtual void ReleaseDeviceDependentResources()final;
 		GRAPHICS_DLL_API virtual void GetWindowDimensions(float& x, float& y)final;
-		GRAPHICS_DLL_API virtual void CreateNew2DBrush(std::string uniqueName, glm::vec4 color)final;
-		GRAPHICS_DLL_API virtual void CreateNew2DBrush(std::string uniqueName, std::string filename)final;
-		GRAPHICS_DLL_API virtual void Delete2DBrush(std::string uniqueName)final;
 		GRAPHICS_DLL_API virtual void Wireframe(bool val)final;
+		GRAPHICS_DLL_API virtual void Reset();
 
 		//Overridable
 		GRAPHICS_DLL_API virtual void GetVideoCardInfo(std::string& name, int& memory);

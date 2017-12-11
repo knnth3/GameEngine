@@ -1,22 +1,27 @@
 #include "InputManager.h"
+#include "EngineResources.h"
 
-InputManager::InputManager()
+LIME_ENGINE::InputManager::InputManager()
 {
 	m_MouseCoords = glm::vec2(0.0f, 0.0f);
 	m_Camera = nullptr;
+	m_rmbPressed = false;
+	m_lmbPressed = false;
+	m_lmbDown = false;
+	m_rmbDown = false;
 }
 
-void InputManager::Initialize(std::shared_ptr<Graphics::Camera>& camera)
+void LIME_ENGINE::InputManager::Initialize(std::shared_ptr<Graphics::Camera>& camera)
 {
 	m_Camera = camera;
 }
 
-const glm::vec2 InputManager::GetMouseCoords()
+const glm::vec2 LIME_ENGINE::InputManager::GetMouseCoords()
 {
 	return m_MouseCoords;
 }
 
-glm::vec3 InputManager::GetMouseCoordsWorldSpace()
+glm::vec3 LIME_ENGINE::InputManager::GetMouseCoordsWorldSpace()
 {
 	glm::vec3 worldCoords;
 	if (m_Camera)
@@ -30,7 +35,7 @@ glm::vec3 InputManager::GetMouseCoordsWorldSpace()
 	return worldCoords;
 }
 
-bool InputManager::GetMouse3DPosition(_Inout_ glm::vec3& pos)
+bool LIME_ENGINE::InputManager::GetMouse3DPosition(_Inout_ glm::vec3& pos)
 {
 	bool result = false;
 	if (m_Camera)
@@ -49,7 +54,7 @@ bool InputManager::GetMouse3DPosition(_Inout_ glm::vec3& pos)
 	return result;
 }
 
-bool InputManager::GetMouse3DPosition2(_Inout_ glm::vec3& pos)
+bool LIME_ENGINE::InputManager::GetMouse3DPosition2(_Inout_ glm::vec3& pos)
 {
 	bool result = false;
 	if (m_Camera)
@@ -65,13 +70,31 @@ bool InputManager::GetMouse3DPosition2(_Inout_ glm::vec3& pos)
 	return result;
 }
 
-void InputManager::SetMouseCoords(float x, float y)
+void LIME_ENGINE::InputManager::SetMouseCoords(float x, float y)
 {
 	m_MouseCoords.x = (float)x;
 	m_MouseCoords.y = (float)y;
 }
 
-glm::vec2 InputManager::NormalizeDeviceMouseCoords(glm::vec2 & mousePos)
+void LIME_ENGINE::InputManager::SetLMBStatus(bool val)
+{
+	if (m_lmbDown && !val)
+	{
+		m_lmbPressed = true;
+	}
+	m_lmbDown = val;
+}
+
+void LIME_ENGINE::InputManager::SetRMBStatus(bool val)
+{
+	if (m_rmbDown && !val)
+	{
+		m_rmbPressed = true;
+	}
+	m_rmbDown = val;
+}
+
+glm::vec2 LIME_ENGINE::InputManager::NormalizeDeviceMouseCoords(glm::vec2 & mousePos)
 {
 	glm::vec2 mousePosition;
 	if (m_Camera)
@@ -82,7 +105,7 @@ glm::vec2 InputManager::NormalizeDeviceMouseCoords(glm::vec2 & mousePos)
 	return mousePosition;
 }
 
-glm::vec4 InputManager::GetEyeSpaceCoords(glm::vec4 mouseCoords)
+glm::vec4 LIME_ENGINE::InputManager::GetEyeSpaceCoords(glm::vec4 mouseCoords)
 {
 	glm::vec4 EyeSpaceCoords;
 	if (m_Camera)
@@ -93,7 +116,7 @@ glm::vec4 InputManager::GetEyeSpaceCoords(glm::vec4 mouseCoords)
 	return EyeSpaceCoords;
 }
 
-glm::vec3 InputManager::GetWorldSpaceCoords(glm::vec4 eyeCoords)
+glm::vec3 LIME_ENGINE::InputManager::GetWorldSpaceCoords(glm::vec4 eyeCoords)
 {
 	glm::vec3 worldCoords;
 	if (m_Camera)
@@ -105,7 +128,7 @@ glm::vec3 InputManager::GetWorldSpaceCoords(glm::vec4 eyeCoords)
 	return worldCoords;
 }
 
-void InputManager::SetKeyUp(const int keyID)
+void LIME_ENGINE::InputManager::SetKeyUp(const int keyID)
 {
 	if (m_KeysDown[keyID] == true)
 		m_KeysPressed[keyID] = true;
@@ -113,12 +136,12 @@ void InputManager::SetKeyUp(const int keyID)
 	m_KeysDown[keyID] = false;
 }
 
-void InputManager::SetKeyDown(const int iKeyCode)
+void LIME_ENGINE::InputManager::SetKeyDown(const int iKeyCode)
 {
 	m_KeysDown[iKeyCode] = true;
 }
 
-bool InputManager::KeyStatus(const int iKeyCode)
+bool LIME_ENGINE::InputManager::KeyStatus(const int iKeyCode)
 {
 	auto iterator = m_KeysDown.find((int)iKeyCode);
 	if (iterator != m_KeysDown.end())
@@ -128,7 +151,7 @@ bool InputManager::KeyStatus(const int iKeyCode)
 	return false;
 }
 
-bool InputManager::KeyPressed(const int iKeyCode)
+bool LIME_ENGINE::InputManager::KeyPressed(const int iKeyCode)
 {
 	bool bPressed = false;
 	auto result = m_KeysPressed.find((int)iKeyCode);
@@ -140,7 +163,31 @@ bool InputManager::KeyPressed(const int iKeyCode)
 	return bPressed;
 }
 
-void InputManager::Reset()
+bool LIME_ENGINE::InputManager::LMBPressed()
+{
+	bool val = m_lmbPressed;
+	m_lmbPressed = false;
+	return val;
+}
+
+bool LIME_ENGINE::InputManager::LMBStatus()
+{
+	return m_lmbDown;
+}
+
+bool LIME_ENGINE::InputManager::RMBPressed()
+{
+	bool val = m_rmbPressed;
+	m_rmbPressed = false;
+	return val;
+}
+
+bool LIME_ENGINE::InputManager::RMBStatus()
+{
+	return m_rmbDown;
+}
+
+void LIME_ENGINE::InputManager::Reset()
 {
 	m_KeysDown.clear();
 	m_KeysPressed.clear();

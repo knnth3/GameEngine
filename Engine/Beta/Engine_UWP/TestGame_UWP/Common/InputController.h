@@ -15,7 +15,7 @@ ref class InputController
 internal:
 	InputController(_In_ Windows::UI::Core::CoreWindow^ window);
 	void AttatchCamera(_Inout_ std::shared_ptr<Graphics::Camera>& camera);
-	std::shared_ptr<InputManager> GetManager();
+	std::shared_ptr<LIME_ENGINE::InputManager> GetManager();
 	void Update();
 	bool  Active();
 	void  Active(_In_ bool active);
@@ -67,7 +67,7 @@ private:
 private:
 
 	bool m_bActive;
-	std::shared_ptr<InputManager> m_inputManager;
+	std::shared_ptr<LIME_ENGINE::InputManager> m_inputManager;
 	// Game controller related members.
 	Windows::Gaming::Input::Gamepad^    m_activeGamepad;
 	std::atomic<bool>                   m_gamepadsChanged;

@@ -1,8 +1,7 @@
 #include "RenderBatch_2D.h"
-#include <DirectXTex\DirectXTex.h>
+#include "BrushManager.h"
 
 using namespace Microsoft::WRL;
-using namespace DirectX;
 
 
 Graphics::RenderBatch_2D::RenderBatch_2D(IDWriteFactory3 * writeFactory, 
@@ -30,33 +29,21 @@ void Graphics::RenderBatch_2D::Initialize()
 
 void Graphics::RenderBatch_2D::CreateDeviceDependentResources()
 {
+	BrushManager::Initialize(m_2DFactory, m_2DDeviceContext, m_wicFactory);
 	ThrowIfFailed(
 		m_2DDeviceContext->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			&m_defualtBrush)
 	);
 
-	for (auto& colors : m_brushColors)
-		CreateNewBrush(colors.first, colors.second, false);
-
-
-	m_bitmaps.clear();
-	for (auto& colors : m_bmpBrushInfo)
-		CreateNewImageBrush(colors.first, colors.second, false);
-
 }
 
 void Graphics::RenderBatch_2D::ReleaseDeviceDependentResources()
 {
 	m_defualtBrush.Reset();
-
-	for (auto& brush : m_solidBrushes)
-		brush.second.Reset();
-	m_solidBrushes.clear();
-
-	for (auto& brush : m_bitmaps)
-		brush.second.Reset();
-	m_bitmaps.clear();
+	m_bitmapRenderTarget.Reset();
+	m_textRenderTarget.Reset();
+	BrushManager::Reset();
 }
 
 void Graphics::RenderBatch_2D::SetDimensions(float width, float height)
@@ -70,13 +57,33 @@ void Graphics::RenderBatch_2D::BeginScene()
 	// Set tranform on window orientation change
 	//m_2DDeviceContext->SetTransform(m_deviceResources->GetOrientationTransform2D());
 	m_2DDeviceContext->SaveDrawingState(m_stateBlock.Get());
-	m_2DDeviceContext->BeginDraw();
+	m_2DDeviceContext->CreateCompatibleRenderTarget(&m_bitmapRenderTarget);
+	m_2DDeviceContext->CreateCompatibleRenderTarget(&m_textRenderTarget);
+	m_2DDeviceContext->CreateCompatibleRenderTarget(&m_backgroundRenderTarget);
+
+	m_backgroundRenderTarget->BeginDraw();
+	m_textRenderTarget->BeginDraw();
+	m_bitmapRenderTarget->BeginDraw();
+}
+
+void Graphics::RenderBatch_2D::ClearScreen(float r, float g, float b)
+{
+	m_backgroundRenderTarget->Clear(D2D1::ColorF(r, g, b));
+	m_bitmapRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
+	m_textRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
 }
 
 void Graphics::RenderBatch_2D::EndScene()
 {
 	// Ignore D2DERR_RECREATE_TARGET here. This error indicates that the device
 	// is lost. It will be handled during the next call to Present.
+	m_backgroundRenderTarget->EndDraw();
+	m_textRenderTarget->EndDraw();
+	m_bitmapRenderTarget->EndDraw();
+
+	//Begin writing compilation
+	m_2DDeviceContext->BeginDraw();
+	CreateEffects();
 	HRESULT hr = m_2DDeviceContext->EndDraw();
 	if (hr != D2DERR_RECREATE_TARGET)
 	{
@@ -84,6 +91,46 @@ void Graphics::RenderBatch_2D::EndScene()
 	}
 
 	m_2DDeviceContext->RestoreDrawingState(m_stateBlock.Get());
+}
+
+void Graphics::RenderBatch_2D::CreateEffects()
+{
+	ComPtr<ID2D1Bitmap> spriteMap;
+	ComPtr<ID2D1Bitmap> text;
+	ComPtr<ID2D1Bitmap> background;
+	auto size = m_2DDeviceContext->GetSize();
+	m_bitmapRenderTarget->GetBitmap(&spriteMap);
+	m_textRenderTarget->GetBitmap(&text);
+	m_backgroundRenderTarget->GetBitmap(&background);
+
+	//Draw Background
+	m_2DDeviceContext->DrawBitmap(background.Get(), D2D1::RectF(0.0f, 0.0f, size.width, size.height));
+
+	//Draw sprites
+	auto effect = BrushManager::GetEffect();
+	if (effect)
+	{
+		effect->Create(m_2DDeviceContext);
+		if (effect->GetBeginEffect() && effect->GetFinalEffect())
+		{
+			ComPtr<ID2D1Effect> arithmeticCompositeEffect;
+			m_2DDeviceContext->CreateEffect(CLSID_D2D1ArithmeticComposite, &arithmeticCompositeEffect);
+
+			effect->GetBeginEffect()->SetInput(0, spriteMap.Get());
+			arithmeticCompositeEffect->SetInput(0, background.Get());
+			arithmeticCompositeEffect->SetInputEffect(1, effect->GetFinalEffect().Get());
+
+			m_2DDeviceContext->DrawImage(arithmeticCompositeEffect.Get());
+		}
+	}
+	else
+	{
+		//Failsafe
+		m_2DDeviceContext->DrawBitmap(spriteMap.Get(), D2D1::RectF(0.0f, 0.0f, size.width, size.height));
+	}
+
+	//Draw out layer
+	m_2DDeviceContext->DrawBitmap(text.Get(), D2D1::RectF(0.0f, 0.0f, size.width, size.height));
 }
 
 void Graphics::RenderBatch_2D::Draw(const Text & t)
@@ -106,8 +153,11 @@ void Graphics::RenderBatch_2D::Draw(const Text & t)
 		DWRITE_TEXT_METRICS metrics;
 		textLayout->GetMetrics(&metrics);
 
-		auto& brush = GetBrush(t.GetBrushName());
-		m_2DDeviceContext->DrawTextLayout(
+		auto brush = BrushManager::GetBrush(t.GetBrush());
+		if (brush == nullptr)
+			brush = m_defualtBrush;
+
+		m_textRenderTarget->DrawTextLayout(
 			t.GetPosition(),
 			textLayout.Get(),
 			brush.Get()
@@ -115,26 +165,33 @@ void Graphics::RenderBatch_2D::Draw(const Text & t)
 	}
 }
 
-void Graphics::RenderBatch_2D::Draw(const Square & s)
+void Graphics::RenderBatch_2D::Draw(const Square & s, bool background)
 {
-	auto& bmp = GetBitmap(s.GetBrushName());
-	if (bmp)
+	BRUSH_TEXTURE_TYPE type = s.GetBrushType();
+
+	switch (type)
 	{
-		m_2DDeviceContext->DrawBitmap(bmp.Get(), s.GetRectBounds(), s.GetBitmapOpacity(),
-			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, 
-			D2D1::RectF(0.0f, 0.0f, bmp->GetSize().width, bmp->GetSize().height));
-	}
-	else
-	{
-		auto& brush = GetBrush(s.GetBrushName());
-		m_2DDeviceContext->FillRectangle(s.GetRectBounds(), brush.Get());
+	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_DEFAULT:
+		DrawRect(s, background);
+		break;
+	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE_BRUSH:
+		DrawBitmapBrush(s, background);
+		break;
+	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE:
+		DrawBitmap(s, background);
+		break;
+	default:
+		break;
 	}
 }
 
 void Graphics::RenderBatch_2D::Draw(const Line & l)
 {
-	auto& brush = GetBrush(l.GetBrushName());
-	m_2DDeviceContext->DrawLine(
+	auto brush = BrushManager::GetBrush(l.GetBrush());
+	if (brush == nullptr)
+		brush = m_defualtBrush;
+
+	m_bitmapRenderTarget->DrawLine(
 		l.GetPointOne(),
 		l.GetPointTwo(),
 		brush.Get(),
@@ -142,108 +199,57 @@ void Graphics::RenderBatch_2D::Draw(const Line & l)
 	);
 }
 
-void Graphics::RenderBatch_2D::CreateNewBrush(std::string uniqueName, glm::vec4 color, bool newColor)
+void Graphics::RenderBatch_2D::DrawBitmap(const Square & s, bool background)
 {
-	auto& found = m_solidBrushes.find(uniqueName);
-	if (found != m_solidBrushes.end())
-		found->second.Reset();
-
-	if (newColor)
-		m_brushColors[uniqueName] = color;
-
-	m_solidBrushes[uniqueName] = nullptr;
-	D2D1_COLOR_F brush;
-	brush.r = color.r;
-	brush.g = color.g;
-	brush.b = color.b;
-	brush.a = color.a;
-	ThrowIfFailed(
-		m_2DDeviceContext->CreateSolidColorBrush(
-			brush,
-			&m_solidBrushes[uniqueName]
-		)
-	);
-}
-
-void Graphics::RenderBatch_2D::DeleteBrush(std::string uniqueName)
-{
-	auto& found = m_solidBrushes.find(uniqueName);
-	if (found != m_solidBrushes.end())
-		found->second.Reset();
-
-	m_solidBrushes.erase(uniqueName);
-}
-
-void Graphics::RenderBatch_2D::DeleteImageBrush(std::string uniqueName)
-{
-	auto& found = m_bitmaps.find(uniqueName);
-	if (found != m_bitmaps.end())
-		found->second.Reset();
-
-	m_bitmaps.erase(uniqueName);
-}
-
-void Graphics::RenderBatch_2D::CreateNewImageBrush(std::string uniqueName, std::string filename, bool newBrush)
-{
-	std::wstring path = std::wstring(filename.begin(), filename.end());
-	if (newBrush)
-		m_bmpBrushInfo[uniqueName] = filename;
-
-	m_bitmaps[uniqueName] = nullptr;
-	ThrowIfFailed(
-		LoadResourceBitmapToBrush(path, m_bitmaps[uniqueName])
-	);
-
-}
-
-HRESULT Graphics::RenderBatch_2D::LoadResourceBitmapToBrush(std::wstring filename, ComPtr<ID2D1Bitmap>& bitmap)
-{
-	ComPtr<IWICBitmapDecoder> decoder;
-	ThrowIfFailed(m_wicFactory->CreateDecoderFromFilename(
-		filename.c_str(),
-		nullptr,
-		GENERIC_READ,
-		WICDecodeMetadataCacheOnDemand,
-		&decoder
-	));
-
-	ComPtr<IWICBitmapFrameDecode> frame;
-	ThrowIfFailed(decoder->GetFrame(0, &frame));
-	ThrowIfFailed(m_wicFactory->CreateFormatConverter(&m_formatConvert));
-	ThrowIfFailed(m_formatConvert->Initialize(
-		frame.Get(),
-		GUID_WICPixelFormat32bppPBGRA,
-		WICBitmapDitherTypeNone,
-		nullptr,
-		0.0f,
-		WICBitmapPaletteTypeCustom
-	));
-	ThrowIfFailed(
-		m_2DDeviceContext->CreateBitmapFromWicBitmap(m_formatConvert.Get(), NULL , &bitmap)
-	);
-
-	m_formatConvert.Reset();
-	frame.Reset();
-	decoder.Reset();
-	return S_OK;
-}
-
-Microsoft::WRL::ComPtr<ID2D1Bitmap> Graphics::RenderBatch_2D::GetBitmap(std::string uniqueName)
-{
-	auto& found = m_bitmaps.find(uniqueName);
-	if (found != m_bitmaps.end())
+	int ID = s.GetBrush();
+	auto bmp = BrushManager::GetImage(ID);
+	if (bmp != nullptr)
 	{
-		return found->second;
+		auto rect = s.GetRect();
+		auto source = s.GetSourceRect();
+		float opacity = s.GetColor().w;
+		if (!background)
+			m_bitmapRenderTarget->DrawBitmap(bmp.Get(), rect, opacity,
+				D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, source);
+
+		m_backgroundRenderTarget->DrawBitmap(bmp.Get(), rect, opacity,
+			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, source);
 	}
-	return nullptr;
+	else
+		DrawRect(s, background, true);
 }
 
-Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> Graphics::RenderBatch_2D::GetBrush(std::string uniqueName)
+void Graphics::RenderBatch_2D::DrawBitmapBrush(const Square & s, bool background)
 {
-	auto& found = m_solidBrushes.find(uniqueName);
-	if (found != m_solidBrushes.end())
+	int ID = s.GetBrush();
+	auto brush = BrushManager::GetImageBrush(ID);
+
+	if (brush != nullptr)
 	{
-		return found->second;
+		if (!background)
+			m_bitmapRenderTarget->FillRectangle(s.GetRect(), brush.Get());
+
+		m_backgroundRenderTarget->FillRectangle(s.GetRect(), brush.Get());
+
 	}
-	return m_defualtBrush;
+	else
+		DrawRect(s, background, true);
+}
+
+void Graphics::RenderBatch_2D::DrawRect(const Square & s, bool background, bool defaultBrush)
+{
+	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
+	if (!defaultBrush)
+	{
+		int ID = s.GetBrush();
+		brush = BrushManager::GetBrush(ID);
+	}
+	if (brush == nullptr)
+		brush = m_defualtBrush;
+
+	if(!background)
+		m_bitmapRenderTarget->FillRectangle(s.GetRect(), brush.Get());
+
+	m_backgroundRenderTarget->FillRectangle(s.GetRect(), brush.Get());
+		
 }

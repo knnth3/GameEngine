@@ -24,14 +24,14 @@ namespace Graphics
 		GRAPHICS_DLL_API void SetString(std::string val);
 		GRAPHICS_DLL_API void SetString(std::wstring val);
 		GRAPHICS_DLL_API void SetBounds(float width, float height);
-		GRAPHICS_DLL_API void SetBrush(std::string uniqueName);
+		GRAPHICS_DLL_API void SetBrush(int ID);
 
 		//Get
 
 		GRAPHICS_DLL_API std::string GetFormatName()const;
 		GRAPHICS_DLL_API D2D_POINT_2F GetPosition()const;
 		GRAPHICS_DLL_API glm::vec2 GetBounds()const;
-		GRAPHICS_DLL_API std::string GetBrushName()const;
+		GRAPHICS_DLL_API int GetBrush()const;
 
 		//Operator
 		GRAPHICS_DLL_API virtual void operator=(std::string str);
@@ -42,7 +42,7 @@ namespace Graphics
 		D2D_POINT_2F m_position;
 		glm::vec2 m_bounds;
 		std::string m_style;
-		std::string m_brush;
+		int m_brush;
 	};
 
 	class TextStyleLib

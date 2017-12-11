@@ -30,13 +30,13 @@
     <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-06T00:44:30.323</Modified>
+      <Modified>2017-12-08T00:41:10.024</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
       <PackagePath>TestGame_UWP.exe</PackagePath>
-      <Modified>2017-12-06T16:22:13.648</Modified>
+      <Modified>2017-12-08T03:00:45.721</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
       <PackagePath>TestGame_UWP.winmd</PackagePath>
@@ -98,11 +98,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-06T16:21:54.361</Modified>
+      <Modified>2017-12-08T02:02:06.585</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-06T16:22:02.208</Modified>
+      <Modified>2017-12-08T03:00:37.007</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
@@ -155,7 +155,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-06T00:44:30.090</Modified>
+      <Modified>2017-12-08T00:41:09.771</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

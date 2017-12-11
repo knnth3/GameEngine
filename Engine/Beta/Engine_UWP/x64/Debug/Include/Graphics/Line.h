@@ -10,7 +10,7 @@ namespace Graphics
 		GRAPHICS_DLL_API Line(D2D1_POINT_2F p1, D2D1_POINT_2F p2);
 
 		//Setters
-		GRAPHICS_DLL_API void SetBrush(std::string uniqueName);
+		GRAPHICS_DLL_API void SetBrush(int ID);
 		GRAPHICS_DLL_API void SetPointOne(D2D1_POINT_2F p1);
 		GRAPHICS_DLL_API void SetPointTwo(D2D1_POINT_2F p2);
 		GRAPHICS_DLL_API void SetPoints(D2D1_POINT_2F p1, D2D1_POINT_2F p2);
@@ -19,7 +19,7 @@ namespace Graphics
 		//Getters
 		GRAPHICS_DLL_API D2D1_POINT_2F GetPointOne()const;
 		GRAPHICS_DLL_API D2D1_POINT_2F GetPointTwo()const;
-		GRAPHICS_DLL_API std::string GetBrushName()const;
+		GRAPHICS_DLL_API int GetBrush()const;
 		GRAPHICS_DLL_API float GetStrokeWidth()const;
 
 	private:
@@ -27,7 +27,7 @@ namespace Graphics
 		D2D1_POINT_2F m_point1;
 		D2D1_POINT_2F m_point2;
 		float m_strokeWidth;
-		std::string m_brush;
+		int m_brush;
 	};
 
 

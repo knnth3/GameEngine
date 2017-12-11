@@ -4,15 +4,16 @@
 
 Graphics::Camera::Camera(CameraSettings defaultSettings)
 {
-	m_currentSettings = defaultSettings;
-	CalculateAspectRatio();
-	Create3DProjectionMatrix();
-	Create2DProjectionMatrix();
+	m_defaultSettings = defaultSettings;
+	Reset();
 }
 
 void Graphics::Camera::Reset()
 {
 	m_currentSettings = m_defaultSettings;
+	CalculateAspectRatio();
+	Create3DProjectionMatrix();
+	Create2DProjectionMatrix();
 }
 
 void Graphics::Camera::SetDefaultSettings(CameraSettings info)
@@ -279,7 +280,7 @@ Graphics::CameraSettings::CameraSettings()
 
 Graphics::ModelPos::ModelPos()
 {
-	m_position = nullptr;
+	m_position = vec3_ptr(new glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 bool Graphics::ModelPos::Empty()

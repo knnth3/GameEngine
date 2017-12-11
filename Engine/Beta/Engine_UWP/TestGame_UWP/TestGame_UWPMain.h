@@ -4,8 +4,7 @@
 #include "Common\InputController.h"
 #include <Lime_Engine\EngineApp.h>
 
-// Renders Direct2D and 3D content on the screen.
-
+// Hnadles Engine app connections to UWP app interface
 namespace TestGame_UWP
 {
 	class TestGame_UWPMain : public DX::IDeviceNotify
@@ -26,12 +25,7 @@ namespace TestGame_UWP
 	private:
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
-
-		// Rendering loop timer.
 		std::shared_ptr<LIME_ENGINE::StepTimer> m_timer;
-
-		//Render Objects
-		Graphics::Text m_str;
 		std::unique_ptr<LIME_ENGINE::EngineApp> m_engineApp;
 		InputController^ m_controller;
 	};
