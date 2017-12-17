@@ -5,16 +5,10 @@
 //Everything that wants to be represented graphicsally
 // will inherit as an actor
 
+//Common Game Defines
 #define BLOCK_WIDTH 64.0f
 #define BLOCK_HEIGHT 64.0f
-
-enum ACTOR_LOOK_DIRECTION
-{
-	ACTOR_LOOK_DOWN,
-	ACTOR_LOOK_LEFT,
-	ACTOR_LOOK_RIGHT,
-	ACTOR_LOOK_UP
-};
+#define ANIM_DURATION 0.15
 
 
 class Actor
@@ -23,38 +17,42 @@ public:
 	Actor();
 	Actor(std::string name);
 
-	void Update();
+	virtual void Update()final;
+	virtual void SetName(std::string name)final;
+	virtual void SetDestination(glm::vec2 pos)final;
+	virtual void SetPosition(glm::vec2 pos)final;
+	virtual void SetPosition(float width, float height)final;
+	virtual void SetBrush(int ID, Graphics::BRUSH_TEXTURE_TYPE type)final;
+	virtual void SetImageAtlasDivisons(int x, int y)final;
+	virtual void SetImageAtlasPosition(int x, int y)final;
+	virtual void SetDimensions(float x, float y)final;
+	virtual void SetMoveInstructions(NodePositions positions)final;
+	virtual void SetPassableState(bool val);
 
-	void SetName(std::string name);
-	void SetDestination(glm::vec2 pos);
-	void SetPosition(glm::vec2 pos);
-	void SetPosition(float width, float height);
-	void SetBrush(int ID, Graphics::BRUSH_TEXTURE_TYPE type);
-	void SetImageAtlasDivisons(int x, int y);
-	void SetImageAtlasPosition(int x, int y);
-	void SetDimensions(float x, float y);
-	void SetMoveInstructions(NodePositions positions);
+	virtual std::string GetName()const final;
+	virtual glm::vec2 GetPosition()const final;
+	virtual glm::vec2 GetDestination()const final;
+	virtual glm::vec2 GetModelPosition()const final;
+	virtual const Graphics::Square& Get()const final;
+	virtual bool IsPassable()const final;
 
-	std::string GetName()const;
-	glm::vec2 GetPosition()const;
-	glm::vec2 GetModelPosition()const;
-	bool IsMoving()const;
-	const Graphics::Square& Get()const;
-	void GetDirection();
-
-
+protected:
+	virtual void Animate() = 0;
+	virtual bool IsMoving()const final;
+	virtual glm::vec2 GridToWorld(Vector2<float> pos)final;
+	virtual glm::vec2 GridToWorld(glm::vec2 pos)final;
+	virtual Vector2<int> GetImageAtlasDivisons()const final;
+	virtual Vector2<int> GetImageAtlasPosition()const final;
+	virtual float GetHeightOffset()const final;
+	virtual void SetHeightOffset(float offset);
 
 private:
-	
-	void SetMoveAnimation(int index);
-	void SetRestAnimation(int index);
-	glm::vec2 GridToWorld(Vector2<float> pos);
-	glm::vec2 GridToWorld(glm::vec2 pos);
-	void Animate();
+	void Move();
 
-	ACTOR_LOOK_DIRECTION m_lookDir;
 	bool m_bNewCommands;
 	bool m_bisMoving;
+	bool m_bPassable;
+	float m_heightOffset;
 	std::vector<Vector2<int>> m_animList;
 	NodePositions m_moves;
 	std::string m_name;

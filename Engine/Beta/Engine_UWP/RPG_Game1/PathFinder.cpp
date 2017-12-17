@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PathFinder.h"
-
+#include <Lime_Engine\EngineResources.h>
 
 
 template<typename T>
@@ -46,6 +46,7 @@ bool PathFinder::FindPath(NodePositions& path)
 		if (currentNode == m_end)
 		{
 			//Finished
+
 			Retrace(currentNode, path);
 			Close();
 			return true;

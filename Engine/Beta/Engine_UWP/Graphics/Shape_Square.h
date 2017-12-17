@@ -22,8 +22,12 @@ namespace Graphics
 		GRAPHICS_DLL_API BRUSH_TEXTURE_TYPE GetBrushType()const;
 		GRAPHICS_DLL_API glm::vec4 GetColor()const;
 		GRAPHICS_DLL_API D2D1_RECT_F GetSourceRect()const;
-		GRAPHICS_DLL_API float GetImageAtlasDivisonWidth()const;
-		GRAPHICS_DLL_API float GetImageAtlasDivisonHeight()const;
+		GRAPHICS_DLL_API float GetImageDivisionWidth()const;
+		GRAPHICS_DLL_API float GetImageDivisionHeight()const;
+		GRAPHICS_DLL_API int GetImageAtlasDivisionWidth()const;
+		GRAPHICS_DLL_API int GetImageAtlasDivisionHeight()const;
+		GRAPHICS_DLL_API int GetImageAtlasPositionX()const;
+		GRAPHICS_DLL_API int GetImageAtlasPositionY()const;
 
 		//Set
 		GRAPHICS_DLL_API void SetColor(glm::vec4 color);

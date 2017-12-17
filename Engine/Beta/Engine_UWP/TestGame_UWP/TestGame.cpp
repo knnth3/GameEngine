@@ -12,25 +12,10 @@ using namespace Graphics;
 
 TestGame::TestGame(std::shared_ptr<Graphics::GraphicsDevice>& graphicsDevice,
 	std::shared_ptr<InputManager>& inputManager,
-	std::shared_ptr<LIME_ENGINE::StepTimer>& timer):
-	EngineApp(graphicsDevice, inputManager, timer, 800.0f, 600.0f)
+	std::shared_ptr<LIME_ENGINE::StepTimer>& timer)
 {
+	SetDefaultDimensions(832.0f, 640.0f);
 	this->SetClearColor(0.2f, 0.2f, 0.2f);
-}
-
-void TestGame::OnInitialize()
-{
-	MeshID id = MeshLoader::LoadModel("Assets/Models/Sphere_smooth.obj");
-	m_model2.SetMesh(id);
-	m_model2.Scale(50.0f, 50.0f, 50.0f);
-	m_model.Scale(100.0f, 100.0f, 100.0f);
-	m_line.SetPointOne({ 0.0f, 0.0f });
-	m_line.SetPointTwo({300.0f, 300.0f});
-	EngineResources::GetGraphicsDevice()->GetCamera()->AttachToModel(m_model);
-	EngineResources::GetConsole()->SetToggleButton(192);
-	EngineResources::GetConsole()->Log(L"Hello!");
-	EngineResources::GetConsole()->Log(L"How are you?");
-	//this->GetGraphicsDevice()->Wireframe(true);
 }
 
 void TestGame::OnUpdate()
@@ -63,30 +48,25 @@ void TestGame::OnRender()
 	graphics->Draw(m_model2);
 }
 
-void TestGame::OnActivated()
+void TestGame::OnResume()
 {
+	MeshID id = MeshLoader::LoadModel("Assets/Models/Sphere_smooth.obj");
+	m_model2.SetMesh(id);
+	m_model2.Scale(50.0f, 50.0f, 50.0f);
+	m_model.Scale(100.0f, 100.0f, 100.0f);
+	m_line.SetPointOne({ 0.0f, 0.0f });
+	m_line.SetPointTwo({ 300.0f, 300.0f });
+	EngineResources::GetGraphicsDevice()->GetCamera()->AttachToModel(m_model);
+	EngineResources::GetConsole()->SetToggleButton(192);
+	EngineResources::GetConsole()->Log(L"Hello!");
+	EngineResources::GetConsole()->Log(L"How are you?");
+	//this->GetGraphicsDevice()->Wireframe(true);
 }
 
-void TestGame::OnDeactivated()
-{
-}
-
-void TestGame::OnSuspending()
-{
-}
-
-void TestGame::OnResuming()
-{
-}
-
-void TestGame::OnWindowMoved()
+void TestGame::OnSuspend()
 {
 }
 
 void TestGame::OnWindowSizeChanged()
-{
-}
-
-void TestGame::OnShutdown()
 {
 }

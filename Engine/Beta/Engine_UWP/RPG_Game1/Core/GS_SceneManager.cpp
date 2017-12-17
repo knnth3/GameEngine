@@ -30,7 +30,7 @@ void GameStates::SceneManager::CreateDeviceDependentResources()
 	m_ground.SetBrush(brush, BRUSH_TEXTURE_IMAGE_BRUSH);
 
 	m_effect = make_shared<Effects::SpotLightDiffuse>();
-	BrushManager::AddEffect(m_effect);
+	//BrushManager::AddEffect(m_effect);
 
 	LoadScene();
 	BeginNewScene();
@@ -40,7 +40,7 @@ void GameStates::SceneManager::CreateDeviceDependentResources()
 void GameStates::SceneManager::Close()
 {
 	ShutDownScene();
-	BrushManager::ClearEffect();
+	//BrushManager::ClearEffect();
 }
 
 void GameStates::SceneManager::Draw()
@@ -48,18 +48,21 @@ void GameStates::SceneManager::Draw()
 	auto graphics = EngineResources::GetGraphicsDevice();
 	graphics->Draw(m_ground, true);
 
+	for (auto& line : m_pathLines)
+		graphics->Draw(line);
+
 	for(auto& actor : m_actors)
 		graphics->Draw(actor.Get());
 
-	for (auto& line : m_pathLines)
-		graphics->Draw(line);
+	for (auto& item : m_items)
+		graphics->Draw(item.Get());
 }
 
 GameStates::States GameStates::SceneManager::Update()
 {
 	static int lineBrush = BrushManager::CreateNewBrush(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	m_actors[0].Update();
-	m_actors[0].GetDirection();
+	m_items[0].Update();
 	UpdateLighting();
 	auto input = EngineResources::GetInputManager();
 	auto timer = EngineResources::GetTimer();
@@ -131,20 +134,29 @@ bool GameStates::SceneManager::LoadScene()
 	if (!err.empty())
 		EngineResources::GetConsole()->Log(err);
 
-	Actor a;
+	Character a;
 	a.SetPosition(3.0f, 5.0f);
 	a.SetDimensions(48.0f, 72.0f);
 	a.SetBrush(bg, BRUSH_TEXTURE_IMAGE);
 	a.SetImageAtlasDivisons(8, 4);
 	m_actors.push_back(a);
 
-	Actor b;
+	Character b;
 	b.SetPosition(4.0f, 5.0f);
 	b.SetDimensions(64.0f, 64.0f);
 	b.SetBrush(m_spriteSheetID, BRUSH_TEXTURE_IMAGE);
 	b.SetImageAtlasPosition(1, 1);
 	b.SetImageAtlasDivisons(64, 95);
 	m_actors.push_back(b);
+
+	Item i;
+	i.SetPosition(5.0f, 5.0f);
+	i.SetDimensions(64.0f, 64.0f);
+	i.SetBrush(m_spriteSheetID, BRUSH_TEXTURE_IMAGE);
+	i.SetImageAtlasPosition(6, 26);
+	i.SetImageAtlasDivisons(64, 95);
+	m_items.push_back(i);
+
 	return true;
 }
 

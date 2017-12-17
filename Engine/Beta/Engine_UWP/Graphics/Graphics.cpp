@@ -2,6 +2,7 @@
 #include "RenderBatch.h"
 #include <Graphics\TextureLoader.h>
 
+#define ENABLE_3D_RENDERING true
 
 Graphics::GraphicsDevice::GraphicsDevice()
 {
@@ -15,8 +16,16 @@ Graphics::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 
 void Graphics::GraphicsDevice::BeginScene(float r, float g, float b)
 {
+	float alpha = 1.0f;
 	m_renderBatch_2D->BeginScene();
-	m_renderBatch_2D->ClearScreen(r, g, b);
+
+	if (ENABLE_3D_RENDERING)
+	{
+		ClearScreen(r, g, b);
+		alpha = 0.0f;
+	}
+
+	m_renderBatch_2D->ClearScreen(r, g, b, alpha);
 }
 
 bool Graphics::GraphicsDevice::Initialize(
@@ -26,16 +35,20 @@ bool Graphics::GraphicsDevice::Initialize(
 {
 	TextStyleLib::Initialize(writeFactory);
 	bool result = false;
-	//m_constBuffer = std::shared_ptr<DX11ConstantBuffer>(new DX11ConstantBuffer(device_3D, context_3D));
-	//m_bufferManager = std::shared_ptr<DX11BufferManager>(new DX11BufferManager(device_3D, context_3D, m_constBuffer));
-	//m_shaderManager = std::shared_ptr<DX11ShaderManager>(new DX11ShaderManager(device_3D, context_3D));
-	//m_RSSManager = std::shared_ptr<DX11RasterStateManager>(new DX11RasterStateManager(device_3D, context_3D));
-	//m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(m_bufferManager, m_shaderManager, m_RSSManager));
-	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, deviceContext_2D, wicFactory));
+	if (ENABLE_3D_RENDERING)
+	{
+		m_constBuffer = std::shared_ptr<DX11ConstantBuffer>(new DX11ConstantBuffer(device_3D, context_3D));
+		m_bufferManager = std::shared_ptr<DX11BufferManager>(new DX11BufferManager(device_3D, context_3D, m_constBuffer));
+		m_shaderManager = std::shared_ptr<DX11ShaderManager>(new DX11ShaderManager(device_3D, context_3D));
+		m_RSSManager = std::shared_ptr<DX11RasterStateManager>(new DX11RasterStateManager(device_3D, context_3D));
+		m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(m_bufferManager, m_shaderManager, m_RSSManager));
 
-	//result = m_renderBatch->Initialize(m_camera);
-	//if (result)
-	//	result = TextureLoader::Initialize(device_3D, context_3D);
+		result = m_renderBatch->Initialize(m_camera);
+		if (result)
+			result = TextureLoader::Initialize(device_3D, context_3D);
+	}
+
+	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, deviceContext_2D, wicFactory));
 
 	m_renderBatch_2D->Initialize();
 	return result;
@@ -55,7 +68,9 @@ void Graphics::GraphicsDevice::Close()
 
 void Graphics::GraphicsDevice::EndScene()
 {
-	//m_renderBatch->Draw();
+	if(ENABLE_3D_RENDERING)
+		m_renderBatch->Draw();
+
 	m_renderBatch_2D->EndScene();
 }
 
@@ -70,7 +85,8 @@ void Graphics::GraphicsDevice::GetVideoCardInfo(std::string& name, int& memory)
 
 void Graphics::GraphicsDevice::Draw(Model& model)
 {
-	//m_renderBatch->AddModel(model);
+	if(ENABLE_3D_RENDERING)
+		m_renderBatch->AddModel(model);
 }
 
 void Graphics::GraphicsDevice::Draw(const Text & str)
@@ -106,11 +122,15 @@ void Graphics::GraphicsDevice::GetWindowDimensions(float & x, float & y)
 
 void Graphics::GraphicsDevice::Wireframe(bool val)
 {
-	//m_renderBatch->Wireframe(val);
+	if(ENABLE_3D_RENDERING)
+		m_renderBatch->Wireframe(val);
 }
 
 void Graphics::GraphicsDevice::Reset()
 {
-	//m_renderBatch->Reset();
-	//m_camera->Reset();
+	if (ENABLE_3D_RENDERING)
+	{
+		m_renderBatch->Reset();
+		m_camera->Reset();
+	}
 }

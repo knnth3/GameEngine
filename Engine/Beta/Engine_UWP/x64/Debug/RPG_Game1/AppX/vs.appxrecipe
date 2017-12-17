@@ -30,13 +30,13 @@
     <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-11T06:07:18.332</Modified>
+      <Modified>2017-12-15T06:36:50.191</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.exe">
       <PackagePath>RPG_Game1.exe</PackagePath>
-      <Modified>2017-12-11T06:11:33.741</Modified>
+      <Modified>2017-12-17T02:07:30.650</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.winmd">
       <PackagePath>RPG_Game1.winmd</PackagePath>
@@ -146,11 +146,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-11T00:00:42.926</Modified>
+      <Modified>2017-12-17T02:06:01.346</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-10T22:34:00.768</Modified>
+      <Modified>2017-12-15T07:26:41.145</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Populace\Populace.dll">
       <PackagePath>Populace.dll</PackagePath>
@@ -176,13 +176,17 @@
       <PackagePath>Assets\Models\person.obj</PackagePath>
       <Modified>2017-12-09T00:19:20.234</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\game_piece.obj">
+      <PackagePath>Assets\Models\game_piece.obj</PackagePath>
+      <Modified>2017-12-14T00:51:40.504</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>
       <Modified>2017-11-21T23:16:48.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\3D Shader.hlsl">
       <PackagePath>Assets\Shaders\3D Shader.hlsl</PackagePath>
-      <Modified>2017-12-04T15:54:23.497</Modified>
+      <Modified>2017-12-14T02:44:51.180</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.16299.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -191,7 +195,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-11T06:07:18.098</Modified>
+      <Modified>2017-12-15T06:36:49.932</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

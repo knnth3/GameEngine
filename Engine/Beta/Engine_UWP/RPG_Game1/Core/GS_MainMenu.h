@@ -29,6 +29,7 @@ namespace GameStates
 		Graphics::Text m_mouseCoords;
 		Button m_b1;
 		Button m_b2;
+		Button m_b3;
 	};
 
 }

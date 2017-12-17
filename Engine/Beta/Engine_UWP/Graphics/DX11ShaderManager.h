@@ -1,5 +1,6 @@
 #pragma once
 #include "DX11Shader.h"
+#include <wrl.h>
 
 
 namespace Graphics
@@ -14,11 +15,13 @@ namespace Graphics
 		void DeleteShader(std::string uniqueName);
 		bool SetActive(std::string uniqueName);
 	private:
+		bool CreateBlendState();
 
 		std::string m_active;
 		std::map<std::string, std::unique_ptr<DX11Shader>> m_shaders;
 		ID3D11Device3* m_device;
 		ID3D11DeviceContext3* m_context;
+		Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;
 	};
 }
 

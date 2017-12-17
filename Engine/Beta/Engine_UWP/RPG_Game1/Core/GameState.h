@@ -15,9 +15,10 @@ namespace GameStates
 	enum States
 	{
 		RUNNING = 0,
-		MAIN_MENU = 1,
-		MAP_EDITOR = 2,
-		SCENE_MANAGER = 3,
+		MAIN_MENU,
+		MAP_EDITOR,
+		SCENE_MANAGER,
+		TESTING_REALM
 	};
 }
 

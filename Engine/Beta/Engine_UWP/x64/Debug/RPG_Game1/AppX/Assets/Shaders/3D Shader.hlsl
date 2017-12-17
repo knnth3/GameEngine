@@ -142,7 +142,7 @@ PS_GBUFFER_OUT PackGBuffer(Material mat)
 float4 psMain(VSOutput input) : SV_TARGET
 {
 	float4 tex = ObjTexture[0].Sample(ObjSamplerState, input.uv);
-	tex.w = 1.0f;
+	//tex.w = 1.0f;
 	float3 lightPos = float3(0.0f, 500.0f, 0.0f);
 	float3 lightVec = normalize(lightPos - input.worldPos);
 	float brightness = saturate(dot(input.normal, lightVec));

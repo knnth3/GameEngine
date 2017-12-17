@@ -6,6 +6,7 @@
 #include "Core\GS_MainMenu.h"
 #include "Core\GS_MapEditor.h"
 #include "Core\GS_SceneManager.h"
+#include "GS_TestingRealm.h"
 
 using namespace LIME_ENGINE;
 using namespace Windows::System;
@@ -79,6 +80,16 @@ void RPG_Game_App::SwitchStates(GameStates::States state)
 		{
 			InitializeNewState(newState);
 			m_currentState = SCENE_MANAGER;
+		}
+	}
+	break;
+	case GameStates::TESTING_REALM:
+	{
+		std::unique_ptr<GameState> newState = std::unique_ptr<TestingRealm>(new TestingRealm());
+		if (newState->CreateDeviceIndependentResources())
+		{
+			InitializeNewState(newState);
+			m_currentState = TESTING_REALM;
 		}
 	}
 	break;

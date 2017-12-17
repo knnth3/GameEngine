@@ -66,9 +66,9 @@ void Graphics::RenderBatch_2D::BeginScene()
 	m_bitmapRenderTarget->BeginDraw();
 }
 
-void Graphics::RenderBatch_2D::ClearScreen(float r, float g, float b)
+void Graphics::RenderBatch_2D::ClearScreen(float r, float g, float b, float a)
 {
-	m_backgroundRenderTarget->Clear(D2D1::ColorF(r, g, b));
+	m_backgroundRenderTarget->Clear(D2D1::ColorF(r, g, b, a));
 	m_bitmapRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
 	m_textRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
 }

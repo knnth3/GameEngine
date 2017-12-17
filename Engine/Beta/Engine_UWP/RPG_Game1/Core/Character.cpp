@@ -1,72 +1,93 @@
 #include "pch.h"
 #include "Character.h"
-#include "Shared.h"
+#include <Lime_Engine\EngineResources.h>
 
-using namespace Lime;
+using namespace Graphics;
+using namespace LIME_ENGINE;
 
-Character::Character(Character_Info info)
+Character::Character()
 {
-	m_info = info;
+	m_lookDir = ACTOR_LOOK_DOWN;
+	SetHeightOffset(-BLOCK_HEIGHT * 0.25f);
 }
 
-void Character::SetModel(MeshID id, shared_ptr<RenderBatch>& rend, shared_ptr<Camera>& camera)
+Character::~Character()
 {
-	m_model = std::make_shared<Model3D>(id);
-	rend->Add3DModel(m_model);
-	camera->AttachToModel(m_model);
 }
 
-void Character::Update(float time)
+void Character::SetMoveAnimation(int index)
 {
-	this->MovePlayer(time);
-	m_model->SetPosition(m_info.position);
-}
-
-void Character::Draw()
-{
-	this->DrawModel();
-}
-
-void Character::SetLocation(glm::vec3 position)
-{
-	m_info.position = position;
-	m_info.destination = position;
-	m_info.isMoving = false;
-}
-
-void Character::SetDestination(glm::vec3 position)
-{
-	m_info.destination = position;
-	m_info.isMoving = true;
-}
-
-void Character::MovePlayer(float time)
-{
-	if (m_info.isMoving)
+	glm::vec2 position = GetPosition();
+	glm::vec2 destination = GetDestination();
+	glm::vec2 direction = glm::normalize(destination - position);
+	if (direction.y < 0)
 	{
-		glm::vec3 direction = m_info.destination - m_info.position;
-		float distance = glm::length(direction);
-		float moveDist = m_info.move_speed * time;
-		if (distance >= moveDist)
-		{
-			m_info.position += (glm::normalize(direction) * moveDist);
-		}
-		else
-		{
-			m_info.isMoving = false;
-			m_info.position = m_info.destination;
-		}
+		m_lookDir = ACTOR_LOOK_UP;
+		SetImageAtlasPosition(index, 1);
+	}
+	else if (direction.y > 0)
+	{
+		m_lookDir = ACTOR_LOOK_DOWN;
+		SetImageAtlasPosition(index, 0);
+	}
+	else if (direction.x > 0)
+	{
+		m_lookDir = ACTOR_LOOK_RIGHT;
+		SetImageAtlasPosition(index, 3);
+	}
+	else if (direction.x < 0)
+	{
+		m_lookDir = ACTOR_LOOK_LEFT;
+		SetImageAtlasPosition(index, 2);
 	}
 }
 
-Character_Info::Character_Info()
+void Character::SetRestAnimation(int index)
 {
-	isMoving = false;
-	move_speed = 5.0f * METER;
-	current_health = 100;
-	max_health = 100;
-	character_name = "None";
-	player_name = "None";
-	position = {0.0f};
-	destination = {0.0f};
+	switch (m_lookDir)
+	{
+	case ACTOR_LOOK_DOWN:
+		SetImageAtlasPosition(index, 0);
+		break;
+	case ACTOR_LOOK_LEFT:
+		SetImageAtlasPosition(index, 2);
+		break;
+	case ACTOR_LOOK_RIGHT:
+		SetImageAtlasPosition(index, 3);
+		break;
+	case ACTOR_LOOK_UP:
+		SetImageAtlasPosition(index, 1);
+		break;
+	default:
+		break;
+	}
+}
+
+void Character::Animate()
+{
+	double deltatime = EngineResources::GetTimer()->GetElapsedSeconds();
+	static int frame = 0;
+	static double totalTime = deltatime;
+	static bool bEnteredRest = false;
+	if (IsMoving())
+	{
+		if (totalTime > ANIM_DURATION)
+		{
+			frame++;
+			frame = frame % 8;
+			totalTime = 0.0;
+			SetMoveAnimation(frame);
+		}
+		bEnteredRest = false;
+	}
+	else
+	{
+		if (!bEnteredRest && totalTime > ANIM_DURATION)
+		{
+			totalTime = 0.0;
+			SetRestAnimation(0);
+			bEnteredRest = true;
+		}
+	}
+	totalTime += deltatime;
 }

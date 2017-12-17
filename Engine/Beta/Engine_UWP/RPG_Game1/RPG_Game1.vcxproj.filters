@@ -92,6 +92,15 @@
     <Filter Include="Assets\Textures\Tileset">
       <UniqueIdentifier>{2f6b6b42-a626-4ef5-8df8-8fbfdb65bb13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Testing Realm">
+      <UniqueIdentifier>{4f3b456d-1d4c-4f2b-8b19-ef651a481b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Actor\Character">
+      <UniqueIdentifier>{facbb5f9-ace1-441f-8d6b-d5793605b771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Actor\Item">
+      <UniqueIdentifier>{c1da0e87-898e-4301-9224-7b1fb7842eff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -125,6 +134,15 @@
     </ClCompile>
     <ClCompile Include="PathFinder.cpp">
       <Filter>Core\PathFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="GS_TestingRealm.cpp">
+      <Filter>Core\Testing Realm</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Character.cpp">
+      <Filter>Core\Actor\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Core\Actor\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +180,15 @@
     </ClInclude>
     <ClInclude Include="PathFinder.h">
       <Filter>Core\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="GS_TestingRealm.h">
+      <Filter>Core\Testing Realm</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Character.h">
+      <Filter>Core\Actor\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Core\Actor\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +278,9 @@
     </None>
     <None Include="Assets\textures\Basic_Character\rpg_sprite_walk.png">
       <Filter>Assets\Textures\Basic_Character</Filter>
+    </None>
+    <None Include="Assets\Models\game_piece.obj">
+      <Filter>Assets\Models</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

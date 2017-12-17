@@ -64,8 +64,8 @@ glm::vec4 Graphics::Square::GetColor() const
 D2D1_RECT_F Graphics::Square::GetSourceRect() const
 {
 	D2D1_RECT_F r;
-	float newWidth = GetImageAtlasDivisonWidth();
-	float newHeight = GetImageAtlasDivisonHeight();
+	float newWidth = GetImageDivisionWidth();
+	float newHeight = GetImageDivisionHeight();
 
 	r.left = (m_atlasPosX * newWidth);
 	r.top = (m_atlasPosY * newHeight);
@@ -74,14 +74,34 @@ D2D1_RECT_F Graphics::Square::GetSourceRect() const
 	return r;
 }
 
-float Graphics::Square::GetImageAtlasDivisonWidth()const
+float Graphics::Square::GetImageDivisionWidth()const
 {
 	return (m_imageWidth / m_atlasDivsX);
 }
 
-float Graphics::Square::GetImageAtlasDivisonHeight()const
+float Graphics::Square::GetImageDivisionHeight()const
 {
 	return (m_imageHeight / m_atlasDivsY);
+}
+
+int Graphics::Square::GetImageAtlasDivisionWidth() const
+{
+	return m_atlasDivsX;
+}
+
+int Graphics::Square::GetImageAtlasDivisionHeight() const
+{
+	return m_atlasDivsY;
+}
+
+int Graphics::Square::GetImageAtlasPositionX() const
+{
+	return m_atlasPosX;
+}
+
+int Graphics::Square::GetImageAtlasPositionY() const
+{
+	return m_atlasPosY;
 }
 
 void Graphics::Square::SetColor(glm::vec4 color)

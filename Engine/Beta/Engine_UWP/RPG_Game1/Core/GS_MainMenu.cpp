@@ -13,6 +13,7 @@ bool GameStates::MainMenu::CreateDeviceIndependentResources()
 {
 	m_b1 = Button(100.0f, 30.0f, 100.0f, 100.0f);
 	m_b2 = Button(100.0f, 30.0f, 100.0f, 140.0f);
+	m_b3 = Button(100.0f, 30.0f, 100.0f, 180.0f);
 	return true;
 }
 
@@ -41,12 +42,15 @@ GameStates::States GameStates::MainMenu::Update()
 	bool bLMBPressed = input->LMBPressed();
 	m_b1.Update(bLMBPressed);
 	m_b2.Update(bLMBPressed);
+	m_b3.Update(bLMBPressed);
 	m_mouseCoords = "x = " + to_string(mousePos.x) + ", y = " + to_string(mousePos.y);
 	//If the button is clicked, load the map editor
 	if (m_b1.IsClicked())
 		return States::MAP_EDITOR;
 	else if (m_b2.IsClicked())
 		return States::SCENE_MANAGER;
+	else if (m_b3.IsClicked())
+		return States::TESTING_REALM;
 	else
 		return States::RUNNING;
 }
@@ -75,5 +79,6 @@ void GameStates::MainMenu::Draw()
 	graphics->Draw(m_background);
 	graphics->Draw(m_b1);
 	graphics->Draw(m_b2);
+	graphics->Draw(m_b3);
 	graphics->Draw(m_mouseCoords);
 }

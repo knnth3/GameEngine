@@ -1,38 +1,27 @@
 #pragma once
-#include "Entity.h"
-#include <Lime\RenderBatch.h>
+#include "Actor.h"
 
-
-struct Character_Info
+enum CHAR_LOOK_DIRECTION
 {
-	Character_Info();
-	bool isMoving;
-	int current_health;
-	int max_health;
-	float move_speed;
-	string character_name;
-	string player_name;
-	glm::vec3 position;
-	glm::vec3 destination;
+	ACTOR_LOOK_DOWN,
+	ACTOR_LOOK_LEFT,
+	ACTOR_LOOK_RIGHT,
+	ACTOR_LOOK_UP
 };
 
+
 class Character:
-	public Entity
+	public Actor
 {
 public:
-	Character(Character_Info info);
-	void SetModel(MeshID id, shared_ptr<Lime::RenderBatch>& rend, shared_ptr<Lime::Camera>& camera);
-
-	void Update(float time);
-	void Draw();
-	void SetLocation(glm::vec3 position);
-	void SetDestination(glm::vec3 position);
+	Character();
+	~Character();
 
 private:
-	void MovePlayer(float time);
+	void SetMoveAnimation(int index);
+	void SetRestAnimation(int index);
+	virtual void Animate()override;
 
-
-	Character_Info m_info;
-
+	CHAR_LOOK_DIRECTION m_lookDir;
 };
 

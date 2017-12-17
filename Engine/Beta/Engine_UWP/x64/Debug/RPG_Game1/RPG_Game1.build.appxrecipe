@@ -133,6 +133,9 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\person.obj">
       <PackagePath>Assets\Models\person.obj</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\game_piece.obj">
+      <PackagePath>Assets\Models\game_piece.obj</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>
     </AppxPackagedFile>

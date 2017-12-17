@@ -270,11 +270,14 @@
     <ClInclude Include="Common\DeviceResources.h" />
     <ClInclude Include="Common\UWP_InputControlls.h" />
     <ClInclude Include="Core\Button.h" />
+    <ClInclude Include="Core\Character.h" />
     <ClInclude Include="Core\GameState.h" />
     <ClInclude Include="Core\GS_MainMenu.h" />
     <ClInclude Include="Core\GS_MapEditor.h" />
     <ClInclude Include="Core\GS_SceneManager.h" />
     <ClInclude Include="Effects\SpotLightDiffuse.h" />
+    <ClInclude Include="GS_TestingRealm.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="RPG_Game1Main.h" />
     <ClInclude Include="Common\DirectXHelper.h" />
@@ -287,10 +290,13 @@
     <ClCompile Include="Common\DeviceResources.cpp" />
     <ClCompile Include="Common\UWP_InputControlls.cpp" />
     <ClCompile Include="Core\Button.cpp" />
+    <ClCompile Include="Core\Character.cpp" />
     <ClCompile Include="Core\GS_MainMenu.cpp" />
     <ClCompile Include="Core\GS_MapEditor.cpp" />
     <ClCompile Include="Core\GS_SceneManager.cpp" />
     <ClCompile Include="Effects\SpotLightDiffuse.cpp" />
+    <ClCompile Include="GS_TestingRealm.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="RPG_Game1Main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -359,6 +365,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Models\person.obj">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\game_piece.obj">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>

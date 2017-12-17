@@ -9,17 +9,12 @@ public:
 		std::shared_ptr<LIME_ENGINE::InputManager>& inputManager,
 		std::shared_ptr<LIME_ENGINE::StepTimer>& timer);
 
-	//Virtual
-	virtual void OnInitialize()override;
+	//Required
 	virtual void OnUpdate()override;
 	virtual void OnRender()override;
-	virtual void OnActivated()override;
-	virtual void OnDeactivated()override;
-	virtual void OnSuspending()override;
-	virtual void OnResuming()override;
-	virtual void OnWindowMoved()override;
+	virtual void OnResume()override;
+	virtual void OnSuspend()override;
 	virtual void OnWindowSizeChanged()override;
-	virtual void OnShutdown()override;
 
 private:
 

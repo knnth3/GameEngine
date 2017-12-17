@@ -27,7 +27,10 @@ TestGame_UWPMain::TestGame_UWPMain(const std::shared_ptr<DX::DeviceResources>& d
 	std::shared_ptr<GraphicsDevice> m_graphics = m_deviceResources;
 	m_timer = std::shared_ptr<StepTimer>(new StepTimer());
 	m_engineApp = std::make_unique<TestGame>(m_graphics, m_controller->GetManager(), m_timer);
-	m_engineApp->Initialize();
+	m_engineApp->RegisterGraphicsDevice(m_graphics);
+	m_engineApp->RegisterInputManager(m_controller->GetManager());
+	m_engineApp->RegisterTimer(m_timer);
+	m_engineApp->Resume();
 
 	//Set Default window Dimensions
 	float defaultWidth, defaultHeight;
@@ -95,7 +98,6 @@ void TestGame_UWPMain::OnDeviceLost()
 {
 	//Close here
 	m_deviceResources->ReleaseDeviceDependentResources();
-	m_engineApp->OnSuspending();
 }
 
 // Notifies renderers that device resources may now be recreated.
@@ -103,5 +105,4 @@ void TestGame_UWPMain::OnDeviceRestored()
 {
 	m_deviceResources->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
-	m_engineApp->OnResuming();
 }

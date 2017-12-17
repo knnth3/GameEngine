@@ -30,17 +30,17 @@
     <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-08T00:41:10.024</Modified>
+      <Modified>2017-12-14T00:06:19.039</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.exe">
       <PackagePath>TestGame_UWP.exe</PackagePath>
-      <Modified>2017-12-08T03:00:45.721</Modified>
+      <Modified>2017-12-14T00:23:53.267</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP.winmd">
       <PackagePath>TestGame_UWP.winmd</PackagePath>
-      <Modified>2017-12-05T14:42:51.302</Modified>
+      <Modified>2017-12-14T00:06:17.781</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
@@ -98,11 +98,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-08T02:02:06.585</Modified>
+      <Modified>2017-12-14T00:23:16.194</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-08T03:00:37.007</Modified>
+      <Modified>2017-12-14T00:23:41.017</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\TestGame_UWP\Assets\textures\bg1.dds">
       <PackagePath>Assets\textures\bg1.dds</PackagePath>
@@ -155,7 +155,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-08T00:41:09.771</Modified>
+      <Modified>2017-12-14T00:06:18.809</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@ namespace Graphics
 		GRAPHICS_DLL_API void ReleaseDeviceDependentResources();
 		GRAPHICS_DLL_API void SetDimensions(float width, float height);
 		GRAPHICS_DLL_API void BeginScene();
-		GRAPHICS_DLL_API void ClearScreen(float r, float g, float b);
+		GRAPHICS_DLL_API void ClearScreen(float r, float g, float b, float a = 1.0f);
 		GRAPHICS_DLL_API void EndScene();
 		GRAPHICS_DLL_API void Draw(const Text& t);
 		GRAPHICS_DLL_API void Draw(const Square& s, bool background = false);
