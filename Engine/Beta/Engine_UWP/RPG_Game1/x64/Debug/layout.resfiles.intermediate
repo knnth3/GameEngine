@@ -1,10 +1,7 @@
 Assets\LockScreenLogo.scale-200.png
-Assets\Models\Cube.obj
-Assets\Models\game_piece.obj
-Assets\Models\person.obj
-Assets\Models\Plane.obj
-Assets\Models\Sphere.obj
-Assets\Models\Sphere_smooth.obj
+Assets\Models\Cube.bin
+Assets\Models\Plane.bin
+Assets\Models\stick_figure.bin
 Assets\Shaders\2D Shader.hlsl
 Assets\Shaders\3D Shader.hlsl
 Assets\SplashScreen.scale-200.png
@@ -21,6 +18,7 @@ Assets\textures\Default\metallic.png
 Assets\textures\Default\normal.png
 Assets\textures\Default\roughness.png
 Assets\textures\grass.jpg
+Assets\textures\grid_tile.png
 Assets\textures\heightmap.png
 Assets\textures\heightmap2.png
 Assets\textures\heightmap3.png

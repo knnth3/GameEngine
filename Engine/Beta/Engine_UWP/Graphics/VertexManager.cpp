@@ -77,20 +77,25 @@ void Graphics::VertexManager::CreateNewBatch(MeshID mesh, TextureID texture, Dra
 {
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;
+	std::vector<Index> newIndices;
 	MeshLoader::GrabMeshData(mesh, data);
 	size_t originalVertSize = m_vertices.size();
 	size_t originalIndexSize = m_indices.size();
 	data->GetVertices(m_vertices);
-	size_t recievedIndices = data->GetIndices(m_indices);
+	data->GetIndices(newIndices);
+
+	for (size_t i = 0; i < newIndices.size(); i++)
+	{
+		m_indices.push_back((Index)originalVertSize + newIndices[i]);
+	}
 
 	//Save batch info
 	Batch newBatch;
 	newBatch.info.Texture = texture;
 	newBatch.info.Style = style;
-	newBatch.info.IndexCountPerInstance = (uint32_t)recievedIndices;
+	newBatch.info.IndexCountPerInstance = (uint32_t)newIndices.size();
 	newBatch.info.InstanceCount = 0;
 	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
-	newBatch.info.BaseVertexLocation = (uint32_t)originalVertSize;
 
 	//Create new batch
 	m_BatchCache[std::make_pair(mesh, texture)] = newBatch;

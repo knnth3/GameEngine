@@ -53,13 +53,10 @@ namespace Graphics
 		ID3D11DeviceContext3* m_context;
 		D3D11_BUFFER_DESC m_vertexBufferDesc;
 		D3D11_BUFFER_DESC m_indexBufferDesc;
-		D3D11_BUFFER_DESC m_instanceBufferDesc;
 		D3D11_SUBRESOURCE_DATA m_vertexData;
 		D3D11_SUBRESOURCE_DATA m_indexData;
-		D3D11_SUBRESOURCE_DATA m_instanceData;
 		ID3D11Buffer* m_vertexBuffer;
 		ID3D11Buffer* m_indexBuffer;
-		ID3D11Buffer* m_instanceBuffer;
 		std::shared_ptr<DX11ConstantBuffer> m_cbManager;
 	};
 }

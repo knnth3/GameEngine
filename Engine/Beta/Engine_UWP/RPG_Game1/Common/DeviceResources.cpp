@@ -234,10 +234,12 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	// Clear the previous window size specific context.
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	m_d3dContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
-	m_d3dRenderTargetView = nullptr;
 	m_d2dContext->SetTarget(nullptr);
+	m_d3dRenderTargetView = nullptr;
 	m_d2dTargetBitmap = nullptr;
+	m_offScreenSurface = nullptr;
 	m_d3dDepthStencilView = nullptr;
+	m_backBuffer = nullptr;
 	m_d3dContext->Flush1(D3D11_CONTEXT_TYPE_ALL, nullptr);
 
 	UpdateRenderTargetSize();
@@ -261,6 +263,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 			DXGI_FORMAT_B8G8R8A8_UNORM,
 			0
 		);
+
 
 		if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 		{
@@ -375,18 +378,50 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	);
 
 	// Create a render target view of the swap chain back buffer.
-	ComPtr<ID3D11Texture2D1> backBuffer;
 	DX::ThrowIfFailed(
-		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer))
+		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&m_backBuffer))
 	);
 
+	float widthMulti = m_d3dRenderTargetSize.Width;
+	float heightMulti = m_d3dRenderTargetSize.Height;
+
+	D3D11_TEXTURE2D_DESC offScreenSurfaceDesc;
+	ZeroMemory(&offScreenSurfaceDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	offScreenSurfaceDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	offScreenSurfaceDesc.Width = static_cast<UINT>(widthMulti);
+	offScreenSurfaceDesc.Height = static_cast<UINT>(heightMulti);
+	offScreenSurfaceDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+	offScreenSurfaceDesc.MipLevels = 1;
+	offScreenSurfaceDesc.ArraySize = 1;
+	offScreenSurfaceDesc.SampleDesc.Count = 4;
+	offScreenSurfaceDesc.SampleDesc.Quality = 0;
+
+	// Create a surface that's multisampled.
 	DX::ThrowIfFailed(
-		m_d3dDevice->CreateRenderTargetView1(
-			backBuffer.Get(),
+		m_d3dDevice->CreateTexture2D(
+			&offScreenSurfaceDesc,
 			nullptr,
+			&m_offScreenSurface)
+	);
+
+	// Create a render target view. 
+	CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2DMS);
+	DX::ThrowIfFailed(
+		m_d3dDevice->CreateRenderTargetView(
+			m_offScreenSurface.Get(),
+			&renderTargetViewDesc,
 			&m_d3dRenderTargetView
 		)
 	);
+
+	//DX::ThrowIfFailed(
+	//	m_d3dDevice->CreateRenderTargetView(
+	//		backBuffer.Get(),
+	//		nullptr,
+	//		&m_d3dRenderTargetView
+	//	)
+	//);
 
 	// Create a depth stencil view for use with 3D rendering if needed.
 	CD3D11_TEXTURE2D_DESC1 depthStencilDesc(
@@ -395,7 +430,11 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		lround(m_d3dRenderTargetSize.Height),
 		1, // This depth stencil view has only one texture.
 		1, // Use a single mipmap level.
-		D3D11_BIND_DEPTH_STENCIL
+		D3D11_BIND_DEPTH_STENCIL,
+		D3D11_USAGE_DEFAULT,
+		0,
+		4,
+		0
 	);
 
 	ComPtr<ID3D11Texture2D1> depthStencil;
@@ -407,7 +446,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		)
 	);
 
-	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2DMS);
 	DX::ThrowIfFailed(
 		m_d3dDevice->CreateDepthStencilView(
 			depthStencil.Get(),
@@ -438,8 +477,13 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 
 	ComPtr<IDXGISurface2> dxgiBackBuffer;
 	DX::ThrowIfFailed(
-		m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer))
+		m_offScreenSurface.Get()->QueryInterface(
+			__uuidof(IDXGISurface2), &dxgiBackBuffer)
 	);
+
+	//DX::ThrowIfFailed(
+	//	m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer))
+	//);
 
 	DX::ThrowIfFailed(
 		m_d2dContext->CreateBitmapFromDxgiSurface(
@@ -634,13 +678,23 @@ void DX::DeviceResources::Present()
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
 	// frames that will never be displayed to the screen.
+
+	unsigned int sub = D3D11CalcSubresource(0, 0, 1);
+	m_d3dContext->ResolveSubresource(
+		m_backBuffer.Get(),
+		sub,
+		m_offScreenSurface.Get(),
+		sub,
+		DXGI_FORMAT_B8G8R8A8_UNORM
+	);
+
 	DXGI_PRESENT_PARAMETERS parameters = { 0 };
 	HRESULT hr = m_swapChain->Present1(1, 0, &parameters);
 
 	// Discard the contents of the render target.
 	// This is a valid operation only when the existing contents will be entirely
 	// overwritten. If dirty or scroll rects are used, this call should be removed.
-	m_d3dContext->DiscardView1(m_d3dRenderTargetView.Get(), nullptr, 0);
+	m_d3dContext->DiscardView(m_d3dRenderTargetView.Get());
 
 	// Discard the contents of the depth stencil.
 	m_d3dContext->DiscardView1(m_d3dDepthStencilView.Get(), nullptr, 0);

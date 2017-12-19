@@ -109,8 +109,7 @@ void Graphics::RenderBatch::ProcessObject_3DTriangles(BatchInfo& info)
 		info.IndexCountPerInstance, 
 		info.InstanceCount, 
 		info.StartIndexLocation, 
-		info.BaseVertexLocation, 
-		0);
+		0, 0);
 }
 
 void Graphics::RenderBatch::Reset()
@@ -173,27 +172,27 @@ bool Graphics::RenderBatch::CreateRSSStates()
 	RSSSettings settings;
 
 	//3D default
-	settings.AntialiasedLineEnable = false;
+	settings.AntialiasedLineEnable = true;
 	settings.CullMode = D3D11_CULL_BACK;
 	settings.DepthBias = 0;
 	settings.DepthBiasClamp = 0.0f;
 	settings.DepthClipEnable = true;
 	settings.FillMode = D3D11_FILL_SOLID;
 	settings.FrontCounterClockwise = true;
-	settings.MultisampleEnable = false;
+	settings.MultisampleEnable = true;
 	settings.ScissorEnable = false;
 	settings.SlopeScaledDepthBias = 0.0f;
 	result = m_RSSManager->CreateRSS(settings, "3D");
 
 	//Wireframe
-	settings.AntialiasedLineEnable = false;
+	settings.AntialiasedLineEnable = true;
 	settings.CullMode = D3D11_CULL_NONE;
 	settings.DepthBias = 0;
 	settings.DepthBiasClamp = 0.0f;
 	settings.DepthClipEnable = true;
 	settings.FillMode = D3D11_FILL_WIREFRAME;
 	settings.FrontCounterClockwise = true;
-	settings.MultisampleEnable = false;
+	settings.MultisampleEnable = true;
 	settings.ScissorEnable = false;
 	settings.SlopeScaledDepthBias = 0.0f;
 	result = m_RSSManager->CreateRSS(settings, "Wireframe");

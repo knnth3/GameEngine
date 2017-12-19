@@ -97,6 +97,18 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\rpg_sprite_walk.png">
       <PackagePath>Assets\textures\Basic_Character\rpg_sprite_walk.png</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grid_tile.png">
+      <PackagePath>Assets\textures\grid_tile.png</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Cube.bin">
+      <PackagePath>Assets\Models\Cube.bin</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Plane.bin">
+      <PackagePath>Assets\Models\Plane.bin</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\stick_figure.bin">
+      <PackagePath>Assets\Models\stick_figure.bin</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
     </AppxPackagedFile>
@@ -117,24 +129,6 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Populace\Populace.dll">
       <PackagePath>Populace.dll</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Cube.obj">
-      <PackagePath>Assets\Models\Cube.obj</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Sphere.obj">
-      <PackagePath>Assets\Models\Sphere.obj</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Sphere_smooth.obj">
-      <PackagePath>Assets\Models\Sphere_smooth.obj</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Plane.obj">
-      <PackagePath>Assets\Models\Plane.obj</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\person.obj">
-      <PackagePath>Assets\Models\person.obj</PackagePath>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\game_piece.obj">
-      <PackagePath>Assets\Models\game_piece.obj</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\2D Shader.hlsl">
       <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>

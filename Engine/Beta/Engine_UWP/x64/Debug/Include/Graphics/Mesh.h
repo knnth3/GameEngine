@@ -16,9 +16,8 @@ namespace Graphics
 
 
 		uint32_t objectID = 0;
-		uint32_t vertOffset = 0;
-		uint32_t indiciOffset = 0;
-		std::vector<Polygon> m_polygons;
+		std::vector<Vertex> m_vertices;
+		std::vector<Index> m_indices;
 		float m_height = 0.0f;
 	};
 

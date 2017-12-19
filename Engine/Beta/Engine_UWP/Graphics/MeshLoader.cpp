@@ -1,7 +1,8 @@
 #include "MeshLoader.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tinyobjloader\tiny_obj_loader.h>
+#include "WindowsAdditionals.h"
+#include <iostream>
+#include <fstream>
+#include <sys/stat.h>
 
 
 using namespace Graphics;
@@ -9,14 +10,43 @@ using namespace std;
 bool Graphics::MeshLoader::m_bIsInit = false;
 std::shared_ptr<Mesh> Graphics::MeshLoader::m_default;
 std::vector<std::shared_ptr<Mesh>> Graphics::MeshLoader::m_modelLibrary;
-std::vector<MeshDefaultSettings> Graphics::MeshLoader::m_defaultSettings;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_filepaths;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_keyNames;
 
+template<typename T>
+bool Graphics::Vector3<T>::operator==(const Vector3<T>& v)
+{
+	if (this->x == v.x && this->y == v.y && this->z == v.z)
+	{
+		return true;
+	}
+	return false;
+}
+
+template<typename T>
+glm::vec3 Graphics::Vector3<T>::to_glm()
+{
+	return glm::vec3((float)this->x, (float)this->y, (float)this->z);
+}
+
+bool Graphics::VertexData::operator==(const VertexData & v)
+{
+	auto pos = this->m_position == v.m_position;
+	auto normals = this->m_normal == v.m_normal;
+	auto tangents = this->m_tangent == v.m_tangent;
+	auto bitangents = this->m_binormal == v.m_binormal;
+	auto textureCoords = this->m_uv == v.m_uv;
+
+	if (pos && normals && tangents && bitangents && textureCoords)
+	{
+		return true;
+	}
+	return false;
+}
 
 bool Graphics::MeshLoader::Initialize()
 {
-	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.obj");
+	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.bin");
 	if (defaultMesh == -1)
 		return false;
 
@@ -28,65 +58,93 @@ bool Graphics::MeshLoader::Initialize()
 
 Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string filename)
 {
-	MeshID result;
-	if (!IsFilepathQuerried(filename, result))
-	{
-		std::string ext;
-		GetFileExt(filename, ext);
+	MeshID result = -1;
+	std::string ext;
+	GetFileExt(filename, ext);
 
-		if(ext.compare("obj") == 0)
-			result = ProcessOBJFile(filename);
+	struct stat results;
+	if (!stat(filename.c_str(), &results) == 0)
+	{
+		std::wstring message;
+		message.insert(message.end(), filename.begin(), filename.end());
+		CheckSuccess(E_INVALIDARG, message.c_str());
+		return result;
 	}
 
+	if (!IsFilepathQuerried(filename, result))
+	{
+		result = CreateMesh(filename);
+	}
 	return result;
 }
 
 Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
 {
-	MeshID result;
-	if(!IsKeyNameQuerried(uniqueName, result))
-	{
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-		MeshDefaultSettings settings = {};
-		settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	MeshID result = -1;
+	//if(!IsKeyNameQuerried(uniqueName, result))
+	//{
+	//	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	//	MeshDefaultSettings settings = {};
 
-		Polygon p;
-		p.m_vertices.insert(p.m_vertices.end(), verts.begin(), verts.end());
-		p.m_indices.insert(p.m_indices.end(), indices.begin(), indices.end());
-		mesh->m_polygons.push_back(p);
-
-		result = SaveInformation(mesh, settings);
-		m_keyNames.emplace(uniqueName, result);
-	}
+	//}
 
 	return result;
 }
 
-Graphics::MeshID Graphics::MeshLoader::CreateLine(glm::vec3 pos1, glm::vec3 pos2)
+MeshID Graphics::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
 {
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-	MeshDefaultSettings settings = {};
-	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	auto data = std::make_shared<Mesh>();
 
-	Polygon poly;
-	poly.m_vertices = 
-	{
-			{ pos1, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f) },
-			{ pos2, glm::vec2(0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f) },
-	};
-	poly.m_indices =
-	{
-		0,1
-	};
-	mesh->m_polygons.push_back(poly);
+	float offsetX = xUnits * xTesselation * 0.5f;
+	float offsetZ = zUnits * zTesselation * 0.5f;
 
-	return SaveInformation(mesh, settings);
+	Vertex basic;
+	basic.m_normal = { 0.0f, 1.0f, 0.0f, 0.0f };
+	basic.m_binormal = { 0.0f, 1.0f, 0.0f };
+	basic.m_tangent = { 0.0f, 1.0f, 0.0f };
+
+	std::vector<glm::vec3> m_positions;
+	std::vector<glm::vec2> m_textureCoords;
+
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ          });
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
+
+	m_textureCoords.push_back({ 0.0f, 0.0f });
+	m_textureCoords.push_back({ 0.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 0.0f });
+	m_textureCoords.push_back({ 0.0f, 0.0f });
+
+	Index count = 0;
+	for (int x = 0; x < xTesselation; x++)
+	{
+		for (int z = 0; z < zTesselation; z++)
+		{
+			for (size_t it = 0; it < m_positions.size(); it++)
+			{
+				basic.m_uv = m_textureCoords[it];
+				basic.m_position = m_positions[it];
+
+				basic.m_position.x += (float)x * xUnits;
+				basic.m_position.z += (float)z * zUnits;
+
+				data->m_vertices.push_back(basic);
+				data->m_indices.push_back(count++);
+			}
+		}
+	}
+
+	return SaveMesh(data);
 }
 
 void Graphics::MeshLoader::Clear()
 {
 	m_modelLibrary.clear();
-	m_defaultSettings.clear();
 	m_filepaths.clear();
 	m_keyNames.clear();
 }
@@ -99,194 +157,62 @@ void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 		ptr = m_default;
 }
 
-void Graphics::MeshLoader::GetDefaulMeshInfo(MeshID id, MeshDefaultSettings& settings)
+Graphics::MeshID Graphics::MeshLoader::CreateMesh(const std::string filename)
 {
-	if(m_defaultSettings.size() > id)
-		settings = m_defaultSettings.at(id);
-}
+	MeshID result = -1;
+	auto data = std::make_shared<Mesh>();
+	unsigned int index;
+	Vertex newVertex;
+	VertexData vertData;
 
-Graphics::MeshID Graphics::MeshLoader::SaveInformation(const std::shared_ptr<Mesh> & data, const MeshDefaultSettings & settings)
-{
-	return SaveMesh(data, settings);
-}
-
-Graphics::MeshID Graphics::MeshLoader::ProcessOBJFile(const std::string filename)
-{
-	Graphics::MeshID result = -1;
-	auto mesh = std::make_shared<Mesh>();
-	MeshDefaultSettings settings = {};
-	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	if (CreateMeshFromOBJ(filename, mesh, settings))
+	int indexSize = 0;
+	int vertexSize = 0;
+	ifstream myFile(filename.c_str(), ios::in | ios::binary);
+	if (myFile)
 	{
-		result = SaveInformation(mesh, settings);
-		m_filepaths.emplace(filename, result);
-	}
+		if (!myFile.read((char*)&indexSize, sizeof(int)))
+			return result;
 
+		if (!myFile.read((char*)&vertexSize, sizeof(int)))
+			return result;
+
+		for (int it = 0; it < indexSize; it++)
+		{
+			if (!myFile.read((char*)&index, sizeof(unsigned int)))
+				return result;
+
+			data->m_indices.push_back((Index)index);
+		}
+
+		for (int it = 0; it < vertexSize; it++)
+		{
+			if (!myFile.read((char*)&vertData, sizeof(VertexData)))
+				return result;
+
+			newVertex.m_position = vertData.m_position.to_glm();
+			newVertex.m_normal = glm::vec4(vertData.m_normal.to_glm(), 1.0f);
+			newVertex.m_tangent = vertData.m_tangent.to_glm();
+			newVertex.m_binormal = vertData.m_binormal.to_glm();
+			newVertex.m_uv = vertData.m_uv.to_glm();
+
+			data->m_vertices.push_back(newVertex);
+		}
+
+		myFile.close();
+		result = SaveMesh(data);
+	}
 	return result;
 }
 
-bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::shared_ptr<Mesh>& data, MeshDefaultSettings & settings)
-{
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::string err;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, nullptr, &err, filename.c_str());
-
-	//Can contain warnings as well
-	if (!err.empty())
-	{
-
-#if PLATFORM == OS_WINDOWS
-		wstring msg = wstring(err.begin(), err.end());
-		MessageBox(NULL, msg.c_str(), L"Error", MB_ICONEXCLAMATION);
-#endif
-
-	}
-
-	if (!ret)
-		return false;
-
-	//Shapes contains all objects in scene
-	for (size_t s = 0; s < shapes.size(); s++)
-	{
-		size_t index_offset = 0;
-		//Go through all faces of the shape
-		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
-		{
-			Polygon poly;
-			int fv = shapes[s].mesh.num_face_vertices[f];
-
-			//Go through all vertices in face
-			for (size_t v = 0; v < fv; v++)
-			{
-				//Prefix definitions:
-				//	tinyobj::real_t = float
-				//	v = pos coord
-				//	n = normal
-				//	t = texture coord
-				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-
-				//Make sure the obj file contains the correct perams
-				if (idx.normal_index < 0 || idx.texcoord_index < 0 || idx.vertex_index < 0)
-					return false;
-
-				Vertex vert;
-				vert.m_position.x = attrib.vertices[3 * idx.vertex_index + 0];
-				vert.m_position.y = attrib.vertices[3 * idx.vertex_index + 1];
-				vert.m_position.z = attrib.vertices[3 * idx.vertex_index + 2];
-
-				vert.m_normal.x = attrib.normals[3 * idx.normal_index + 0];
-				vert.m_normal.y = attrib.normals[3 * idx.normal_index + 1];
-				vert.m_normal.z = attrib.normals[3 * idx.normal_index + 2];
-
-				vert.m_uv.x = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vert.m_uv.y = attrib.texcoords[2 * idx.texcoord_index + 1];
-
-				poly.m_vertices.push_back(vert);
-				poly.m_indices.push_back(Graphics::Index(index_offset + v));
-			}
-			index_offset += fv;
-			/*CalculateTangentBinormal(poly);*/
-			data->m_polygons.push_back(poly);
-		}
-
-	}
-	return true;
-}
-
-void Graphics::MeshLoader::CalculateTangentBinormal(Polygon& p)
-{
-	glm::vec3 vector1, vector2;
-	glm::vec2 tuVector, tvVector;
-	glm::vec3 tangent, binormal, normal;
-	float den;
-	float length;
-
-	const Vertex& vertex1 = p.m_vertices[0];
-	const Vertex& vertex2 = p.m_vertices[1];
-	const Vertex& vertex3 = p.m_vertices[2];
-
-	// Calculate the two vectors for this face.
-	vector1[0] = vertex2.m_position.x - vertex1.m_position.x;
-	vector1[1] = vertex2.m_position.y - vertex1.m_position.y;
-	vector1[2] = vertex2.m_position.z - vertex1.m_position.z;
-
-	vector2[0] = vertex3.m_position.x - vertex1.m_position.x;
-	vector2[1] = vertex3.m_position.y - vertex1.m_position.y;
-	vector2[2] = vertex3.m_position.z - vertex1.m_position.z;
-
-	// Calculate the tu and tv texture space vectors.
-	tuVector[0] = vertex2.m_uv.x - vertex1.m_uv.x;
-	tvVector[0] = vertex2.m_uv.y - vertex1.m_uv.y;
-
-	tuVector[1] = vertex3.m_uv.x - vertex1.m_uv.x;
-	tvVector[1] = vertex3.m_uv.y - vertex1.m_uv.y;
-
-	// Calculate the denominator of the tangent/binormal equation.
-	den = 1.0f / (tuVector[0] * tvVector[1] - tuVector[1] * tvVector[0]);
-
-	// Calculate the cross products and multiply by the coefficient to get the tangent and binormal.
-	tangent.x = (tvVector[1] * vector1[0] - tvVector[0] * vector2[0]) * den;
-	tangent.y = (tvVector[1] * vector1[1] - tvVector[0] * vector2[1]) * den;
-	tangent.z = (tvVector[1] * vector1[2] - tvVector[0] * vector2[2]) * den;
-
-	binormal.x = (tuVector[0] * vector2[0] - tuVector[1] * vector1[0]) * den;
-	binormal.y = (tuVector[0] * vector2[1] - tuVector[1] * vector1[1]) * den;
-	binormal.z = (tuVector[0] * vector2[2] - tuVector[1] * vector1[2]) * den;
-
-	// Calculate the length of this normal.
-	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
-
-	// Normalize the normal and then store it
-	tangent.x = tangent.x / length;
-	tangent.y = tangent.y / length;
-	tangent.z = tangent.z / length;
-
-	// Calculate the length of this normal.
-	length = sqrt((binormal.x * binormal.x) + (binormal.y * binormal.y) + (binormal.z * binormal.z));
-
-	// Normalize the normal and then store it
-	binormal.x = binormal.x / length;
-	binormal.y = binormal.y / length;
-	binormal.z = binormal.z / length;
-
-	// Calculate the cross product of the tangent and binormal which will give the normal vector.
-	normal.x = (tangent.y * binormal.z) - (tangent.z * binormal.y);
-	normal.y = (tangent.z * binormal.x) - (tangent.x * binormal.z);
-	normal.z = (tangent.x * binormal.y) - (tangent.y * binormal.x);
-
-	// Calculate the length of the normal.
-	length = sqrt((normal.x * normal.x) + (normal.y * normal.y) + (normal.z * normal.z));
-
-	// Normalize the normal.
-	normal.x = normal.x / length;
-	normal.y = normal.y / length;
-	normal.z = normal.z / length;
-
-	for (auto& vertex : p.m_vertices)
-	{
-		vertex.m_binormal = binormal;
-		vertex.m_tangent = tangent;
-		vertex.m_normal = glm::vec4(normal, 0.0f);
-	}
-}
-
-Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh, const MeshDefaultSettings & setting)
+Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
 {
 	MeshID result = -1;
 	size_t models = m_modelLibrary.size();
-	size_t settings = m_defaultSettings.size();
-	if (models == settings)
-	{
-		result = (MeshID)models;
-		mesh->objectID = result;
-		m_modelLibrary.push_back(mesh);
-		m_defaultSettings.push_back(setting);
-	}
 
-	//TODO:
-	//Output log information that MeshLibrary is corrupt
+	result = (MeshID)models;
+	mesh->objectID = result;
+	m_modelLibrary.push_back(mesh);
+
 	return result;
 }
 

@@ -4,7 +4,7 @@ bool Check(bool x, LPCWSTR lpctstr, LPCWSTR message)
 {
 	if (!(x))
 	{
-		::MessageBox(0, lpctstr, message, MB_OK);
+		::MessageBox(0, message, lpctstr, MB_OK);
 		return false;
 	}
 	else

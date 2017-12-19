@@ -18,7 +18,6 @@ namespace Graphics
 		uint32_t IndexCountPerInstance;
 		uint32_t InstanceCount;
 		uint32_t StartIndexLocation;
-		uint32_t BaseVertexLocation;
 	};
 
 	struct Batch

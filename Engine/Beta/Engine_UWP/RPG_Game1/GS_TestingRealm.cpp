@@ -10,36 +10,40 @@ using namespace Windows::System;
 
 bool GameStates::TestingRealm::CreateDeviceIndependentResources()
 {
-	m_floor.Scale(1000.0f, 1.0f, 1000.0f);
-	m_player.Scale(100.0f, 100.0f, 1.0f);
-	m_playerBack.Scale(100.0f, 100.0f, 1.0f);
-
-	m_player.Rotate(0.0f, 0.0f, (float)M_PI);
-	m_playerBack.Rotate(0.0f, (float)M_PI, (float)M_PI);
+	m_player.Scale(100.0f, 100.0f, 100.0f);
 	m_player.SetPosition(0.0f, 200.0f, 0.0f);
-	m_playerBack.SetPosition(0.0f, 200.0f, 0.0f);
 	return true;
 }
 
 void GameStates::TestingRealm::CreateDeviceDependentResources()
 {
-	std::string character = "Assets/textures/Basic_Character/rpg_sprite_walk.png";
+	std::string character = "Assets/textures/grid_tile.png";
 	TextureID tex = TextureLoader::CreateNewTexture(character, character, character, character, character, character);
-	MeshID mesh = MeshLoader::LoadModel("Assets/Models/game_piece.obj");
-	m_player.SetMesh(mesh);
-	m_player.SetTexture(tex);
-	m_playerBack.SetMesh(mesh);
-	m_playerBack.SetTexture(tex);
+	MeshID mesh = MeshLoader::CreatePlane(100.0f, 100.0f, 10.0f, 10.0f);
+
+	m_floor.SetMesh(mesh);
+	m_floor.SetTexture(tex);
 	EngineResources::GetGraphicsDevice()->GetCamera()->AttachToModel(m_floor);
+	EngineResources::GetGraphicsDevice()->GetCamera()->EnforceBounds(false);
 }
 
 GameStates::States GameStates::TestingRealm::Update()
 {
 	static float rotation = 0;
+	static bool wireframe = false;
 	auto input = EngineResources::GetInputManager();
 	auto camera = EngineResources::GetGraphicsDevice()->GetCamera();
 	auto timer = EngineResources::GetTimer();
 	rotation  = 2.3 * timer->GetElapsedSeconds();
+	if (input->KeyPressed((int)VirtualKey::Escape))
+	{
+		return MAIN_MENU;
+	}
+	if (input->KeyPressed((int)VirtualKey::L))
+	{
+		wireframe = !wireframe;
+		EngineResources::GetGraphicsDevice()->Wireframe(wireframe);
+	}
 	if(input->KeyStatus((int)VirtualKey::W))
 	{
 		camera->Rotate(rotation, 0.0f, 0.0f);
@@ -56,6 +60,14 @@ GameStates::States GameStates::TestingRealm::Update()
 	{
 		camera->Rotate(0.0f, -rotation, 0.0f);
 	}
+	if (input->KeyStatus((int)VirtualKey::Q))
+	{
+		camera->Zoom(-rotation * 100.0f);
+	}
+	if (input->KeyStatus((int)VirtualKey::E))
+	{
+		camera->Zoom(rotation * 100.0f);
+	}
 	return RUNNING;
 }
 
@@ -63,12 +75,15 @@ void GameStates::TestingRealm::Draw()
 {
 	EngineResources::GetGraphicsDevice()->Draw(m_floor);
 	EngineResources::GetGraphicsDevice()->Draw(m_player);
-	EngineResources::GetGraphicsDevice()->Draw(m_playerBack);
 }
 
 void GameStates::TestingRealm::Close()
 {
+	TextureLoader::Clear();
+	MeshLoader::Clear();
 	EngineResources::GetGraphicsDevice()->Reset();
+	EngineResources::GetGraphicsDevice()->GetCamera()->EnforceBounds(true);
+	EngineResources::GetGraphicsDevice()->Wireframe(false);
 }
 
 void GameStates::TestingRealm::OnWindowResize()

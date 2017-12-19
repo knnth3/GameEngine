@@ -237,21 +237,6 @@
     <None Include="Assets\Shaders\3D Shader.hlsl">
       <Filter>Assets\Shaders</Filter>
     </None>
-    <None Include="Assets\Models\Cube.obj">
-      <Filter>Assets\Models</Filter>
-    </None>
-    <None Include="Assets\Models\Sphere.obj">
-      <Filter>Assets\Models</Filter>
-    </None>
-    <None Include="Assets\Models\Sphere_smooth.obj">
-      <Filter>Assets\Models</Filter>
-    </None>
-    <None Include="Assets\Models\Plane.obj">
-      <Filter>Assets\Models</Filter>
-    </None>
-    <None Include="Assets\Models\person.obj">
-      <Filter>Assets\Models</Filter>
-    </None>
     <None Include="Assets\textures\grass.jpg">
       <Filter>Assets\Textures</Filter>
     </None>
@@ -279,8 +264,17 @@
     <None Include="Assets\textures\Basic_Character\rpg_sprite_walk.png">
       <Filter>Assets\Textures\Basic_Character</Filter>
     </None>
-    <None Include="Assets\Models\game_piece.obj">
+    <None Include="Assets\Models\Cube.bin">
       <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\Plane.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\stick_figure.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\textures\grid_tile.png">
+      <Filter>Assets\Textures</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

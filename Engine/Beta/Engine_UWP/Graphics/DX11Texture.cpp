@@ -61,13 +61,18 @@ bool Graphics::DX11Texture::LoadTexture(LPCWSTR filepath, ID3D11ShaderResourceVi
 	}
 	else
 	{
-		hr = LoadFromWICFile(filepath, DDS_FLAGS_NONE, nullptr, srcImage);
+		hr = LoadFromWICFile(filepath, WIC_FLAGS_FILTER_LINEAR, nullptr, srcImage);
 		result = CheckSuccess(hr, filepath);
 	}
 	if (result)
 	{
 		ScratchImage secondary;
-		hr = CreateShaderResourceView(m_device, srcImage.GetImages(), srcImage.GetImageCount(), srcImage.GetMetadata(), &target);
+
+		hr = GenerateMipMaps(srcImage.GetImages(), srcImage.GetImageCount(),
+			srcImage.GetMetadata(), TEX_FILTER_DEFAULT, 0, secondary);
+		result = CheckSuccess(hr, filepath);
+
+		hr = CreateShaderResourceView(m_device, secondary.GetImages(), secondary.GetImageCount(), secondary.GetMetadata(), &target);
 		result = CheckSuccess(hr, filepath);
 	}
 	return result;
@@ -81,9 +86,11 @@ void Graphics::DX11Texture::CreateSamplerSate()
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sampDesc.MaxAnisotropy = 1;
+
 	HRESULT result = m_device->CreateSamplerState(&sampDesc, &m_samplerState);
 	CheckSuccess(result, L"Sampler State");
 	m_context->PSSetSamplers(0, 1, &m_samplerState);

@@ -22,7 +22,6 @@ namespace GameStates
 	private:
 
 		Graphics::Model m_player;
-		Graphics::Model m_playerBack;
 		Graphics::Model m_floor;
 	};
 

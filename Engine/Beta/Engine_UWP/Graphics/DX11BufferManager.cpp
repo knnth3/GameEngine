@@ -26,13 +26,6 @@ Graphics::DX11BufferManager::DX11BufferManager(ID3D11Device3* device, ID3D11Devi
 	m_indexBufferDesc.MiscFlags = 0;
 	m_indexBufferDesc.StructureByteStride = 0;
 
-	//DEFAULT Instance Buffer Description
-	m_instanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	m_instanceBufferDesc.ByteWidth = 0;
-	m_instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_instanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	m_instanceBufferDesc.MiscFlags = 0;
-	m_instanceBufferDesc.StructureByteStride = 0;
 }
 
 Graphics::DX11BufferManager::~DX11BufferManager()
@@ -91,12 +84,7 @@ void Graphics::DX11BufferManager::SetDrawTopology(const D3D_PRIMITIVE_TOPOLOGY s
 
 void Graphics::DX11BufferManager::SetAsActive()
 {
-	//Instancing
-	ID3D11Buffer* bufferPointers[2] = { m_vertexBuffer , m_instanceBuffer };
-	unsigned int strides[2] = { m_vertexStride, m_instanceStride };
-	unsigned int offsets[2] = { 0,0 };
 	UINT offset = 0;
-
 	m_context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &m_vertexStride, &offset);
 	m_context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -141,14 +129,6 @@ bool Graphics::DX11BufferManager::CreateBuffers()
 		MessageBox(NULL, L"Could not create the Index Buffer", L"Error", MB_ICONERROR | MB_OK);
 		return false;
 	}
-
-	////Create Instance Buffer
-	//result = m_device->CreateBuffer(&m_instanceBufferDesc, &m_instanceData, &m_instanceBuffer);
-	//if (FAILED(result))
-	//{
-	//	MessageBox(NULL, L"Could not create the Instance Buffer", L"Error", MB_ICONERROR | MB_OK);
-	//	return false;
-	//}
 
 	SetAsActive();
 	return true;
