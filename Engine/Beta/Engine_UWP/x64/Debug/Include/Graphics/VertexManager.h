@@ -15,6 +15,7 @@ namespace Graphics
 	{
 		TextureID Texture;
 		DrawStyle Style;
+		bool UsingVertexColors;
 		uint32_t IndexCountPerInstance;
 		uint32_t InstanceCount;
 		uint32_t StartIndexLocation;

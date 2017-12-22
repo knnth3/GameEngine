@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
+#include <BMImporter\BinImporter.h>
 
 
 using namespace Graphics;
@@ -12,37 +13,6 @@ std::shared_ptr<Mesh> Graphics::MeshLoader::m_default;
 std::vector<std::shared_ptr<Mesh>> Graphics::MeshLoader::m_modelLibrary;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_filepaths;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_keyNames;
-
-template<typename T>
-bool Graphics::Vector3<T>::operator==(const Vector3<T>& v)
-{
-	if (this->x == v.x && this->y == v.y && this->z == v.z)
-	{
-		return true;
-	}
-	return false;
-}
-
-template<typename T>
-glm::vec3 Graphics::Vector3<T>::to_glm()
-{
-	return glm::vec3((float)this->x, (float)this->y, (float)this->z);
-}
-
-bool Graphics::VertexData::operator==(const VertexData & v)
-{
-	auto pos = this->m_position == v.m_position;
-	auto normals = this->m_normal == v.m_normal;
-	auto tangents = this->m_tangent == v.m_tangent;
-	auto bitangents = this->m_binormal == v.m_binormal;
-	auto textureCoords = this->m_uv == v.m_uv;
-
-	if (pos && normals && tangents && bitangents && textureCoords)
-	{
-		return true;
-	}
-	return false;
-}
 
 bool Graphics::MeshLoader::Initialize()
 {
@@ -160,45 +130,52 @@ void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 Graphics::MeshID Graphics::MeshLoader::CreateMesh(const std::string filename)
 {
 	MeshID result = -1;
-	auto data = std::make_shared<Mesh>();
-	unsigned int index;
-	Vertex newVertex;
-	VertexData vertData;
-
-	int indexSize = 0;
-	int vertexSize = 0;
-	ifstream myFile(filename.c_str(), ios::in | ios::binary);
-	if (myFile)
+	BMImporter io;
+	MeshData meshdata;
+	if (io.Import(filename, meshdata))
 	{
-		if (!myFile.read((char*)&indexSize, sizeof(int)))
-			return result;
-
-		if (!myFile.read((char*)&vertexSize, sizeof(int)))
-			return result;
-
-		for (int it = 0; it < indexSize; it++)
+		auto data = std::make_shared<Mesh>();
+		for (auto i : meshdata.m_indices)
 		{
-			if (!myFile.read((char*)&index, sizeof(unsigned int)))
-				return result;
-
-			data->m_indices.push_back((Index)index);
+			data->m_indices.push_back(Index(i));
 		}
 
-		for (int it = 0; it < vertexSize; it++)
+		for (auto v : meshdata.m_vertices)
 		{
-			if (!myFile.read((char*)&vertData, sizeof(VertexData)))
-				return result;
+			Vertex newVertex;
 
-			newVertex.m_position = vertData.m_position.to_glm();
-			newVertex.m_normal = glm::vec4(vertData.m_normal.to_glm(), 1.0f);
-			newVertex.m_tangent = vertData.m_tangent.to_glm();
-			newVertex.m_binormal = vertData.m_binormal.to_glm();
-			newVertex.m_uv = vertData.m_uv.to_glm();
+			newVertex.m_position.x = v.m_position.x;
+			newVertex.m_position.y = v.m_position.y;
+			newVertex.m_position.z = v.m_position.z;
+
+			newVertex.m_normal.x = v.m_normal.x;
+			newVertex.m_normal.y = v.m_normal.y;
+			newVertex.m_normal.z = v.m_normal.z;
+
+			if (v.m_bHasTangents)
+			{
+				newVertex.m_uv.x = v.m_uv.x;
+				newVertex.m_uv.y = v.m_uv.y;
+
+				newVertex.m_tangent.x = v.m_tangent.x;
+				newVertex.m_tangent.y = v.m_tangent.y;
+				newVertex.m_tangent.z = v.m_tangent.z;
+
+				newVertex.m_binormal.x = v.m_binormal.x;
+				newVertex.m_binormal.y = v.m_binormal.y;
+				newVertex.m_binormal.z = v.m_binormal.z;
+			}
+			else
+			{
+				data->m_bUsingVertexColors = true;
+				newVertex.m_color.x = v.m_color.x;
+				newVertex.m_color.y = v.m_color.y;
+				newVertex.m_color.z = v.m_color.z;
+			}
 
 			data->m_vertices.push_back(newVertex);
 		}
 
-		myFile.close();
 		result = SaveMesh(data);
 	}
 	return result;
@@ -210,7 +187,6 @@ Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mes
 	size_t models = m_modelLibrary.size();
 
 	result = (MeshID)models;
-	mesh->objectID = result;
 	m_modelLibrary.push_back(mesh);
 
 	return result;

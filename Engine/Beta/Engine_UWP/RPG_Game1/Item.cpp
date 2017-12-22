@@ -32,7 +32,7 @@ void Item::Animate()
 		val = val % 5;
 		SetImageAtlasPosition(begin + val, 26);
 	}
-	float height = 10.0f * cosf(2.0f * totalTime2);
+	float height = 10.0f * (float)cos(2.0 * totalTime2);
 	SetHeightOffset(height);
 	totalTime += deltatime;
 	totalTime2 += deltatime;

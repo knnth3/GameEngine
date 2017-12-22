@@ -5,83 +5,9 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
+#include "BinImporter.h"
 
 using namespace std;
-
-template <typename T>
-struct Vector3
-{
-	bool operator==(const Vector3<T>& v)
-	{
-		if (this->x == v.x && this->y == v.y && this->z == v.z)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	T x;
-	T y;
-	T z;
-};
-
-struct VertexData
-{
-	bool operator==(const VertexData& v)
-	{
-		auto pos = this->m_position == v.m_position;
-		auto normals = this->m_normal == v.m_normal;
-		auto tangents = this->m_tangent == v.m_tangent;
-		auto bitangents = this->m_binormal == v.m_binormal;
-		auto textureCoords = this->m_uv == v.m_uv;
-
-		if (pos && normals && tangents && bitangents && textureCoords)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	Vector3<float> m_position;
-	Vector3<float> m_uv;
-	Vector3<float> m_normal;
-	Vector3<float> m_tangent;
-	Vector3<float> m_binormal;
-};
-
-struct MeshData
-{
-	bool operator==(const MeshData& data)
-	{
-		if (data.m_vertexSize != this->m_vertexSize)
-			return false;
-
-		if (data.m_indexSize != this->m_indexSize)
-			return false;
-
-		for (int it = 0; it < this->m_vertexSize; it++)
-		{
-			if (!(this->m_vertices[it] == data.m_vertices[it]))
-			{
-				return false;
-			}
-		}
-
-		for (int it = 0; it < this->m_indexSize; it++)
-		{
-			if (!(this->m_indices[it] == data.m_indices[it]))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-	int m_indexSize;
-	int m_vertexSize;
-	std::vector<unsigned int> m_indices;
-	std::vector<VertexData> m_vertices;
-};
 
 void DoTheErrorLogging(std::string err)
 {
@@ -138,11 +64,14 @@ void SaveNewData(const std::string& pFile, MeshData mesh)
 	}
 }
 
-void DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshData& m_mesh)
+bool DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshData& m_mesh)
 {
 	VertexData newVertex;
 	vector<vector<int>> m_indices;
 	CopyNodesWithMeshes(scene->mRootNode, m_indices);
+	if (m_indices.empty())
+		return false;
+
 	for (size_t x = 0; x < m_indices.size(); x++)
 	{
 		auto mesh = scene->mMeshes[m_indices[x][0]];
@@ -151,8 +80,10 @@ void DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshDat
 		auto uv = mesh->HasTextureCoords(m_indices[x][0]);
 		auto normals = mesh->HasNormals();
 		auto tangents = mesh->HasTangentsAndBitangents();
+		auto colors = mesh->HasVertexColors(m_indices[x][0]);
 
-		if (normals && tangents && uv && positions)
+		bool bHasLook = (colors || uv);
+		if (normals && positions && bHasLook)
 		{
 			for (unsigned int index = 0; index < mesh->mNumFaces; index++)
 			{
@@ -168,9 +99,6 @@ void DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshDat
 			{
 				auto pos = mesh->mVertices[y];
 				auto norm = mesh->mNormals[y];
-				auto bita = mesh->mBitangents[y];
-				auto tan = mesh->mTangents[y];
-				auto uvs = mesh->mTextureCoords[0][y];
 
 				newVertex.m_position.x = pos.x;
 				newVertex.m_position.y = pos.y;
@@ -180,17 +108,35 @@ void DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshDat
 				newVertex.m_normal.y = norm.y;
 				newVertex.m_normal.z = norm.z;
 
-				newVertex.m_tangent.x = tan.x;
-				newVertex.m_tangent.y = tan.y;
-				newVertex.m_tangent.z = tan.z;
+				if (tangents)
+				{
+					auto bita = mesh->mBitangents[y];
+					auto tan = mesh->mTangents[y];
 
-				newVertex.m_binormal.x = bita.x;
-				newVertex.m_binormal.y = bita.y;
-				newVertex.m_binormal.z = bita.z;
+					newVertex.m_bHasTangents = true;
+					newVertex.m_tangent.x = tan.x;
+					newVertex.m_tangent.y = tan.y;
+					newVertex.m_tangent.z = tan.z;
 
-				newVertex.m_uv.x = uvs.x;
-				newVertex.m_uv.y = uvs.y;
-				newVertex.m_uv.z = uvs.z;
+					newVertex.m_binormal.x = bita.x;
+					newVertex.m_binormal.y = bita.y;
+					newVertex.m_binormal.z = bita.z;
+				}
+
+				if (colors)
+				{
+					auto color = mesh->mColors[0][y];
+					newVertex.m_color.x = color.r;
+					newVertex.m_color.y = color.g;
+					newVertex.m_color.z = color.b;
+				}
+				else if (uv)
+				{
+					auto uvs = mesh->mTextureCoords[0][y];
+					newVertex.m_uv.x = uvs.x;
+					newVertex.m_uv.y = uvs.y;
+					newVertex.m_uv.z = uvs.z;
+				}
 
 				m_mesh.m_vertices.push_back(newVertex);
 			}
@@ -202,6 +148,7 @@ void DoTheSceneProcessing(const std::string& pFile,const aiScene* scene, MeshDat
 	cout << m_mesh.m_vertexSize << " vertices read" << endl;
 	cout << m_mesh.m_indexSize << " indices read" << endl;
 	SaveNewData(pFile, m_mesh);
+	return true;
 }
 
 bool DoTheImportThing(const std::string& pFile, MeshData& mesh)
@@ -224,83 +171,55 @@ bool DoTheImportThing(const std::string& pFile, MeshData& mesh)
 		return false;
 	}
 	// Now we can access the file's contents. 
-	DoTheSceneProcessing(pFile, scene, mesh);
 	// We're done. Everything will be cleaned up by the importer destructor
-	return true;
+	return 	DoTheSceneProcessing(pFile, scene, mesh);
 }
 
-void DoTheUnitTestThing(std::string filename, MeshData& mesh)
+std::string RemoveExtension(std::string original)
 {
-	struct stat results;
-	if (!stat(filename.c_str(), &results) == 0)
-		return;
-
-	VertexData newVertex;
-	unsigned int index;
-	ifstream myFile(filename.c_str(), ios::in | ios::binary);
-	if (myFile)
-	{
-		if (!myFile.read((char*)&mesh.m_indexSize, sizeof(int)))
-			return;
-
-		if (!myFile.read((char*)&mesh.m_vertexSize, sizeof(int)))
-			return;
-
-		for (int it = 0; it < mesh.m_indexSize; it++)
-		{
-			if (!myFile.read((char*)&index, sizeof(unsigned int)))
-				return;
-
-			mesh.m_indices.push_back(index);
-		}
-
-		for (int it = 0; it < mesh.m_vertexSize; it++)
-		{
-			if (!myFile.read((char*)&newVertex, sizeof(VertexData)))
-				return;
-
-			mesh.m_vertices.push_back(newVertex);
-		}
-
-		myFile.close();
-	}
+	return original.substr(0, original.find_first_of('.'));
 }
 
 int main()
 {
-	//std::string file1 = "Models/stick_figure.3DS";
-	//std::string converted1 = "Models/stick_figure.bin";
+	BMImporter io;
+	vector<string> files;
 
-	//MeshData mesh1;
-	//MeshData mesh2;
-	//DoTheImportThing(file1, mesh1);
-	//DoTheUnitTestThing(converted1, mesh2);
+	//files.push_back("Models/Plane.obj");
+	//files.push_back("Models/Cube.obj");
+	files.push_back("Models/Characters/Models/Robe/body_robe_gold_common.fbx");
 
-	//if (mesh1 == mesh2)
-	//{
-	//	cout << "Both files are the same!" << endl;
-	//}
-	//else
-	//{
-	//	cout << "Mismatch!" << endl;
-	//}
-
-	MeshData mesh3;
-	MeshData mesh4;
-
-	std::string file2 = "Models/Cube.obj";
-	std::string converted2 = "Models/Cube.bin";
-
-	DoTheImportThing(file2, mesh3);
-	DoTheUnitTestThing(converted2, mesh4);
-
-	if (mesh3 == mesh4)
+	for (auto f : files)
 	{
-		cout << "Both files are the same!" << endl;
-	}
-	else
-	{
-		cout << "Mismatch!" << endl;
+		cout << "------Processing: " + f + "------" << endl;
+		MeshData original;
+		MeshData bin;
+		if (DoTheImportThing(f, original))
+		{
+			std::string path = RemoveExtension(f);
+			io.Import(path + ".bin", bin);
+
+			if (original == bin)
+			{
+				cout << endl;
+				cout << "**Conversion Successful!**" << endl;
+				cout << "----------------------------" << endl;
+			}
+			else
+			{
+				cout << endl;
+				cout << "Conversion falied: Unsupported bin file." << endl;
+				cout << "----------------------------" << endl;
+			}
+			cout << endl;
+		}
+		else
+		{
+			cout << endl;
+			cout << "Conversion falied: Invalid input file/location." << endl;
+			cout << "----------------------------" << endl;
+		}
+
 	}
 
 	system("pause");

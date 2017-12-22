@@ -30,13 +30,13 @@
     <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-18T17:56:40.024</Modified>
+      <Modified>2017-12-22T08:55:18.584</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.exe">
       <PackagePath>RPG_Game1.exe</PackagePath>
-      <Modified>2017-12-19T08:11:38.155</Modified>
+      <Modified>2017-12-22T08:56:47.603</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.winmd">
       <PackagePath>RPG_Game1.winmd</PackagePath>
@@ -132,17 +132,21 @@
       <PackagePath>Assets\textures\grid_tile.png</PackagePath>
       <Modified>2017-12-18T17:53:53.702</Modified>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_bronze_common.bin">
+      <PackagePath>Assets\Models\body_robe_bronze_common.bin</PackagePath>
+      <Modified>2017-12-22T07:21:53.448</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_gold_common.bin">
+      <PackagePath>Assets\Models\body_robe_gold_common.bin</PackagePath>
+      <Modified>2017-12-22T08:54:13.517</Modified>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Cube.bin">
       <PackagePath>Assets\Models\Cube.bin</PackagePath>
-      <Modified>2017-12-18T15:27:39.006</Modified>
+      <Modified>2017-12-22T07:21:53.235</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Plane.bin">
       <PackagePath>Assets\Models\Plane.bin</PackagePath>
-      <Modified>2017-12-18T15:27:38.991</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\stick_figure.bin">
-      <PackagePath>Assets\Models\stick_figure.bin</PackagePath>
-      <Modified>2017-12-18T15:47:39.914</Modified>
+      <Modified>2017-12-22T07:21:53.189</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
@@ -162,11 +166,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-19T08:08:12.349</Modified>
+      <Modified>2017-12-22T08:17:45.487</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-18T17:11:12.356</Modified>
+      <Modified>2017-12-22T08:18:05.176</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Populace\Populace.dll">
       <PackagePath>Populace.dll</PackagePath>
@@ -178,7 +182,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\3D Shader.hlsl">
       <PackagePath>Assets\Shaders\3D Shader.hlsl</PackagePath>
-      <Modified>2017-12-14T02:44:51.180</Modified>
+      <Modified>2017-12-22T08:03:36.378</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\vertex_color_shader.hlsl">
+      <PackagePath>Assets\Shaders\vertex_color_shader.hlsl</PackagePath>
+      <Modified>2017-12-22T09:18:28.816</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.16299.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -187,7 +195,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-18T17:56:39.921</Modified>
+      <Modified>2017-12-22T08:55:18.362</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

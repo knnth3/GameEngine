@@ -1,5 +1,11 @@
 #include "Mesh.h"
 
+Graphics::Mesh::Mesh()
+{
+	m_bUsingVertexColors = false;
+	m_height = 0.0;
+}
+
 void Graphics::Mesh::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const
 {
 	verts.clear();

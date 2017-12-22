@@ -66,6 +66,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="DllSettings.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VertexManager.cpp" />
     <ClCompile Include="WindowsAdditionals.cpp" />
   </ItemGroup>

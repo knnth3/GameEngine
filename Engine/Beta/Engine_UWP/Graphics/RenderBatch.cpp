@@ -101,8 +101,16 @@ void Graphics::RenderBatch::ProcessObject_3DTriangles(BatchInfo& info)
 		return;
 
 	//Set the relevant shader active(if not already set)
-	if (!m_shaderManager->SetActive("3D"))
-		return;
+	if (info.UsingVertexColors)
+	{
+		if (!m_shaderManager->SetActive("VertexColor"))
+			return;
+	}
+	else
+	{
+		if (!m_shaderManager->SetActive("3D"))
+			return;
+	}
 
 	//Draw batch of instanced objects
 	m_bufferManager->DrawIndexedInstanced(
@@ -144,8 +152,8 @@ void Graphics::RenderBatch::CreateShaders()
 	path = L"Assets/shaders/3D Shader.hlsl";
 	m_shaderManager->CreateShader("3D", path);
 
-	path = L"Assets/shaders/2D Shader.hlsl";
-	m_shaderManager->CreateShader("2D", path);
+	path = L"Assets/shaders/vertex_color_shader.hlsl";
+	m_shaderManager->CreateShader("VertexColor", path);
 }
 
 void Graphics::RenderBatch::CreateConstBuffers()
@@ -173,7 +181,7 @@ bool Graphics::RenderBatch::CreateRSSStates()
 
 	//3D default
 	settings.AntialiasedLineEnable = true;
-	settings.CullMode = D3D11_CULL_BACK;
+	settings.CullMode = D3D11_CULL_NONE;
 	settings.DepthBias = 0;
 	settings.DepthBiasClamp = 0.0f;
 	settings.DepthClipEnable = true;

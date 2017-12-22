@@ -96,6 +96,7 @@ void Graphics::VertexManager::CreateNewBatch(MeshID mesh, TextureID texture, Dra
 	newBatch.info.IndexCountPerInstance = (uint32_t)newIndices.size();
 	newBatch.info.InstanceCount = 0;
 	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
+	newBatch.info.UsingVertexColors = data->m_bUsingVertexColors;
 
 	//Create new batch
 	m_BatchCache[std::make_pair(mesh, texture)] = newBatch;

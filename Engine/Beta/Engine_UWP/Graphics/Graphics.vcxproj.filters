@@ -222,6 +222,7 @@
     <ClCompile Include="Effect_2D.cpp">
       <Filter>Source Files\Graphics\RenderBatch\2D\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TestGame\Assets\Shaders\2D Shader.hlsl">

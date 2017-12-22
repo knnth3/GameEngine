@@ -10,19 +10,21 @@ using namespace Windows::System;
 
 bool GameStates::TestingRealm::CreateDeviceIndependentResources()
 {
-	m_player.Scale(100.0f, 100.0f, 100.0f);
-	m_player.SetPosition(0.0f, 200.0f, 0.0f);
+	m_player.Scale(50.0f, 50.0f, 50.0f);
+	//m_player.SetPosition(0.0f, 200.0f, 0.0f);
 	return true;
 }
 
 void GameStates::TestingRealm::CreateDeviceDependentResources()
 {
-	std::string character = "Assets/textures/grid_tile.png";
-	TextureID tex = TextureLoader::CreateNewTexture(character, character, character, character, character, character);
-	MeshID mesh = MeshLoader::CreatePlane(100.0f, 100.0f, 10.0f, 10.0f);
+	std::string gridtex = "Assets/textures/grid_tile.png";
+	TextureID tex = TextureLoader::CreateNewTexture(gridtex, gridtex, gridtex, gridtex, gridtex, gridtex);
+	MeshID mesh = MeshLoader::CreatePlane(100.0f, 100.0f, 10, 10);
+	MeshID character = MeshLoader::LoadModel("Assets/models/body_robe_gold_common.bin");
 
 	m_floor.SetMesh(mesh);
 	m_floor.SetTexture(tex);
+	m_player.SetMesh(character);
 	EngineResources::GetGraphicsDevice()->GetCamera()->AttachToModel(m_floor);
 	EngineResources::GetGraphicsDevice()->GetCamera()->EnforceBounds(false);
 }
@@ -34,7 +36,12 @@ GameStates::States GameStates::TestingRealm::Update()
 	auto input = EngineResources::GetInputManager();
 	auto camera = EngineResources::GetGraphicsDevice()->GetCamera();
 	auto timer = EngineResources::GetTimer();
-	rotation  = 2.3 * timer->GetElapsedSeconds();
+	rotation  = 2.3f * (float)timer->GetElapsedSeconds();
+
+	glm::vec3 pos;
+	if(input->GetMouse3DPosition(pos))
+		m_player.SetPosition(pos);
+
 	if (input->KeyPressed((int)VirtualKey::Escape))
 	{
 		return MAIN_MENU;
@@ -60,11 +67,11 @@ GameStates::States GameStates::TestingRealm::Update()
 	{
 		camera->Rotate(0.0f, -rotation, 0.0f);
 	}
-	if (input->KeyStatus((int)VirtualKey::Q))
+	if (input->KeyStatus((int)VirtualKey::E))
 	{
 		camera->Zoom(-rotation * 100.0f);
 	}
-	if (input->KeyStatus((int)VirtualKey::E))
+	if (input->KeyStatus((int)VirtualKey::Q))
 	{
 		camera->Zoom(rotation * 100.0f);
 	}

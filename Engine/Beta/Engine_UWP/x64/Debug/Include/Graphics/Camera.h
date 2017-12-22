@@ -6,9 +6,9 @@
 
 namespace Graphics
 {
-	struct ModelPos
+	struct Position
 	{
-		ModelPos();
+		Position();
 		bool Empty();
 		glm::vec3 GetPosition();
 		vec3_ptr m_position;
@@ -17,22 +17,22 @@ namespace Graphics
 	struct CameraSettings
 	{
 		GRAPHICS_DLL_API CameraSettings();
+
 		float m_fov;
 		float m_aspectRatio;
-		float m_nearPlane;
-		float m_farPlane;
+		float m_nearDistance;
+		float m_farDistance;
 		float m_distanceFromObject;
 		float m_angleAroundPlayer;
 		float m_cameraHeight;
 		glm::mat4 m_view;
-		glm::mat4 m_3Dprojection;
-		glm::mat4 m_2Dprojection;
+		glm::mat4 m_projection;
 		glm::vec3 m_position;
 		glm::vec3 m_upDirection;
-		glm::vec3 m_rotation;
-		uint32_t m_xResolution;
-		uint32_t m_yResolution;
-		ModelPos m_model;
+		glm::vec3 m_rotations;
+		uint32_t m_screenWidth;
+		uint32_t m_screenHeight;
+		Position m_focusPoint;
 	};
 
 	class Camera
@@ -54,7 +54,6 @@ namespace Graphics
 		GRAPHICS_DLL_API glm::mat4 GetViewMatrix();
 		GRAPHICS_DLL_API glm::mat4 GetIdentityMatrix();
 		GRAPHICS_DLL_API glm::mat4 Get3DProjectionMatrix();
-		GRAPHICS_DLL_API glm::mat4 Get2DProjectionMatrix();
 		GRAPHICS_DLL_API float GetFarPlane();
 		GRAPHICS_DLL_API unsigned int GetWindowWidth();
 		GRAPHICS_DLL_API unsigned int GetWindowHeight();
@@ -64,14 +63,14 @@ namespace Graphics
 		void CalculateAspectRatio();
 		void CreateViewMatrix();
 		void Create3DProjectionMatrix();
-		void Create2DProjectionMatrix();
 		float CalculateVertDistance();
 		float CalculateHorisDistance();
 		void CalculatePosition(float horizontalDistance, float verticalDistance);
+		void CalculateClippingPlanes();
 
 		bool m_bUsingBounds;
-		CameraSettings m_defaultSettings;
-		CameraSettings m_currentSettings;
+		CameraSettings m_defaults;
+		CameraSettings m_active;
 	};
 
 
