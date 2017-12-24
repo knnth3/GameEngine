@@ -44,7 +44,7 @@
 *.suo
 
 # unwanted files
-/Engine/Beta/Engine_UWP/ModelConverter/Models/*
+/Engine/Beta/Engine_UWP/BinaryModelConverter/ModelConverter/Models/*
 
 #Exceptions
 !/Engine/Beta/Engine/TestGame/Assets/**/*.obj

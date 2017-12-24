@@ -1,0 +1,1 @@
+C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\BinaryModelConverter.vcxproj;x86

@@ -187,7 +187,7 @@ int main()
 
 	//files.push_back("Models/Plane.obj");
 	//files.push_back("Models/Cube.obj");
-	files.push_back("Models/Characters/Models/Robe/body_robe_gold_common.fbx");
+	files.push_back("Models/Characters/Models/Robe/body_robe_gold_epic.fbx");
 
 	for (auto f : files)
 	{

@@ -38,10 +38,6 @@ GameStates::States GameStates::TestingRealm::Update()
 	auto timer = EngineResources::GetTimer();
 	rotation  = 2.3f * (float)timer->GetElapsedSeconds();
 
-	glm::vec3 pos;
-	if(input->GetMouse3DPosition(pos))
-		m_player.SetPosition(pos);
-
 	if (input->KeyPressed((int)VirtualKey::Escape))
 	{
 		return MAIN_MENU;
