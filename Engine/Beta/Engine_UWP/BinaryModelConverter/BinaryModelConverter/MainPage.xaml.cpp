@@ -12,6 +12,8 @@
 #include "pch.h"
 #include "MainPage.xaml.h"
 #include "ConvertPage.g.h"
+#include "HomePage.g.h"
+#include "Settings.g.h"
 
 using namespace BinaryModelConverter;
 using namespace Platform;
@@ -36,21 +38,40 @@ MainPage::MainPage()
 {
 	InitializeComponent();
 	AppTitle->Text = Windows::ApplicationModel::Package::Current->DisplayName;
+	ContentFrame->Navigate(TypeName(HomePage::typeid));
 	CoreApplicationViewTitleBar^ titleBar = CoreApplication::GetCurrentView()->TitleBar;
 	titleBar->LayoutMetricsChanged += ref new TypedEventHandler<CoreApplicationViewTitleBar^, Object^>(this, &MainPage::TitleBar_LayoutMetricsChanged);
+	Current = this;
+	m_bOverwriteSave = false;
+}
+
+void BinaryModelConverter::MainPage::SetOverwriteProperty(bool value)
+{
+	m_bOverwriteSave = value;
+}
+
+bool BinaryModelConverter::MainPage::GetOverwriteProperty()
+{
+	return m_bOverwriteSave;
 }
 
 void BinaryModelConverter::MainPage::NavView_SelectionChanged(NavigationView^ sender, NavigationViewSelectionChangedEventArgs^ args)
 {
 	if (args->IsSettingsSelected)
 	{
-		ContentFrame->Navigate(TypeName(ConvertPage::typeid));
+		ContentFrame->Navigate(TypeName(Settings::typeid));
+		NavView->Header = "Settings";
 	}
 	else
 	{
 		NavigationViewItem^ item = static_cast<NavigationViewItem^>(args->SelectedItem);
 		auto requested = item->Tag->ToString();
 
+		if (requested == "Home")
+		{
+			ContentFrame->Navigate(TypeName(HomePage::typeid));
+			NavView->Header = "Home";
+		}
 		if (requested == "Convert")
 		{
 			ContentFrame->Navigate(TypeName(ConvertPage::typeid));

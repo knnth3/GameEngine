@@ -34,7 +34,6 @@ namespace LIME_ENGINE
 		ENGINE_DLL_API virtual void OnWindowMoved();
 
 		//Usage
-		ENGINE_DLL_API void SetClearColor(float r, float g, float b);
 		ENGINE_DLL_API void SetDefaultDimensions(float width, float height);
 
 	private:

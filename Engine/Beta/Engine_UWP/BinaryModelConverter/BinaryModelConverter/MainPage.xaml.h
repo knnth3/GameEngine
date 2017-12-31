@@ -17,10 +17,15 @@ namespace BinaryModelConverter
 	public:
 		MainPage();
 
+		void SetOverwriteProperty(bool value);
+		bool GetOverwriteProperty();
+
 	internal:
 		static MainPage^ Current;
 
 	private:
+		bool m_bOverwriteSave;
+
 		void NavView_SelectionChanged(Windows::UI::Xaml::Controls::NavigationView^ sender, Windows::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs^ args);
 		void TitleBar_LayoutMetricsChanged(Windows::ApplicationModel::Core::CoreApplicationViewTitleBar ^ sender, Platform::Object ^ args);
 	};

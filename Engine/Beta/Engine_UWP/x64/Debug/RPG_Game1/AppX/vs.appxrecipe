@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Machine>PC-KENNETH</Machine>
-    <WindowsUser>Kenneth</WindowsUser>
+    <Machine>DESKTOP-AP94PAJ</Machine>
+    <WindowsUser>Kenneth_Laptop</WindowsUser>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
     <TargetOsDescription>Windows 10.0</TargetOsDescription>
@@ -10,15 +10,15 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>f16242d8-67d0-4ed7-9ffa-d612c6e4b21b</PackageIdentityName>
     <PackageIdentityPublisher>CN=Kenneth</PackageIdentityPublisher>
-    <IntermediateOutputPath>D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppX</LayoutDir>
-    <RegisteredManifestChecksum>63AAF342BA779B2230F627776618DB276773AC403E07E67DABB6B235594AF80E</RegisteredManifestChecksum>
+    <LayoutDir>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppX</LayoutDir>
+    <RegisteredManifestChecksum>6AFDBED2F1BAD29A29ECDC0DA6532BA7D42D2FA9AC3F1944581B5E1C485BDD6A</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>f16242d8-67d0-4ed7-9ffa-d612c6e4b21b_1.0.0.0_x64__3qa0hgc3q8b7w</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>f16242d8-67d0-4ed7-9ffa-d612c6e4b21b_3qa0hgc3q8b7w!App</RegisteredUserModeAppID>
     <RegisteredPackageID>f16242d8-67d0-4ed7-9ffa-d612c6e4b21b</RegisteredPackageID>
@@ -27,175 +27,175 @@
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-22T08:55:18.584</Modified>
+      <Modified>2017-12-30T20:16:22.650</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.exe">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.exe">
       <PackagePath>RPG_Game1.exe</PackagePath>
-      <Modified>2017-12-24T05:32:09.485</Modified>
+      <Modified>2017-12-31T00:20:37.898</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.winmd">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\RPG_Game1.winmd">
       <PackagePath>RPG_Game1.winmd</PackagePath>
-      <Modified>2017-12-09T14:33:44.162</Modified>
+      <Modified>2017-12-24T23:38:15.713</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.526</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.544</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.546</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.546</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.548</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.549</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:14.550</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\diffuse.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\diffuse.png">
       <PackagePath>Assets\textures\Default\diffuse.png</PackagePath>
-      <Modified>2017-12-08T15:33:26.490</Modified>
+      <Modified>2017-12-24T23:37:14.558</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\emissive.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\emissive.png">
       <PackagePath>Assets\textures\Default\emissive.png</PackagePath>
-      <Modified>2017-12-03T11:58:27.732</Modified>
+      <Modified>2017-12-24T23:37:14.572</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\metallic.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\metallic.png">
       <PackagePath>Assets\textures\Default\metallic.png</PackagePath>
-      <Modified>2017-12-03T11:48:07.446</Modified>
+      <Modified>2017-12-24T23:37:14.573</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\normal.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\normal.png">
       <PackagePath>Assets\textures\Default\normal.png</PackagePath>
-      <Modified>2017-12-03T07:28:05.274</Modified>
+      <Modified>2017-12-24T23:37:14.645</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\roughness.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Default\roughness.png">
       <PackagePath>Assets\textures\Default\roughness.png</PackagePath>
-      <Modified>2017-12-03T11:50:19.642</Modified>
+      <Modified>2017-12-24T23:37:14.721</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\button_selected.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\button_selected.png">
       <PackagePath>Assets\textures\MainMenu\button_selected.png</PackagePath>
-      <Modified>2017-11-04T12:19:47.227</Modified>
+      <Modified>2017-12-24T23:37:14.806</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\button_unselected.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\button_unselected.png">
       <PackagePath>Assets\textures\MainMenu\button_unselected.png</PackagePath>
-      <Modified>2017-11-04T12:19:47.230</Modified>
+      <Modified>2017-12-24T23:37:14.808</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap.png">
       <PackagePath>Assets\textures\heightmap.png</PackagePath>
-      <Modified>2017-12-09T14:27:43.022</Modified>
+      <Modified>2017-12-24T23:38:12.290</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap2.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap2.png">
       <PackagePath>Assets\textures\heightmap2.png</PackagePath>
-      <Modified>2017-12-09T14:07:26.676</Modified>
+      <Modified>2017-12-24T23:38:12.292</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap3.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\heightmap3.png">
       <PackagePath>Assets\textures\heightmap3.png</PackagePath>
-      <Modified>2017-12-09T22:09:48.000</Modified>
+      <Modified>2017-12-24T23:38:12.298</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\base_sprite.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\base_sprite.png">
       <PackagePath>Assets\textures\Basic_Character\base_sprite.png</PackagePath>
-      <Modified>2017-12-09T16:32:51.633</Modified>
+      <Modified>2017-12-24T23:37:14.552</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Tileset\spritesheet.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Tileset\spritesheet.png">
       <PackagePath>Assets\textures\Tileset\spritesheet.png</PackagePath>
-      <Modified>2017-12-11T00:07:28.696</Modified>
+      <Modified>2017-12-24T23:38:12.186</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\rpg_sprite_walk.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\rpg_sprite_walk.png">
       <PackagePath>Assets\textures\Basic_Character\rpg_sprite_walk.png</PackagePath>
-      <Modified>2017-12-11T06:00:01.924</Modified>
+      <Modified>2017-12-24T23:37:14.555</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grid_tile.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grid_tile.png">
       <PackagePath>Assets\textures\grid_tile.png</PackagePath>
-      <Modified>2017-12-18T17:53:53.702</Modified>
+      <Modified>2017-12-24T23:38:12.288</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_bronze_common.bin">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_bronze_common.bin">
       <PackagePath>Assets\Models\body_robe_bronze_common.bin</PackagePath>
-      <Modified>2017-12-22T07:21:53.448</Modified>
+      <Modified>2017-12-24T23:37:14.533</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_gold_common.bin">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\body_robe_gold_common.bin">
       <PackagePath>Assets\Models\body_robe_gold_common.bin</PackagePath>
-      <Modified>2017-12-22T08:54:13.517</Modified>
+      <Modified>2017-12-24T23:37:14.539</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Cube.bin">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Cube.bin">
       <PackagePath>Assets\Models\Cube.bin</PackagePath>
-      <Modified>2017-12-22T07:21:53.235</Modified>
+      <Modified>2017-12-24T23:37:14.528</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Plane.bin">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\newcube.bin">
+      <PackagePath>Assets\Models\newcube.bin</PackagePath>
+      <Modified>2017-12-30T23:36:13.140</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Models\Plane.bin">
       <PackagePath>Assets\Models\Plane.bin</PackagePath>
-      <Modified>2017-12-22T07:21:53.189</Modified>
+      <Modified>2017-12-24T23:37:14.529</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grass.jpg">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\grass.jpg">
       <PackagePath>Assets\textures\grass.jpg</PackagePath>
-      <Modified>2017-11-04T12:19:47.231</Modified>
+      <Modified>2017-12-24T23:38:12.286</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\background.jpg">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\MainMenu\background.jpg">
       <PackagePath>Assets\textures\MainMenu\background.jpg</PackagePath>
-      <Modified>2017-11-04T12:19:37.661</Modified>
+      <Modified>2017-12-24T23:37:14.805</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\light_tile.jpg">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\light_tile.jpg">
       <PackagePath>Assets\textures\light_tile.jpg</PackagePath>
-      <Modified>2017-12-10T23:32:59.939</Modified>
+      <Modified>2017-12-24T23:38:12.300</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\base_sprite_big.gif">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\textures\Basic_Character\base_sprite_big.gif">
       <PackagePath>Assets\textures\Basic_Character\base_sprite_big.gif</PackagePath>
-      <Modified>2017-12-09T16:23:11.260</Modified>
+      <Modified>2017-12-24T23:37:14.553</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Graphics\Graphics.dll">
       <PackagePath>Graphics.dll</PackagePath>
-      <Modified>2017-12-22T08:17:45.487</Modified>
+      <Modified>2017-12-31T00:35:20.971</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
       <PackagePath>Lime_Engine.dll</PackagePath>
-      <Modified>2017-12-22T08:18:05.176</Modified>
+      <Modified>2017-12-31T00:28:13.928</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Populace\Populace.dll">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\Libraries\Populace\Populace.dll">
       <PackagePath>Populace.dll</PackagePath>
-      <Modified>2017-12-03T04:48:53.842</Modified>
+      <Modified>2017-12-04T16:00:20.459</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\2D Shader.hlsl">
-      <PackagePath>Assets\Shaders\2D Shader.hlsl</PackagePath>
-      <Modified>2017-11-21T23:16:48.000</Modified>
-    </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\3D Shader.hlsl">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\3D Shader.hlsl">
       <PackagePath>Assets\Shaders\3D Shader.hlsl</PackagePath>
-      <Modified>2017-12-22T08:03:36.378</Modified>
+      <Modified>2017-12-30T23:31:09.254</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\vertex_color_shader.hlsl">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\RPG_Game1\Assets\Shaders\vertex_color_shader.hlsl">
       <PackagePath>Assets\Shaders\vertex_color_shader.hlsl</PackagePath>
-      <Modified>2017-12-22T09:18:28.816</Modified>
+      <Modified>2017-12-30T23:31:31.078</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.16299.0\\redist\Debug\X64\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
-      <Modified>2017-09-29T08:58:52.000</Modified>
+      <Modified>2017-11-11T07:55:06.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\resources.pri">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\RPG_Game1\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-22T08:55:18.362</Modified>
+      <Modified>2017-12-30T20:16:22.468</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

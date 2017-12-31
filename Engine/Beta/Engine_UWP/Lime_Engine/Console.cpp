@@ -9,8 +9,6 @@ using namespace Graphics;
 LIME_ENGINE::Console::Console()
 {
 	m_bActive = false;
-	EngineResources::GetGraphicsDevice()->GetWindowDimensions(m_width, m_height);
-	m_height *= 0.5f;
 	int ID = BrushManager::CreateNewBrush(glm::vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	m_textBrush = BrushManager::CreateNewBrush(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	m_background = Square(m_width, m_height, 0.0f, 0.0f);
@@ -38,22 +36,10 @@ void LIME_ENGINE::Console::Log(std::wstring text, int brushID)
 
 void LIME_ENGINE::Console::Update()
 {
-	static double timer = 0.0;
-	if(m_strings.size() > 0)
-		timer += EngineResources::GetTimer()->GetElapsedSeconds();
-
 	bool pressed = EngineResources::GetInputManager()->KeyPressed(m_openButton);
 	if (pressed)
 	{
 		Switch();
-	}
-
-	std::lock_guard<std::mutex> lock(m_mutex);
-	if (timer > 5.0)
-	{
-		m_strings.pop_front();
-		ReorderStrings();
-		timer = 0.0;
 	}
 }
 
@@ -79,12 +65,11 @@ void LIME_ENGINE::Console::Switch()
 void LIME_ENGINE::Console::UpdateDimensions()
 {
 	EngineResources::GetGraphicsDevice()->GetWindowDimensions(m_width, m_height);
-	m_height *= 0.5f;
 	m_background.SetDimensions(m_width, m_height);
 	int count = (int)m_strings.size();
 	for (auto& str : m_strings)
 		str.SetPosition(0.0f, m_height - (str.GetBounds().y * count--));
-	m_fpsText.SetPosition(m_width - 200.0f, (m_height*2.0f) - 100.0f);
+	m_fpsText.SetPosition(m_width * 9.0f/10.0f, 0.0f);
 }
 
 void LIME_ENGINE::Console::SetTextColor(glm::vec4 color)
@@ -114,10 +99,10 @@ void LIME_ENGINE::Console::Push_Back(Text& newStr)
 void LIME_ENGINE::Console::ReorderStrings()
 {
 	float newPos = m_height;
-	for (auto& x : m_strings)
+	for (auto x = m_strings.rbegin(); x != m_strings.rend(); ++x)
 	{
-		newPos -= x.GetBounds().y;
-		x.SetPosition(0.0f, newPos);
+		newPos -= x->GetBounds().y;
+		x->SetPosition(0.0f, newPos);
 	}
 }
 

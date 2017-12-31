@@ -7,6 +7,7 @@
 Graphics::GraphicsDevice::GraphicsDevice()
 {
 	m_camera = std::shared_ptr<Camera>(new Camera());
+	clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Graphics::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
@@ -14,18 +15,30 @@ Graphics::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 	m_camera = std::shared_ptr<Camera>(new Camera(s_camera));
 }
 
-void Graphics::GraphicsDevice::BeginScene(float r, float g, float b)
+void Graphics::GraphicsDevice::SetClearColor(float r, float g, float b)
+{
+	clearColor.r = r;
+	clearColor.g = g;
+	clearColor.b = b;
+}
+
+void Graphics::GraphicsDevice::SetClearColor(glm::vec3 color)
+{
+	clearColor = color;
+}
+
+void Graphics::GraphicsDevice::BeginScene()
 {
 	float alpha = 1.0f;
 	m_renderBatch_2D->BeginScene();
 
 	if (ENABLE_3D_RENDERING)
 	{
-		ClearScreen(r, g, b);
+		ClearScreen(clearColor.r, clearColor.g, clearColor.b);
 		alpha = 0.0f;
 	}
 
-	m_renderBatch_2D->ClearScreen(r, g, b, alpha);
+	m_renderBatch_2D->ClearScreen(clearColor.r, clearColor.g, clearColor.b, alpha);
 }
 
 bool Graphics::GraphicsDevice::Initialize(
@@ -132,5 +145,6 @@ void Graphics::GraphicsDevice::Reset()
 	{
 		m_renderBatch->Reset();
 		m_camera->Reset();
+		m_camera->SetResolution(m_WindowWidth, m_WindowHeight);
 	}
 }

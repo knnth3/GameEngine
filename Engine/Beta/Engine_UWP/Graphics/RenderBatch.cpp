@@ -181,7 +181,7 @@ bool Graphics::RenderBatch::CreateRSSStates()
 
 	//3D default
 	settings.AntialiasedLineEnable = true;
-	settings.CullMode = D3D11_CULL_NONE;
+	settings.CullMode = D3D11_CULL_BACK;
 	settings.DepthBias = 0;
 	settings.DepthBiasClamp = 0.0f;
 	settings.DepthClipEnable = true;

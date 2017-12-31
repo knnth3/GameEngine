@@ -10,12 +10,16 @@
 #include "XamlTypeInfo.g.h"
 
 #include "ConvertPage.xaml.h"
+#include "HomePage.xaml.h"
 #include "App.xaml.h"
 #include "MainPage.xaml.h"
+#include "Settings.xaml.h"
 #include "XamlBindingInfo.g.hpp"
 #include "ConvertPage.g.hpp"
+#include "HomePage.g.hpp"
 #include "App.g.hpp"
 #include "MainPage.g.hpp"
+#include "Settings.g.hpp"
 
 template<typename T>
 ::Platform::Object^ ActivateType()
@@ -76,18 +80,30 @@ const TypeInfo TypeInfos[] =
     0, 0, -1, ::Windows::UI::Xaml::Interop::TypeKind::Metadata,
     TypeInfo_Flags_IsSystemType | TypeInfo_Flags_None,
     //   1
+    L"BinaryModelConverter.HomePage", L"",
+    &ActivateType<::BinaryModelConverter::HomePage>, nullptr, nullptr, nullptr,
+    0, // Windows.UI.Xaml.Controls.Page
+    0, 0, -1, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
+    TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
+    //   2
     L"BinaryModelConverter.MainPage", L"",
     &ActivateType<::BinaryModelConverter::MainPage>, nullptr, nullptr, nullptr,
     0, // Windows.UI.Xaml.Controls.Page
     0, 0, -1, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
     TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
-    //   2
+    //   3
+    L"BinaryModelConverter.Settings", L"",
+    &ActivateType<::BinaryModelConverter::Settings>, nullptr, nullptr, nullptr,
+    0, // Windows.UI.Xaml.Controls.Page
+    0, 0, -1, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
+    TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
+    //   4
     L"BinaryModelConverter.ConvertPage", L"",
     &ActivateType<::BinaryModelConverter::ConvertPage>, nullptr, nullptr, nullptr,
     0, // Windows.UI.Xaml.Controls.Page
     0, 0, -1, ::Windows::UI::Xaml::Interop::TypeKind::Custom,
     TypeInfo_Flags_IsLocalType | TypeInfo_Flags_None,
-    //   3
+    //   5
     L"Windows.UI.Xaml.Controls.UserControl", L"",
     nullptr, nullptr, nullptr, nullptr,
     -1,
@@ -132,14 +148,14 @@ const UINT TypeInfoLookup[] = {
       0,   //  27
       0,   //  28
       0,   //  29
-      2,   //  30
-      2,   //  31
-      2,   //  32
-      3,   //  33
-      3,   //  34
-      3,   //  35
-      3,   //  36
-      4,   //  37
+      4,   //  30
+      4,   //  31
+      4,   //  32
+      5,   //  33
+      5,   //  34
+      5,   //  35
+      5,   //  36
+      6,   //  37
 };
 
 const TypeInfo* GetTypeInfo(::Platform::String^ typeName)

@@ -20,9 +20,8 @@ namespace GameStates
 		virtual void OnWindowResize()override;
 
 	private:
-
+		int m_blueBrush;
 		Graphics::Model m_player;
 		Graphics::Model m_floor;
 	};
-
 }

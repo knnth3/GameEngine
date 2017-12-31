@@ -24,5 +24,14 @@ namespace LIME_ENGINE
 		LOG_BLUE,
 		LOG_GREEN
 	};
+
+	inline std::wstring To_wstr(bool val)
+	{
+		if (val)
+			return L"True";
+
+		else
+			return L"False";
+	}
 }
 

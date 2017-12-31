@@ -231,9 +231,6 @@
     <None Include="Assets\textures\MainMenu\button_unselected.png">
       <Filter>Assets\Textures\MainMenu</Filter>
     </None>
-    <None Include="Assets\Shaders\2D Shader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </None>
     <None Include="Assets\Shaders\3D Shader.hlsl">
       <Filter>Assets\Shaders</Filter>
     </None>
@@ -279,13 +276,14 @@
     <None Include="Assets\Models\body_robe_gold_common.bin">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Assets\Models\newcube.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Shaders\vertex_color_shader.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Assets\Shaders\vertex_color_shader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

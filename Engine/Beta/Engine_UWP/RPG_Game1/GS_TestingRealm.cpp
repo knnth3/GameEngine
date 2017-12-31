@@ -10,6 +10,7 @@ using namespace Windows::System;
 
 bool GameStates::TestingRealm::CreateDeviceIndependentResources()
 {
+	m_blueBrush = 0;
 	m_player.Scale(50.0f, 50.0f, 50.0f);
 	//m_player.SetPosition(0.0f, 200.0f, 0.0f);
 	return true;
@@ -20,13 +21,27 @@ void GameStates::TestingRealm::CreateDeviceDependentResources()
 	std::string gridtex = "Assets/textures/grid_tile.png";
 	TextureID tex = TextureLoader::CreateNewTexture(gridtex, gridtex, gridtex, gridtex, gridtex, gridtex);
 	MeshID mesh = MeshLoader::CreatePlane(100.0f, 100.0f, 10, 10);
-	MeshID character = MeshLoader::LoadModel("Assets/models/body_robe_gold_common.bin");
+	MeshID character = MeshLoader::LoadModel("Assets/models/newcube.bin");
 
 	m_floor.SetMesh(mesh);
 	m_floor.SetTexture(tex);
 	m_player.SetMesh(character);
 	EngineResources::GetGraphicsDevice()->GetCamera()->AttachToModel(m_floor);
 	EngineResources::GetGraphicsDevice()->GetCamera()->EnforceBounds(false);
+
+	//Log Info
+	bool bounds = false;
+	EngineResources::GetGraphicsDevice()->GetCamera()->EnforceBounds(bounds);
+	m_blueBrush = BrushManager::CreateNewBrush(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+	auto console = EngineResources::GetConsole();
+	console->Log(L"Controls:", m_blueBrush);
+	console->Log(L"L - Wireframe View", m_blueBrush);
+	console->Log(L"P - Fullscreen", m_blueBrush);
+	console->Log(L"Q - Zoom Out", m_blueBrush);
+	console->Log(L"E - Zoom In", m_blueBrush);
+	console->Log(L"WASD look controls enabled", m_blueBrush);
+	console->Log(L"Enforcing look-bounds: " + To_wstr(bounds), m_blueBrush);
 }
 
 GameStates::States GameStates::TestingRealm::Update()
@@ -82,6 +97,7 @@ void GameStates::TestingRealm::Draw()
 
 void GameStates::TestingRealm::Close()
 {
+	BrushManager::DeleteBrush(m_blueBrush);
 	TextureLoader::Clear();
 	MeshLoader::Clear();
 	EngineResources::GetGraphicsDevice()->Reset();

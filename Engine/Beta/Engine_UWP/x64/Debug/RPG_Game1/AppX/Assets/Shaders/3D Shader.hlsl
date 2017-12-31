@@ -150,7 +150,6 @@ float4 psMain(VSOutput input) : SV_TARGET
 	float4 color = float4(input.diffuse * brightness, 1.0f);
 
 	return tex * color;
-	//return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 //------------------------Pixel Shader------------------------------------

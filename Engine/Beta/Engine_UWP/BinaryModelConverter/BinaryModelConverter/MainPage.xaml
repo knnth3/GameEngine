@@ -17,6 +17,7 @@
                 </NavigationView.Header>
 
                 <NavigationView.MenuItems>
+                    <NavigationViewItem Icon="Home" Content="Home" Tag="Home" />
                     <NavigationViewItem Icon="Play" Content="Convert a Model" Tag="Convert" />
                 </NavigationView.MenuItems>
 

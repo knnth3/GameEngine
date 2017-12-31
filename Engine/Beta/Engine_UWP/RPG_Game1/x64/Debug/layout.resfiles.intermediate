@@ -2,8 +2,8 @@ Assets\LockScreenLogo.scale-200.png
 Assets\Models\body_robe_bronze_common.bin
 Assets\Models\body_robe_gold_common.bin
 Assets\Models\Cube.bin
+Assets\Models\newcube.bin
 Assets\Models\Plane.bin
-Assets\Shaders\2D Shader.hlsl
 Assets\Shaders\3D Shader.hlsl
 Assets\Shaders\vertex_color_shader.hlsl
 Assets\SplashScreen.scale-200.png

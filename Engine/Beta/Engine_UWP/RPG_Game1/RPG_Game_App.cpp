@@ -16,7 +16,6 @@ using namespace GameStates;
 
 RPG_Game_App::RPG_Game_App()
 {
-	SetClearColor(0.2f, 0.2f, 0.2f);
 	SetDefaultDimensions(832.0f, 640.0f);
 	m_currentState = MAIN_MENU;
 }

@@ -48,7 +48,7 @@ void LIME_ENGINE::EngineApp::Render()
 		auto graphics = EngineResources::GetGraphicsDevice();
 		auto console = EngineResources::GetConsole();
 
-		graphics->BeginScene(m_clearColor.x, m_clearColor.g, m_clearColor.b);
+		graphics->BeginScene();
 		OnRender();
 		console->Render();
 		graphics->EndScene();
@@ -75,6 +75,8 @@ void LIME_ENGINE::EngineApp::Resume()
 {
 	if (EngineResources::Initialize())
 	{
+		auto graphics = EngineResources::GetGraphicsDevice();
+		graphics->SetClearColor(m_clearColor);
 		m_bActivated = true;
 		OnResume();
 	}
@@ -93,13 +95,6 @@ void LIME_ENGINE::EngineApp::OnWindowSizeChanged()
 void LIME_ENGINE::EngineApp::OnWindowMoved()
 {
 	
-}
-
-void LIME_ENGINE::EngineApp::SetClearColor(float r, float g, float b)
-{
-	m_clearColor.x = r;
-	m_clearColor.y = g;
-	m_clearColor.z = b;
 }
 
 void LIME_ENGINE::EngineApp::SetDefaultDimensions(float width, float height)

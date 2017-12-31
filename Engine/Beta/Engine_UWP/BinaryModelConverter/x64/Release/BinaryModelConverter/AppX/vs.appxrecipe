@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Machine>DESKTOP-AP94PAJ</Machine>
+    <WindowsUser>Kenneth_Laptop</WindowsUser>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetOsDescription>Windows 10.0</TargetOsDescription>
+    <SolutionConfiguration>Release|x64</SolutionConfiguration>
+    <PackageArchitecture>x64</PackageArchitecture>
+    <PackageIdentityName>656c686b-c2c0-43d5-81a1-06ee187f5564</PackageIdentityName>
+    <PackageIdentityPublisher>CN=Kenneth</PackageIdentityPublisher>
+    <IntermediateOutputPath>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\x64\Release\</IntermediateOutputPath>
+    <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
+    <PackageRegistrationPath>
+    </PackageRegistrationPath>
+    <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
+    <DeployOptionalPackages>false</DeployOptionalPackages>
+    <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
+    <LayoutDir>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\AppX</LayoutDir>
+    <RegisteredManifestChecksum>40FDE73F107BE3EC1C74726582260B9F913024FFE65D3FE0DDADFB09C7841658</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>656c686b-c2c0-43d5-81a1-06ee187f5564_1.0.0.0_x64__3qa0hgc3q8b7w</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>656c686b-c2c0-43d5-81a1-06ee187f5564_3qa0hgc3q8b7w!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>656c686b-c2c0-43d5-81a1-06ee187f5564</RegisteredPackageID>
+    <RegisteredPackagePublisher>CN=Kenneth</RegisteredPackagePublisher>
+    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+    <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppXManifest Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\AppxManifest.xml">
+      <PackagePath>AppxManifest.xml</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-31T01:30:33.477</Modified>
+    </AppXManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\background.jpg">
+      <PackagePath>Assets\background.jpg</PackagePath>
+      <Modified>2017-12-24T23:37:13.615</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\background.png">
+      <PackagePath>Assets\background.png</PackagePath>
+      <Modified>2017-12-24T23:37:13.623</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\LockScreenLogo.scale-200.png">
+      <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
+      <Modified>2017-12-24T23:37:13.607</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\SplashScreen.scale-200.png">
+      <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.608</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\Square150x150Logo.scale-200.png">
+      <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.609</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\Square44x44Logo.scale-200.png">
+      <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.610</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.611</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\StoreLogo.png">
+      <PackagePath>Assets\StoreLogo.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.612</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\Assets\Wide310x150Logo.scale-200.png">
+      <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-24T23:37:13.613</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.exe">
+      <PackagePath>BinaryModelConverter.exe</PackagePath>
+      <Modified>2017-12-31T02:07:21.043</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.pdb">
+      <PackagePath>BinaryModelConverter.pdb</PackagePath>
+      <Modified>2017-12-31T02:07:21.061</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.winmd">
+      <PackagePath>BinaryModelConverter.winmd</PackagePath>
+      <Modified>2017-12-31T01:59:42.152</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\bin\x64\Assimp64.dll">
+      <PackagePath>bin\x64\Assimp64.dll</PackagePath>
+      <Modified>2014-01-13T04:45:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\lib\libfbxsdk.dll">
+      <PackagePath>lib\libfbxsdk.dll</PackagePath>
+      <Modified>2017-03-30T21:19:52.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\models\model.tmp">
+      <PackagePath>models\model.tmp</PackagePath>
+      <Modified>2017-12-27T09:12:01.770</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\resources.pri">
+      <PackagePath>resources.pri</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2017-12-31T02:07:21.337</Modified>
+    </AppxPackagedFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00</Name>
+      <Version>14.0.25426.0</Version>
+      <Architecture>ARM</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00, MinVersion = 14.0.25426.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Retail\ARM\Microsoft.VCLibs.ARM.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00</Name>
+      <Version>14.0.25426.0</Version>
+      <Architecture>x64</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00, MinVersion = 14.0.25426.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Retail\x64\Microsoft.VCLibs.x64.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+    <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
+      <Name>Microsoft.VCLibs.140.00</Name>
+      <Version>14.0.25426.0</Version>
+      <Architecture>x86</Architecture>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00, MinVersion = 14.0.25426.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Retail\x86\Microsoft.VCLibs.x86.14.00.appx</AppxLocation>
+      <MoreInfo>
+      </MoreInfo>
+    </ResolvedSDKReference>
+  </ItemGroup>
+</Project>

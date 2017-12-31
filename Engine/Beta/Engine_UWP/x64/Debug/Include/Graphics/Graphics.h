@@ -18,7 +18,9 @@ namespace Graphics
 	public:
 		GRAPHICS_DLL_API GraphicsDevice();
 		GRAPHICS_DLL_API GraphicsDevice(const CameraSettings s_camera);
-		GRAPHICS_DLL_API virtual void BeginScene(float r, float g, float b)final;
+		GRAPHICS_DLL_API virtual void SetClearColor(float r, float g, float b)final;
+		GRAPHICS_DLL_API virtual void SetClearColor(glm::vec3 color)final;
+		GRAPHICS_DLL_API virtual void BeginScene()final;
 		GRAPHICS_DLL_API virtual void EndScene()final;
 
 		//Functionality
@@ -39,6 +41,7 @@ namespace Graphics
 
 	private:
 
+		glm::vec3 clearColor;
 		float m_WindowWidth;
 		float m_WindowHeight;
 		std::shared_ptr<Camera> m_camera;

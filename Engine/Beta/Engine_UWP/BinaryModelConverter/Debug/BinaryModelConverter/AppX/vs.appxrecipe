@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Machine>PC-KENNETH</Machine>
-    <WindowsUser>Kenneth</WindowsUser>
+    <Machine>DESKTOP-AP94PAJ</Machine>
+    <WindowsUser>Kenneth_Laptop</WindowsUser>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
     <TargetOsDescription>Windows 10.0</TargetOsDescription>
@@ -10,14 +10,14 @@
     <PackageArchitecture>x86</PackageArchitecture>
     <PackageIdentityName>656c686b-c2c0-43d5-81a1-06ee187f5564</PackageIdentityName>
     <PackageIdentityPublisher>CN=Kenneth</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>CopyToDevice</RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
     <RemoveNonLayoutFiles>false</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>C:\Users\Kenneth\Source\Repos\BinaryModelConverter\Debug\BinaryModelConverter\AppX</LayoutDir>
+    <LayoutDir>C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\Debug\BinaryModelConverter\AppX</LayoutDir>
     <RegisteredManifestChecksum>16C4800D557A9C1892DD3A28FAF2FE0933BB23E0B58B22EC6D79ED46F78C776F</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>656c686b-c2c0-43d5-81a1-06ee187f5564_1.0.0.0_x86__3qa0hgc3q8b7w</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>656c686b-c2c0-43d5-81a1-06ee187f5564_3qa0hgc3q8b7w!App</RegisteredUserModeAppID>
@@ -27,63 +27,71 @@
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\Debug\BinaryModelConverter\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\Debug\BinaryModelConverter\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-24T06:47:33.216</Modified>
+      <Modified>2017-12-24T23:37:13.795</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\Debug\BinaryModelConverter\BinaryModelConverter.exe">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\Debug\BinaryModelConverter\BinaryModelConverter.exe">
       <PackagePath>BinaryModelConverter.exe</PackagePath>
-      <Modified>2017-12-24T10:50:37.650</Modified>
+      <Modified>2017-12-24T23:42:32.899</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\Debug\BinaryModelConverter\BinaryModelConverter.winmd">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\Debug\BinaryModelConverter\BinaryModelConverter.winmd">
       <PackagePath>BinaryModelConverter.winmd</PackagePath>
-      <Modified>2017-12-24T06:47:26.655</Modified>
+      <Modified>2017-12-24T23:42:26.854</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\background.jpg">
+      <PackagePath>Assets\background.jpg</PackagePath>
+      <Modified>2017-12-24T23:37:13.615</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\background.png">
+      <PackagePath>Assets\background.png</PackagePath>
+      <Modified>2017-12-24T23:37:13.623</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.607</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.608</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.609</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.610</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.611</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.612</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\BinaryModelConverter\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\BinaryModelConverter\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-01T03:42:08.223</Modified>
+      <Modified>2017-12-24T23:37:13.613</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.16299.0\\redist\Debug\x86\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
-      <Modified>2017-09-29T05:31:16.000</Modified>
+      <Modified>2017-09-29T06:31:16.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\Kenneth\Source\Repos\BinaryModelConverter\Debug\BinaryModelConverter\resources.pri">
+    <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\Debug\BinaryModelConverter\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-24T10:50:37.935</Modified>
+      <Modified>2017-12-24T23:42:34.164</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

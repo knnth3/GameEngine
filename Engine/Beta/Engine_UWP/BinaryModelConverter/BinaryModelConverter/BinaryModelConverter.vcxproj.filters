@@ -11,6 +11,21 @@
     <Filter Include="Styles">
       <UniqueIdentifier>{8dbb952b-6042-4b21-86f6-9171e063f196}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FBX SDK">
+      <UniqueIdentifier>{56774180-aaa1-4c24-b81f-376038bfabde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Basics">
+      <UniqueIdentifier>{64719422-4c83-48e6-8f0f-ac055ac90bae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{4baccebe-3501-4dda-af31-718e86ef2855}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dlls">
+      <UniqueIdentifier>{77a4e292-13cb-433e-b6ad-04e96f487afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pages">
+      <UniqueIdentifier>{ad0ab75e-f3db-4434-a5dd-e4a0fdda8b9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -20,12 +35,26 @@
     <ClCompile Include="MainPage.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ConvertPage.xaml.cpp" />
+    <ClCompile Include="FBX SDK\FBX_READER.cpp">
+      <Filter>FBX SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="HomePage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
     <ClInclude Include="MainPage.xaml.h" />
     <ClInclude Include="ConvertPage.xaml.h" />
+    <ClInclude Include="FBX SDK\FBX_READER.h">
+      <Filter>FBX SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Basics\BinImporter.h">
+      <Filter>Basics</Filter>
+    </ClInclude>
+    <ClInclude Include="Basics\DataTypes.h">
+      <Filter>Basics</Filter>
+    </ClInclude>
+    <ClInclude Include="HomePage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -61,12 +90,30 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="BinaryModelConverter_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+    <None Include="lib\libfbxsdk.dll">
+      <Filter>dlls</Filter>
+    </None>
+    <None Include="models\model.tmp">
+      <Filter>models</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\Assimp64.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainPage.xaml" />
     <Page Include="Styles\Styles.xaml">
       <Filter>Styles</Filter>
     </Page>
-    <Page Include="ConvertPage.xaml" />
+    <Page Include="ConvertPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="HomePage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Settings.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
 </Project>

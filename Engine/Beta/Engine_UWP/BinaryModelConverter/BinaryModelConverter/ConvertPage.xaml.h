@@ -21,12 +21,17 @@ namespace BinaryModelConverter
 
 	private:
 		MainPage^ rootPage;
-		Platform::String^ m_filename;
+		Windows::Storage::StorageFile^ m_file;
+		Windows::Storage::StorageFile^ m_temp;
 		Windows::Storage::StorageFolder^ m_selectedFolder;
 
+		Windows::Storage::StorageFile^ GetOriginalFile();
 		Platform::String^ GetSaveFile();
 		Windows::Storage::StorageFolder^ GetStorageFolder();
+		bool CopyContentToTemp();
+		void LoadTempFile();
 
+		std::wstring ParseFilePath(std::wstring path);
 		void SetStorageFolder(Windows::Storage::StorageFolder^ folder);
 		void PickAFileButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void PickAFolderButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
