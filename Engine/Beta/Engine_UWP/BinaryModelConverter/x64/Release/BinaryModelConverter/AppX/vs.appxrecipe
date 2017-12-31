@@ -103,7 +103,7 @@
     <AppxPackagedFile Include="C:\Users\Kenneth_Laptop\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-12-31T02:07:21.337</Modified>
+      <Modified>2017-12-31T02:20:41.515</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>
