@@ -4,19 +4,22 @@ This project is an engine that currently uses the DirectX 11 API.
 It's a very basic implementation that is work in progress.
 To test it out, clone and open the sln file in Visual Studios.
 
-#Included in Root:
+**Included in Root:**
+
 -Networking model that uses UDP sockets.
 -BinaryModelConverter that converts obj, 3ds, fbx and collada files using FBX sdk to a custom format Engine can read.
 -Populace is an api to handle RPG game like interations and information.
 
-#Supported Building of x64 only
-#*************Engine Documentation*************
+**Supported Building of x64 only**
+
+**Engine Documentation**
 
 Engine is a Dll based graphics api based on the DirectX 11 interface.
 This means that this program can only run on Windows OS.
 -It is possible to create a renderer that does not use DirectX 11 although a new RenderBatch must be created (More info Below)
 
-#-----Standard Build----------------------------------------------------------------------------------------------------------
+**---------Standard Build---------**
+
 -In the main function, a GraphicsWindow is created.
 int main(){
 	int val = 0;
@@ -33,15 +36,21 @@ int main(){
 *The WindowApp is a user made class that inherits "GraphicsWindow"
 -GraphicsWindow requires a few functions to be present in WindowApp for it to work.
 -The implementation of those are completely user defined and are called by the WindowApp public functions like Initialize() and Run().
-#Required:
+
+**Required:**
+
 virtual void Update(void);
+
 virtual void Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics);
+
 virtual void Resume(void);
+
 virtual void Suspend(void);
 
 *When using the GraphicsWindow, you also gain access to the WindowResources static class.
 -This contains all of the nessesary interfaces that the window creates.
-#Included by default:
+**Included by default:**
+
 Input
 Timer
 Graphics (also passed as an argument in the Render() function)
@@ -50,7 +59,8 @@ Graphics (also passed as an argument in the Render() function)
 -Keep in mind that anything given to WindowResources becomes "Global" and needs to be thread safe to avoid any undefined behavior.
 -More info can be found by hovering over the WindowResources object (in VS) or looking up the specified header file.
 
-#-----UWP Build-------------------------------------------------------------------------------------------------------------------
+**---------UWP Build---------**
+
 *It is possible to build as a UWP project although some modifications may need to be made.
 *WindowApp cannot be used if building as UWP
 -This means that WindowResources must be included in the self-implementation and needs to handle passed data accordingly 
