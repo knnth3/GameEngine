@@ -1,9 +1,7 @@
 #include "WindowApp.h"
 #include <Windows.h>
-#include <Graphics\universal_map.h>
 
 using namespace Graphics;
-
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
