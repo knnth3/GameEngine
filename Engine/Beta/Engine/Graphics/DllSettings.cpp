@@ -1,14 +1,7 @@
 #include <glm\gtx\transform.hpp>
+#include <algorithm>
 #include "DllSettings.h"
 
-Graphics::WorldLight::WorldLight()
-{
-	m_direction =  glm::vec3(0.0f, 1.0f, 0.0f);
-	m_specularColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	m_ambientColor = glm::vec4(0.15f, 0.15f, 0.15f, 1.0f);
-	m_diffuseColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_specularPower = 60.0f;
-}
 
 void Graphics::GetFileExt(const std::string& path, std::string & ext)
 {
@@ -25,4 +18,43 @@ void Graphics::GetFileExt(const std::string& path, std::string & ext)
 		//Log error
 		ext = "";
 	}
+}
+
+std::wstring Graphics::To_wstr(std::string val)
+{
+	std::wstring temp;
+	temp.insert(temp.begin(), val.begin(), val.end());
+	return temp;
+}
+
+std::wstring Graphics::To_wstr(bool val)
+{
+	if (val)
+		return L"True";
+
+	else
+		return L"False";
+}
+
+std::string Graphics::To_str(std::wstring val)
+{
+	std::string temp;
+	temp.insert(temp.begin(), val.begin(), val.end());
+	return temp;
+}
+
+std::string Graphics::To_str(bool val)
+{
+	if (val)
+		return "True";
+
+	else
+		return "False";
+}
+
+std::string Graphics::To_upper(const std::string & val)
+{
+	std::string str = val;
+	std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+	return str;
 }

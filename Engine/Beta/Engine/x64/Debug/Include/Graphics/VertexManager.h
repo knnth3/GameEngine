@@ -13,12 +13,12 @@ namespace Graphics
 
 	struct BatchInfo
 	{
-		TextureID Texture;
+		std::string Texture;
 		DrawStyle Style;
+		bool UsingVertexColors;
 		uint32_t IndexCountPerInstance;
 		uint32_t InstanceCount;
 		uint32_t StartIndexLocation;
-		uint32_t BaseVertexLocation;
 	};
 
 	struct Batch
@@ -32,7 +32,7 @@ namespace Graphics
 	{
 	public:
 		VertexManager(const uint16_t maxInstances);
-		void AddModel(Model& model);
+		void AddModel(const Model& model);
 
 		bool NewBatchInfo();
 		void Reset();
@@ -42,13 +42,13 @@ namespace Graphics
 
 
 	private:
-		void CreateNewBatch(MeshID mesh, TextureID texture, DrawStyle style);
+		void CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style);
 
 		bool m_bNewBatch;
 		const uint16_t m_maxInstances;
 		std::vector<Vertex> m_vertices;
 		std::vector<Index> m_indices;
-		std::map<std::pair<MeshID, TextureID>, Batch> m_BatchCache;
+		std::map<std::pair<MeshID, std::string>, Batch> m_BatchCache;
 	};
 
 

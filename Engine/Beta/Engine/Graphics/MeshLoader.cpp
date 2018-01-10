@@ -1,7 +1,9 @@
 #include "MeshLoader.h"
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tinyobjloader\tiny_obj_loader.h>
+#include "WindowsAdditionals.h"
+#include <iostream>
+#include <fstream>
+#include <sys/stat.h>
+#include <BMImporter\BinImporter.h>
 
 
 using namespace Graphics;
@@ -9,14 +11,12 @@ using namespace std;
 bool Graphics::MeshLoader::m_bIsInit = false;
 std::shared_ptr<Mesh> Graphics::MeshLoader::m_default;
 std::vector<std::shared_ptr<Mesh>> Graphics::MeshLoader::m_modelLibrary;
-std::vector<MeshDefaultSettings> Graphics::MeshLoader::m_defaultSettings;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_filepaths;
 std::map<std::string, MeshID> Graphics::MeshLoader::m_keyNames;
 
-
 bool Graphics::MeshLoader::Initialize()
 {
-	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.obj");
+	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.bin");
 	if (defaultMesh == -1)
 		return false;
 
@@ -28,65 +28,93 @@ bool Graphics::MeshLoader::Initialize()
 
 Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string filename)
 {
-	MeshID result;
-	if (!IsFilepathQuerried(filename, result))
-	{
-		std::string ext;
-		GetFileExt(filename, ext);
+	MeshID result = -1;
+	std::string ext;
+	GetFileExt(filename, ext);
 
-		if(ext.compare("obj") == 0)
-			result = ProcessOBJFile(filename);
+	struct stat results;
+	if (!stat(filename.c_str(), &results) == 0)
+	{
+		std::wstring message;
+		message.insert(message.end(), filename.begin(), filename.end());
+		CheckSuccess(E_INVALIDARG, message.c_str());
+		return result;
 	}
 
+	if (!IsFilepathQuerried(filename, result))
+	{
+		result = CreateMesh(filename);
+	}
 	return result;
 }
 
 Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
 {
-	MeshID result;
-	if(!IsKeyNameQuerried(uniqueName, result))
-	{
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-		MeshDefaultSettings settings = {};
-		settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	MeshID result = -1;
+	//if(!IsKeyNameQuerried(uniqueName, result))
+	//{
+	//	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	//	MeshDefaultSettings settings = {};
 
-		Polygon p;
-		p.m_vertices.insert(p.m_vertices.end(), verts.begin(), verts.end());
-		p.m_indices.insert(p.m_indices.end(), indices.begin(), indices.end());
-		mesh->m_polygons.push_back(p);
-
-		result = SaveInformation(mesh, settings);
-		m_keyNames.emplace(uniqueName, result);
-	}
+	//}
 
 	return result;
 }
 
-Graphics::MeshID Graphics::MeshLoader::CreateLine(glm::vec3 pos1, glm::vec3 pos2)
+MeshID Graphics::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
 {
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-	MeshDefaultSettings settings = {};
-	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	auto data = std::make_shared<Mesh>();
 
-	Polygon poly;
-	poly.m_vertices = 
-	{
-			{ pos1, glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f) },
-			{ pos2, glm::vec2(0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f) },
-	};
-	poly.m_indices =
-	{
-		0,1
-	};
-	mesh->m_polygons.push_back(poly);
+	float offsetX = xUnits * xTesselation * 0.5f;
+	float offsetZ = zUnits * zTesselation * 0.5f;
 
-	return SaveInformation(mesh, settings);
+	Vertex basic;
+	basic.m_normal = { 0.0f, 1.0f, 0.0f, 0.0f };
+	basic.m_binormal = { 0.0f, 1.0f, 0.0f };
+	basic.m_tangent = { 0.0f, 1.0f, 0.0f };
+
+	std::vector<glm::vec3> m_positions;
+	std::vector<glm::vec2> m_textureCoords;
+
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ          });
+	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
+
+	m_textureCoords.push_back({ 0.0f, 0.0f });
+	m_textureCoords.push_back({ 0.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 1.0f });
+	m_textureCoords.push_back({ 1.0f, 0.0f });
+	m_textureCoords.push_back({ 0.0f, 0.0f });
+
+	Index count = 0;
+	for (int x = 0; x < xTesselation; x++)
+	{
+		for (int z = 0; z < zTesselation; z++)
+		{
+			for (size_t it = 0; it < m_positions.size(); it++)
+			{
+				basic.m_uv = m_textureCoords[it];
+				basic.m_position = m_positions[it];
+
+				basic.m_position.x += (float)x * xUnits;
+				basic.m_position.z += (float)z * zUnits;
+
+				data->m_vertices.push_back(basic);
+				data->m_indices.push_back(count++);
+			}
+		}
+	}
+
+	return SaveMesh(data);
 }
 
 void Graphics::MeshLoader::Clear()
 {
 	m_modelLibrary.clear();
-	m_defaultSettings.clear();
 	m_filepaths.clear();
 	m_keyNames.clear();
 }
@@ -99,117 +127,68 @@ void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 		ptr = m_default;
 }
 
-void Graphics::MeshLoader::GetDefaulMeshInfo(MeshID id, MeshDefaultSettings& settings)
+Graphics::MeshID Graphics::MeshLoader::CreateMesh(const std::string filename)
 {
-	if(m_defaultSettings.size() > id)
-		settings = m_defaultSettings.at(id);
-}
-
-Graphics::MeshID Graphics::MeshLoader::SaveInformation(const std::shared_ptr<Mesh> & data, const MeshDefaultSettings & settings)
-{
-	return SaveMesh(data, settings);
-}
-
-Graphics::MeshID Graphics::MeshLoader::ProcessOBJFile(const std::string filename)
-{
-	Graphics::MeshID result = -1;
-	auto mesh = std::make_shared<Mesh>();
-	MeshDefaultSettings settings = {};
-	settings.scale = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	if (CreateMeshFromOBJ(filename, mesh, settings))
+	MeshID result = -1;
+	BMImporter io;
+	MeshData meshdata;
+	if (io.Import(filename, meshdata))
 	{
-		result = SaveInformation(mesh, settings);
-		m_filepaths.emplace(filename, result);
-	}
+		auto data = std::make_shared<Mesh>();
+		for (auto i : meshdata.m_indices)
+		{
+			data->m_indices.push_back(Index(i));
+		}
 
+		for (auto v : meshdata.m_vertices)
+		{
+			Vertex newVertex;
+
+			newVertex.m_position.x = v.m_position.x;
+			newVertex.m_position.y = v.m_position.y;
+			newVertex.m_position.z = v.m_position.z;
+
+			newVertex.m_normal.x = v.m_normal.x;
+			newVertex.m_normal.y = v.m_normal.y;
+			newVertex.m_normal.z = v.m_normal.z;
+
+			if (v.m_bHasTangents)
+			{
+				newVertex.m_uv.x = v.m_uv.x;
+				newVertex.m_uv.y = v.m_uv.y;
+
+				newVertex.m_tangent.x = v.m_tangent.x;
+				newVertex.m_tangent.y = v.m_tangent.y;
+				newVertex.m_tangent.z = v.m_tangent.z;
+
+				newVertex.m_binormal.x = v.m_binormal.x;
+				newVertex.m_binormal.y = v.m_binormal.y;
+				newVertex.m_binormal.z = v.m_binormal.z;
+			}
+			else
+			{
+				data->m_bUsingVertexColors = true;
+				newVertex.m_color.x = v.m_color.x;
+				newVertex.m_color.y = v.m_color.y;
+				newVertex.m_color.z = v.m_color.z;
+			}
+
+			data->m_vertices.push_back(newVertex);
+		}
+
+		result = SaveMesh(data);
+	}
 	return result;
 }
 
-bool Graphics::MeshLoader::CreateMeshFromOBJ(const std::string filename, std::shared_ptr<Mesh>& data, MeshDefaultSettings & settings)
-{
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string err;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str());
-
-	//Can contain warnings as well
-	if (!err.empty())
-	{
-
-#if PLATFORM == OS_WINDOWS
-		wstring msg = wstring(err.begin(), err.end());
-		MessageBox(NULL, msg.c_str(), L"Error", MB_ICONEXCLAMATION);
-#endif
-
-	}
-
-	if (!ret)
-		return false;
-
-	//Shapes contains all objects in scene
-	for (size_t s = 0; s < shapes.size(); s++)
-	{
-		size_t index_offset = 0;
-		//Go through all faces of the shape
-		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
-		{
-			Polygon poly;
-			int fv = shapes[s].mesh.num_face_vertices[f];
-
-			//Go through all vertices in face
-			for (size_t v = 0; v < fv; v++)
-			{
-				//Prefix definitions:
-				//	tinyobj::real_t = float
-				//	v = pos coord
-				//	n = normal
-				//	t = texture coord
-				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
-
-				//Make sure the obj file contains the correct perams
-				if (idx.normal_index < 0 || idx.texcoord_index < 0 || idx.vertex_index < 0)
-					return false;
-
-				Vertex vert;
-				vert.m_position.x = attrib.vertices[3 * idx.vertex_index + 0];
-				vert.m_position.y = attrib.vertices[3 * idx.vertex_index + 1];
-				vert.m_position.z = attrib.vertices[3 * idx.vertex_index + 2];
-
-				vert.m_normal.x = attrib.normals[3 * idx.normal_index + 0];
-				vert.m_normal.y = attrib.normals[3 * idx.normal_index + 1];
-				vert.m_normal.z = attrib.normals[3 * idx.normal_index + 2];
-
-				vert.m_uv.x = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vert.m_uv.y = attrib.texcoords[2 * idx.texcoord_index + 1];
-
-				poly.m_vertices.push_back(vert);
-				poly.m_indices.push_back(Graphics::Index(index_offset + v));
-			}
-			index_offset += fv;
-			data->m_polygons.push_back(poly);
-		}
-
-	}
-	return true;
-}
-
-Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh, const MeshDefaultSettings & setting)
+Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
 {
 	MeshID result = -1;
 	size_t models = m_modelLibrary.size();
-	size_t settings = m_defaultSettings.size();
-	if (models == settings)
-	{
-		result = (MeshID)models;
-		mesh->objectID = result;
-		m_modelLibrary.push_back(mesh);
-		m_defaultSettings.push_back(setting);
-	}
 
-	//TODO:
-	//Output log information that MeshLibrary is corrupt
+	result = (MeshID)models;
+	m_modelLibrary.push_back(mesh);
+
 	return result;
 }
 

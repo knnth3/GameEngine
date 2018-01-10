@@ -1,34 +1,25 @@
 #pragma once
-
-#define Check(x, lpctstr, message) \
-	if(!(x)) { MessageBox(0, lpctstr, message, MB_OK);}
-
-#define CheckSuccess(hresult, message) \
-	{_com_error err(hresult); Check(SUCCEEDED(hresult), err.ErrorMessage(), message);}
+#include "DllSettings.h"
+#include <wrl.h>
+#include <dxgi1_4.h>
+#include <d3d11_3.h>
+#include <d2d1_3.h>
+#include <d2d1effects_2.h>
+#include <dwrite_3.h>
+#include <wincodec.h>
+#include <atlbase.h>
 
 #define CLOSE_COM_PTR(ptr) \
 	if(ptr) { ptr->Release(); ptr = nullptr;}
 
+GRAPHICS_DLL_API inline bool Check(bool x, LPCWSTR lpctstr, LPCWSTR message);
+GRAPHICS_DLL_API inline bool CheckSuccess(HRESULT hresult, LPCWSTR message);
+GRAPHICS_DLL_API inline void OpenDialog(LPCWSTR title, LPCWSTR message);
+GRAPHICS_DLL_API inline std::wstring GetLastErrorAsString();
 
 
-static std::wstring GetLastErrorAsString()
+namespace Graphics
 {
-	//Get the error message, if any.
-	DWORD errorMessageID = ::GetLastError();
-	if (errorMessageID == 0)
-		return std::wstring(); //No error message has been recorded
-
-	LPSTR messageBuffer = nullptr;
-	int size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-
-	std::wstring message;
-	message.resize(30);
-	int bufferSize = (int)message.size();
-	MultiByteToWideChar(CP_ACP, 0, messageBuffer, size, &message[0], bufferSize);
-
-	//Free the buffer.
-	LocalFree(messageBuffer);
-
-	return message;
+	// Helper utility converts D3D API failures into exceptions.
+	GRAPHICS_DLL_API inline void ThrowIfFailed(HRESULT hr);
 }

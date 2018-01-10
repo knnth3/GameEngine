@@ -19,56 +19,95 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BrushManager.h" />
+    <ClInclude Include="BufferLibrary.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="DirectX11API.h" />
-    <ClInclude Include="DX11BufferManager.h" />
-    <ClInclude Include="DX11ConstantBuffer.h" />
-    <ClInclude Include="DX11DepthStencilState.h" />
-    <ClInclude Include="DX11RasterStateManager.h" />
+    <ClInclude Include="DirectXHelper.h" />
+    <ClInclude Include="Effect_2D.h" />
+    <ClInclude Include="GraphicsBuffer.h" />
+    <ClInclude Include="GraphicsResources.h" />
+    <ClInclude Include="GraphicsRSS.h" />
+    <ClInclude Include="GraphicsShader.h" />
+    <ClInclude Include="GraphicsWindow.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputDevice.h" />
+    <ClInclude Include="Library.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Polygon.h" />
-    <ClInclude Include="RenderBatch.h" />
-    <ClInclude Include="DX11Shader.h" />
-    <ClInclude Include="DX11ShaderManager.h" />
-    <ClInclude Include="DX11Texture.h" />
-    <ClInclude Include="DX11TextureManager.h" />
+    <ClInclude Include="RenderBatch_3D.h" />
+    <ClInclude Include="GraphicsTexture.h" />
+    <ClInclude Include="RenderBatch_2D.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="universal_struct.h" />
+    <ClInclude Include="RSSLibrary.h" />
+    <ClInclude Include="ShaderLibrary.h" />
+    <ClInclude Include="Shape_Square.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextureLibrary.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MeshLoader.h" />
-    <ClInclude Include="RenderAPI.h" />
     <ClInclude Include="DllSettings.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexManager.h" />
+    <ClInclude Include="universal_map.h" />
+    <ClInclude Include="MouseInput.h" />
+    <ClInclude Include="WindowResources.h" />
     <ClInclude Include="WindowsAdditionals.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BrushManager.cpp" />
+    <ClCompile Include="BufferLibrary.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DirectX11API.cpp" />
-    <ClCompile Include="DX11BufferManager.cpp" />
-    <ClCompile Include="DX11ConstantBuffer.cpp" />
-    <ClCompile Include="DX11DepthStencilState.cpp" />
-    <ClCompile Include="DX11RasterStateManager.cpp" />
+    <ClCompile Include="Effect_2D.cpp" />
+    <ClCompile Include="GraphicsBuffer.cpp" />
+    <ClCompile Include="GraphicsResources.cpp" />
+    <ClCompile Include="GraphicsRSS.cpp" />
+    <ClCompile Include="GraphicsShader.cpp" />
+    <ClCompile Include="GraphicsWindow.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputDevice.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Polygon.cpp" />
-    <ClCompile Include="RenderBatch.cpp" />
-    <ClCompile Include="DX11Shader.cpp" />
-    <ClCompile Include="DX11ShaderManager.cpp" />
-    <ClCompile Include="DX11Texture.cpp" />
-    <ClCompile Include="DX11TextureManager.cpp" />
+    <ClCompile Include="RenderBatch_3D.cpp" />
+    <ClCompile Include="GraphicsTexture.cpp" />
+    <ClCompile Include="RenderBatch_2D.cpp" />
+    <ClCompile Include="RSSLibrary.cpp" />
+    <ClCompile Include="ShaderLibrary.cpp" />
+    <ClCompile Include="Shape_Square.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextureLibrary.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
-    <ClCompile Include="RenderAPI.cpp" />
     <ClCompile Include="DllSettings.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="VertexManager.cpp" />
+    <ClCompile Include="universal_map.cpp" />
+    <ClCompile Include="MouseInput.cpp" />
+    <ClCompile Include="WindowResources.cpp" />
+    <ClCompile Include="WindowsAdditionals.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\TestGame\Assets\Shaders\2D Shader.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="..\TestGame\Assets\Shaders\3D Shader.hlsl">
-      <FileType>Document</FileType>
-    </None>
+    <FxCompile Include="..\WinAppx64\Assets\Shaders\PixelShader_3D.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\WinAppx64\Assets\Shaders\VertexShader_3D.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -143,17 +182,28 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
+      <CompileAsWinRT>
+      </CompileAsWinRT>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ForcedUsingFiles>
+      </ForcedUsingFiles>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;windowscodecs.lib;dwrite.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>del "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\*.h"
 copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -192,19 +242,30 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;GRAPHICS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <CompileAsWinRT>
+      </CompileAsWinRT>
+      <ForcedUsingFiles>
+      </ForcedUsingFiles>
+      <AdditionalUsingDirectories>
+      </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;windowscodecs.lib;dwrite.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>del "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\*.h"
 copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

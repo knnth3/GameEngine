@@ -8,10 +8,10 @@ Graphics::VertexManager::VertexManager(const uint16_t maxInstances):
 	m_bNewBatch = false;
 }
 
-void Graphics::VertexManager::AddModel(Model& model)
+void Graphics::VertexManager::AddModel(const Model& model)
 {
 	MeshID mesh = model.GetMesh();
-	TextureID texture = model.GetTexture();
+	std::string texture = model.GetTexture();
 	DrawStyle drawStyle = model.GetDrawStyle();
 
 	//Allow 3d and 2d draw styles
@@ -73,24 +73,30 @@ void Graphics::VertexManager::GetBatchData(std::vector<Batch>& batch)
 	}
 }
 
-void Graphics::VertexManager::CreateNewBatch(MeshID mesh, TextureID texture, DrawStyle style)
+void Graphics::VertexManager::CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style)
 {
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;
+	std::vector<Index> newIndices;
 	MeshLoader::GrabMeshData(mesh, data);
 	size_t originalVertSize = m_vertices.size();
 	size_t originalIndexSize = m_indices.size();
 	data->GetVertices(m_vertices);
-	size_t recievedIndices = data->GetIndices(m_indices);
+	data->GetIndices(newIndices);
+
+	for (size_t i = 0; i < newIndices.size(); i++)
+	{
+		m_indices.push_back((Index)originalVertSize + newIndices[i]);
+	}
 
 	//Save batch info
 	Batch newBatch;
 	newBatch.info.Texture = texture;
 	newBatch.info.Style = style;
-	newBatch.info.IndexCountPerInstance = (uint32_t)recievedIndices;
+	newBatch.info.IndexCountPerInstance = (uint32_t)newIndices.size();
 	newBatch.info.InstanceCount = 0;
 	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
-	newBatch.info.BaseVertexLocation = (uint32_t)originalVertSize;
+	newBatch.info.UsingVertexColors = data->m_bUsingVertexColors;
 
 	//Create new batch
 	m_BatchCache[std::make_pair(mesh, texture)] = newBatch;

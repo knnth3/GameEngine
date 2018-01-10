@@ -1,39 +1,47 @@
 #pragma once
+#include <Graphics\Graphics.h>
 #include "DllSettings.h"
 #include "Console.h"
-#include <System\System.h>
+#include "InputManager.h"
+#include "Timer.h"
 
 namespace LIME_ENGINE
 {
-	class EngineApp:
-		public System::App
+	class EngineApp
 	{
 	public:
-		ENGINE_DLL_API EngineApp(uint16_t windowWidth, uint16_t windowHeight, std::string programPath);
-		ENGINE_DLL_API ~EngineApp();
+		ENGINE_DLL_API EngineApp();
+		ENGINE_DLL_API void Initialize(HWND hwnd);
+		ENGINE_DLL_API void RegisterInputManager(std::shared_ptr<InputManager> inputManager);
+		ENGINE_DLL_API void RegisterTimer(std::shared_ptr<StepTimer> timer);
+		ENGINE_DLL_API void GetDefaultDimensions(float& width, float& height);
+		ENGINE_DLL_API void Tick();
+		ENGINE_DLL_API void Render();
+		ENGINE_DLL_API void UpdateDimensions();
+		ENGINE_DLL_API void Suspend();
+		ENGINE_DLL_API void Resume();
 
-		ENGINE_DLL_API virtual void OnInitialize() final;
-		ENGINE_DLL_API virtual void Tick() final;
+	protected:
 
-		//Overloadable functions
-		ENGINE_DLL_API virtual void OnTick();
-		ENGINE_DLL_API virtual void OnStartUp();
-		ENGINE_DLL_API virtual void OnActivated();
-		ENGINE_DLL_API virtual void OnDeactivated();
-		ENGINE_DLL_API virtual void OnSuspending();
-		ENGINE_DLL_API virtual void OnResuming();
+		//Required
+		ENGINE_DLL_API virtual void OnUpdate() = 0;
+		ENGINE_DLL_API virtual void OnRender() = 0;
+		ENGINE_DLL_API virtual void OnResume() = 0;
+		ENGINE_DLL_API virtual void OnSuspend() = 0;
+
+		//Optional
+		ENGINE_DLL_API virtual void OnWindowVisibilityChange();
+		ENGINE_DLL_API virtual void OnWindowSizeChanged();
 		ENGINE_DLL_API virtual void OnWindowMoved();
-		ENGINE_DLL_API virtual void OnWindowSizeChanged(int width, int height);
-		ENGINE_DLL_API virtual void OnShutdown();
 
-		//User functions
-		ENGINE_DLL_API std::shared_ptr<Console> GetConsole();
+		//Usage
+		ENGINE_DLL_API void SetDefaultDimensions(float width, float height);
 
 	private:
-
-		uint16_t m_windowWidth;
-		uint16_t m_windowHeight;
-		std::shared_ptr<Console> m_console;
+		bool m_bActivated;
+		glm::vec2 m_defaultDimensions;
+		glm::vec3 m_clearColor;
+		std::shared_ptr<Graphics::GraphicsDevice> m_graphics;
 	};
 
 }

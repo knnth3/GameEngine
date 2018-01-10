@@ -8,18 +8,18 @@ namespace Graphics
 	class Mesh
 	{
 	public:
-		GRAPHICS_DLL_API void GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const;
-		GRAPHICS_DLL_API size_t GetVertices(std::vector<Vertex>& verts);
-		GRAPHICS_DLL_API size_t GetIndices(std::vector<Index>& indices);
-		GRAPHICS_DLL_API uint32_t GetIndexCount();
-		GRAPHICS_DLL_API float GetHeight();
+		Mesh();
+		void GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const;
+		size_t GetVertices(std::vector<Vertex>& verts);
+		size_t GetIndices(std::vector<Index>& indices);
+		uint32_t GetIndexCount();
+		float GetHeight();
 
 
-		uint32_t objectID = 0;
-		uint32_t vertOffset = 0;
-		uint32_t indiciOffset = 0;
-		std::vector<Polygon> m_polygons;
-		float m_height = 0.0f;
+		bool m_bUsingVertexColors;
+		float m_height;
+		std::vector<Vertex> m_vertices;
+		std::vector<Index> m_indices;
 	};
 
 

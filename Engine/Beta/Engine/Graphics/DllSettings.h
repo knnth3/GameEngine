@@ -20,13 +20,13 @@
 
 //OS Types
 #define OS_UNDEFINED 0x00
-#define OS_WINDOWS 0x01
+#define OS_WIN32 0x01
 #define OS_APPLE 0x02
 #define OS_MINGW 0x03
 #define OS_LINUX 0x04
 
 #if defined(_WIN32)
-#define PLATFORM OS_WINDOWS
+#define PLATFORM OS_WIN32
 #elif defined(__APPLE__)
 #define PLATFORM OS_APPLE
 #elif defined(__MINGW32__)
@@ -38,15 +38,14 @@
 #endif
 
 
-#if PLATFORM == OS_WINDOWS
+#if PLATFORM == OS_WIN32
 //included libs
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 //Included headers
 #include <comdef.h>
-#include <d3d11.h>
-#include "WindowsAdditionals.h"
+#include <D3D11_3.h>
 #include "D3Dcompiler.h"
 #else
 //Stuff for other operating systems
@@ -64,19 +63,11 @@
 namespace Graphics
 {
 
-	void GetFileExt(const std::string& path, std::string& ext);
-
-
-	class WorldLight
-	{
-	public:
-		WorldLight();
-		glm::vec3 m_direction;
-		glm::vec4 m_specularColor;
-		glm::vec4 m_ambientColor;
-		glm::vec4 m_diffuseColor;
-		float m_specularPower;
-	private:
-	};
+	GRAPHICS_DLL_API inline void GetFileExt(const std::string& path, std::string& ext);
+	GRAPHICS_DLL_API inline std::wstring To_wstr(std::string val);
+	GRAPHICS_DLL_API inline std::wstring To_wstr(bool val);
+	GRAPHICS_DLL_API inline std::string To_str(std::wstring val);
+	GRAPHICS_DLL_API inline std::string To_str(bool val);
+	GRAPHICS_DLL_API inline std::string To_upper(const std::string& val);
 
 }
