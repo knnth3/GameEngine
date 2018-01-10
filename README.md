@@ -29,6 +29,6 @@ Engine UWP in Beta
 ------------------
 There is an already built Engine for UWP and does follow close to the Engine sln in Beta although it has a D3D memory leak and
 is not adivsed to build and run.
-The Engine here is named Graphics and has a subsequent dll called Lime_Engine that runs in addition to Graphcis. 
+The Engine here is named Graphics and has a subsequent dll called Lime_Engine that runs in addition to Graphics. 
 *(This was changed to a single dll in the most recent version of Engine in Beta)*
 
