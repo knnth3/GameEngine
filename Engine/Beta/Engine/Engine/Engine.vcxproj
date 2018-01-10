@@ -20,33 +20,33 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{55118FEF-0778-42F6-870A-6631D4814584}</ProjectGuid>
+    <ProjectGuid>{EB926E02-EF85-4C1A-9596-460C7A2E085C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>WinAppx64</RootNamespace>
+    <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,35 +71,40 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)</TargetName>
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\Libraries\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>ENGINE</TargetName>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>ENGINE</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)</TargetName>
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\Libraries\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine/Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;windowscodecs.lib;dwrite.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"</Command>
+      <Command>del "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\*.h"
+copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -107,7 +112,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,7 +126,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -137,27 +142,92 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine/Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;windowscodecs.lib;dwrite.lib;DirectXTex/DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"</Command>
+      <Command>del "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\*.h"
+copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(ProjectName)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="WindowApp.cpp" />
+    <ClCompile Include="BrushManager.cpp" />
+    <ClCompile Include="BufferLibrary.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DllSettings.cpp" />
+    <ClCompile Include="Effect_2D.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="GraphicsBuffer.cpp" />
+    <ClCompile Include="GraphicsResources.cpp" />
+    <ClCompile Include="GraphicsRSS.cpp" />
+    <ClCompile Include="GraphicsShader.cpp" />
+    <ClCompile Include="GraphicsTexture.cpp" />
+    <ClCompile Include="GraphicsWindow.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputDevice.cpp" />
+    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshLoader.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="MouseInput.cpp" />
+    <ClCompile Include="RenderBatch_2D.cpp" />
+    <ClCompile Include="RenderBatch_3D.cpp" />
+    <ClCompile Include="RSSLibrary.cpp" />
+    <ClCompile Include="ShaderLibrary.cpp" />
+    <ClCompile Include="Shape_Square.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextureLibrary.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="universal_map.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="VertexManager.cpp" />
+    <ClCompile Include="WindowResources.cpp" />
+    <ClCompile Include="WindowsAdditionals.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowApp.h" />
+    <ClInclude Include="BrushManager.h" />
+    <ClInclude Include="BufferLibrary.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="DirectXHelper.h" />
+    <ClInclude Include="DllSettings.h" />
+    <ClInclude Include="Effect_2D.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="GraphicsBuffer.h" />
+    <ClInclude Include="GraphicsResources.h" />
+    <ClInclude Include="GraphicsRSS.h" />
+    <ClInclude Include="GraphicsShader.h" />
+    <ClInclude Include="GraphicsTexture.h" />
+    <ClInclude Include="GraphicsWindow.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputDevice.h" />
+    <ClInclude Include="Library.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="MouseInput.h" />
+    <ClInclude Include="RenderBatch_2D.h" />
+    <ClInclude Include="RenderBatch_3D.h" />
+    <ClInclude Include="RSSLibrary.h" />
+    <ClInclude Include="ShaderLibrary.h" />
+    <ClInclude Include="Shape_Square.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextureLibrary.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="universal_map.h" />
+    <ClInclude Include="universal_struct.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexManager.h" />
+    <ClInclude Include="WindowResources.h" />
+    <ClInclude Include="WindowsAdditionals.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
