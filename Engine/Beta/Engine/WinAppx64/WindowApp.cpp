@@ -4,8 +4,8 @@ using namespace std;
 using namespace Graphics;
 
 
-WindowApp::WindowApp(std::string appName):
-	GraphicsWindow(appName)
+WindowApp::WindowApp(std::string appName, float width, float height):
+	GraphicsWindow(appName, width, height)
 {
 	m.Scale(20, 20, 20);
 	m.SetColor(0.0f, 0.0f, 1.0f);
@@ -20,6 +20,8 @@ WindowApp::WindowApp(std::string appName):
 void WindowApp::Update()
 {
 	auto timer = WindowResources::GetTimer();
+	//Color
+	static bool wf = false;
 	static int red = 0;
 	static int green = 0;
 	static int blue = 0;
@@ -44,13 +46,20 @@ void WindowApp::Update()
 	float speed = 4.9f;
 	float seconds = (float)timer->elapsed() / 1000.0f;
 	float rotation = speed * seconds;
-	t = std::string("Rotation speed: ") + std::to_string(speed) + std::string(" m/s");
 	m.RotateRelative(0.0f, rotation, 0.0f);
 
 	//Mouse
 	auto input = WindowResources::GetInput()->GetMouse();
 	glm::vec2 pos = input->GetPositon();
 	mouset = std::string("Mouse:\n x=") + std::to_string(pos.x) + std::string("\ny= ") + std::to_string(pos.y);
+
+	//Keyboard
+	auto keyboard = WindowResources::GetInput()->GetKeyboard();
+	bool value = keyboard->ButtonPressed('S');
+	if (value)
+	{
+		ToggleFullscreen();
+	}
 }
 
 void WindowApp::Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics)
@@ -62,6 +71,7 @@ void WindowApp::Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics
 
 void WindowApp::Resume()
 {
+	t = WindowResources::GetGraphics()->GetVideoCardInfo().at(0).name;
 }
 
 void WindowApp::Suspend()

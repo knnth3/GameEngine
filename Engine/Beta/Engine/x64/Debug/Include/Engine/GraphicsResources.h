@@ -4,6 +4,12 @@
 
 namespace Graphics
 {
+	struct VideoCardInfo
+	{
+		std::string name;
+		size_t memorySize;
+	};
+
 	struct DisplaySize
 	{
 		__engine_decl DisplaySize();
@@ -58,6 +64,7 @@ namespace Graphics
 		ID2D1Bitmap1*				                   GetD2DTargetBitmap() const { return m_d2dTargetBitmap.Get(); }
 		IDWriteFactory3*			                   GetDWriteFactory() const { return m_dwriteFactory.Get(); }
 		IWICImagingFactory2*		                   GetWicImagingFactory() const { return m_wicFactory.Get(); }
+		std::vector<VideoCardInfo>                     GetVideoCardInfo()const { return m_videocardInfo; }
 
 	private:
 		void CreateDeviceIndependentResource();
@@ -102,6 +109,9 @@ namespace Graphics
 
 		// The IDeviceNotify can be held directly as it owns the DeviceResources.
 		IDeviceNotify* m_deviceNotify;
+
+		// This saves all the basic video card info
+		std::vector <VideoCardInfo> m_videocardInfo;
 	};
 
 }

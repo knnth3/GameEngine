@@ -21,8 +21,8 @@ bool Graphics::InputDevice::ButtonDown(int key)
 {
 	key = ConvertKeyToButton(key);
 	std::lock_guard<std::mutex> lock(m_lock);
-	auto found = m_KeysPressed.find(key);
-	if (found != m_KeysPressed.end())
+	auto found = m_KeysDown.find(key);
+	if (found != m_KeysDown.end())
 		return found->second;
 
 	return false;

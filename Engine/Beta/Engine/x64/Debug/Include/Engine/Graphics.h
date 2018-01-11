@@ -21,6 +21,7 @@ namespace Graphics
 
 		//Functionality
 		__engine_decl virtual std::shared_ptr<Camera> GetCamera()final;
+		__engine_decl virtual std::shared_ptr<TextureLibrary> GetTextureLibrary()final;
 		__engine_decl virtual Graphics::DisplaySize GetWindowDimensions()final;
 		__engine_decl virtual void Draw(Model& model)final;
 		__engine_decl virtual void Draw(const Text& str);
@@ -30,7 +31,7 @@ namespace Graphics
 		__engine_decl virtual void ReleaseDeviceDependentResources()final;
 		__engine_decl virtual void Wireframe(bool val)final;
 		__engine_decl virtual void Reset();
-		__engine_decl virtual void GetVideoCardInfo(std::string& name, int& memory)final;
+		__engine_decl virtual std::vector<VideoCardInfo> GetVideoCardInfo()const final;
 
 	private:
 

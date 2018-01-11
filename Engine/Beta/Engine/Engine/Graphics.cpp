@@ -103,9 +103,9 @@ std::shared_ptr<Graphics::Camera> Graphics::GraphicsDevice::GetCamera()
 	return m_camera;
 }
 
-void Graphics::GraphicsDevice::GetVideoCardInfo(std::string& name, int& memory)
+std::shared_ptr<Graphics::TextureLibrary> Graphics::GraphicsDevice::GetTextureLibrary()
 {
-
+	return m_renderBatch_3D->GetTextureLibrary();
 }
 
 void Graphics::GraphicsDevice::Draw(Model& model)
@@ -158,4 +158,9 @@ void Graphics::GraphicsDevice::Reset()
 		m_camera->Reset();
 		m_camera->SetResolution(m_size.Width, m_size.Height);
 	}
+}
+
+std::vector<Graphics::VideoCardInfo> Graphics::GraphicsDevice::GetVideoCardInfo() const
+{
+	return m_deviceResources->GetVideoCardInfo();
 }

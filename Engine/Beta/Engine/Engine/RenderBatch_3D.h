@@ -29,7 +29,7 @@ namespace Graphics
 		void Draw(const Model& model);
 		void Wireframe(bool value);
 		void ProcessScene();
-
+		const std::shared_ptr<TextureLibrary>& GetTextureLibrary();
 	private:
 		void ProcessObjects(Batch & batch);
 
@@ -46,10 +46,10 @@ namespace Graphics
 		ID3D11Device3* m_device;
 		ID3D11DeviceContext3* m_context;
 		std::shared_ptr<Camera> m_camera;
+		std::shared_ptr<TextureLibrary> m_textureLib;
 		RSSLibrary m_rssLib;
 		ShaderLibrary m_shaderLib;
 		BufferLibrary m_bufferLib;
-		TextureLibrary m_textureLib;
 		VertexManager m_vertexManager;
 	};
 

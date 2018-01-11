@@ -5,7 +5,7 @@ class WindowApp:
 	public Graphics::GraphicsWindow
 {
 public:
-	WindowApp(std::string appName);
+	WindowApp(std::string appName, float width, float height);
 
 protected:
 	virtual void Update();

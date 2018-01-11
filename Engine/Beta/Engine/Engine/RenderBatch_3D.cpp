@@ -3,7 +3,6 @@
 
 
 Graphics::RenderBatch_3D::RenderBatch_3D(ID3D11Device3* device, ID3D11DeviceContext3* context):
-	m_textureLib(device, context),
 	m_shaderLib(device, context),
 	m_bufferLib(device, context),
 	m_rssLib(device, context),
@@ -25,8 +24,8 @@ bool Graphics::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	std::string emissive = "Assets/textures/Default/emissive.png";
 	std::string roughness = "Assets/textures/Default/roughness.png";
 	std::string metallic = "Assets/textures/Default/metallic.png";
-
-	if (!m_textureLib.Initialize(diffuse, normal, emissive, roughness, metallic))
+	m_textureLib = std::make_shared<TextureLibrary>(m_device, m_context);
+	if (!m_textureLib->Initialize(diffuse, normal, emissive, roughness, metallic))
 		return false;
 
 	if (!m_shaderLib.Initialize("Assets/Shaders/VertexShader_3D.hlsl", "Assets/Shaders/PixelShader_3D.hlsl"))
@@ -73,6 +72,11 @@ void Graphics::RenderBatch_3D::ProcessScene()
 	}
 }
 
+const std::shared_ptr<Graphics::TextureLibrary>& Graphics::RenderBatch_3D::GetTextureLibrary()
+{
+	return m_textureLib;
+}
+
 void Graphics::RenderBatch_3D::ProcessObjects(Batch & batch)
 {
 	//Fill Constant buffer with instance data
@@ -104,7 +108,7 @@ void Graphics::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
 	if (m_bWireframe)
 		rss = "Wireframe";
 	//Set the relevant texture active(if not already set)
-	if (!m_textureLib.SetAsActive(info.Texture))
+	if (!m_textureLib->SetAsActive(info.Texture))
 	{
 		//Do something
 	}
@@ -130,7 +134,7 @@ void Graphics::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
 
 void Graphics::RenderBatch_3D::Reset()
 {
-	m_textureLib.Clear();
+	m_textureLib->Clear();
 	m_vertexManager.Reset();
 }
 

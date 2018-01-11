@@ -86,6 +86,7 @@ void Graphics::DeviceResources::CreateDeviceIndependentResource()
 // Configures the Direct3D device, and stores handles to it and the device context.
 void Graphics::DeviceResources::CreateDeviceResources()
 {
+
 	// This flag adds support for surfaces with a different color channel ordering
 	// than the API default. It is required for compatibility with Direct2D.
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -259,6 +260,23 @@ void Graphics::DeviceResources::CreateWindowSizeDependentResources()
 		DX::ThrowIfFailed(
 			dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory))
 		);
+
+		//Get VideoCard info
+		VideoCardInfo info;
+		ComPtr<IDXGIAdapter> pAdapter;
+		DXGI_ADAPTER_DESC adapterDescription;
+		for (UINT i = 0; dxgiFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; ++i)
+		{
+			HRESULT hr = pAdapter->GetDesc(&adapterDescription);
+			if (SUCCEEDED(hr))
+			{
+				std::wstring temp = adapterDescription.Description;
+				info.name = To_str(temp);
+				info.memorySize = adapterDescription.DedicatedVideoMemory;
+				m_videocardInfo.push_back(info);
+			}
+			pAdapter.Reset();
+		}
 
 		ComPtr<IDXGISwapChain1> swapChain;
 		DX::ThrowIfFailed(
