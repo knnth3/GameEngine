@@ -2,7 +2,7 @@
 #include "MouseInput.h"
 
 
-namespace Graphics
+namespace Engine
 {
 	class Input
 	{

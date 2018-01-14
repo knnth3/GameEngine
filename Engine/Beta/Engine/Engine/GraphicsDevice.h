@@ -1,8 +1,8 @@
 #pragma once
-#include "GraphicsResources.h"
+#include "DirectXResources.h"
 #include "RenderBatch_2D.h"
 #include "RenderBatch_3D.h"
-namespace Graphics
+namespace Engine
 {
 	class GraphicsDevice
 	{
@@ -22,7 +22,7 @@ namespace Graphics
 		//Functionality
 		__engine_decl virtual std::shared_ptr<Camera> GetCamera()final;
 		__engine_decl virtual std::shared_ptr<TextureLibrary> GetTextureLibrary()final;
-		__engine_decl virtual Graphics::DisplaySize GetWindowDimensions()final;
+		__engine_decl virtual Engine::DisplaySize GetWindowDimensions()final;
 		__engine_decl virtual void Draw(Model& model)final;
 		__engine_decl virtual void Draw(const Text& str);
 		__engine_decl virtual void Draw(const Square& sqr, bool background = false);
@@ -35,7 +35,7 @@ namespace Graphics
 
 	private:
 
-		Graphics::DisplaySize m_size;
+		Engine::DisplaySize m_size;
 		glm::vec3 m_clearColor;
 		std::shared_ptr<Camera> m_camera;
 		std::unique_ptr<RenderBatch_3D> m_renderBatch_3D;

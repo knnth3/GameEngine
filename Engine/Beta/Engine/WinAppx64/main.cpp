@@ -1,7 +1,7 @@
 #include "WindowApp.h"
 #include <Windows.h>
 
-using namespace Graphics;
+using namespace Engine;
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {

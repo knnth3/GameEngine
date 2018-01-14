@@ -4,7 +4,7 @@
 
 typedef std::shared_ptr<glm::vec3> vec3_ptr;
 
-namespace Graphics
+namespace Engine
 {
 
 	enum DrawStyle

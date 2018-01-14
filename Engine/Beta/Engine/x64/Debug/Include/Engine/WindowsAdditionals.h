@@ -18,7 +18,7 @@ __engine_decl inline void OpenDialog(LPCWSTR title, LPCWSTR message);
 __engine_decl inline std::wstring GetLastErrorAsString();
 
 
-namespace Graphics
+namespace Engine
 {
 	// Helper utility converts D3D API failures into exceptions.
 	__engine_decl inline void ThrowIfFailed(HRESULT hr);

@@ -1,15 +1,15 @@
 #include "Vertex.h"
 #define nameof(name) #name
 
-std::vector<std::pair<size_t, std::string>> Graphics::VertexInfo::m_vertex_info;
-Graphics::vertex_info_init Graphics::VertexInfo::init;
+std::vector<std::pair<size_t, std::string>> Engine::VertexInfo::m_vertex_info;
+Engine::vertex_info_init Engine::VertexInfo::init;
 
-Graphics::Vertex::Vertex()
+Engine::Vertex::Vertex()
 {
 	m_color = glm::vec3(1.0f);
 }
 
-void Graphics::VertexInfo::Initialize()
+void Engine::VertexInfo::Initialize()
 {
 	static bool posted = false;
 
@@ -25,22 +25,22 @@ void Graphics::VertexInfo::Initialize()
 	}
 }
 
-size_t Graphics::VertexInfo::NumElements()
+size_t Engine::VertexInfo::NumElements()
 {
 	return m_vertex_info.size();
 }
 
-const std::string* Graphics::VertexInfo::NameOf(size_t index)
+const std::string* Engine::VertexInfo::NameOf(size_t index)
 {
 	return &m_vertex_info[index].second;
 }
 
-size_t Graphics::VertexInfo::SizeOf(size_t index)
+size_t Engine::VertexInfo::SizeOf(size_t index)
 {
 	return m_vertex_info[index].first;
 }
 
-Graphics::vertex_info_init::vertex_info_init()
+Engine::vertex_info_init::vertex_info_init()
 {
 	VertexInfo::Initialize();
 }

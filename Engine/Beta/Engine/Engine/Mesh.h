@@ -1,7 +1,7 @@
 #pragma once
 #include "Vertex.h"
 
-namespace Graphics
+namespace Engine
 {
 	typedef int32_t MeshID;
 	typedef uint32_t Index;

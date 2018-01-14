@@ -1,42 +1,42 @@
 #include "Shape_Square.h"
 
-Graphics::Square::Square()
+Engine::Square::Square()
 {
 	SetDefaultSettings();
 	SetPosition(0.0f, 0.0f);
 	SetDimensions(0.0f, 0.0f);
 }
 
-Graphics::Square::Square(float width, float height)
+Engine::Square::Square(float width, float height)
 {
 	SetDefaultSettings();
 	SetPosition(0.0f, 0.0f);
 	SetDimensions(width, height);
 }
 
-Graphics::Square::Square(float width, float height, float x, float y)
+Engine::Square::Square(float width, float height, float x, float y)
 {
 	SetDefaultSettings();
 	SetPosition(x, y);
 	SetDimensions(width, height);
 }
 
-float Graphics::Square::GetWidth()const
+float Engine::Square::GetWidth()const
 {
 	return m_width;
 }
 
-float Graphics::Square::GetHeight()const
+float Engine::Square::GetHeight()const
 {
 	return m_height;
 }
 
-glm::vec2 Graphics::Square::GetPosition()const
+glm::vec2 Engine::Square::GetPosition()const
 {
 	return m_position;
 }
 
-D2D1_RECT_F Graphics::Square::GetRect() const
+D2D1_RECT_F Engine::Square::GetRect() const
 {
 	D2D1_RECT_F r;
 	r.left = m_position.x;
@@ -46,22 +46,22 @@ D2D1_RECT_F Graphics::Square::GetRect() const
 	return r;
 }
 
-int Graphics::Square::GetBrush()const
+int Engine::Square::GetBrush()const
 {
 	return m_brush;
 }
 
-Graphics::BRUSH_TEXTURE_TYPE Graphics::Square::GetBrushType() const
+Engine::BRUSH_TEXTURE_TYPE Engine::Square::GetBrushType() const
 {
 	return m_brushType;
 }
 
-glm::vec4 Graphics::Square::GetColor() const
+glm::vec4 Engine::Square::GetColor() const
 {
 	return m_color;
 }
 
-D2D1_RECT_F Graphics::Square::GetSourceRect() const
+D2D1_RECT_F Engine::Square::GetSourceRect() const
 {
 	D2D1_RECT_F r;
 	float newWidth = GetImageDivisionWidth();
@@ -74,42 +74,42 @@ D2D1_RECT_F Graphics::Square::GetSourceRect() const
 	return r;
 }
 
-float Graphics::Square::GetImageDivisionWidth()const
+float Engine::Square::GetImageDivisionWidth()const
 {
 	return (m_imageWidth / m_atlasDivsX);
 }
 
-float Graphics::Square::GetImageDivisionHeight()const
+float Engine::Square::GetImageDivisionHeight()const
 {
 	return (m_imageHeight / m_atlasDivsY);
 }
 
-int Graphics::Square::GetImageAtlasDivisionWidth() const
+int Engine::Square::GetImageAtlasDivisionWidth() const
 {
 	return m_atlasDivsX;
 }
 
-int Graphics::Square::GetImageAtlasDivisionHeight() const
+int Engine::Square::GetImageAtlasDivisionHeight() const
 {
 	return m_atlasDivsY;
 }
 
-int Graphics::Square::GetImageAtlasPositionX() const
+int Engine::Square::GetImageAtlasPositionX() const
 {
 	return m_atlasPosX;
 }
 
-int Graphics::Square::GetImageAtlasPositionY() const
+int Engine::Square::GetImageAtlasPositionY() const
 {
 	return m_atlasPosY;
 }
 
-void Graphics::Square::SetColor(glm::vec4 color)
+void Engine::Square::SetColor(glm::vec4 color)
 {
 	m_color = color;
 }
 
-void Graphics::Square::SetBrush(int ID, BRUSH_TEXTURE_TYPE type)
+void Engine::Square::SetBrush(int ID, BRUSH_TEXTURE_TYPE type)
 {
 	glm::vec2 dims = glm::vec2(0.0f, 0.0f);
 	if (type != BRUSH_TEXTURE_DEFAULT)
@@ -121,33 +121,33 @@ void Graphics::Square::SetBrush(int ID, BRUSH_TEXTURE_TYPE type)
 	m_brushType = type;
 }
 
-void Graphics::Square::SetDimensions(float width, float height)
+void Engine::Square::SetDimensions(float width, float height)
 {
 	m_width = width;
 	m_height = height;
 }
 
-void Graphics::Square::SetWidth(float val)
+void Engine::Square::SetWidth(float val)
 {
 	m_width = val;
 }
 
-void Graphics::Square::SetHeight(float val)
+void Engine::Square::SetHeight(float val)
 {
 	m_height = val;
 }
 
-void Graphics::Square::SetPosition(glm::vec2 pos)
+void Engine::Square::SetPosition(glm::vec2 pos)
 {
 	m_position = pos;
 }
 
-void Graphics::Square::SetPosition(float x, float y)
+void Engine::Square::SetPosition(float x, float y)
 {
 	m_position = glm::vec2(x, y);
 }
 
-void Graphics::Square::SetImageAtlasDivisons(int x, int y)
+void Engine::Square::SetImageAtlasDivisons(int x, int y)
 {
 
 	if (x > 0 && y > 0)
@@ -157,13 +157,13 @@ void Graphics::Square::SetImageAtlasDivisons(int x, int y)
 	}
 }
 
-void Graphics::Square::SetImageAtlasPosition(int x, int y)
+void Engine::Square::SetImageAtlasPosition(int x, int y)
 {
 	m_atlasPosX = x;
 	m_atlasPosY = y;
 }
 
-void Graphics::Square::SetDefaultSettings()
+void Engine::Square::SetDefaultSettings()
 {
 	SetImageAtlasPosition(0, 0);
 	SetImageDimensions(0.0f, 0.0f);
@@ -172,7 +172,7 @@ void Graphics::Square::SetDefaultSettings()
 	SetBrush(-1, BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_DEFAULT);
 }
 
-void Graphics::Square::SetImageDimensions(float width, float height)
+void Engine::Square::SetImageDimensions(float width, float height)
 {
 	m_imageWidth = width;
 	m_imageHeight = height;

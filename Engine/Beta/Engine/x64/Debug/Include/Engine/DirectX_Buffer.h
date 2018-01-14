@@ -1,7 +1,7 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
-namespace Graphics
+namespace Engine
 {
 	enum BufferType
 	{
@@ -27,10 +27,10 @@ namespace Graphics
 		std::map<ShaderType, unsigned int> m_refCount;
 	};
 
-	class GraphicsBuffer
+	class DirectX_Buffer
 	{
 	public:
-		GraphicsBuffer(ID3D11Device3 * device, ID3D11DeviceContext3 * context, BufferType type, ShaderType usage);
+		DirectX_Buffer(ID3D11Device3 * device, ID3D11DeviceContext3 * context, BufferType type, ShaderType usage);
 		bool AddRefCounter(std::shared_ptr<BufferRefCounter> counter);
 		void SetAsActive();
 		bool CreateBuffer(const void* data, const uint32_t bufferSize);

@@ -1,17 +1,17 @@
-#include "GraphicsTexture.h"
+#include "DirectX_Texture.h"
 #include <DirectXTex\DirectXTex.h>
 
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-Graphics::GraphicsTexture::GraphicsTexture(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
+Engine::DirectX_Texture::DirectX_Texture(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
 	m_device = device;
 	m_context = context;
 }
 
-bool Graphics::GraphicsTexture::Initialize(const std::string& diffuse, const std::string& normal, const std::string& emissive,
+bool Engine::DirectX_Texture::Initialize(const std::string& diffuse, const std::string& normal, const std::string& emissive,
 	const std::string& roughness, const std::string& metalic)
 {
 	m_tmFileNames[0] = To_wstr(diffuse);
@@ -28,12 +28,12 @@ bool Graphics::GraphicsTexture::Initialize(const std::string& diffuse, const std
 	return true;
 }
 
-void Graphics::GraphicsTexture::SetAsActive()
+void Engine::DirectX_Texture::SetAsActive()
 {
 	m_context->PSSetShaderResources(0, 5, m_textures->GetAddressOf());
 }
 
-bool Graphics::GraphicsTexture::LoadTexture(LPCWSTR filepath, ComPtr<ID3D11ShaderResourceView>& target)
+bool Engine::DirectX_Texture::LoadTexture(LPCWSTR filepath, ComPtr<ID3D11ShaderResourceView>& target)
 {
 	HRESULT hr;
 	bool result = false;

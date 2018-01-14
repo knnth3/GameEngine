@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "universal_struct.h"
 
-namespace Graphics
+namespace Engine
 {
 	/*Container to hold abstract types of data/objects.
 	The"universal_struct" class is used to add new data/objects.

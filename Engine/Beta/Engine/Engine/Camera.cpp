@@ -2,42 +2,42 @@
 
 #define PI (float)M_PI
 
-Graphics::Camera::Camera(CameraSettings defaultSettings)
+Engine::Camera::Camera(CameraSettings defaultSettings)
 {
 	m_defaults = defaultSettings;
 	Reset();
 }
 
-void Graphics::Camera::Reset()
+void Engine::Camera::Reset()
 {
 	m_active = m_defaults;
 	CalculateAspectRatio();
 	Create3DProjectionMatrix();
 }
 
-void Graphics::Camera::SetDefaultSettings(CameraSettings info)
+void Engine::Camera::SetDefaultSettings(CameraSettings info)
 {
 	m_defaults = info;
 }
 
-void Graphics::Camera::AttachToModel(const Model& model)
+void Engine::Camera::AttachToModel(const Model& model)
 {
 	m_active.m_focusPoint.m_position = model.GetPosition();
 }
 
-void Graphics::Camera::SetViewDistance(float nearPlane)
+void Engine::Camera::SetViewDistance(float nearPlane)
 {
 	m_active.m_nearDistance = nearPlane;
 	Create3DProjectionMatrix();
 }
 
-void Graphics::Camera::SetFOV(float fov)
+void Engine::Camera::SetFOV(float fov)
 {
 	m_active.m_fov = fov;
 	Create3DProjectionMatrix();
 }
 
-void Graphics::Camera::Move(float x, float y, float z)
+void Engine::Camera::Move(float x, float y, float z)
 {
 	float speed = 5.0f;
 	m_active.m_position.x += x / speed;
@@ -45,12 +45,12 @@ void Graphics::Camera::Move(float x, float y, float z)
 	m_active.m_position.z += z / speed;
 }
 
-void Graphics::Camera::SetPosition(glm::vec3 position)
+void Engine::Camera::SetPosition(glm::vec3 position)
 {
 	m_active.m_position = position;
 }
 
-void Graphics::Camera::Rotate(float x, float y, float z)
+void Engine::Camera::Rotate(float x, float y, float z)
 {
 	float circle = (2.0f * PI);
 	float xLimitUp = (PI / 2.0f);
@@ -72,7 +72,7 @@ void Graphics::Camera::Rotate(float x, float y, float z)
 		m_active.m_angleAroundPlayer -= circle;
 }
 
-void Graphics::Camera::SetRotation(glm::vec3 rotation)
+void Engine::Camera::SetRotation(glm::vec3 rotation)
 {
 	SetAngeInBounds(rotation.x);
 	m_active.m_rotations.x = rotation.x;
@@ -84,7 +84,7 @@ void Graphics::Camera::SetRotation(glm::vec3 rotation)
 	m_active.m_rotations.z = rotation.z;
 }
 
-void Graphics::Camera::SetResolution(float width, float height)
+void Engine::Camera::SetResolution(float width, float height)
 {
 	m_active.m_screenWidth = width;
 	m_active.m_screenHeight = height;
@@ -92,7 +92,7 @@ void Graphics::Camera::SetResolution(float width, float height)
 	Create3DProjectionMatrix();
 }
 
-void Graphics::Camera::Zoom(float x)
+void Engine::Camera::Zoom(float x)
 {
 	float maxZoomOut = 700.0f;
 	float maxZoomIn = 300.0f;
@@ -108,12 +108,12 @@ void Graphics::Camera::Zoom(float x)
 	}
 }
 
-glm::vec3 Graphics::Camera::GetPosition()
+glm::vec3 Engine::Camera::GetPosition()
 {
 	return m_active.m_position;
 }
 
-glm::mat4 Graphics::Camera::GetViewMatrix()
+glm::mat4 Engine::Camera::GetViewMatrix()
 {
 	float horis = CalculateHorisDistance();
 	float vert = CalculateVertDistance();
@@ -122,38 +122,38 @@ glm::mat4 Graphics::Camera::GetViewMatrix()
 	return m_active.m_view;
 }
 
-glm::mat4 Graphics::Camera::GetIdentityMatrix()
+glm::mat4 Engine::Camera::GetIdentityMatrix()
 {
 	glm::mat4 identity(1.0f);
 	return identity;
 }
 
-glm::mat4 Graphics::Camera::Get3DProjectionMatrix()
+glm::mat4 Engine::Camera::Get3DProjectionMatrix()
 {
 	return m_active.m_projection;
 }
 
-float Graphics::Camera::GetFarPlane()
+float Engine::Camera::GetFarPlane()
 {
 	return m_active.m_farDistance;
 }
 
-float Graphics::Camera::GetWindowWidth()
+float Engine::Camera::GetWindowWidth()
 {
 	return m_active.m_screenWidth;
 }
 
-float Graphics::Camera::GetWindowHeight()
+float Engine::Camera::GetWindowHeight()
 {
 	return m_active.m_screenHeight;
 }
 
-void Graphics::Camera::EnforceBounds(bool val)
+void Engine::Camera::EnforceBounds(bool val)
 {
 	m_bUsingBounds = val;
 }
 
-void Graphics::Camera::SetAngeInBounds(float & angle)
+void Engine::Camera::SetAngeInBounds(float & angle)
 {
 	float circle = (2.0f * PI);
 	if (angle > circle)
@@ -166,12 +166,12 @@ void Graphics::Camera::SetAngeInBounds(float & angle)
 	}
 }
 
-void Graphics::Camera::CalculateAspectRatio()
+void Engine::Camera::CalculateAspectRatio()
 {
 	m_active.m_aspectRatio = m_active.m_screenWidth / m_active.m_screenHeight;
 }
 
-void Graphics::Camera::CreateViewMatrix()
+void Engine::Camera::CreateViewMatrix()
 {
 	glm::mat4 basicMatrix;
 	glm::mat4 rotX = glm::rotate(basicMatrix, m_active.m_rotations.x, glm::vec3(1, 0, 0));
@@ -181,12 +181,12 @@ void Graphics::Camera::CreateViewMatrix()
 	m_active.m_view = glm::translate(rotZ, negPos);
 }
 
-void Graphics::Camera::Create3DProjectionMatrix()
+void Engine::Camera::Create3DProjectionMatrix()
 {
 	m_active.m_projection = glm::perspectiveRH(m_active.m_fov, m_active.m_aspectRatio, m_active.m_nearDistance, m_active.m_farDistance);
 }
 
-void Graphics::Camera::CalculatePosition(float horizontalDistance, float verticalDistance)
+void Engine::Camera::CalculatePosition(float horizontalDistance, float verticalDistance)
 {
 	if (!m_active.m_focusPoint.Empty())
 	{
@@ -204,7 +204,7 @@ void Graphics::Camera::CalculatePosition(float horizontalDistance, float vertica
 	}
 }
 
-void Graphics::Camera::CalculateClippingPlanes()
+void Engine::Camera::CalculateClippingPlanes()
 {
 	float hNear = 2.0f * tanf(m_active.m_fov / 2.0f) * m_active.m_nearDistance;
 	float wNear = hNear * m_active.m_aspectRatio;
@@ -213,17 +213,17 @@ void Graphics::Camera::CalculateClippingPlanes()
 	float Wfar = Hfar * m_active.m_aspectRatio;
 }
 
-float Graphics::Camera::CalculateVertDistance()
+float Engine::Camera::CalculateVertDistance()
 {
 	return m_active.m_distanceFromObject * sinf(m_active.m_rotations.x);
 }
 
-float Graphics::Camera::CalculateHorisDistance()
+float Engine::Camera::CalculateHorisDistance()
 {
 	return m_active.m_distanceFromObject * cosf(m_active.m_rotations.x);
 }
 
-Graphics::CameraSettings::CameraSettings()
+Engine::CameraSettings::CameraSettings()
 {
 	m_fov = 0.25f* 3.14f;
 	m_aspectRatio = 0.0f;
@@ -241,12 +241,12 @@ Graphics::CameraSettings::CameraSettings()
 	m_screenHeight = 600.0f;
 }
 
-Graphics::Position::Position()
+Engine::Position::Position()
 {
 	m_position = vec3_ptr(new glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
-bool Graphics::Position::Empty()
+bool Engine::Position::Empty()
 {
 	if (m_position == nullptr)
 		return true;
@@ -254,7 +254,7 @@ bool Graphics::Position::Empty()
 	return false;
 }
 
-glm::vec3 Graphics::Position::GetPosition()
+glm::vec3 Engine::Position::GetPosition()
 {
 	return *m_position;
 }

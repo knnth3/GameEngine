@@ -1,4 +1,4 @@
-#include "GraphicsResources.h"
+#include "DirectXResources.h"
 #include "DirectXHelper.h"
 #ifdef NOMINMAX
 #undef NOMINMAX
@@ -27,7 +27,7 @@ namespace DisplayMetrics
 };
 
 // Constructor for DeviceResources.
-Graphics::DeviceResources::DeviceResources() :
+Engine::DeviceResources::DeviceResources() :
 	m_screenViewport(),
 	m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
 	m_d3dRenderTargetSize(),
@@ -42,7 +42,7 @@ Graphics::DeviceResources::DeviceResources() :
 }
 
 // Configures resources that don't depend on the Direct3D device.
-void Graphics::DeviceResources::CreateDeviceIndependentResource()
+void Engine::DeviceResources::CreateDeviceIndependentResource()
 {
 	// Initialize Direct2D resources.
 	D2D1_FACTORY_OPTIONS options;
@@ -84,7 +84,7 @@ void Graphics::DeviceResources::CreateDeviceIndependentResource()
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
-void Graphics::DeviceResources::CreateDeviceResources()
+void Engine::DeviceResources::CreateDeviceResources()
 {
 
 	// This flag adds support for surfaces with a different color channel ordering
@@ -182,7 +182,7 @@ void Graphics::DeviceResources::CreateDeviceResources()
 }
 
 // These resources need to be recreated every time the window size is changed.
-void Graphics::DeviceResources::CreateWindowSizeDependentResources()
+void Engine::DeviceResources::CreateWindowSizeDependentResources()
 {
 	// Clear the previous window size specific context.
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
@@ -416,7 +416,7 @@ void Graphics::DeviceResources::CreateWindowSizeDependentResources()
 }
 
 // Determine the dimensions of the render target and whether it will be scaled down.
-void Graphics::DeviceResources::UpdateRenderTargetSize()
+void Engine::DeviceResources::UpdateRenderTargetSize()
 {
 	m_effectiveDpi = m_dpi;
 
@@ -448,7 +448,7 @@ void Graphics::DeviceResources::UpdateRenderTargetSize()
 }
 
 // This method is called when the CoreWindow is created (or re-created).
-void Graphics::DeviceResources::SetHandleInfo(HWND hwnd, DisplaySize size)
+void Engine::DeviceResources::SetHandleInfo(HWND hwnd, DisplaySize size)
 {
 	m_hwnd = hwnd;
 	m_logicalSize = size;
@@ -459,7 +459,7 @@ void Graphics::DeviceResources::SetHandleInfo(HWND hwnd, DisplaySize size)
 }
 
 // This method is called in the event handler for the SizeChanged event.
-void Graphics::DeviceResources::SetLogicalSize(DisplaySize logicalSize)
+void Engine::DeviceResources::SetLogicalSize(DisplaySize logicalSize)
 {
 	if (m_logicalSize != logicalSize)
 	{
@@ -469,7 +469,7 @@ void Graphics::DeviceResources::SetLogicalSize(DisplaySize logicalSize)
 }
 
 // This method is called in the event handler for the DpiChanged event.
-void Graphics::DeviceResources::SetDpi(float dpi, DisplaySize size)
+void Engine::DeviceResources::SetDpi(float dpi, DisplaySize size)
 {
 	if (dpi != m_dpi)
 	{
@@ -484,7 +484,7 @@ void Graphics::DeviceResources::SetDpi(float dpi, DisplaySize size)
 }
 
 // This method is called in the event handler for the DisplayContentsInvalidated event.
-void Graphics::DeviceResources::ValidateDevice()
+void Engine::DeviceResources::ValidateDevice()
 {
 	// The D3D Device is no longer valid if the default adapter changed since the device
 	// was created or if the device has been removed.
@@ -536,7 +536,7 @@ void Graphics::DeviceResources::ValidateDevice()
 }
 
 // Recreate all device resources and set them back to the current state.
-void Graphics::DeviceResources::HandleDeviceLost()
+void Engine::DeviceResources::HandleDeviceLost()
 {
 	m_swapChain = nullptr;
 
@@ -556,14 +556,14 @@ void Graphics::DeviceResources::HandleDeviceLost()
 }
 
 // Register our DeviceNotify to be informed on device lost and creation.
-void Graphics::DeviceResources::RegisterDeviceNotify(Graphics::IDeviceNotify* deviceNotify)
+void Engine::DeviceResources::RegisterDeviceNotify(Engine::IDeviceNotify* deviceNotify)
 {
 	m_deviceNotify = deviceNotify;
 }
 
 // Call this method when the app suspends. It provides a hint to the driver that the app 
 // is entering an idle state and that temporary buffers can be reclaimed for use by other apps.
-void Graphics::DeviceResources::Trim()
+void Engine::DeviceResources::Trim()
 {
 	ComPtr<IDXGIDevice3> dxgiDevice;
 	m_d3dDevice.As(&dxgiDevice);
@@ -572,7 +572,7 @@ void Graphics::DeviceResources::Trim()
 }
 
 // Present the contents of the swap chain to the screen.
-void Graphics::DeviceResources::Present()
+void Engine::DeviceResources::Present()
 {
 	// The first argument instructs DXGI to block until VSync, putting the application
 	// to sleep until the next VSync. This ensures we don't waste any cycles rendering
@@ -610,7 +610,7 @@ void Graphics::DeviceResources::Present()
 	}
 }
 
-void Graphics::DeviceResources::ClearScreen(float r, float g, float b)
+void Engine::DeviceResources::ClearScreen(float r, float g, float b)
 {
 	// Reset the viewport to target the whole screen.
 	m_d3dContext->RSSetViewports(1, &m_screenViewport);
@@ -625,19 +625,19 @@ void Graphics::DeviceResources::ClearScreen(float r, float g, float b)
 	m_d3dContext->ClearDepthStencilView(m_d3dDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-Graphics::DisplaySize::DisplaySize()
+Engine::DisplaySize::DisplaySize()
 {
 	Width = 0.0f;
 	Height = 0.0f;
 }
 
-Graphics::DisplaySize::DisplaySize(float width, float height)
+Engine::DisplaySize::DisplaySize(float width, float height)
 {
 	Width = width;
 	Height = height;
 }
 
-bool Graphics::DisplaySize::operator!=(const DisplaySize & other)
+bool Engine::DisplaySize::operator!=(const DisplaySize & other)
 {
 	if (this->Width == other.Width && this->Height == other.Height)
 		return false;

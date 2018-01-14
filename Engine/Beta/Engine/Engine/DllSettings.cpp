@@ -3,7 +3,7 @@
 #include "DllSettings.h"
 
 
-void Graphics::GetFileExt(const std::string& path, std::string & ext)
+void Engine::GetFileExt(const std::string& path, std::string & ext)
 {
 	//removes the '.'
 	size_t extPoint = path.find_last_of('.') + 1;
@@ -20,14 +20,14 @@ void Graphics::GetFileExt(const std::string& path, std::string & ext)
 	}
 }
 
-std::wstring Graphics::To_wstr(std::string val)
+std::wstring Engine::To_wstr(std::string val)
 {
 	std::wstring temp;
 	temp.insert(temp.begin(), val.begin(), val.end());
 	return temp;
 }
 
-std::wstring Graphics::To_wstr(bool val)
+std::wstring Engine::To_wstr(bool val)
 {
 	if (val)
 		return L"True";
@@ -36,14 +36,14 @@ std::wstring Graphics::To_wstr(bool val)
 		return L"False";
 }
 
-std::string Graphics::To_str(std::wstring val)
+std::string Engine::To_str(std::wstring val)
 {
 	std::string temp;
 	temp.insert(temp.begin(), val.begin(), val.end());
 	return temp;
 }
 
-std::string Graphics::To_str(bool val)
+std::string Engine::To_str(bool val)
 {
 	if (val)
 		return "True";
@@ -52,7 +52,7 @@ std::string Graphics::To_str(bool val)
 		return "False";
 }
 
-std::string Graphics::To_upper(const std::string & val)
+std::string Engine::To_upper(const std::string & val)
 {
 	std::string str = val;
 	std::transform(str.begin(), str.end(), str.begin(), ::toupper);

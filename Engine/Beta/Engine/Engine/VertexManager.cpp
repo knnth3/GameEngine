@@ -1,14 +1,14 @@
 #include "VertexManager.h"
 #include "MeshLoader.h"
 
-Graphics::VertexManager::VertexManager(const uint16_t maxInstances):
+Engine::VertexManager::VertexManager(const uint16_t maxInstances):
 	m_maxInstances(maxInstances)
 {
 	MeshLoader::Initialize();
 	m_bNewBatch = false;
 }
 
-void Graphics::VertexManager::AddModel(const Model& model)
+void Engine::VertexManager::AddModel(const Model& model)
 {
 	MeshID mesh = model.GetMesh();
 	std::string texture = model.GetTexture();
@@ -42,27 +42,27 @@ void Graphics::VertexManager::AddModel(const Model& model)
 	}
 }
 
-bool Graphics::VertexManager::NewBatchInfo()
+bool Engine::VertexManager::NewBatchInfo()
 {
 	bool result = m_bNewBatch;
 	m_bNewBatch = false;
 	return result;
 }
 
-void Graphics::VertexManager::Reset()
+void Engine::VertexManager::Reset()
 {
 	m_vertices.clear();
 	m_indices.clear();
 	m_BatchCache.clear();
 }
 
-void Graphics::VertexManager::GetVertexData(std::vector<Vertex>& verts, std::vector<Index>& indices)
+void Engine::VertexManager::GetVertexData(std::vector<Vertex>& verts, std::vector<Index>& indices)
 {
 	verts = m_vertices;
 	indices = m_indices;
 }
 
-void Graphics::VertexManager::GetBatchData(std::vector<Batch>& batch)
+void Engine::VertexManager::GetBatchData(std::vector<Batch>& batch)
 {
 	batch.clear();
 	for (auto& pair : m_BatchCache)
@@ -73,7 +73,7 @@ void Graphics::VertexManager::GetBatchData(std::vector<Batch>& batch)
 	}
 }
 
-void Graphics::VertexManager::CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style)
+void Engine::VertexManager::CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style)
 {
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;

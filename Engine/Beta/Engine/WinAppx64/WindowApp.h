@@ -1,23 +1,23 @@
 #pragma once
-#include <Engine\GraphicsWindow.h>
+#include <Engine\EngineWindow.h>
 
 class WindowApp:
-	public Graphics::GraphicsWindow
+	public Engine::GraphicsWindow
 {
 public:
 	WindowApp(std::string appName, float width, float height);
 
 protected:
 	virtual void Update();
-	virtual void Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics);
+	virtual void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics);
 	virtual void Resume();
 	virtual void Suspend();
 
 private:
 
-	Graphics::Text t;
-	Graphics::Text mouset;
-	Graphics::Model m;
-	Graphics::Square s;
+	Engine::Text t;
+	Engine::Text mouset;
+	Engine::Model m;
+	Engine::Square s;
 };
 

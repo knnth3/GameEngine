@@ -3,15 +3,15 @@
 using namespace Microsoft::WRL;
 using namespace std;
 
-std::vector<Microsoft::WRL::ComPtr<ID2D1Bitmap>> Graphics::BrushManager::m_images;
-std::vector<Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> Graphics::BrushManager::m_solidBrushes;
-std::vector<Microsoft::WRL::ComPtr<ID2D1BitmapBrush1>> Graphics::BrushManager::m_imageBrushes;
-std::shared_ptr<Graphics::Effect_2D> Graphics::BrushManager::m_effect;
-ID2D1Factory3* Graphics::BrushManager::m_2DFactory = nullptr;
-ID2D1DeviceContext* Graphics::BrushManager::m_2DDeviceContext = nullptr;
-IWICImagingFactory2* Graphics::BrushManager::m_wicFactory = nullptr;
+std::vector<Microsoft::WRL::ComPtr<ID2D1Bitmap>> Engine::BrushManager::m_images;
+std::vector<Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>> Engine::BrushManager::m_solidBrushes;
+std::vector<Microsoft::WRL::ComPtr<ID2D1BitmapBrush1>> Engine::BrushManager::m_imageBrushes;
+std::shared_ptr<Engine::Effect_2D> Engine::BrushManager::m_effect;
+ID2D1Factory3* Engine::BrushManager::m_2DFactory = nullptr;
+ID2D1DeviceContext* Engine::BrushManager::m_2DDeviceContext = nullptr;
+IWICImagingFactory2* Engine::BrushManager::m_wicFactory = nullptr;
 
-bool Graphics::BrushManager::Initialize(ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D, IWICImagingFactory2* wicFactory)
+bool Engine::BrushManager::Initialize(ID2D1Factory3* factory_2D, ID2D1DeviceContext* deviceContext_2D, IWICImagingFactory2* wicFactory)
 {
 	m_2DFactory = factory_2D;
 	m_2DDeviceContext = deviceContext_2D;
@@ -22,14 +22,14 @@ bool Graphics::BrushManager::Initialize(ID2D1Factory3* factory_2D, ID2D1DeviceCo
 	return false;
 }
 
-void Graphics::BrushManager::Reset()
+void Engine::BrushManager::Reset()
 {
 	SafeClose(m_images);
 	SafeClose(m_solidBrushes);
 	SafeClose(m_imageBrushes);
 }
 
-int Graphics::BrushManager::CreateNewBrush(glm::vec4 color)
+int Engine::BrushManager::CreateNewBrush(glm::vec4 color)
 {
 	size_t newID = FindNextEmpty(m_solidBrushes);
 	D2D1_COLOR_F brush;
@@ -47,7 +47,7 @@ int Graphics::BrushManager::CreateNewBrush(glm::vec4 color)
 	return (int)newID;
 }
 
-int Graphics::BrushManager::CreateNewImageBrush(const int imageID, std::wstring& str)
+int Engine::BrushManager::CreateNewImageBrush(const int imageID, std::wstring& str)
 {
 	size_t newID = FindNextEmpty(m_imageBrushes);
 	auto bmp = GetImage(imageID);
@@ -62,7 +62,7 @@ int Graphics::BrushManager::CreateNewImageBrush(const int imageID, std::wstring&
 	return (int)newID;
 }
 
-int Graphics::BrushManager::CreateNewImage(std::string filename, std::wstring& str)
+int Engine::BrushManager::CreateNewImage(std::string filename, std::wstring& str)
 {
 	std::wstring path = std::wstring(filename.begin(), filename.end());
 	size_t newID = FindNextEmpty(m_images);
@@ -70,33 +70,33 @@ int Graphics::BrushManager::CreateNewImage(std::string filename, std::wstring& s
 	return (int)newID;
 }
 
-void Graphics::BrushManager::AddEffect(std::shared_ptr<Effect_2D> effect)
+void Engine::BrushManager::AddEffect(std::shared_ptr<Effect_2D> effect)
 {
 	m_effect = effect;
 }
 
-void Graphics::BrushManager::DeleteBrush(const int ID)
+void Engine::BrushManager::DeleteBrush(const int ID)
 {
 	SafeClose(m_solidBrushes, ID);
 }
 
-void Graphics::BrushManager::DeleteImageBrush(const int ID)
+void Engine::BrushManager::DeleteImageBrush(const int ID)
 {
 	SafeClose(m_imageBrushes, ID);
 }
 
-void Graphics::BrushManager::DeleteImage(const int ID)
+void Engine::BrushManager::DeleteImage(const int ID)
 {
 	SafeClose(m_images, ID);
 }
 
-void Graphics::BrushManager::ClearEffect()
+void Engine::BrushManager::ClearEffect()
 {
 	m_effect->Reset();
 	m_effect = nullptr;
 }
 
-const bool Graphics::BrushManager::GetImageDimensions(const int ID, glm::vec2& dims)
+const bool Engine::BrushManager::GetImageDimensions(const int ID, glm::vec2& dims)
 {
 	if (m_images.size() > ID && ID >= 0)
 	{
@@ -108,12 +108,12 @@ const bool Graphics::BrushManager::GetImageDimensions(const int ID, glm::vec2& d
 	return false;
 }
 
-const std::shared_ptr<Graphics::Effect_2D> Graphics::BrushManager::GetEffect()
+const std::shared_ptr<Engine::Effect_2D> Engine::BrushManager::GetEffect()
 {
 	return m_effect;
 }
 
-const Microsoft::WRL::ComPtr<ID2D1Bitmap> Graphics::BrushManager::GetImage(int ID)
+const Microsoft::WRL::ComPtr<ID2D1Bitmap> Engine::BrushManager::GetImage(int ID)
 {
 	if (m_images.size() > ID && ID >= 0)
 		return m_images[ID];
@@ -121,7 +121,7 @@ const Microsoft::WRL::ComPtr<ID2D1Bitmap> Graphics::BrushManager::GetImage(int I
 	return nullptr;
 }
 
-const Microsoft::WRL::ComPtr<ID2D1BitmapBrush1> Graphics::BrushManager::GetImageBrush(int ID)
+const Microsoft::WRL::ComPtr<ID2D1BitmapBrush1> Engine::BrushManager::GetImageBrush(int ID)
 {
 	if (m_imageBrushes.size() > ID && ID >= 0)
 		return m_imageBrushes[ID];
@@ -129,7 +129,7 @@ const Microsoft::WRL::ComPtr<ID2D1BitmapBrush1> Graphics::BrushManager::GetImage
 	return nullptr;
 }
 
-const Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> Graphics::BrushManager::GetBrush(int ID)
+const Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> Engine::BrushManager::GetBrush(int ID)
 {
 	if (m_solidBrushes.size() > ID && ID >= 0)
 		return m_solidBrushes[ID];
@@ -137,7 +137,7 @@ const Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> Graphics::BrushManager::GetBr
 	return nullptr;
 }
 
-bool Graphics::BrushManager::LoadImageFromFile(std::wstring filename, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, std::wstring& str)
+bool Engine::BrushManager::LoadImageFromFile(std::wstring filename, Microsoft::WRL::ComPtr<ID2D1Bitmap>& bitmap, std::wstring& str)
 {
 	HRESULT result;
 	ComPtr<IWICBitmapDecoder> decoder;
@@ -203,7 +203,7 @@ bool Graphics::BrushManager::LoadImageFromFile(std::wstring filename, Microsoft:
 }
 
 template<class T>
-int Graphics::BrushManager::FindNextEmpty(std::vector<T>& arr)
+int Engine::BrushManager::FindNextEmpty(std::vector<T>& arr)
 {
 	for (size_t it = 0; it < arr.size(); it++)
 		if (arr[it] == nullptr)
@@ -214,7 +214,7 @@ int Graphics::BrushManager::FindNextEmpty(std::vector<T>& arr)
 }
 
 template<class T>
-void Graphics::BrushManager::SafeClose(std::vector<Microsoft::WRL::ComPtr<T>>& arr)
+void Engine::BrushManager::SafeClose(std::vector<Microsoft::WRL::ComPtr<T>>& arr)
 {
 	for (auto& item : arr)
 		item.Reset();
@@ -222,7 +222,7 @@ void Graphics::BrushManager::SafeClose(std::vector<Microsoft::WRL::ComPtr<T>>& a
 }
 
 template<class T>
-void Graphics::BrushManager::SafeClose(std::vector<Microsoft::WRL::ComPtr<T>>& arr, int ID)
+void Engine::BrushManager::SafeClose(std::vector<Microsoft::WRL::ComPtr<T>>& arr, int ID)
 {
 	if (arr.size() > ID)
 	{

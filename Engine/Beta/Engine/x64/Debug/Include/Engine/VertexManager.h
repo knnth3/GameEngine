@@ -2,7 +2,7 @@
 #include "Model.h"
 #include <map>
 
-namespace Graphics
+namespace Engine
 {
 	struct PerInstanceInfo
 	{

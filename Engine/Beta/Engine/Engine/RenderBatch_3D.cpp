@@ -2,7 +2,7 @@
 #include "MeshLoader.h"
 
 
-Graphics::RenderBatch_3D::RenderBatch_3D(ID3D11Device3* device, ID3D11DeviceContext3* context):
+Engine::RenderBatch_3D::RenderBatch_3D(ID3D11Device3* device, ID3D11DeviceContext3* context):
 	m_shaderLib(device, context),
 	m_bufferLib(device, context),
 	m_rssLib(device, context),
@@ -13,7 +13,7 @@ Graphics::RenderBatch_3D::RenderBatch_3D(ID3D11Device3* device, ID3D11DeviceCont
 	m_bWireframe = false;
 }
 
-bool Graphics::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
+bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 {
 	m_camera = camera;
 	if(!m_camera)
@@ -28,7 +28,7 @@ bool Graphics::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	if (!m_textureLib->Initialize(diffuse, normal, emissive, roughness, metallic))
 		return false;
 
-	if (!m_shaderLib.Initialize("Assets/Shaders/VertexShader_3D.hlsl", "Assets/Shaders/PixelShader_3D.hlsl"))
+	if (!m_shaderLib.Initialize("Assets/Shaders/3D_VertexShader.hlsl", "Assets/Shaders/3D_PixelShader.hlsl"))
 		return false;
 
 	if (!m_bufferLib.Initialize())
@@ -45,17 +45,17 @@ bool Graphics::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	return true;
 }
 
-void Graphics::RenderBatch_3D::Draw(const Model& model)
+void Engine::RenderBatch_3D::Draw(const Model& model)
 {
 	m_vertexManager.AddModel(model);
 }
 
-void Graphics::RenderBatch_3D::Wireframe(bool value)
+void Engine::RenderBatch_3D::Wireframe(bool value)
 {
 	m_bWireframe = value;
 }
 
-void Graphics::RenderBatch_3D::ProcessScene()
+void Engine::RenderBatch_3D::ProcessScene()
 {
 	//Get info
 	std::vector<Batch> batchLib;
@@ -72,12 +72,12 @@ void Graphics::RenderBatch_3D::ProcessScene()
 	}
 }
 
-const std::shared_ptr<Graphics::TextureLibrary>& Graphics::RenderBatch_3D::GetTextureLibrary()
+const std::shared_ptr<Engine::TextureLibrary>& Engine::RenderBatch_3D::GetTextureLibrary()
 {
 	return m_textureLib;
 }
 
-void Graphics::RenderBatch_3D::ProcessObjects(Batch & batch)
+void Engine::RenderBatch_3D::ProcessObjects(Batch & batch)
 {
 	//Fill Constant buffer with instance data
 	PBInfo batchInfo;
@@ -102,7 +102,7 @@ void Graphics::RenderBatch_3D::ProcessObjects(Batch & batch)
 	}
 }
 
-void Graphics::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
+void Engine::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
 {
 	std::string rss = "";
 	if (m_bWireframe)
@@ -132,13 +132,13 @@ void Graphics::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
 		0, 0);
 }
 
-void Graphics::RenderBatch_3D::Reset()
+void Engine::RenderBatch_3D::Reset()
 {
 	m_textureLib->Clear();
 	m_vertexManager.Reset();
 }
 
-bool Graphics::RenderBatch_3D::FillBuffers()
+bool Engine::RenderBatch_3D::FillBuffers()
 {
 	bool m_bFilled = true;
 	if (m_vertexManager.NewBatchInfo())
@@ -162,7 +162,7 @@ bool Graphics::RenderBatch_3D::FillBuffers()
 	return m_bFilled;
 }
 
-void Graphics::RenderBatch_3D::CreateShaders()
+void Engine::RenderBatch_3D::CreateShaders()
 {
 	//std::wstring path;
 
@@ -173,7 +173,7 @@ void Graphics::RenderBatch_3D::CreateShaders()
 	//m_shaderManager->CreateShader("VertexColor", path);
 }
 
-void Graphics::RenderBatch_3D::CreateConstBuffers()
+void Engine::RenderBatch_3D::CreateConstBuffers()
 {
 	D3D11_BUFFER_DESC cbbd = { 0 };
 	cbbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -187,7 +187,7 @@ void Graphics::RenderBatch_3D::CreateConstBuffers()
 		throw std::exception();
 }
 
-bool Graphics::RenderBatch_3D::CreateRSSStates()
+bool Engine::RenderBatch_3D::CreateRSSStates()
 {
 	bool result = false;
 

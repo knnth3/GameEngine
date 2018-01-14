@@ -1,15 +1,15 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
-namespace Graphics
+namespace Engine
 {
 	//Handles the creation and usage of all shader structures
 	//Any given shader files must have the entry point as "main"
 	//Version: hlsl 5.0
-	class GraphicsShader
+	class DirectX_Shader
 	{
 	public:
-		GraphicsShader(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
+		DirectX_Shader(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
 		bool SetAsActive();
 
 		//Must coincide with the default vertex layout.

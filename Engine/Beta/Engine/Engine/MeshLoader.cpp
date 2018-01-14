@@ -6,15 +6,15 @@
 #include <BinImporter\BinImporter.h>
 
 
-using namespace Graphics;
+using namespace Engine;
 using namespace std;
-bool Graphics::MeshLoader::m_bIsInit = false;
-std::shared_ptr<Mesh> Graphics::MeshLoader::m_default;
-std::vector<std::shared_ptr<Mesh>> Graphics::MeshLoader::m_modelLibrary;
-std::map<std::string, MeshID> Graphics::MeshLoader::m_filepaths;
-std::map<std::string, MeshID> Graphics::MeshLoader::m_keyNames;
+bool Engine::MeshLoader::m_bIsInit = false;
+std::shared_ptr<Mesh> Engine::MeshLoader::m_default;
+std::vector<std::shared_ptr<Mesh>> Engine::MeshLoader::m_modelLibrary;
+std::map<std::string, MeshID> Engine::MeshLoader::m_filepaths;
+std::map<std::string, MeshID> Engine::MeshLoader::m_keyNames;
 
-bool Graphics::MeshLoader::Initialize()
+bool Engine::MeshLoader::Initialize()
 {
 	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.bin");
 	if (defaultMesh == -1)
@@ -26,7 +26,7 @@ bool Graphics::MeshLoader::Initialize()
 	return true;
 }
 
-Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string filename)
+Engine::MeshID Engine::MeshLoader::LoadModel(const std::string filename)
 {
 	MeshID result = -1;
 	std::string ext;
@@ -48,7 +48,7 @@ Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::string filename)
 	return result;
 }
 
-Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
+Engine::MeshID Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
 {
 	MeshID result = -1;
 	//if(!IsKeyNameQuerried(uniqueName, result))
@@ -61,7 +61,7 @@ Graphics::MeshID Graphics::MeshLoader::LoadModel(const std::vector<Vertex>& vert
 	return result;
 }
 
-MeshID Graphics::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
+MeshID Engine::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
 {
 	auto data = std::make_shared<Mesh>();
 
@@ -112,14 +112,14 @@ MeshID Graphics::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTessel
 	return SaveMesh(data);
 }
 
-void Graphics::MeshLoader::Clear()
+void Engine::MeshLoader::Clear()
 {
 	m_modelLibrary.clear();
 	m_filepaths.clear();
 	m_keyNames.clear();
 }
 
-void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
+void Engine::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 {
 	if (m_modelLibrary.size() > id && id >= 0)
 		ptr = m_modelLibrary.at(id);
@@ -127,7 +127,7 @@ void Graphics::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 		ptr = m_default;
 }
 
-Graphics::MeshID Graphics::MeshLoader::CreateMesh(const std::string filename)
+Engine::MeshID Engine::MeshLoader::CreateMesh(const std::string filename)
 {
 	MeshID result = -1;
 	BMImporter io;
@@ -181,7 +181,7 @@ Graphics::MeshID Graphics::MeshLoader::CreateMesh(const std::string filename)
 	return result;
 }
 
-Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
+Engine::MeshID Engine::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
 {
 	MeshID result = -1;
 	size_t models = m_modelLibrary.size();
@@ -192,7 +192,7 @@ Graphics::MeshID Graphics::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mes
 	return result;
 }
 
-bool Graphics::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID & result)
+bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID & result)
 {
 	result = -1;
 	if (!filepath.empty())
@@ -208,7 +208,7 @@ bool Graphics::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID
 	return false;
 }
 
-bool Graphics::MeshLoader::IsKeyNameQuerried(const std::string filepath, MeshID & result)
+bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, MeshID & result)
 {
 	result = -1;
 	if (!filepath.empty())

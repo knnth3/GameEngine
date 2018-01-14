@@ -26,7 +26,7 @@ struct VSOutput
 	float3 diffuse : COLOR01;
 	float metallic : COLOR02;
 	float roughness : COLOR03;
-	float3 tangent : TAMGENT;
+	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
 };
 
@@ -44,10 +44,10 @@ VSOutput main(Vertex input)
 	output.normal = mul(input.normal, instances[input.instanceID].worldMatrix).xyz;
 	output.normal = normalize(output.normal);
 
-	output.tangent = mul(input.tangent, (float3x3)instances[input.instanceID].worldMatrix);
+	output.tangent = mul(input.tangent.xyz, (float3x3)instances[input.instanceID].worldMatrix);
 	output.tangent = normalize(output.tangent);
 
-	output.binormal = mul(input.binormal, (float3x3)instances[input.instanceID].worldMatrix);
+	output.binormal = mul(input.binormal.xyz, (float3x3)instances[input.instanceID].worldMatrix);
 	output.binormal = normalize(output.binormal);
 
 	output.metallic = instances[input.instanceID].diffuse.w;

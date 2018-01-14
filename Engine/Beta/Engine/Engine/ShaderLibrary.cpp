@@ -1,6 +1,6 @@
 #include "ShaderLibrary.h"
 
-using namespace Graphics;
+using namespace Engine;
 
 ShaderLibrary::ShaderLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
@@ -29,7 +29,7 @@ bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::stri
 	return false;
 }
 
-const std::shared_ptr<GraphicsShader> Graphics::ShaderLibrary::GetShader(const std::string & uniqueName)
+const std::shared_ptr<DirectX_Shader> Engine::ShaderLibrary::GetShader(const std::string & uniqueName)
 {
 	int ref = 0;
 	auto found = m_shaderCodex.find(uniqueName);
@@ -41,7 +41,7 @@ const std::shared_ptr<GraphicsShader> Graphics::ShaderLibrary::GetShader(const s
 	return nullptr;
 }
 
-const std::shared_ptr<GraphicsShader> ShaderLibrary::CreateShader(const std::string & uniqueName)
+const std::shared_ptr<DirectX_Shader> ShaderLibrary::CreateShader(const std::string & uniqueName)
 {
 	int ref = 0;
 	auto found = m_shaderCodex.find(uniqueName);
@@ -54,7 +54,7 @@ const std::shared_ptr<GraphicsShader> ShaderLibrary::CreateShader(const std::str
 	return nullptr;
 }
 
-void Graphics::ShaderLibrary::DeleteShader(const std::string & uniqueName)
+void Engine::ShaderLibrary::DeleteShader(const std::string & uniqueName)
 {
 	auto found = m_shaderCodex.find(uniqueName);
 	if (found != m_shaderCodex.end())
@@ -63,7 +63,7 @@ void Graphics::ShaderLibrary::DeleteShader(const std::string & uniqueName)
 	}
 }
 
-bool Graphics::ShaderLibrary::SetAsActive(const std::string & uniqueName)
+bool Engine::ShaderLibrary::SetAsActive(const std::string & uniqueName)
 {
 	if (m_activeShader.compare(uniqueName))
 	{
@@ -88,7 +88,7 @@ bool Graphics::ShaderLibrary::SetAsActive(const std::string & uniqueName)
 	return true;
 }
 
-void Graphics::ShaderLibrary::Clear()
+void Engine::ShaderLibrary::Clear()
 {
 	for (auto& x : m_shaderCodex)
 	{

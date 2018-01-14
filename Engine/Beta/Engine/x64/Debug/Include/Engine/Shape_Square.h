@@ -3,7 +3,7 @@
 #include "BrushManager.h"
 #include <glm\glm.hpp>
 
-namespace Graphics
+namespace Engine
 {
 
 	class Square

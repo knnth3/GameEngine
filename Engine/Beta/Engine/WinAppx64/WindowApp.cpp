@@ -1,7 +1,7 @@
 #include "WindowApp.h"
 
 using namespace std;
-using namespace Graphics;
+using namespace Engine;
 
 
 WindowApp::WindowApp(std::string appName, float width, float height):
@@ -62,7 +62,7 @@ void WindowApp::Update()
 	}
 }
 
-void WindowApp::Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics)
+void WindowApp::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
 {
 	graphics->Draw(m);
 	graphics->Draw(t);

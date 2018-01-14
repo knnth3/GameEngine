@@ -1,7 +1,7 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
-namespace Graphics
+namespace Engine
 {
 	struct TextFormat
 	{

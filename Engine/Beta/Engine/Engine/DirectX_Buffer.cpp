@@ -1,8 +1,8 @@
-#include "GraphicsBuffer.h"
+#include "DirectX_Buffer.h"
 
-using namespace Graphics;
+using namespace Engine;
 
-GraphicsBuffer::GraphicsBuffer(ID3D11Device3 * device, ID3D11DeviceContext3 * context, BufferType type, ShaderType usage)
+DirectX_Buffer::DirectX_Buffer(ID3D11Device3 * device, ID3D11DeviceContext3 * context, BufferType type, ShaderType usage)
 {
 	m_device = device;
 	m_context = context;
@@ -17,7 +17,7 @@ GraphicsBuffer::GraphicsBuffer(ID3D11Device3 * device, ID3D11DeviceContext3 * co
 	SetBufferDescription(type);
 }
 
-bool Graphics::GraphicsBuffer::AddRefCounter(std::shared_ptr<BufferRefCounter> counter)
+bool Engine::DirectX_Buffer::AddRefCounter(std::shared_ptr<BufferRefCounter> counter)
 {
 	if (!counter)
 		return false;
@@ -26,7 +26,7 @@ bool Graphics::GraphicsBuffer::AddRefCounter(std::shared_ptr<BufferRefCounter> c
 	return true;
 }
 
-void Graphics::GraphicsBuffer::SetAsActive()
+void Engine::DirectX_Buffer::SetAsActive()
 {
 	switch (m_type)
 	{
@@ -43,7 +43,7 @@ void Graphics::GraphicsBuffer::SetAsActive()
 	}
 }
 
-bool Graphics::GraphicsBuffer::CreateBuffer(const void* data, const uint32_t bufferSize)
+bool Engine::DirectX_Buffer::CreateBuffer(const void* data, const uint32_t bufferSize)
 {
 	HRESULT result;
 	if (m_buffer)
@@ -63,7 +63,7 @@ bool Graphics::GraphicsBuffer::CreateBuffer(const void* data, const uint32_t buf
 	return SUCCEEDED(result);
 }
 
-void Graphics::GraphicsBuffer::UpdateBuffer(const void * data, const uint32_t bufferSize)
+void Engine::DirectX_Buffer::UpdateBuffer(const void * data, const uint32_t bufferSize)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -96,17 +96,17 @@ void Graphics::GraphicsBuffer::UpdateBuffer(const void * data, const uint32_t bu
 	}
 }
 
-void Graphics::GraphicsBuffer::SetStride(uint32_t stride)
+void Engine::DirectX_Buffer::SetStride(uint32_t stride)
 {
 	m_dataStride = stride;
 }
 
-void Graphics::GraphicsBuffer::SetOffset(uint32_t offset)
+void Engine::DirectX_Buffer::SetOffset(uint32_t offset)
 {
 	m_dataOffset = offset;
 }
 
-void Graphics::GraphicsBuffer::SetBufferDescription(BufferType type)
+void Engine::DirectX_Buffer::SetBufferDescription(BufferType type)
 {
 	switch (type)
 	{
@@ -139,12 +139,12 @@ void Graphics::GraphicsBuffer::SetBufferDescription(BufferType type)
 	}
 }
 
-void Graphics::BufferRefCounter::ClearCount()
+void Engine::BufferRefCounter::ClearCount()
 {
 	m_refCount.clear();
 }
 
-int Graphics::BufferRefCounter::CheckOutKey(ShaderType type)
+int Engine::BufferRefCounter::CheckOutKey(ShaderType type)
 {
 	auto found = m_refCount.find(type);
 	if (found != m_refCount.end())

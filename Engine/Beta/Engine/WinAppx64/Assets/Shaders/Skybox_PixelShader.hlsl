@@ -10,7 +10,7 @@ struct VSOutput
 	float3 diffuse : COLOR01;
 	float metallic : COLOR02;
 	float roughness : COLOR03;
-	float3 tangent : TAMGENT;
+    float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
 };
 

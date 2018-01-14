@@ -112,9 +112,6 @@
     <ClCompile Include="DllSettings.cpp">
       <Filter>Source Files\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -123,9 +120,6 @@
     </ClCompile>
     <ClCompile Include="WindowsAdditionals.cpp">
       <Filter>Source Files\Settings</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsWindow.cpp">
-      <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="WindowResources.cpp">
       <Filter>Source Files\Window\Resources</Filter>
@@ -172,26 +166,11 @@
     <ClCompile Include="BufferLibrary.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsBuffer.cpp">
-      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsResources.cpp">
-      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsRSS.cpp">
-      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
-    </ClCompile>
     <ClCompile Include="RSSLibrary.cpp">
       <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsTexture.cpp">
-      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="TextureLibrary.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsShader.cpp">
-      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="ShaderLibrary.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
@@ -202,19 +181,35 @@
     <ClCompile Include="VertexManager.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="EngineWindow.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXResources.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_RSS.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Buffer.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Shader.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Texture.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsAdditionals.h">
       <Filter>Source Files\Settings</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Source Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Source Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsWindow.h">
-      <Filter>Source Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Source Files\Input</Filter>
@@ -279,26 +274,11 @@
     <ClInclude Include="BufferLibrary.h">
       <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsBuffer.h">
-      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsResources.h">
-      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsRSS.h">
-      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
-    </ClInclude>
     <ClInclude Include="RSSLibrary.h">
       <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsTexture.h">
-      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
-    </ClInclude>
     <ClInclude Include="TextureLibrary.h">
       <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsShader.h">
-      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="ShaderLibrary.h">
       <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
@@ -308,6 +288,28 @@
     </ClInclude>
     <ClInclude Include="VertexManager.h">
       <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="EngineWindow.h">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDevice.h">
+      <Filter>Source Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXResources.h">
+      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_RSS.h">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Buffer.h">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Shader.h">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Texture.h">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

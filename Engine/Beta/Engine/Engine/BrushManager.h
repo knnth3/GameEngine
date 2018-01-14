@@ -3,7 +3,7 @@
 #include "Effect_2D.h"
 #include <wincodec.h>
 
-namespace Graphics
+namespace Engine
 {
 	enum BRUSH_TEXTURE_TYPE
 	{

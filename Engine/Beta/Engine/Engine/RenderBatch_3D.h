@@ -10,7 +10,7 @@
 #define FLAG_SIZE 4
 #define MAX_INSTANCES 500
 
-namespace Graphics
+namespace Engine
 {
 	struct PBInfo
 	{

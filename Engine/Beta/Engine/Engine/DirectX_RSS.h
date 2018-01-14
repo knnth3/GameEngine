@@ -2,12 +2,12 @@
 #include "WindowsAdditionals.h"
 
 
-namespace Graphics
+namespace Engine
 {
-	class GraphicsRSS
+	class DirectX_RSS
 	{
 	public:
-		GraphicsRSS(ID3D11Device3 * device, ID3D11DeviceContext3 * context, const std::string& name);
+		DirectX_RSS(ID3D11Device3 * device, ID3D11DeviceContext3 * context, const std::string& name);
 		bool Initialize(D3D11_RASTERIZER_DESC desc);
 		void SetAsActive();
 	private:

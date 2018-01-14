@@ -159,6 +159,27 @@
   <ItemGroup>
     <ClInclude Include="WindowApp.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\3D_PixelShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Assets\Shaders\3D_VertexShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Assets\Shaders\Skybox_PixelShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Assets\Shaders\Skybox_VertexShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Assets\Shaders\StandardDataStructs.hlsl">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -2,7 +2,7 @@
 #include "WindowsAdditionals.h"
 
 
-namespace Graphics
+namespace Engine
 {
 	struct VideoCardInfo
 	{

@@ -1,14 +1,23 @@
-#include "GraphicsWindow.h"
+#include "EngineWindow.h"
 #include <future>
+#define STRICT
+#include <windows.h>
+#include <windowsx.h>
+#include <ole2.h>
+#include <commctrl.h>
+#include <shlwapi.h>
 
-Graphics::GraphicsWindow* window = nullptr;
+#define WS_NORESIZEWINDOW WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX
 
-Graphics::GraphicsWindow::GraphicsWindow(const std::string WindowTitle, float width, float height, bool fullscreen):
+Engine::GraphicsWindow* window = nullptr;
+WINDOWPLACEMENT g_wpPrev = { sizeof(g_wpPrev) };
+
+Engine::GraphicsWindow::GraphicsWindow(const std::string WindowTitle, float width, float height, bool fullscreen):
 	GraphicsWindow(To_wstr(WindowTitle), width, height, fullscreen)
 {
 }
 
-Graphics::GraphicsWindow::GraphicsWindow(const std::wstring WindowTitle, float width, float height, bool fullscreen)
+Engine::GraphicsWindow::GraphicsWindow(const std::wstring WindowTitle, float width, float height, bool fullscreen)
 {
 	window = this;
 	m_windowTitle = WindowTitle;
@@ -19,10 +28,10 @@ Graphics::GraphicsWindow::GraphicsWindow(const std::wstring WindowTitle, float w
 	m_brunning = false;
 	m_bFullscreen = fullscreen;
 	m_size = { width, height };
-	m_currentSize = m_size;
+	m_bResize = false;
 }
 
-Graphics::GraphicsWindow::~GraphicsWindow()
+Engine::GraphicsWindow::~GraphicsWindow()
 {
 	m_windowTitle = L"";
 	m_lastError = "";
@@ -30,10 +39,9 @@ Graphics::GraphicsWindow::~GraphicsWindow()
 	m_hInstance = NULL;
 	m_bInitialized = false;
 	m_size = { 800.0f, 600.0f };
-	m_currentSize = m_size;
 }
 
-bool Graphics::GraphicsWindow::Initialize()
+bool Engine::GraphicsWindow::Initialize()
 {
 	LPCWSTR title = m_windowTitle.c_str();
 	WNDCLASSEX wcexDesc = {};
@@ -59,7 +67,7 @@ bool Graphics::GraphicsWindow::Initialize()
 	rect.right = (LONG)roundf(m_size.Width);
 	rect.bottom = (LONG)roundf(m_size.Height);
 	::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
-	m_hwnd = CreateWindow(title, title, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT,
+	m_hwnd = CreateWindow(title, title, WS_NORESIZEWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
 		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, m_hInstance, NULL);
 
 	if (!m_hwnd)
@@ -73,7 +81,7 @@ bool Graphics::GraphicsWindow::Initialize()
 	return m_bInitialized;
 }
 
-int Graphics::GraphicsWindow::Run()
+int Engine::GraphicsWindow::Run()
 {
 	MSG msg = {};
 	msg.wParam = -1;
@@ -99,12 +107,12 @@ int Graphics::GraphicsWindow::Run()
 	return (int)msg.wParam;
 }
 
-std::string Graphics::GraphicsWindow::GetLastError()
+std::string Engine::GraphicsWindow::GetLastError()
 {
 	return m_lastError;
 }
 
-LRESULT Graphics::GraphicsWindow::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT Engine::GraphicsWindow::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	auto input = WindowResources::GetInput();
 
@@ -153,12 +161,19 @@ LRESULT Graphics::GraphicsWindow::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 			}
 		}
 		break;
+
+	case WM_SIZE:
+		m_size.Width = LOWORD(lParam); // width of client area
+		m_size.Height = HIWORD(lParam); // height of client area
+		m_bResize = true;
+		break;
+
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void Graphics::GraphicsWindow::SetWindowWidth(float width)
+void Engine::GraphicsWindow::SetWindowWidth(float width)
 {
 	if (m_size.Width != width)
 	{
@@ -167,7 +182,7 @@ void Graphics::GraphicsWindow::SetWindowWidth(float width)
 	}
 }
 
-void Graphics::GraphicsWindow::SetWindowHeight(float height)
+void Engine::GraphicsWindow::SetWindowHeight(float height)
 {
 	if (m_size.Height != height)
 	{
@@ -176,7 +191,7 @@ void Graphics::GraphicsWindow::SetWindowHeight(float height)
 	}
 }
 
-void Graphics::GraphicsWindow::SetDisplaySize(DisplaySize size)
+void Engine::GraphicsWindow::SetDisplaySize(DisplaySize size)
 {
 	if (m_size != size)
 	{
@@ -185,16 +200,42 @@ void Graphics::GraphicsWindow::SetDisplaySize(DisplaySize size)
 	}
 }
 
-void Graphics::GraphicsWindow::ToggleFullscreen()
+void Engine::GraphicsWindow::ToggleFullscreen()
 {
-	m_bFullscreen = !m_bFullscreen;
-	EnterFullscreen(m_bFullscreen);
+	DWORD dwStyle = GetWindowLong(m_hwnd, GWL_STYLE);
+	if (dwStyle & WS_OVERLAPPEDWINDOW) {
+		MONITORINFO mi = { sizeof(mi) };
+		if (GetWindowPlacement(m_hwnd, &g_wpPrev) &&
+			GetMonitorInfo(MonitorFromWindow(m_hwnd,
+				MONITOR_DEFAULTTOPRIMARY), &mi)) {
+			SetWindowLong(m_hwnd, GWL_STYLE,
+				dwStyle & ~WS_OVERLAPPEDWINDOW);
+			SetWindowPos(m_hwnd, HWND_TOP,
+				mi.rcMonitor.left, mi.rcMonitor.top,
+				mi.rcMonitor.right - mi.rcMonitor.left,
+				mi.rcMonitor.bottom - mi.rcMonitor.top,
+				SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_ASYNCWINDOWPOS);
+		}
+	}
+	else {
+		SetWindowLong(m_hwnd, GWL_STYLE,
+			dwStyle | WS_NORESIZEWINDOW);
+		SetWindowPlacement(m_hwnd, &g_wpPrev);
+		SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0,
+			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+			SWP_NOOWNERZORDER | SWP_FRAMECHANGED | SWP_ASYNCWINDOWPOS);
+	}
 }
 
-bool Graphics::GraphicsWindow::ProcessApp()
+bool Engine::GraphicsWindow::ProcessApp()
 {
 	while (m_brunning)
 	{
+		if (m_bResize)
+		{
+			m_graphics->SetWindowDimensions(m_size);
+			m_bResize = false;
+		}
 		m_timer->update();
 		Update();
 		m_graphics->BeginScene();
@@ -205,7 +246,7 @@ bool Graphics::GraphicsWindow::ProcessApp()
 	return true;
 }
 
-bool Graphics::GraphicsWindow::InitGraphics()
+bool Engine::GraphicsWindow::InitGraphics()
 {
 	if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED)))
 		return false;
@@ -225,7 +266,7 @@ bool Graphics::GraphicsWindow::InitGraphics()
 	return true;
 }
 
-void Graphics::GraphicsWindow::ShutdownGraphics()
+void Engine::GraphicsWindow::ShutdownGraphics()
 {
 	WindowResources::Reset();
 	m_input.reset();
@@ -238,62 +279,21 @@ void Graphics::GraphicsWindow::ShutdownGraphics()
 	CoUninitialize();
 }
 
-void Graphics::GraphicsWindow::ResizeWindowBySettings(bool move, glm::vec2 pos)
+void Engine::GraphicsWindow::ResizeWindowBySettings(bool move, glm::vec2 pos)
 {
 	RECT rect = { 0 };
 	rect.left = (LONG)pos.x;
 	rect.top = (LONG)pos.y;
 	rect.right = (LONG)roundf(rect.left + m_size.Width);
 	rect.bottom = (LONG)roundf(rect.top + m_size.Height);
-	::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+	::AdjustWindowRect(&rect, WS_NORESIZEWINDOW, false);
 	if (move)
 		SetWindowPos(m_hwnd, HWND_NOTOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_ASYNCWINDOWPOS | SWP_SHOWWINDOW);
 	else
 		SetWindowPos(m_hwnd, HWND_NOTOPMOST, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_ASYNCWINDOWPOS | SWP_SHOWWINDOW);
 }
 
-bool Graphics::GraphicsWindow::EnterFullscreen(bool value)
-{
-	bool isChangeSuccessful;
-	if (value)
-	{
-		int fullscreenWidth = GetSystemMetrics(SM_CXSCREEN);
-		int fullscreenHeight = GetSystemMetrics(SM_CYSCREEN);
-		m_currentSize.Width = (float)fullscreenWidth;
-		m_currentSize.Height = (float)fullscreenHeight;
-		DEVMODE fullscreenSettings;
-		memset(&fullscreenSettings, 0, sizeof(fullscreenSettings));
-		EnumDisplaySettings(NULL, 0, &fullscreenSettings);
-		fullscreenSettings.dmPelsWidth = fullscreenWidth;
-		fullscreenSettings.dmPelsHeight = fullscreenHeight;
-		fullscreenSettings.dmBitsPerPel = 32;
-		fullscreenSettings.dmFields = DM_PELSWIDTH |
-			DM_PELSHEIGHT |
-			DM_BITSPERPEL |
-			DM_DISPLAYFREQUENCY;
-
-		SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
-		SetWindowLongPtr(m_hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-		ResizeWindowBySettings(true, glm::vec2(0.0f, 0.0f));
-		isChangeSuccessful = ChangeDisplaySettings(&fullscreenSettings, CDS_FULLSCREEN) == DISP_CHANGE_SUCCESSFUL;
-		ShowWindow(m_hwnd, SW_MAXIMIZE);
-	}
-	else
-	{
-		glm::vec2 pos;
-		SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, WS_EX_LEFT);
-		SetWindowLongPtr(m_hwnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE);
-		isChangeSuccessful = ChangeDisplaySettings(NULL, CDS_RESET) == DISP_CHANGE_SUCCESSFUL;
-		pos.x = (GetSystemMetrics(SM_CXSCREEN) - m_size.Width) / 2;
-		pos.y = (GetSystemMetrics(SM_CYSCREEN) - m_size.Height) / 2;
-		ResizeWindowBySettings(true, pos);
-		ShowWindow(m_hwnd, SW_RESTORE);
-	}
-
-	return isChangeSuccessful;
-}
-
-LRESULT Graphics::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT Engine::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if(window)
 		return window->WinProc(hwnd, uMsg, wParam, lParam);

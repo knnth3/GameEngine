@@ -1,8 +1,8 @@
 #include "BufferLibrary.h"
 
-using namespace Graphics;
+using namespace Engine;
 
-Graphics::BufferLibrary::BufferLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
+Engine::BufferLibrary::BufferLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
 	m_device = device;
 	m_context = context;
@@ -12,17 +12,17 @@ Graphics::BufferLibrary::BufferLibrary(ID3D11Device3 * device, ID3D11DeviceConte
 	m_bufferRefCounter = std::make_shared<BufferRefCounter>();
 }
 
-bool Graphics::BufferLibrary::Initialize()
+bool Engine::BufferLibrary::Initialize()
 {
-	m_vertexBuffer = std::make_shared<GraphicsBuffer>(m_device, m_context, BUFFER_TYPE_VERTEX, SHADER_TYPE_NONE);
-	m_indexBuffer = std::make_shared<GraphicsBuffer>(m_device, m_context, BUFFER_TYPE_INDEX, SHADER_TYPE_NONE);
+	m_vertexBuffer = std::make_shared<DirectX_Buffer>(m_device, m_context, BUFFER_TYPE_VERTEX, SHADER_TYPE_NONE);
+	m_indexBuffer = std::make_shared<DirectX_Buffer>(m_device, m_context, BUFFER_TYPE_INDEX, SHADER_TYPE_NONE);
 	if (!m_vertexBuffer && !m_indexBuffer)
 		return false;
 
 	return true;
 }
 
-const std::shared_ptr<GraphicsBuffer> Graphics::BufferLibrary::GetBuffer(const std::string & uniqueName)
+const std::shared_ptr<DirectX_Buffer> Engine::BufferLibrary::GetBuffer(const std::string & uniqueName)
 {
 	int ref = 0;
 	auto found = m_bufferCodex.find(uniqueName);
@@ -34,7 +34,7 @@ const std::shared_ptr<GraphicsBuffer> Graphics::BufferLibrary::GetBuffer(const s
 	return nullptr;
 }
 
-const std::shared_ptr<GraphicsBuffer> Graphics::BufferLibrary::CreateBuffer(const std::string & uniqueName, BufferType type, ShaderType usage)
+const std::shared_ptr<DirectX_Buffer> Engine::BufferLibrary::CreateBuffer(const std::string & uniqueName, BufferType type, ShaderType usage)
 {
 	int ref = 0;
 	auto found = m_bufferCodex.find(uniqueName);
@@ -50,7 +50,7 @@ const std::shared_ptr<GraphicsBuffer> Graphics::BufferLibrary::CreateBuffer(cons
 	return nullptr;
 }
 
-void Graphics::BufferLibrary::DeleteBuffer(const std::string & uniqueName)
+void Engine::BufferLibrary::DeleteBuffer(const std::string & uniqueName)
 {
 	auto found = m_bufferCodex.find(uniqueName);
 	if (found != m_bufferCodex.end())
@@ -59,7 +59,7 @@ void Graphics::BufferLibrary::DeleteBuffer(const std::string & uniqueName)
 	}
 }
 
-bool Graphics::BufferLibrary::SetBufferActive(const std::string & uniqueName)
+bool Engine::BufferLibrary::SetBufferActive(const std::string & uniqueName)
 {
 	if (m_activeBuffer.compare(uniqueName))
 	{
@@ -84,7 +84,7 @@ bool Graphics::BufferLibrary::SetBufferActive(const std::string & uniqueName)
 	return true;
 }
 
-void Graphics::BufferLibrary::ClearBuffers()
+void Engine::BufferLibrary::ClearBuffers()
 {
 	for (auto& x : m_bufferCodex)
 	{
@@ -93,17 +93,17 @@ void Graphics::BufferLibrary::ClearBuffers()
 	m_bufferCodex.clear();
 }
 
-void Graphics::BufferLibrary::ResetBufferRefCount()
+void Engine::BufferLibrary::ResetBufferRefCount()
 {
 	m_bufferRefCounter->ClearCount();
 }
 
-const std::shared_ptr<GraphicsBuffer>& Graphics::BufferLibrary::GetVertexBuffer() const
+const std::shared_ptr<DirectX_Buffer>& Engine::BufferLibrary::GetVertexBuffer() const
 {
 	return m_vertexBuffer;
 }
 
-const std::shared_ptr<GraphicsBuffer>& Graphics::BufferLibrary::GetIndexBuffer() const
+const std::shared_ptr<DirectX_Buffer>& Engine::BufferLibrary::GetIndexBuffer() const
 {
 	return m_indexBuffer;
 }

@@ -1,10 +1,10 @@
-#include "GraphicsRSS.h"
+#include "DirectX_RSS.h"
 
 
 
-using namespace Graphics;
+using namespace Engine;
 
-GraphicsRSS::GraphicsRSS(ID3D11Device3 * device, ID3D11DeviceContext3 * context, const std::string& name)
+DirectX_RSS::DirectX_RSS(ID3D11Device3 * device, ID3D11DeviceContext3 * context, const std::string& name)
 {
 	m_device = device;
 	m_context = context;
@@ -12,7 +12,7 @@ GraphicsRSS::GraphicsRSS(ID3D11Device3 * device, ID3D11DeviceContext3 * context,
 	m_rasterState = nullptr;
 }
 
-bool Graphics::GraphicsRSS::Initialize(D3D11_RASTERIZER_DESC desc)
+bool Engine::DirectX_RSS::Initialize(D3D11_RASTERIZER_DESC desc)
 {
 	//Create RSS
 	HRESULT result = m_device->CreateRasterizerState(&desc, &m_rasterState);
@@ -24,7 +24,7 @@ bool Graphics::GraphicsRSS::Initialize(D3D11_RASTERIZER_DESC desc)
 	return true;
 }
 
-void Graphics::GraphicsRSS::SetAsActive()
+void Engine::DirectX_RSS::SetAsActive()
 {
 	if(m_rasterState)
 		m_context->RSSetState(m_rasterState.Get());

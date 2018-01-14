@@ -1,9 +1,9 @@
 #include "InputDevice.h"
 
 
-using namespace Graphics;
+using namespace Engine;
 
-bool Graphics::InputDevice::ButtonPressed(int key)
+bool Engine::InputDevice::ButtonPressed(int key)
 {
 	key = ConvertKeyToButton(key);
 	std::lock_guard<std::mutex> lock(m_lock);
@@ -17,7 +17,7 @@ bool Graphics::InputDevice::ButtonPressed(int key)
 	return false;
 }
 
-bool Graphics::InputDevice::ButtonDown(int key)
+bool Engine::InputDevice::ButtonDown(int key)
 {
 	key = ConvertKeyToButton(key);
 	std::lock_guard<std::mutex> lock(m_lock);
@@ -28,7 +28,7 @@ bool Graphics::InputDevice::ButtonDown(int key)
 	return false;
 }
 
-void Graphics::InputDevice::SetButtonStatus(int key, bool value)
+void Engine::InputDevice::SetButtonStatus(int key, bool value)
 {
 	key = ConvertKeyToButton(key);
 	auto found = m_KeysDown.find(key);
@@ -52,7 +52,7 @@ void Graphics::InputDevice::SetButtonStatus(int key, bool value)
 	}
 }
 
-int Graphics::InputDevice::ConvertKeyToButton(int key)
+int Engine::InputDevice::ConvertKeyToButton(int key)
 {
 	return key;
 }

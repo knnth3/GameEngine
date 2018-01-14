@@ -1,36 +1,36 @@
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 #define ENABLE_3D_RENDERING true
 
-Graphics::GraphicsDevice::GraphicsDevice()
+Engine::GraphicsDevice::GraphicsDevice()
 {
 	m_camera = std::shared_ptr<Camera>(new Camera());
 	m_clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
-Graphics::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
+Engine::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 {
 	m_camera = std::shared_ptr<Camera>(new Camera(s_camera));
 }
 
-Graphics::GraphicsDevice::~GraphicsDevice()
+Engine::GraphicsDevice::~GraphicsDevice()
 {
 	TextStyleLib::Close();
 }
 
-void Graphics::GraphicsDevice::SetClearColor(float r, float g, float b)
+void Engine::GraphicsDevice::SetClearColor(float r, float g, float b)
 {
 	m_clearColor.r = r;
 	m_clearColor.g = g;
 	m_clearColor.b = b;
 }
 
-void Graphics::GraphicsDevice::SetClearColor(glm::vec3 color)
+void Engine::GraphicsDevice::SetClearColor(glm::vec3 color)
 {
 	m_clearColor = color;
 }
 
-void Graphics::GraphicsDevice::BeginScene()
+void Engine::GraphicsDevice::BeginScene()
 {
 	float alpha = 1.0f;
 	m_renderBatch_2D->BeginScene();
@@ -44,7 +44,7 @@ void Graphics::GraphicsDevice::BeginScene()
 	m_renderBatch_2D->ClearScreen(m_clearColor.r, m_clearColor.g, m_clearColor.b, alpha);
 }
 
-bool Graphics::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
+bool Engine::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
 {
 	m_size = size;
 	m_deviceResources = std::make_unique<DeviceResources>();
@@ -74,13 +74,15 @@ bool Graphics::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
 	return result;
 }
 
-void Graphics::GraphicsDevice::SetWindowDimensions(DisplaySize size)
+void Engine::GraphicsDevice::SetWindowDimensions(DisplaySize size)
 {
 	m_size = size;
+	m_deviceResources->SetLogicalSize(m_size);
+	m_camera->SetResolution(m_size.Width, m_size.Height);
 	m_renderBatch_2D->SetDimensions(m_size.Width, m_size.Height);
 }
 
-void Graphics::GraphicsDevice::EndScene()
+void Engine::GraphicsDevice::EndScene()
 {
 	if(ENABLE_3D_RENDERING)
 		m_renderBatch_3D->ProcessScene();
@@ -88,69 +90,69 @@ void Graphics::GraphicsDevice::EndScene()
 	m_renderBatch_2D->EndScene();
 }
 
-void Graphics::GraphicsDevice::Present()
+void Engine::GraphicsDevice::Present()
 {
 	m_deviceResources->Present();
 }
 
-void Graphics::GraphicsDevice::Trim()
+void Engine::GraphicsDevice::Trim()
 {
 	m_deviceResources->Trim();
 }
 
-std::shared_ptr<Graphics::Camera> Graphics::GraphicsDevice::GetCamera()
+std::shared_ptr<Engine::Camera> Engine::GraphicsDevice::GetCamera()
 {
 	return m_camera;
 }
 
-std::shared_ptr<Graphics::TextureLibrary> Graphics::GraphicsDevice::GetTextureLibrary()
+std::shared_ptr<Engine::TextureLibrary> Engine::GraphicsDevice::GetTextureLibrary()
 {
 	return m_renderBatch_3D->GetTextureLibrary();
 }
 
-void Graphics::GraphicsDevice::Draw(Model& model)
+void Engine::GraphicsDevice::Draw(Model& model)
 {
 	if(ENABLE_3D_RENDERING)
 		m_renderBatch_3D->Draw(model);
 }
 
-void Graphics::GraphicsDevice::Draw(const Text & str)
+void Engine::GraphicsDevice::Draw(const Text & str)
 {
 	m_renderBatch_2D->Draw(str);
 }
 
-void Graphics::GraphicsDevice::Draw(const Square & sqr, bool background)
+void Engine::GraphicsDevice::Draw(const Square & sqr, bool background)
 {
 	m_renderBatch_2D->Draw(sqr, background);
 }
 
-void Graphics::GraphicsDevice::Draw(const Line & lne)
+void Engine::GraphicsDevice::Draw(const Line & lne)
 {
 	m_renderBatch_2D->Draw(lne);
 }
 
-void Graphics::GraphicsDevice::CreateDeviceDependentResources()
+void Engine::GraphicsDevice::CreateDeviceDependentResources()
 {
 	m_renderBatch_2D->CreateDeviceDependentResources();
 }
 
-void Graphics::GraphicsDevice::ReleaseDeviceDependentResources()
+void Engine::GraphicsDevice::ReleaseDeviceDependentResources()
 {
 	m_renderBatch_2D->ReleaseDeviceDependentResources();
 }
 
-Graphics::DisplaySize Graphics::GraphicsDevice::GetWindowDimensions()
+Engine::DisplaySize Engine::GraphicsDevice::GetWindowDimensions()
 {
 	return m_size;
 }
 
-void Graphics::GraphicsDevice::Wireframe(bool val)
+void Engine::GraphicsDevice::Wireframe(bool val)
 {
 	if(ENABLE_3D_RENDERING)
 		m_renderBatch_3D->Wireframe(val);
 }
 
-void Graphics::GraphicsDevice::Reset()
+void Engine::GraphicsDevice::Reset()
 {
 	if (ENABLE_3D_RENDERING)
 	{
@@ -160,7 +162,7 @@ void Graphics::GraphicsDevice::Reset()
 	}
 }
 
-std::vector<Graphics::VideoCardInfo> Graphics::GraphicsDevice::GetVideoCardInfo() const
+std::vector<Engine::VideoCardInfo> Engine::GraphicsDevice::GetVideoCardInfo() const
 {
 	return m_deviceResources->GetVideoCardInfo();
 }

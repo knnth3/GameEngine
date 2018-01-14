@@ -1,9 +1,9 @@
-#include "GraphicsShader.h"
+#include "DirectX_Shader.h"
 #include "Vertex.h"
 
 using namespace Microsoft::WRL;
 
-Graphics::GraphicsShader::GraphicsShader(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
+Engine::DirectX_Shader::DirectX_Shader(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
 	m_device = device;
 	m_context = context;
@@ -12,7 +12,7 @@ Graphics::GraphicsShader::GraphicsShader(ID3D11Device3 * device, ID3D11DeviceCon
 	m_pixelShader = nullptr;
 }
 
-bool Graphics::GraphicsShader::SetAsActive()
+bool Engine::DirectX_Shader::SetAsActive()
 {
 	if (HasVertexShader() && HasPixelShader())
 	{
@@ -29,7 +29,7 @@ bool Graphics::GraphicsShader::SetAsActive()
 	return false;
 }
 
-bool Graphics::GraphicsShader::SetVertexShader(const std::string & vsPath)
+bool Engine::DirectX_Shader::SetVertexShader(const std::string & vsPath)
 {
 	HRESULT result;
 	ComPtr<ID3DBlob> vsBlob = nullptr;
@@ -66,7 +66,7 @@ bool Graphics::GraphicsShader::SetVertexShader(const std::string & vsPath)
 	return true;
 }
 
-bool Graphics::GraphicsShader::SetPixelShader(const std::string & psPath)
+bool Engine::DirectX_Shader::SetPixelShader(const std::string & psPath)
 {
 	HRESULT result;
 	ComPtr<ID3DBlob> psBlob = nullptr;
@@ -92,7 +92,7 @@ bool Graphics::GraphicsShader::SetPixelShader(const std::string & psPath)
 	return true;
 }
 
-bool Graphics::GraphicsShader::SetGeometryShader(const std::string & gsPath)
+bool Engine::DirectX_Shader::SetGeometryShader(const std::string & gsPath)
 {
 	HRESULT result;
 	ComPtr<ID3DBlob> gsBlob = nullptr;
@@ -118,56 +118,56 @@ bool Graphics::GraphicsShader::SetGeometryShader(const std::string & gsPath)
 	return true;
 }
 
-bool Graphics::GraphicsShader::HasVertexShader() const
+bool Engine::DirectX_Shader::HasVertexShader() const
 {
 	return m_vertexShader;
 }
 
-bool Graphics::GraphicsShader::HasPixelShader() const
+bool Engine::DirectX_Shader::HasPixelShader() const
 {
 	return m_pixelShader;
 }
 
-bool Graphics::GraphicsShader::HasGeometryShader() const
+bool Engine::DirectX_Shader::HasGeometryShader() const
 {
 	return m_geometryShader;
 }
 
-std::string Graphics::GraphicsShader::GetVertexShaderPath() const
+std::string Engine::DirectX_Shader::GetVertexShaderPath() const
 {
 	return m_vsPath;
 }
 
-std::string Graphics::GraphicsShader::GetPixelShaderPath() const
+std::string Engine::DirectX_Shader::GetPixelShaderPath() const
 {
 	return m_psPath;
 }
 
-std::string Graphics::GraphicsShader::GetGeometryShaderPath() const
+std::string Engine::DirectX_Shader::GetGeometryShaderPath() const
 {
 	return m_gsPath;
 }
 
-void Graphics::GraphicsShader::ClearVertexShader()
+void Engine::DirectX_Shader::ClearVertexShader()
 {
 	m_vertexShader.Reset();
 	m_vertexLayout.Reset();
 	m_vsPath.clear();
 }
 
-void Graphics::GraphicsShader::ClearPixelShader()
+void Engine::DirectX_Shader::ClearPixelShader()
 {
 	m_pixelShader.Reset();
 	m_psPath.clear();
 }
 
-void Graphics::GraphicsShader::ClearGeometryShader()
+void Engine::DirectX_Shader::ClearGeometryShader()
 {
 	m_geometryShader.Reset();
 	m_gsPath.clear();
 }
 
-std::vector<D3D11_INPUT_ELEMENT_DESC> Graphics::GraphicsShader::GetInputLayoutDescFromVertexLayout()
+std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDescFromVertexLayout()
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
 	UINT byteOffset = 0;
@@ -208,7 +208,7 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> Graphics::GraphicsShader::GetInputLayoutDe
 	return layout;
 }
 
-HRESULT Graphics::GraphicsShader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
+HRESULT Engine::DirectX_Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint,
 	LPCSTR profile, ComPtr<ID3DBlob>& blob, std::string* error)
 {
 	if (!srcFile || !entryPoint || !profile)

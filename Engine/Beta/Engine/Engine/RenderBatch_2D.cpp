@@ -4,7 +4,7 @@
 using namespace Microsoft::WRL;
 
 
-Graphics::RenderBatch_2D::RenderBatch_2D(IDWriteFactory3 * writeFactory, 
+Engine::RenderBatch_2D::RenderBatch_2D(IDWriteFactory3 * writeFactory, 
 	ID2D1Factory3 * factory_2D, ID2D1DeviceContext * deviceContext_2D, IWICImagingFactory2* wicFactory)
 {
 	m_writeFactory = writeFactory;
@@ -13,12 +13,12 @@ Graphics::RenderBatch_2D::RenderBatch_2D(IDWriteFactory3 * writeFactory,
 	m_wicFactory = wicFactory;
 }
 
-Graphics::RenderBatch_2D::~RenderBatch_2D()
+Engine::RenderBatch_2D::~RenderBatch_2D()
 {
 
 }
 
-void Graphics::RenderBatch_2D::Initialize()
+void Engine::RenderBatch_2D::Initialize()
 {
 	ThrowIfFailed(
 		m_2DFactory->CreateDrawingStateBlock(&m_stateBlock)
@@ -27,7 +27,7 @@ void Graphics::RenderBatch_2D::Initialize()
 	CreateDeviceDependentResources();
 }
 
-void Graphics::RenderBatch_2D::CreateDeviceDependentResources()
+void Engine::RenderBatch_2D::CreateDeviceDependentResources()
 {
 	BrushManager::Initialize(m_2DFactory, m_2DDeviceContext, m_wicFactory);
 	ThrowIfFailed(
@@ -38,7 +38,7 @@ void Graphics::RenderBatch_2D::CreateDeviceDependentResources()
 
 }
 
-void Graphics::RenderBatch_2D::ReleaseDeviceDependentResources()
+void Engine::RenderBatch_2D::ReleaseDeviceDependentResources()
 {
 	m_defualtBrush.Reset();
 	m_bitmapRenderTarget.Reset();
@@ -46,13 +46,13 @@ void Graphics::RenderBatch_2D::ReleaseDeviceDependentResources()
 	BrushManager::Reset();
 }
 
-void Graphics::RenderBatch_2D::SetDimensions(float width, float height)
+void Engine::RenderBatch_2D::SetDimensions(float width, float height)
 {
 	m_windowWidth = width;
 	m_windowHeight = height;
 }
 
-void Graphics::RenderBatch_2D::BeginScene()
+void Engine::RenderBatch_2D::BeginScene()
 {
 	// Set tranform on window orientation change
 	//m_2DDeviceContext->SetTransform(m_deviceResources->GetOrientationTransform2D());
@@ -66,14 +66,14 @@ void Graphics::RenderBatch_2D::BeginScene()
 	m_bitmapRenderTarget->BeginDraw();
 }
 
-void Graphics::RenderBatch_2D::ClearScreen(float r, float g, float b, float a)
+void Engine::RenderBatch_2D::ClearScreen(float r, float g, float b, float a)
 {
 	m_backgroundRenderTarget->Clear(D2D1::ColorF(r, g, b, a));
 	m_bitmapRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
 	m_textRenderTarget->Clear(D2D1::ColorF(r, g, b, 0.0f));
 }
 
-void Graphics::RenderBatch_2D::EndScene()
+void Engine::RenderBatch_2D::EndScene()
 {
 	// Ignore D2DERR_RECREATE_TARGET here. This error indicates that the device
 	// is lost. It will be handled during the next call to Present.
@@ -93,7 +93,7 @@ void Graphics::RenderBatch_2D::EndScene()
 	m_2DDeviceContext->RestoreDrawingState(m_stateBlock.Get());
 }
 
-void Graphics::RenderBatch_2D::CreateEffects()
+void Engine::RenderBatch_2D::CreateEffects()
 {
 	ComPtr<ID2D1Bitmap> spriteMap;
 	ComPtr<ID2D1Bitmap> text;
@@ -133,7 +133,7 @@ void Graphics::RenderBatch_2D::CreateEffects()
 	m_2DDeviceContext->DrawBitmap(text.Get(), D2D1::RectF(0.0f, 0.0f, size.width, size.height));
 }
 
-void Graphics::RenderBatch_2D::Draw(const Text & t)
+void Engine::RenderBatch_2D::Draw(const Text & t)
 {
 	auto format = TextStyleLib::GetFormat(t.GetFormatName());
 	if (format)
@@ -165,19 +165,19 @@ void Graphics::RenderBatch_2D::Draw(const Text & t)
 	}
 }
 
-void Graphics::RenderBatch_2D::Draw(const Square & s, bool background)
+void Engine::RenderBatch_2D::Draw(const Square & s, bool background)
 {
 	BRUSH_TEXTURE_TYPE type = s.GetBrushType();
 
 	switch (type)
 	{
-	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_DEFAULT:
+	case Engine::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_DEFAULT:
 		DrawRect(s, background);
 		break;
-	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE_BRUSH:
+	case Engine::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE_BRUSH:
 		DrawBitmapBrush(s, background);
 		break;
-	case Graphics::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE:
+	case Engine::BRUSH_TEXTURE_TYPE::BRUSH_TEXTURE_IMAGE:
 		DrawBitmap(s, background);
 		break;
 	default:
@@ -185,7 +185,7 @@ void Graphics::RenderBatch_2D::Draw(const Square & s, bool background)
 	}
 }
 
-void Graphics::RenderBatch_2D::Draw(const Line & l)
+void Engine::RenderBatch_2D::Draw(const Line & l)
 {
 	auto brush = BrushManager::GetBrush(l.GetBrush());
 	if (brush == nullptr)
@@ -199,7 +199,7 @@ void Graphics::RenderBatch_2D::Draw(const Line & l)
 	);
 }
 
-void Graphics::RenderBatch_2D::DrawBitmap(const Square & s, bool background)
+void Engine::RenderBatch_2D::DrawBitmap(const Square & s, bool background)
 {
 	int ID = s.GetBrush();
 	auto bmp = BrushManager::GetImage(ID);
@@ -219,7 +219,7 @@ void Graphics::RenderBatch_2D::DrawBitmap(const Square & s, bool background)
 		DrawRect(s, background, true);
 }
 
-void Graphics::RenderBatch_2D::DrawBitmapBrush(const Square & s, bool background)
+void Engine::RenderBatch_2D::DrawBitmapBrush(const Square & s, bool background)
 {
 	int ID = s.GetBrush();
 	auto brush = BrushManager::GetImageBrush(ID);
@@ -236,7 +236,7 @@ void Graphics::RenderBatch_2D::DrawBitmapBrush(const Square & s, bool background
 		DrawRect(s, background, true);
 }
 
-void Graphics::RenderBatch_2D::DrawRect(const Square & s, bool background, bool defaultBrush)
+void Engine::RenderBatch_2D::DrawRect(const Square & s, bool background, bool defaultBrush)
 {
 	ComPtr<ID2D1SolidColorBrush> brush = nullptr;
 	if (!defaultBrush)

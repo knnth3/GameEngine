@@ -1,7 +1,7 @@
 #pragma once
 #include "DllSettings.h"
 
-namespace Graphics
+namespace Engine
 {
 
 	struct Vertex

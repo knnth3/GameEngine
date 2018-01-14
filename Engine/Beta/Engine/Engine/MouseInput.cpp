@@ -1,16 +1,16 @@
 #include "MouseInput.h"
 #include <glm\gtx\transform.hpp>
 
-using namespace Graphics;
+using namespace Engine;
 
 
-glm::vec2 Graphics::MouseInput::GetPositon()
+glm::vec2 Engine::MouseInput::GetPositon()
 {
 	std::lock_guard<std::mutex> lock(m_mouse_lock);
 	return m_position;
 }
 
-glm::vec3 Graphics::MouseInput::Get3DPosition()
+glm::vec3 Engine::MouseInput::Get3DPosition()
 {
 	glm::vec3 position;
 	if (m_camera)
@@ -29,7 +29,7 @@ glm::vec3 Graphics::MouseInput::Get3DPosition()
 	return position;
 }
 
-glm::vec3 Graphics::MouseInput::Get3DPosition_2()
+glm::vec3 Engine::MouseInput::Get3DPosition_2()
 {
 	glm::vec3 position;
 	if (m_camera)
@@ -45,20 +45,20 @@ glm::vec3 Graphics::MouseInput::Get3DPosition_2()
 	return position;
 }
 
-void Graphics::MouseInput::AttatchCamera(std::shared_ptr<Graphics::Camera>& camera)
+void Engine::MouseInput::AttatchCamera(std::shared_ptr<Engine::Camera>& camera)
 {
 	std::lock_guard<std::mutex> lock(m_mouse_lock);
 	m_camera = camera;
 }
 
-void Graphics::MouseInput::SetPosition(float x, float y)
+void Engine::MouseInput::SetPosition(float x, float y)
 {
 	std::lock_guard<std::mutex> lock(m_mouse_lock);
 	m_position.x = x;
 	m_position.y = y;
 }
 
-glm::vec2 Graphics::MouseInput::GetTranslatedCoords()
+glm::vec2 Engine::MouseInput::GetTranslatedCoords()
 {
 	glm::vec2 mousePosition;
 	if (m_camera)
@@ -70,7 +70,7 @@ glm::vec2 Graphics::MouseInput::GetTranslatedCoords()
 	return mousePosition;
 }
 
-glm::vec4 Graphics::MouseInput::GetEyeSpaceCoords(glm::vec4 position)
+glm::vec4 Engine::MouseInput::GetEyeSpaceCoords(glm::vec4 position)
 {
 	glm::vec4 EyeSpaceCoords;
 	if (m_camera)
@@ -81,7 +81,7 @@ glm::vec4 Graphics::MouseInput::GetEyeSpaceCoords(glm::vec4 position)
 	return EyeSpaceCoords;
 }
 
-glm::vec3 Graphics::MouseInput::GetWorldSpaceCoords()
+glm::vec3 Engine::MouseInput::GetWorldSpaceCoords()
 {
 	glm::vec3 worldCoords;
 	if (m_camera)

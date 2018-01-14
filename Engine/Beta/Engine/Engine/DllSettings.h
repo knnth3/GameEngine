@@ -60,7 +60,7 @@
 
 #define METER 100.0f
 
-namespace Graphics
+namespace Engine
 {
 
 	__engine_decl inline void GetFileExt(const std::string& path, std::string& ext);

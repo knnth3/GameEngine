@@ -1,12 +1,12 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
-namespace Graphics
+namespace Engine
 {
-	class GraphicsTexture
+	class DirectX_Texture
 	{
 	public:
-		GraphicsTexture(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
+		DirectX_Texture(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
 		bool Initialize(const std::string& diffuse, const std::string& normal, const std::string& emissive,
 			const std::string& roughness, const std::string& metalic);
 		void SetAsActive();

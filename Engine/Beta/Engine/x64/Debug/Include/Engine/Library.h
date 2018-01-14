@@ -3,7 +3,7 @@
 #include <map>
 #include <cstdarg>
 
-namespace Graphics
+namespace Engine
 {
 	template<class T>
 	class Library

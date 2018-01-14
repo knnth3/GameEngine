@@ -1,6 +1,6 @@
 #include "RSSLibrary.h"
 
-using namespace Graphics;
+using namespace Engine;
 
 RSSLibrary::RSSLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
@@ -9,7 +9,7 @@ RSSLibrary::RSSLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 	m_activeRSS = "";
 }
 
-bool Graphics::RSSLibrary::Initialize()
+bool Engine::RSSLibrary::Initialize()
 {
 	D3D11_RASTERIZER_DESC desc = {};
 	desc.AntialiasedLineEnable = true;
@@ -28,7 +28,7 @@ bool Graphics::RSSLibrary::Initialize()
 	return rss->Initialize(desc);
 }
 
-void Graphics::RSSLibrary::Clear()
+void Engine::RSSLibrary::Clear()
 {
 	for (auto& x : m_rssCodex)
 	{
@@ -37,7 +37,7 @@ void Graphics::RSSLibrary::Clear()
 	m_rssCodex.clear();
 }
 
-const std::shared_ptr<GraphicsRSS> Graphics::RSSLibrary::GetRSS(const std::string & uniqueName)
+const std::shared_ptr<DirectX_RSS> Engine::RSSLibrary::GetRSS(const std::string & uniqueName)
 {
 	int ref = 0;
 	auto found = m_rssCodex.find(uniqueName);
@@ -49,7 +49,7 @@ const std::shared_ptr<GraphicsRSS> Graphics::RSSLibrary::GetRSS(const std::strin
 	return nullptr;
 }
 
-const std::shared_ptr<GraphicsRSS> Graphics::RSSLibrary::CreateRSS(const std::string & uniqueName)
+const std::shared_ptr<DirectX_RSS> Engine::RSSLibrary::CreateRSS(const std::string & uniqueName)
 {
 	int ref = 0;
 	auto found = m_rssCodex.find(uniqueName);
@@ -62,7 +62,7 @@ const std::shared_ptr<GraphicsRSS> Graphics::RSSLibrary::CreateRSS(const std::st
 	return nullptr;
 }
 
-void Graphics::RSSLibrary::DeleteRSS(const std::string & uniqueName)
+void Engine::RSSLibrary::DeleteRSS(const std::string & uniqueName)
 {
 	auto found = m_rssCodex.find(uniqueName);
 	if (found != m_rssCodex.end())
@@ -71,7 +71,7 @@ void Graphics::RSSLibrary::DeleteRSS(const std::string & uniqueName)
 	}
 }
 
-bool Graphics::RSSLibrary::SetAsActive(const std::string & uniqueName)
+bool Engine::RSSLibrary::SetAsActive(const std::string & uniqueName)
 {
 	if (m_activeRSS.compare(uniqueName))
 	{

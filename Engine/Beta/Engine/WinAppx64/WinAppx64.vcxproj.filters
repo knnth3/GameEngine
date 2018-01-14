@@ -27,4 +27,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\StandardDataStructs.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\Skybox_VertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\Skybox_PixelShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\3D_VertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\3D_PixelShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

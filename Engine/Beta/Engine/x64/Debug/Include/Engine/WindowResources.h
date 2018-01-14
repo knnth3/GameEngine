@@ -1,10 +1,10 @@
 #pragma once
 #include "universal_map.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Timer.h"
 #include "Input.h"
 
-namespace Graphics
+namespace Engine
 {
 	/*Holds all data/objects relevant to the active window.
 	Data is stored as universal_structs and must be cast to use.

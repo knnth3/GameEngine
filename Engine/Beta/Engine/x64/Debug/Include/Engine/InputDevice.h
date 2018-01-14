@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <mutex>
 
-namespace Graphics
+namespace Engine
 {
 	//ThreadSafe interface to handle user input
 	class InputDevice

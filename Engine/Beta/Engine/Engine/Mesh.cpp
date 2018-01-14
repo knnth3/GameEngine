@@ -1,12 +1,12 @@
 #include "Mesh.h"
 
-Graphics::Mesh::Mesh()
+Engine::Mesh::Mesh()
 {
 	m_bUsingVertexColors = false;
 	m_height = 0.0;
 }
 
-void Graphics::Mesh::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const
+void Engine::Mesh::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const
 {
 	verts.clear();
 	indices.clear();
@@ -15,19 +15,19 @@ void Graphics::Mesh::GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t
 	indices.insert(indices.end(), m_indices.begin(), m_indices.end());
 }
 
-size_t Graphics::Mesh::GetVertices(std::vector<Vertex>& verts)
+size_t Engine::Mesh::GetVertices(std::vector<Vertex>& verts)
 {
 	verts.insert(verts.end(), m_vertices.begin(), m_vertices.end());
 	return verts.size();
 }
 
-size_t Graphics::Mesh::GetIndices(std::vector<Index>& indices)
+size_t Engine::Mesh::GetIndices(std::vector<Index>& indices)
 {
 	indices.insert(indices.end(), m_indices.begin(), m_indices.end());
 	return indices.size();
 }
 
-uint32_t Graphics::Mesh::GetIndexCount()
+uint32_t Engine::Mesh::GetIndexCount()
 {
 	if (!m_vertices.empty())
 		return (uint32_t)m_indices.size();
@@ -35,7 +35,7 @@ uint32_t Graphics::Mesh::GetIndexCount()
 		return 0u;
 }
 
-float Graphics::Mesh::GetHeight()
+float Engine::Mesh::GetHeight()
 {
 	return m_height;
 }

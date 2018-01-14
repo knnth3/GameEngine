@@ -1,12 +1,12 @@
 #include "Timer.h"
 
-using namespace Graphics;
+using namespace Engine;
 using namespace std;
 using  ms = chrono::milliseconds;
 using  sec = chrono::seconds;
 using get_time = chrono::steady_clock;
 
-Graphics::Timer::Timer()
+Engine::Timer::Timer()
 {
 	m_numSamples = 10;
 	m_polledFps = new double[m_numSamples]();
@@ -14,11 +14,11 @@ Graphics::Timer::Timer()
 	m_current = m_start;
 }
 
-Graphics::Timer::~Timer()
+Engine::Timer::~Timer()
 {
 }
 
-void Graphics::Timer::update()
+void Engine::Timer::update()
 {
 	static int time_index = 0;
 	time_point newTime = get_time::now();
@@ -29,7 +29,7 @@ void Graphics::Timer::update()
 	m_current = get_time::now();
 }
 
-double Graphics::Timer::ms_per_frame()const
+double Engine::Timer::ms_per_frame()const
 {
 	double totalFPS = 0.0;
 	for (int index = 0; index < m_numSamples; index++)
@@ -39,19 +39,19 @@ double Graphics::Timer::ms_per_frame()const
 	return totalFPS / (double)m_numSamples;
 }
 
-double Graphics::Timer::elapsed() const
+double Engine::Timer::elapsed() const
 {
 	return m_elapsed;
 }
 
-double Graphics::Timer::total_seconds() const
+double Engine::Timer::total_seconds() const
 {
 	time_point newTime = get_time::now();
 	auto diff = newTime - m_start;
 	return (double)chrono::duration_cast<ms>(diff).count() / 1000.0;
 }
 
-void Graphics::Timer::set_sample_rate(int samples)
+void Engine::Timer::set_sample_rate(int samples)
 {
 	m_numSamples = samples;
 	delete[] m_polledFps;

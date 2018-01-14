@@ -3,7 +3,7 @@
 #include <mutex>
 #include <chrono>
 
-namespace Graphics
+namespace Engine
 {
 	typedef std::chrono::time_point<std::chrono::steady_clock> time_point;
 

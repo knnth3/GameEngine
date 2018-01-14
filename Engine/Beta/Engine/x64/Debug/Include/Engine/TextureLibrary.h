@@ -1,8 +1,8 @@
 #pragma once
 #include "Library.h"
-#include "GraphicsTexture.h"
+#include "DirectX_Texture.h"
 
-namespace Graphics
+namespace Engine
 {
 	typedef int32_t TextureID;
 
@@ -24,7 +24,7 @@ namespace Graphics
 		std::string m_activeTexture;
 		ID3D11Device3* m_device;
 		ID3D11DeviceContext3* m_context;
-		Library<GraphicsTexture> m_textures;
+		Library<DirectX_Texture> m_textures;
 		std::map<std::string, int> m_textureCodex;
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerState;
 

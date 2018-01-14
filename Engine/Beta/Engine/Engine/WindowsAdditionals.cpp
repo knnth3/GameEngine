@@ -44,7 +44,7 @@ std::wstring GetLastErrorAsString()
 	return message;
 }
 
-void Graphics::ThrowIfFailed(HRESULT hr)
+void Engine::ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))
 	{

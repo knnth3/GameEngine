@@ -2,7 +2,7 @@
 #include "InputDevice.h"
 #include "Camera.h"
 
-namespace Graphics
+namespace Engine
 {
 	/*Tracks the user input from a mouse.
 	For 3D tracking, a camera must be attatched*/
@@ -13,7 +13,7 @@ namespace Graphics
 		__engine_decl virtual glm::vec2 GetPositon()final;
 		__engine_decl virtual glm::vec3 Get3DPosition()final;
 		__engine_decl virtual glm::vec3 Get3DPosition_2()final;
-		__engine_decl virtual void AttatchCamera(std::shared_ptr<Graphics::Camera>& camera)final;
+		__engine_decl virtual void AttatchCamera(std::shared_ptr<Engine::Camera>& camera)final;
 
 	protected:
 		friend class GraphicsWindow;
@@ -26,7 +26,7 @@ namespace Graphics
 
 		glm::vec2 m_position;
 		std::mutex m_mouse_lock;
-		std::shared_ptr<Graphics::Camera> m_camera;
+		std::shared_ptr<Engine::Camera> m_camera;
 		std::unordered_map<int, bool> m_KeysDown;
 		std::unordered_map<int, bool> m_KeysPressed;
 	};

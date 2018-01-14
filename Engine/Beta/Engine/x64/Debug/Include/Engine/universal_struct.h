@@ -2,7 +2,7 @@
 #include "DllSettings.h"
 #include <typeinfo>
 
-namespace Graphics
+namespace Engine
 {
 	/*Data structure to hold abstract data for a "universal_map".
 	Data that is passed to this class must be owned by a shared_ptr

@@ -8,7 +8,7 @@
 #undef LoadImage
 #endif
 
-namespace Graphics
+namespace Engine
 {
 
 	class RenderBatch_2D

@@ -1,9 +1,9 @@
 #include "Model.h"
 #include <glm\gtx\transform.hpp>
 
-std::vector<int> Graphics::IDManager::currentIDs = std::vector<int>();
+std::vector<int> Engine::IDManager::currentIDs = std::vector<int>();
 
-void Graphics::IDManager::AssignID(int& id)
+void Engine::IDManager::AssignID(int& id)
 {
 	int newID = -1;
 	for (int index = 0; index < currentIDs.size(); index++)
@@ -21,7 +21,7 @@ void Graphics::IDManager::AssignID(int& id)
 	id = newID;
 }
 
-void Graphics::IDManager::RemoveID(int id)
+void Engine::IDManager::RemoveID(int id)
 {
 	for (auto x : currentIDs)
 	{
@@ -30,12 +30,12 @@ void Graphics::IDManager::RemoveID(int id)
 	}
 }
 
-Graphics::Model::Model():
+Engine::Model::Model():
 	Model(-1)
 {
 }
 
-Graphics::Model::Model(MeshID mesh)
+Engine::Model::Model(MeshID mesh)
 {
 	IDManager::AssignID(m_uniqueID);
 	m_mesh            = mesh;
@@ -52,115 +52,115 @@ Graphics::Model::Model(MeshID mesh)
 	m_textureBounds   = { 1.0f, 1.0f, 0.0f, 0.0f };
 }
 
-Graphics::Model::~Model()
+Engine::Model::~Model()
 {
 	IDManager::RemoveID(m_uniqueID);
 }
 
-void Graphics::Model::SetTexture(const std::string& textureName)
+void Engine::Model::SetTexture(const std::string& textureName)
 {
 	m_texture = textureName;
 }
 
-void Graphics::Model::SetMesh(MeshID meshName)
+void Engine::Model::SetMesh(MeshID meshName)
 {
 	m_mesh = meshName;
 }
 
-void Graphics::Model::SetDrawStyle(DrawStyle style)
+void Engine::Model::SetDrawStyle(DrawStyle style)
 {
 	m_drawStyle = style;
 }
 
-void Graphics::Model::SetRSS(RSS_STYLES style)
+void Engine::Model::SetRSS(RSS_STYLES style)
 {
 	m_rssStyle = style;
 }
 
-std::string Graphics::Model::GetTexture()const
+std::string Engine::Model::GetTexture()const
 {
 	return m_texture;
 }
 
-Graphics::MeshID Graphics::Model::GetMesh()const
+Engine::MeshID Engine::Model::GetMesh()const
 {
 	return m_mesh;
 }
 
-int Graphics::Model::GetUniqueID()const
+int Engine::Model::GetUniqueID()const
 {
 	return m_uniqueID;
 }
 
-Graphics::DrawStyle Graphics::Model::GetDrawStyle()const
+Engine::DrawStyle Engine::Model::GetDrawStyle()const
 {
 	return m_drawStyle;
 }
 
-Graphics::RSS_STYLES Graphics::Model::GetRSS()const
+Engine::RSS_STYLES Engine::Model::GetRSS()const
 {
 	return m_rssStyle;
 }
 
-void Graphics::Model::UseViewMatrix(bool val)
+void Engine::Model::UseViewMatrix(bool val)
 {
 	m_bUseViewMatrix = val;
 }
 
-bool Graphics::Model::IsUsingViewMatrix()
+bool Engine::Model::IsUsingViewMatrix()
 {
 	return m_bUseViewMatrix;
 }
 
-void Graphics::Model::Scale(const float x, const float y, const float z)
+void Engine::Model::Scale(const float x, const float y, const float z)
 {
 	Scale(glm::vec3(x, y, z));
 }
 
-void Graphics::Model::Scale(glm::vec3 scale)
+void Engine::Model::Scale(glm::vec3 scale)
 {
 	m_scale = scale;
 	m_scaleMatrix = glm::scale(m_scale);
 }
 
-void Graphics::Model::SetPosition(const float x, const float y, const float z)
+void Engine::Model::SetPosition(const float x, const float y, const float z)
 {
 	m_position->x = x;
 	m_position->y = y;
 	m_position->z = z;
 }
 
-void Graphics::Model::SetPosition(glm::vec3 pos)
+void Engine::Model::SetPosition(glm::vec3 pos)
 {
 	*m_position = pos;
 }
 
-void Graphics::Model::SetRelativeRotation(float x, float y, float z)
+void Engine::Model::SetRelativeRotation(float x, float y, float z)
 {
 	SetRelativeRotation(glm::vec3(x, y, z));
 }
 
-void Graphics::Model::SetRelativeRotation(glm::vec3 rotation)
+void Engine::Model::SetRelativeRotation(glm::vec3 rotation)
 {
 	m_object_rotation = rotation;
 }
 
-void Graphics::Model::SetWorldRotation(float x, float y, float z)
+void Engine::Model::SetWorldRotation(float x, float y, float z)
 {
 	SetWorldRotation(glm::vec3(x, y, z));
 }
 
-void Graphics::Model::SetWorldRotation(glm::vec3 rotation)
+void Engine::Model::SetWorldRotation(glm::vec3 rotation)
 {
 	m_world_rotation = rotation;
 }
 
-void Graphics::Model::RotateRelative(float x, float y, float z)
+void Engine::Model::RotateRelative(float x, float y, float z)
 {
 	RotateRelative(glm::vec3(x, y, z));
 }
 
-void Graphics::Model::RotateRelative(glm::vec3 rotation)
+void Engine::Model::RotateRelative(glm::vec3 rotation)
 {
 	m_object_rotation += rotation;
 
@@ -174,12 +174,12 @@ void Graphics::Model::RotateRelative(glm::vec3 rotation)
 		m_object_rotation.z -= (float)M_PI;
 }
 
-void Graphics::Model::RotateWorld(float x, float y, float z)
+void Engine::Model::RotateWorld(float x, float y, float z)
 {
 	RotateWorld(glm::vec3(x,y,z));
 }
 
-void Graphics::Model::RotateWorld(glm::vec3 rotation)
+void Engine::Model::RotateWorld(glm::vec3 rotation)
 {
 	m_world_rotation += rotation;
 
@@ -193,42 +193,42 @@ void Graphics::Model::RotateWorld(glm::vec3 rotation)
 		m_world_rotation.z -= (float)M_PI;
 }
 
-void Graphics::Model::SetColor(float r, float g, float b)
+void Engine::Model::SetColor(float r, float g, float b)
 {
 	SetColor(r, g, b, m_color.a);
 }
 
-void Graphics::Model::SetColor(float r, float g, float b, float a)
+void Engine::Model::SetColor(float r, float g, float b, float a)
 {
 	m_color = glm::vec4(r, g, b, a);
 }
 
-void Graphics::Model::SetColor(glm::vec4 color)
+void Engine::Model::SetColor(glm::vec4 color)
 {
 	m_color = color;
 }
 
-void Graphics::Model::SetOpacity(float alpha)
+void Engine::Model::SetOpacity(float alpha)
 {
 	m_color.a = alpha;
 }
 
-void Graphics::Model::SetTextureBounds(float length, float width, float xoffset, float yoffset)
+void Engine::Model::SetTextureBounds(float length, float width, float xoffset, float yoffset)
 {
 	m_textureBounds = { length, width, xoffset, yoffset };
 }
 
-const vec3_ptr Graphics::Model::GetPosition()const 
+const vec3_ptr Engine::Model::GetPosition()const 
 {
 	return m_position;
 }
 
-glm::vec3 Graphics::Model::GetScale()const
+glm::vec3 Engine::Model::GetScale()const
 {
 	return m_scale;
 }
 
-glm::mat4 Graphics::Model::GetModelMatrix()const
+glm::mat4 Engine::Model::GetModelMatrix()const
 {
 	glm::vec3 pos = *m_position;
 	glm::mat4 relativeRotation = GetRotationMatrix(m_object_rotation);
@@ -238,17 +238,17 @@ glm::mat4 Graphics::Model::GetModelMatrix()const
 	return localToWorld;
 }
 
-glm::vec4 Graphics::Model::GetColor()const
+glm::vec4 Engine::Model::GetColor()const
 {
 	return m_color;
 }
 
-glm::vec4 Graphics::Model::GetTextureBounds()const
+glm::vec4 Engine::Model::GetTextureBounds()const
 {
 	return m_textureBounds;
 }
 
-glm::mat4 Graphics::Model::GetRotationMatrix(glm::vec3 rotation) const
+glm::mat4 Engine::Model::GetRotationMatrix(glm::vec3 rotation) const
 {
 	glm::mat4 matrix = glm::mat4();
 	if (rotation.x != 0.0f)

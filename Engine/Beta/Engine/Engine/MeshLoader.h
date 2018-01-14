@@ -2,7 +2,7 @@
 #include "DllSettings.h"
 #include "Mesh.h"
 
-namespace Graphics
+namespace Engine
 {
 	//-Class used to create mesh objects
 	//-Models can be loaded in with the provided functions

@@ -1,16 +1,16 @@
 #pragma once
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Timer.h"
 #include "WindowResources.h"
 #include <atomic>
 
-namespace Graphics
+namespace Engine
 {
 	/*This is an abstract class implementation that requires
 	certain functions to be provided by child class.
 	These include: 
 	-Update(void)
-	-Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics)
+	-Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
 	-Resume(void)
 	-Suspend(void)
 	Resume and Suspend functions act as start-up/shut-down functions.
@@ -38,7 +38,7 @@ namespace Graphics
 
 		//Required
 		virtual void Update() = 0;
-		virtual void Render(const std::shared_ptr<Graphics::GraphicsDevice>& graphics) = 0;
+		virtual void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics) = 0;
 		virtual void Resume() = 0;
 		virtual void Suspend() = 0;
 
@@ -47,15 +47,14 @@ namespace Graphics
 		bool InitGraphics();
 		void ShutdownGraphics();
 		void ResizeWindowBySettings(bool move = false, glm::vec2 pos = glm::vec2());
-		bool EnterFullscreen(bool value);
 
 		HWND m_hwnd;
 		HINSTANCE m_hInstance;
 		bool m_bInitialized;
 		bool m_bFullscreen;
+		std::atomic_bool m_bResize;
 		std::atomic_bool m_brunning;
 		DisplaySize m_size;
-		DisplaySize m_currentSize;
 		std::string m_lastError;
 		std::wstring m_windowTitle;
 		std::shared_ptr<GraphicsDevice> m_graphics;

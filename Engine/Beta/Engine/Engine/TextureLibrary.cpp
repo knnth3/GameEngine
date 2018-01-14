@@ -1,6 +1,6 @@
 #include "TextureLibrary.h"
 
-Graphics::TextureLibrary::TextureLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
+Engine::TextureLibrary::TextureLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
 	m_device = device;
 	m_context = context;
@@ -8,7 +8,7 @@ Graphics::TextureLibrary::TextureLibrary(ID3D11Device3 * device, ID3D11DeviceCon
 	m_samplerState = nullptr;
 }
 
-bool Graphics::TextureLibrary::Initialize(const std::string diffuse, const std::string normal,
+bool Engine::TextureLibrary::Initialize(const std::string diffuse, const std::string normal,
 	const std::string emissive, const std::string roughness, const std::string metallic)
 {
 	m_textures.Emplace(m_device, m_context);
@@ -21,7 +21,7 @@ bool Graphics::TextureLibrary::Initialize(const std::string diffuse, const std::
 	return true;
 }
 
-bool Graphics::TextureLibrary::CreateTexture(const std::string uniqueName, const std::string diffuse, 
+bool Engine::TextureLibrary::CreateTexture(const std::string uniqueName, const std::string diffuse, 
 	const std::string normal, const std::string emissive, const std::string roughness, const std::string metallic)
 {
 	if (m_device)
@@ -43,7 +43,7 @@ bool Graphics::TextureLibrary::CreateTexture(const std::string uniqueName, const
 	return false;
 }
 
-void Graphics::TextureLibrary::DeleteTexture(const std::string & uniqueName)
+void Engine::TextureLibrary::DeleteTexture(const std::string & uniqueName)
 {
 	auto found = m_textureCodex.find(uniqueName);
 	if (found != m_textureCodex.end())
@@ -52,7 +52,7 @@ void Graphics::TextureLibrary::DeleteTexture(const std::string & uniqueName)
 	}
 }
 
-bool Graphics::TextureLibrary::SetAsActive(const std::string& uniqueName)
+bool Engine::TextureLibrary::SetAsActive(const std::string& uniqueName)
 {
 	if (m_activeTexture.compare(uniqueName))
 	{
@@ -77,7 +77,7 @@ bool Graphics::TextureLibrary::SetAsActive(const std::string& uniqueName)
 	return true;
 }
 
-void Graphics::TextureLibrary::Clear()
+void Engine::TextureLibrary::Clear()
 {
 	for (auto& x : m_textureCodex)
 	{
@@ -86,7 +86,7 @@ void Graphics::TextureLibrary::Clear()
 	m_textureCodex.clear();
 }
 
-void Graphics::TextureLibrary::CreateSamplerSate()
+void Engine::TextureLibrary::CreateSamplerSate()
 {
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));

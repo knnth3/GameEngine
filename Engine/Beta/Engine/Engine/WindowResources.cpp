@@ -1,6 +1,6 @@
 #include "WindowResources.h"
 
-using namespace Graphics;
+using namespace Engine;
 using namespace std;
 
 #define GRAPHICS_INDEX 0
@@ -11,7 +11,7 @@ const string WindowResources::m_reserved[3] = { "GRAPHICS", "INPUT", "TIMER" };
 universal_map WindowResources::m_resources;
 
 
-void Graphics::WindowResources::SetGraphics(const universal_struct & graphics)
+void Engine::WindowResources::SetGraphics(const universal_struct & graphics)
 {
 	if (!m_resources.Insert(m_reserved[GRAPHICS_INDEX], graphics))
 	{
@@ -20,7 +20,7 @@ void Graphics::WindowResources::SetGraphics(const universal_struct & graphics)
 	}
 }
 
-void Graphics::WindowResources::SetInput(const universal_struct & input)
+void Engine::WindowResources::SetInput(const universal_struct & input)
 {
 	if (!m_resources.Insert(m_reserved[INPUT_INDEX], input))
 	{
@@ -29,7 +29,7 @@ void Graphics::WindowResources::SetInput(const universal_struct & input)
 	}
 }
 
-void Graphics::WindowResources::SetTimer(const universal_struct & timer)
+void Engine::WindowResources::SetTimer(const universal_struct & timer)
 {
 	if (!m_resources.Insert(m_reserved[TIMER_INDEX], timer))
 	{
@@ -38,7 +38,7 @@ void Graphics::WindowResources::SetTimer(const universal_struct & timer)
 	}
 }
 
-void Graphics::WindowResources::RemoveAddon(const std::string & key)
+void Engine::WindowResources::RemoveAddon(const std::string & key)
 {
 	if (IsReserved(key))
 		return;
@@ -46,12 +46,12 @@ void Graphics::WindowResources::RemoveAddon(const std::string & key)
 	m_resources.Remove(key);
 }
 
-void Graphics::WindowResources::Reset()
+void Engine::WindowResources::Reset()
 {
 	m_resources.Clear();
 }
 
-bool Graphics::WindowResources::InsertAddon(const std::string & key, const universal_struct & obj)
+bool Engine::WindowResources::InsertAddon(const std::string & key, const universal_struct & obj)
 {
 	if (IsReserved(key))
 		return false;
@@ -59,7 +59,7 @@ bool Graphics::WindowResources::InsertAddon(const std::string & key, const unive
 	return m_resources.Insert(key, obj);
 }
 
-std::shared_ptr<GraphicsDevice> Graphics::WindowResources::GetGraphics()
+std::shared_ptr<GraphicsDevice> Engine::WindowResources::GetGraphics()
 {
 	auto graphics = m_resources[m_reserved[GRAPHICS_INDEX]];
 	if(graphics)
@@ -68,7 +68,7 @@ std::shared_ptr<GraphicsDevice> Graphics::WindowResources::GetGraphics()
 	return nullptr;
 }
 
-std::shared_ptr<Input> Graphics::WindowResources::GetInput()
+std::shared_ptr<Input> Engine::WindowResources::GetInput()
 {
 	auto input = m_resources[m_reserved[INPUT_INDEX]];
 	if (input)
@@ -77,7 +77,7 @@ std::shared_ptr<Input> Graphics::WindowResources::GetInput()
 	return nullptr;
 }
 
-std::shared_ptr<Timer> Graphics::WindowResources::GetTimer()
+std::shared_ptr<Timer> Engine::WindowResources::GetTimer()
 {
 	auto timer = m_resources[m_reserved[TIMER_INDEX]];
 	if(timer)
@@ -86,17 +86,17 @@ std::shared_ptr<Timer> Graphics::WindowResources::GetTimer()
 	return nullptr;
 }
 
-const universal_struct * Graphics::WindowResources::GetAddon(const std::string & key)
+const universal_struct * Engine::WindowResources::GetAddon(const std::string & key)
 {
 	return m_resources[key];
 }
 
-std::vector<std::string> Graphics::WindowResources::GetKeyList()
+std::vector<std::string> Engine::WindowResources::GetKeyList()
 {
 	return m_resources.List();
 }
 
-bool Graphics::WindowResources::IsReserved(const std::string & key)
+bool Engine::WindowResources::IsReserved(const std::string & key)
 {
 	string uppercase = To_upper(key);
 	for (auto& x : m_reserved)

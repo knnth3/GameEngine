@@ -4,7 +4,7 @@
 #include "DLLSettings.h"
 #include "Model.h"
 
-namespace Graphics
+namespace Engine
 {
 	struct Position
 	{
