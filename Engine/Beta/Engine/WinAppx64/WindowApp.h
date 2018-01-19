@@ -16,8 +16,9 @@ protected:
 private:
 
 	Engine::Text t;
-	Engine::Text mouset;
-	Engine::Model m;
-	Engine::Square s;
+	Engine::Model m_floor;
+	Engine::Model m_cube1;
+	Engine::Model m_cube2;
+
 };
 

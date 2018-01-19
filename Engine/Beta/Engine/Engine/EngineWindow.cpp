@@ -1,11 +1,5 @@
 #include "EngineWindow.h"
 #include <future>
-#define STRICT
-#include <windows.h>
-#include <windowsx.h>
-#include <ole2.h>
-#include <commctrl.h>
-#include <shlwapi.h>
 
 #define WS_NORESIZEWINDOW WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX
 

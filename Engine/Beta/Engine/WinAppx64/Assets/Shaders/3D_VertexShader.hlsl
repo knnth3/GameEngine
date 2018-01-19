@@ -2,18 +2,12 @@
 
 #define MAX_INSTANCES 500
 
-struct Instance
-{
-	float4x4 worldMatrix;
-	float4 diffuse;
-	float4 textureBounds;
-};
-
 cbuffer ConstBuffer
 {
 	bool4 flags;
 	float4x4 viewMatrix;
 	float4x4 projectionMatrix;
+    float4 camera;
 	Instance instances[MAX_INSTANCES];
 };
 
@@ -23,11 +17,14 @@ struct VSOutput
 	float3 worldPos : POSITION;
 	float3 normal : NORMAL;
 	float2 uv : TEXCOORD;
+    float4 color : COLOR;
 	float3 diffuse : COLOR01;
 	float metallic : COLOR02;
 	float roughness : COLOR03;
 	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
+    float4 camera : CAMERA;
+    bool hasUV : FLAGS;
 };
 
 VSOutput main(Vertex input)
@@ -53,6 +50,11 @@ VSOutput main(Vertex input)
 	output.metallic = instances[input.instanceID].diffuse.w;
 	output.uv = input.uv;
 	output.diffuse = instances[input.instanceID].diffuse.xyz;
+
+    output.color = input.color;
+    output.hasUV = flags.a;
+
+    output.camera = camera;
 
 	return output;
 }

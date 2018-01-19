@@ -15,20 +15,21 @@ Engine::RenderBatch_3D::RenderBatch_3D(ID3D11Device3* device, ID3D11DeviceContex
 
 bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 {
+	m_textureLib = std::make_shared<TextureLibrary>(m_device, m_context);
+
 	m_camera = camera;
 	if(!m_camera)
 		return false;
 
-	std::string diffuse = "Assets/textures/Default/diffuse.png";
-	std::string normal = "Assets/textures/Default/normal.png";
-	std::string emissive = "Assets/textures/Default/emissive.png";
-	std::string roughness = "Assets/textures/Default/roughness.png";
-	std::string metallic = "Assets/textures/Default/metallic.png";
-	m_textureLib = std::make_shared<TextureLibrary>(m_device, m_context);
-	if (!m_textureLib->Initialize(diffuse, normal, emissive, roughness, metallic))
+	std::string texture = "Assets/textures/Default/grass.jpg";
+	std::string vs = "Assets/Shaders/3D_VertexShader.hlsl";
+	std::string ps = "Assets/Shaders/3D_PixelShader.hlsl";
+	std::string mesh = "Assets/Models/Cube.bin";
+
+	if (!m_textureLib->Initialize(texture))
 		return false;
 
-	if (!m_shaderLib.Initialize("Assets/Shaders/3D_VertexShader.hlsl", "Assets/Shaders/3D_PixelShader.hlsl"))
+	if (!m_shaderLib.Initialize(vs, ps))
 		return false;
 
 	if (!m_bufferLib.Initialize())
@@ -38,6 +39,7 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 		return false;
 
 	m_bufferLib.GetVertexBuffer()->SetStride(sizeof(Vertex));
+	MeshLoader::Initialize(mesh);
 
 	CreateShaders();
 	CreateConstBuffers();
@@ -45,7 +47,7 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	return true;
 }
 
-void Engine::RenderBatch_3D::Draw(const Model& model)
+void Engine::RenderBatch_3D::Draw(const Model & model)
 {
 	m_vertexManager.AddModel(model);
 }
@@ -83,46 +85,43 @@ void Engine::RenderBatch_3D::ProcessObjects(Batch & batch)
 	PBInfo batchInfo;
 	batchInfo.flags[0] = false;
 	batchInfo.view = glm::transpose(m_camera->GetViewMatrix());
+	batchInfo.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
+	batchInfo.camera = glm::vec4(m_camera->GetFocusPoint(),1.0f);
+	batchInfo.flags[0] = batch.info.UsingVertexColors;
 
+	for (size_t index = 0; index < batch.data.size(); index++)
+		batchInfo.instances[index] = batch.data[index];
 
-	if (batch.info.Style == TRIANGLE_3D)
-	{
-		batchInfo.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
+	auto buffer = m_bufferLib.GetBuffer("BatchInfo");
+	if (!buffer)
+		throw std::exception();
 
-		for (size_t index = 0; index < batch.data.size(); index++)
-			batchInfo.instances[index] = batch.data[index];
-
-		auto buffer = m_bufferLib.GetBuffer("BatchInfo");
-		if (!buffer)
-			throw std::exception();
-
-		buffer->UpdateBuffer(&batchInfo, sizeof(batchInfo));
-		m_bufferLib.ResetBufferRefCount();
-		ProcessObject_3DTriangles(batch.info);
-	}
+	buffer->UpdateBuffer(&batchInfo, sizeof(batchInfo));
+	m_bufferLib.ResetBufferRefCount();
+	ProcessObject_3DTriangles(batch.info);
 }
 
 void Engine::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
 {
-	std::string rss = "";
+	//Set the relevant raster state active(if not already set)
 	if (m_bWireframe)
-		rss = "Wireframe";
-	//Set the relevant texture active(if not already set)
-	if (!m_textureLib->SetAsActive(info.Texture))
-	{
-		//Do something
-	}
+		m_rssLib.SetAsActive("WIREFRAME");
+	else if(info.Style & DRAW_STYLE_CULL_FRONT)
+		m_rssLib.SetAsActive("CULL_FRONT");
+	else
+		m_rssLib.SetAsActive("");
 
-	if (!m_rssLib.SetAsActive(rss))
-	{
-		//Do something
-	}
+	//Set the relevant texture active(if not already set)
+	if (info.Style & DRAW_STYLE_CUBEMAP)
+		m_textureLib->SetAsActive("CUBEMAP");
+	else
+		m_textureLib->SetAsActive(info.Texture);
 
 	//Set the relevant shader active(if not already set)
-	if (info.UsingVertexColors)
-		m_shaderLib.SetAsActive("VertexColor");
+	if (info.Style & DRAW_STYLE_CUBEMAP)
+		m_shaderLib.SetAsActive("CUBEMAP");
 	else
-		m_shaderLib.SetAsActive(""); 
+		m_shaderLib.SetAsActive("");
 
 	//Draw batch of instanced objects
 	m_context->DrawIndexedInstanced(
@@ -164,13 +163,13 @@ bool Engine::RenderBatch_3D::FillBuffers()
 
 void Engine::RenderBatch_3D::CreateShaders()
 {
-	//std::wstring path;
-
-	//path = L"Assets/shaders/3D Shader.hlsl";
-	//m_shaderManager->CreateShader("3D", path);
-
-	//path = L"Assets/shaders/vertex_color_shader.hlsl";
-	//m_shaderManager->CreateShader("VertexColor", path);
+	auto sbShader = m_shaderLib.CreateShader("CUBEMAP");
+	if (sbShader)
+	{
+		bool result;
+		result = sbShader->SetVertexShader("Assets/Shaders/Skybox_VertexShader.hlsl");
+		result = sbShader->SetPixelShader("Assets/Shaders/Skybox_PixelShader.hlsl");
+	}
 }
 
 void Engine::RenderBatch_3D::CreateConstBuffers()
@@ -190,9 +189,10 @@ void Engine::RenderBatch_3D::CreateConstBuffers()
 bool Engine::RenderBatch_3D::CreateRSSStates()
 {
 	bool result = false;
+	D3D11_RASTERIZER_DESC settings;
 
 	//Wireframe
-	D3D11_RASTERIZER_DESC settings;
+	settings = {};
 	settings.AntialiasedLineEnable = true;
 	settings.CullMode = D3D11_CULL_NONE;
 	settings.DepthBias = 0;
@@ -204,7 +204,25 @@ bool Engine::RenderBatch_3D::CreateRSSStates()
 	settings.ScissorEnable = false;
 	settings.SlopeScaledDepthBias = 0.0f;
 
-	auto rss = m_rssLib.CreateRSS("Wireframe");
+	auto rss = m_rssLib.CreateRSS("WIREFRAME");
+	result = rss->Initialize(settings);
+	if (!result)
+		return false;
+
+	//FrontFace culling
+	settings = {};
+	settings.AntialiasedLineEnable = true;
+	settings.CullMode = D3D11_CULL_FRONT;
+	settings.DepthBias = 0;
+	settings.DepthBiasClamp = 0.0f;
+	settings.DepthClipEnable = true;
+	settings.FillMode = D3D11_FILL_SOLID;
+	settings.FrontCounterClockwise = true;
+	settings.MultisampleEnable = true;
+	settings.ScissorEnable = false;
+	settings.SlopeScaledDepthBias = 0.0f;
+
+	rss = m_rssLib.CreateRSS("CULL_FRONT");
 	result = rss->Initialize(settings);
 	if (!result)
 		return false;

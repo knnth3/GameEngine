@@ -5,6 +5,7 @@
 #include "RSSLibrary.h"
 #include "TextureLibrary.h"
 #include "VertexManager.h"
+#include "MeshLoader.h"
 
 //Macros
 #define FLAG_SIZE 4
@@ -17,6 +18,7 @@ namespace Engine
 		uint32_t flags[FLAG_SIZE];
 		glm::mat4 view;
 		glm::mat4 projection;
+		glm::vec4 camera;
 		PerInstanceInfo instances[MAX_INSTANCES];
 	};
 

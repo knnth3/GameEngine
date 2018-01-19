@@ -104,6 +104,9 @@
     <Filter Include="Source Files\Graphics\3D Graphics\Vertex Manager">
       <UniqueIdentifier>{274590c9-bf11-4a40-90b2-b4fd9b429408}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Skybox">
+      <UniqueIdentifier>{a0b0915e-7b3b-4ddc-9db3-811db079d712}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -181,7 +184,6 @@
     <ClCompile Include="VertexManager.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="EngineWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
@@ -202,6 +204,9 @@
     </ClCompile>
     <ClCompile Include="DirectX_Texture.cpp">
       <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files\Skybox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,7 +294,6 @@
     <ClInclude Include="VertexManager.h">
       <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h" />
     <ClInclude Include="EngineWindow.h">
       <Filter>Source Files\Window</Filter>
     </ClInclude>
@@ -310,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="DirectX_Texture.h">
       <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Source Files\Skybox</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

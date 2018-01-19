@@ -2,15 +2,15 @@
 
 #define ENABLE_3D_RENDERING true
 
-Engine::GraphicsDevice::GraphicsDevice()
+Engine::GraphicsDevice::GraphicsDevice() :
+	GraphicsDevice(CameraSettings())
 {
-	m_camera = std::shared_ptr<Camera>(new Camera());
-	m_clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Engine::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 {
 	m_camera = std::shared_ptr<Camera>(new Camera(s_camera));
+	m_clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 Engine::GraphicsDevice::~GraphicsDevice()
@@ -42,6 +42,7 @@ void Engine::GraphicsDevice::BeginScene()
 	}
 
 	m_renderBatch_2D->ClearScreen(m_clearColor.r, m_clearColor.g, m_clearColor.b, alpha);
+
 }
 
 bool Engine::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
@@ -66,7 +67,10 @@ bool Engine::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
 
 		m_renderBatch_3D = std::unique_ptr<RenderBatch_3D>(new RenderBatch_3D(device_3D, context_3D));
 		if (!m_renderBatch_3D->Initialize(m_camera))
+		{
+			OpenDialog(L"Graphics Error", L"3D render batch init failed!");
 			throw std::exception();
+		}
 	}
 
 	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, context_2D, wicFactory));
@@ -160,6 +164,12 @@ void Engine::GraphicsDevice::Reset()
 		m_camera->Reset();
 		m_camera->SetResolution(m_size.Width, m_size.Height);
 	}
+}
+
+void Engine::GraphicsDevice::SetSkybox(Skybox & skybox)
+{
+	auto textureLib = m_renderBatch_3D->GetTextureLibrary();
+	textureLib->CreateTexture("CUBEMAP", skybox.path);
 }
 
 std::vector<Engine::VideoCardInfo> Engine::GraphicsDevice::GetVideoCardInfo() const

@@ -1,6 +1,8 @@
 #pragma once
 #include "Model.h"
+#include "Skybox.h"
 #include <map>
+#include <tuple>
 
 namespace Engine
 {
@@ -13,8 +15,8 @@ namespace Engine
 
 	struct BatchInfo
 	{
+		int Style;
 		std::string Texture;
-		DrawStyle Style;
 		bool UsingVertexColors;
 		uint32_t IndexCountPerInstance;
 		uint32_t InstanceCount;
@@ -42,13 +44,13 @@ namespace Engine
 
 
 	private:
-		void CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style);
+		void CreateNewBatch(int mesh, const std::string& texture, int style);
 
 		bool m_bNewBatch;
 		const uint16_t m_maxInstances;
 		std::vector<Vertex> m_vertices;
 		std::vector<Index> m_indices;
-		std::map<std::pair<MeshID, std::string>, Batch> m_BatchCache;
+		std::map<std::tuple<int, std::string, int>, Batch> m_BatchCache;
 	};
 
 

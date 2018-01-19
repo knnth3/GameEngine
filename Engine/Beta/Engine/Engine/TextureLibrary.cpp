@@ -1,5 +1,7 @@
 #include "TextureLibrary.h"
 
+using namespace std;
+
 Engine::TextureLibrary::TextureLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context)
 {
 	m_device = device;
@@ -8,12 +10,11 @@ Engine::TextureLibrary::TextureLibrary(ID3D11Device3 * device, ID3D11DeviceConte
 	m_samplerState = nullptr;
 }
 
-bool Engine::TextureLibrary::Initialize(const std::string diffuse, const std::string normal,
-	const std::string emissive, const std::string roughness, const std::string metallic)
+bool Engine::TextureLibrary::Initialize(const std::string basic)
 {
 	m_textures.Emplace(m_device, m_context);
 	auto texture = m_textures.At(0);
-	if (!texture->Initialize(diffuse, normal, emissive, roughness, metallic))
+	if (!texture->Initialize(basic))
 		return false;
 
 	CreateSamplerSate();
@@ -21,8 +22,7 @@ bool Engine::TextureLibrary::Initialize(const std::string diffuse, const std::st
 	return true;
 }
 
-bool Engine::TextureLibrary::CreateTexture(const std::string uniqueName, const std::string diffuse, 
-	const std::string normal, const std::string emissive, const std::string roughness, const std::string metallic)
+bool Engine::TextureLibrary::CreateTexture(const std::string& uniqueName, const std::vector<std::string>& paths)
 {
 	if (m_device)
 	{
@@ -32,7 +32,7 @@ bool Engine::TextureLibrary::CreateTexture(const std::string uniqueName, const s
 			auto ref = m_textures.Emplace(m_device, m_context);
 			m_textureCodex.emplace(uniqueName, ref);
 			auto newTexture = m_textures.At(ref);
-			if (!newTexture->Initialize(diffuse, normal, emissive, roughness, metallic))
+			if (!newTexture->Initialize(paths))
 			{
 				OpenDialog(L"Texture init failed!", To_wstr(std::string("Owner: ") + uniqueName).c_str());
 				return false;
@@ -41,6 +41,13 @@ bool Engine::TextureLibrary::CreateTexture(const std::string uniqueName, const s
 		}
 	}
 	return false;
+}
+
+bool Engine::TextureLibrary::CreateTexture(const std::string & uniqueName, const std::string & path)
+{
+	std::vector<std::string> m_path;
+	m_path.push_back(path);
+	return CreateTexture(uniqueName, m_path);
 }
 
 void Engine::TextureLibrary::DeleteTexture(const std::string & uniqueName)

@@ -9,14 +9,9 @@ namespace Engine
 
 	enum DrawStyle
 	{
-		TRIANGLE_3D = 0,
-		TRIANGLE_2D
-	};
-	enum RSS_STYLES
-	{
-		RSS_DEFAULT = 0,
-		RSS_NO_CULL,
-		RSS_WIREFRAME
+		DRAW_STYLE_NORMAL = 0,
+		DRAW_STYLE_CUBEMAP = 1,
+		DRAW_STYLE_CULL_FRONT = 2,
 	};
 
 	class IDManager
@@ -35,7 +30,7 @@ namespace Engine
 		//Constructors, destructors, and final functions
 
 		__engine_decl Model();
-		__engine_decl Model(MeshID mesh);
+		__engine_decl Model(int mesh);
 		__engine_decl ~Model();
 		__engine_decl virtual void UseViewMatrix(bool val) final;
 		__engine_decl virtual bool IsUsingViewMatrix() final;
@@ -43,9 +38,8 @@ namespace Engine
 		//Set Functions
 
 		__engine_decl virtual void SetTexture(const std::string& textureName) final;
-		__engine_decl virtual void SetMesh(MeshID meshName) final;
-		__engine_decl virtual void SetDrawStyle(DrawStyle style) final;
-		__engine_decl virtual void SetRSS(RSS_STYLES style) final;
+		__engine_decl virtual void SetMesh(int ID) final;
+		__engine_decl virtual void SetDrawStyle(int style) final;
 		__engine_decl virtual void Scale(const float x, const float y, const float z);
 		__engine_decl virtual void Scale(glm::vec3 scale);
 		__engine_decl virtual void SetPosition(const float x, const float y, const float z);
@@ -67,10 +61,9 @@ namespace Engine
 		//Get Functions
 
 		__engine_decl virtual int GetUniqueID()const final;
-		__engine_decl virtual DrawStyle GetDrawStyle()const final;
-		__engine_decl virtual RSS_STYLES GetRSS()const final;
+		__engine_decl virtual int GetDrawStyle()const final;
 		__engine_decl virtual std::string GetTexture()const final;
-		__engine_decl virtual MeshID GetMesh()const final;
+		__engine_decl virtual int GetMesh()const final;
 		__engine_decl virtual const vec3_ptr GetPosition()const;
 		__engine_decl virtual glm::vec3 GetScale()const;
 		__engine_decl virtual glm::mat4 GetModelMatrix()const;
@@ -78,14 +71,14 @@ namespace Engine
 		__engine_decl virtual glm::vec4 GetTextureBounds()const;
 
 	private:
+		void Rotate(float& original, const float& ammount);
 		glm::mat4 GetRotationMatrix(glm::vec3 rotation)const;
 
 		bool m_bUseViewMatrix;
 		int m_uniqueID;
-		MeshID m_mesh;
+		int m_mesh;
+		int m_drawStyle;
 		std::string m_texture;
-		DrawStyle m_drawStyle;
-		RSS_STYLES m_rssStyle;
 		glm::mat4 m_scaleMatrix;
 		vec3_ptr m_position;
 		glm::vec3 m_object_rotation;

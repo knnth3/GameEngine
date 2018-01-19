@@ -4,41 +4,37 @@
 Engine::VertexManager::VertexManager(const uint16_t maxInstances):
 	m_maxInstances(maxInstances)
 {
-	MeshLoader::Initialize();
 	m_bNewBatch = false;
 }
 
 void Engine::VertexManager::AddModel(const Model& model)
 {
-	MeshID mesh = model.GetMesh();
+	int mesh = model.GetMesh();
 	std::string texture = model.GetTexture();
-	DrawStyle drawStyle = model.GetDrawStyle();
+	int style = model.GetDrawStyle();
 
-	//Allow 3d and 2d draw styles
-	if (drawStyle == TRIANGLE_3D || drawStyle == TRIANGLE_2D)
+	auto tuple = std::make_tuple(mesh, texture, style);
+
+	//If batch doesn't exit, make a new one
+	if (m_BatchCache.find(tuple) == m_BatchCache.end())
 	{
-		auto pair = std::make_pair(mesh, texture);
+		m_bNewBatch = true;
+		CreateNewBatch(mesh, texture, style);
+	}
 
-		//If batch doesn't exit, make a new one
-		if (m_BatchCache.find(pair) == m_BatchCache.end())
-		{
-			m_bNewBatch = true;
-			CreateNewBatch(mesh, texture, drawStyle);
-		}
-		else if (m_BatchCache[pair].info.InstanceCount < m_maxInstances)
-		{
-			//increment instance count
-			m_BatchCache[pair].info.InstanceCount++;
+	else if (m_BatchCache[tuple].info.InstanceCount < m_maxInstances)
+	{
+		//increment instance count
+		m_BatchCache[tuple].info.InstanceCount++;
 
-			//Fill out the per-instace info
-			PerInstanceInfo info;
-			info.color = model.GetColor();
-			info.textureBounds = model.GetTextureBounds();
-			info.world = glm::transpose(model.GetModelMatrix());
+		//Fill out the per-instace info
+		PerInstanceInfo info;
+		info.color = model.GetColor();
+		info.textureBounds = model.GetTextureBounds();
+		info.world = glm::transpose(model.GetModelMatrix());
 
-			//Push back info into currnet batch's vector
-			m_BatchCache[pair].data.push_back(info);
-		}
+		//Push back info into currnet batch's vector
+		m_BatchCache[tuple].data.push_back(info);
 	}
 }
 
@@ -73,7 +69,7 @@ void Engine::VertexManager::GetBatchData(std::vector<Batch>& batch)
 	}
 }
 
-void Engine::VertexManager::CreateNewBatch(MeshID mesh, const std::string& texture, DrawStyle style)
+void Engine::VertexManager::CreateNewBatch(int mesh, const std::string& texture, int style)
 {
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;
@@ -96,8 +92,12 @@ void Engine::VertexManager::CreateNewBatch(MeshID mesh, const std::string& textu
 	newBatch.info.IndexCountPerInstance = (uint32_t)newIndices.size();
 	newBatch.info.InstanceCount = 0;
 	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
-	newBatch.info.UsingVertexColors = data->m_bUsingVertexColors;
+
+	if (data->m_creationFlags & CREATION_TYPE_NO_UV)
+		newBatch.info.UsingVertexColors = true;
+	else
+		newBatch.info.UsingVertexColors = false;
 
 	//Create new batch
-	m_BatchCache[std::make_pair(mesh, texture)] = newBatch;
+	m_BatchCache[std::make_tuple(mesh, texture, style)] = newBatch;
 }

@@ -1,14 +1,17 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
+#define MAX_TEXTURE_BINDS 5
+
 namespace Engine
 {
+
 	class DirectX_Texture
 	{
 	public:
 		DirectX_Texture(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
-		bool Initialize(const std::string& diffuse, const std::string& normal, const std::string& emissive,
-			const std::string& roughness, const std::string& metalic);
+		bool Initialize(const std::string& m_path);
+		bool Initialize(const std::vector<std::string>& paths);
 		void SetAsActive();
 
 	private:
@@ -16,8 +19,8 @@ namespace Engine
 
 		ID3D11Device3* m_device;
 		ID3D11DeviceContext3* m_context;
-		std::wstring m_tmFileNames[5];
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_textures[5];
+		std::vector<std::wstring> m_tmFileNames;
+		std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> m_textures;
 	};
 
 }

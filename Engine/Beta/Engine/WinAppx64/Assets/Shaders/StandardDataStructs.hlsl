@@ -1,4 +1,13 @@
 
+
+
+struct Instance
+{
+    float4x4 worldMatrix;
+    float4 diffuse;
+    float4 textureBounds;
+};
+
 struct Vertex
 {
 	float4 position : POSITION;

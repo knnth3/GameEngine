@@ -108,6 +108,11 @@ void Engine::Camera::Zoom(float x)
 	}
 }
 
+glm::vec3 Engine::Camera::GetFocusPoint()
+{
+	return m_active.m_focusPoint.GetPosition();
+}
+
 glm::vec3 Engine::Camera::GetPosition()
 {
 	return m_active.m_position;
@@ -183,7 +188,7 @@ void Engine::Camera::CreateViewMatrix()
 
 void Engine::Camera::Create3DProjectionMatrix()
 {
-	m_active.m_projection = glm::perspectiveRH(m_active.m_fov, m_active.m_aspectRatio, m_active.m_nearDistance, m_active.m_farDistance);
+	m_active.m_projection = glm::infinitePerspectiveRH(m_active.m_fov, m_active.m_aspectRatio, m_active.m_nearDistance);
 }
 
 void Engine::Camera::CalculatePosition(float horizontalDistance, float verticalDistance)

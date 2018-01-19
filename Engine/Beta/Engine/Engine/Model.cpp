@@ -1,6 +1,8 @@
 #include "Model.h"
 #include <glm\gtx\transform.hpp>
 
+#define ANGLE_2PI (float)M_PI * 2.0f
+
 std::vector<int> Engine::IDManager::currentIDs = std::vector<int>();
 
 void Engine::IDManager::AssignID(int& id)
@@ -35,13 +37,12 @@ Engine::Model::Model():
 {
 }
 
-Engine::Model::Model(MeshID mesh)
+Engine::Model::Model(int mesh)
 {
 	IDManager::AssignID(m_uniqueID);
 	m_mesh            = mesh;
 	m_texture         = "";
-	m_drawStyle       = TRIANGLE_3D;
-	m_rssStyle        = RSS_DEFAULT;
+	m_drawStyle       = DRAW_STYLE_NORMAL;
 	m_bUseViewMatrix  = true;
 	m_scaleMatrix     = glm::mat4();
 	m_position        = vec3_ptr(new glm::vec3(0.0f, 0.0f, 0.0f));
@@ -62,19 +63,14 @@ void Engine::Model::SetTexture(const std::string& textureName)
 	m_texture = textureName;
 }
 
-void Engine::Model::SetMesh(MeshID meshName)
+void Engine::Model::SetMesh(int ID)
 {
-	m_mesh = meshName;
+	m_mesh = ID;
 }
 
-void Engine::Model::SetDrawStyle(DrawStyle style)
+void Engine::Model::SetDrawStyle(int style)
 {
 	m_drawStyle = style;
-}
-
-void Engine::Model::SetRSS(RSS_STYLES style)
-{
-	m_rssStyle = style;
 }
 
 std::string Engine::Model::GetTexture()const
@@ -82,7 +78,7 @@ std::string Engine::Model::GetTexture()const
 	return m_texture;
 }
 
-Engine::MeshID Engine::Model::GetMesh()const
+int Engine::Model::GetMesh()const
 {
 	return m_mesh;
 }
@@ -92,14 +88,9 @@ int Engine::Model::GetUniqueID()const
 	return m_uniqueID;
 }
 
-Engine::DrawStyle Engine::Model::GetDrawStyle()const
+int Engine::Model::GetDrawStyle()const
 {
 	return m_drawStyle;
-}
-
-Engine::RSS_STYLES Engine::Model::GetRSS()const
-{
-	return m_rssStyle;
 }
 
 void Engine::Model::UseViewMatrix(bool val)
@@ -162,16 +153,9 @@ void Engine::Model::RotateRelative(float x, float y, float z)
 
 void Engine::Model::RotateRelative(glm::vec3 rotation)
 {
-	m_object_rotation += rotation;
-
-	if (m_object_rotation.x > (float)M_PI)
-		m_object_rotation.x -= (float)M_PI;
-
-	if (m_object_rotation.y > (float)M_PI)
-		m_object_rotation.y -= (float)M_PI;
-
-	if (m_object_rotation.z > (float)M_PI)
-		m_object_rotation.z -= (float)M_PI;
+	Rotate(m_object_rotation.x, rotation.x);
+	Rotate(m_object_rotation.y, rotation.y);
+	Rotate(m_object_rotation.z, rotation.z);
 }
 
 void Engine::Model::RotateWorld(float x, float y, float z)
@@ -181,16 +165,9 @@ void Engine::Model::RotateWorld(float x, float y, float z)
 
 void Engine::Model::RotateWorld(glm::vec3 rotation)
 {
-	m_world_rotation += rotation;
-
-	if (m_world_rotation.x > (float)M_PI)
-		m_world_rotation.x -= (float)M_PI;
-
-	if (m_world_rotation.y > (float)M_PI)
-		m_world_rotation.y -= (float)M_PI;
-
-	if (m_world_rotation.z > (float)M_PI)
-		m_world_rotation.z -= (float)M_PI;
+	Rotate(m_world_rotation.x, rotation.x);
+	Rotate(m_world_rotation.y, rotation.y);
+	Rotate(m_world_rotation.z, rotation.z);
 }
 
 void Engine::Model::SetColor(float r, float g, float b)
@@ -246,6 +223,18 @@ glm::vec4 Engine::Model::GetColor()const
 glm::vec4 Engine::Model::GetTextureBounds()const
 {
 	return m_textureBounds;
+}
+
+void Engine::Model::Rotate(float & original, const float & amount)
+{
+
+	original += ammount;
+
+	if (original > ANGLE_2PI)
+		original -= ANGLE_2PI;
+
+	if (original < -ANGLE_2PI)
+		original += ANGLE_2PI;
 }
 
 glm::mat4 Engine::Model::GetRotationMatrix(glm::vec3 rotation) const

@@ -2,7 +2,6 @@
 
 Engine::Mesh::Mesh()
 {
-	m_bUsingVertexColors = false;
 	m_height = 0.0;
 }
 
@@ -33,9 +32,4 @@ uint32_t Engine::Mesh::GetIndexCount()
 		return (uint32_t)m_indices.size();
 	else
 		return 0u;
-}
-
-float Engine::Mesh::GetHeight()
-{
-	return m_height;
 }

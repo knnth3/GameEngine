@@ -43,5 +43,11 @@
     <None Include="Assets\Shaders\3D_PixelShader.hlsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Assets\Shaders\3D_Color_PixelShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Shaders\3D_Color_VertexShader.hlsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

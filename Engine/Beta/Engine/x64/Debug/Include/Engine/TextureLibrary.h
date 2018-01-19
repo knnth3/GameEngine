@@ -10,10 +10,9 @@ namespace Engine
 	{
 	public:
 		__engine_decl TextureLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
-		__engine_decl bool Initialize(const std::string diffuse, const std::string normal, 
-			const std::string emissive, const std::string roughness, const std::string metallic);
-		__engine_decl bool CreateTexture(const std::string uniqueName, const std::string diffuse, 
-			const std::string normal, const std::string emissive, const std::string roughness, const std::string metallic);
+		__engine_decl bool Initialize(const std::string basic);
+		__engine_decl bool CreateTexture(const std::string& uniqueName, const std::vector<std::string>& paths);
+		__engine_decl bool CreateTexture(const std::string& uniqueName, const std::string& path);
 		__engine_decl void DeleteTexture(const std::string& uniqueName);
 		__engine_decl bool SetAsActive(const std::string& uniqueName);
 		__engine_decl void Clear();

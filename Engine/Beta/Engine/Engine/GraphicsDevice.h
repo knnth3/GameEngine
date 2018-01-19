@@ -31,6 +31,7 @@ namespace Engine
 		__engine_decl virtual void ReleaseDeviceDependentResources()final;
 		__engine_decl virtual void Wireframe(bool val)final;
 		__engine_decl virtual void Reset();
+		virtual void SetSkybox(Skybox& skybox);
 		__engine_decl virtual std::vector<VideoCardInfo> GetVideoCardInfo()const final;
 
 	private:

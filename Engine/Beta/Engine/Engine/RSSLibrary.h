@@ -20,6 +20,7 @@ namespace Engine
 		std::string m_activeRSS;
 		ID3D11Device3* m_device;
 		ID3D11DeviceContext3* m_context;
+		DirectX_RSS m_default;
 		std::map<std::string, int> m_rssCodex;
 		Library<DirectX_RSS> m_rss;
 	};

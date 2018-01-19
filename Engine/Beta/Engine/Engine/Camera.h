@@ -50,6 +50,7 @@ namespace Engine
 		__engine_decl void SetRotation(glm::vec3 rotation);
 		__engine_decl void SetResolution(float width, float height);
 		__engine_decl void Zoom(float x);
+		__engine_decl glm::vec3 GetFocusPoint();
 		__engine_decl glm::vec3 GetPosition();
 		__engine_decl glm::mat4 GetViewMatrix();
 		__engine_decl glm::mat4 GetIdentityMatrix();

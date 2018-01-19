@@ -11,46 +11,46 @@ using namespace std;
 bool Engine::MeshLoader::m_bIsInit = false;
 std::shared_ptr<Mesh> Engine::MeshLoader::m_default;
 std::vector<std::shared_ptr<Mesh>> Engine::MeshLoader::m_modelLibrary;
-std::map<std::string, MeshID> Engine::MeshLoader::m_filepaths;
-std::map<std::string, MeshID> Engine::MeshLoader::m_keyNames;
+std::map<std::string, int> Engine::MeshLoader::m_filepaths;
+std::map<std::string, int> Engine::MeshLoader::m_keyNames;
 
-bool Engine::MeshLoader::Initialize()
+bool Engine::MeshLoader::Initialize(const std::string& defaultMesh)
 {
-	auto defaultMesh = MeshLoader::LoadModel("Assets/Models/Cube.bin");
-	if (defaultMesh == -1)
+	auto id = CreateMesh("Assets/Models/Cube.bin");
+	if (id == -1)
 		return false;
 
-	m_default = m_modelLibrary[defaultMesh];
+	m_default = m_modelLibrary[id];
 	Clear();
 	m_bIsInit = true;
 	return true;
 }
 
-Engine::MeshID Engine::MeshLoader::LoadModel(const std::string filename)
+int Engine::MeshLoader::LoadModel(const std::string filename)
 {
-	MeshID result = -1;
-	std::string ext;
-	GetFileExt(filename, ext);
-
-	struct stat results;
-	if (!stat(filename.c_str(), &results) == 0)
+	int result = -1;
+	if (CheckInit())
 	{
-		std::wstring message;
-		message.insert(message.end(), filename.begin(), filename.end());
-		CheckSuccess(E_INVALIDARG, message.c_str());
-		return result;
-	}
+		struct stat results;
+		if (!stat(filename.c_str(), &results) == 0)
+		{
+			std::wstring message;
+			message.insert(message.end(), filename.begin(), filename.end());
+			CheckSuccess(E_INVALIDARG, message.c_str());
+			return result;
+		}
 
-	if (!IsFilepathQuerried(filename, result))
-	{
-		result = CreateMesh(filename);
+		if (!IsFilepathQuerried(filename, result))
+		{
+			result = CreateMesh(filename);
+		}
 	}
 	return result;
 }
 
-Engine::MeshID Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
+int Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
 {
-	MeshID result = -1;
+	int result = -1;
 	//if(!IsKeyNameQuerried(uniqueName, result))
 	//{
 	//	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
@@ -61,55 +61,59 @@ Engine::MeshID Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, c
 	return result;
 }
 
-MeshID Engine::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
+int Engine::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
 {
-	auto data = std::make_shared<Mesh>();
-
-	float offsetX = xUnits * xTesselation * 0.5f;
-	float offsetZ = zUnits * zTesselation * 0.5f;
-
-	Vertex basic;
-	basic.m_normal = { 0.0f, 1.0f, 0.0f, 0.0f };
-	basic.m_binormal = { 0.0f, 1.0f, 0.0f };
-	basic.m_tangent = { 0.0f, 1.0f, 0.0f };
-
-	std::vector<glm::vec3> m_positions;
-	std::vector<glm::vec2> m_textureCoords;
-
-	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
-	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ + zUnits });
-	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
-	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
-	m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ          });
-	m_positions.push_back({ -offsetX          , 0.0f, -offsetZ          });
-
-	m_textureCoords.push_back({ 0.0f, 0.0f });
-	m_textureCoords.push_back({ 0.0f, 1.0f });
-	m_textureCoords.push_back({ 1.0f, 1.0f });
-	m_textureCoords.push_back({ 1.0f, 1.0f });
-	m_textureCoords.push_back({ 1.0f, 0.0f });
-	m_textureCoords.push_back({ 0.0f, 0.0f });
-
-	Index count = 0;
-	for (int x = 0; x < xTesselation; x++)
+	if (CheckInit())
 	{
-		for (int z = 0; z < zTesselation; z++)
+		auto data = std::make_shared<Mesh>();
+
+		float offsetX = xUnits * xTesselation * 0.5f;
+		float offsetZ = zUnits * zTesselation * 0.5f;
+
+		Vertex basic;
+		basic.m_normal = { 0.0f, 1.0f, 0.0f, 0.0f };
+		basic.m_binormal = { 0.0f, 1.0f, 0.0f };
+		basic.m_tangent = { 0.0f, 1.0f, 0.0f };
+
+		std::vector<glm::vec3> m_positions;
+		std::vector<glm::vec2> m_textureCoords;
+
+		m_positions.push_back({ -offsetX          , 0.0f, -offsetZ });
+		m_positions.push_back({ -offsetX          , 0.0f, -offsetZ + zUnits });
+		m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+		m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ + zUnits });
+		m_positions.push_back({ -offsetX + xUnits , 0.0f, -offsetZ });
+		m_positions.push_back({ -offsetX          , 0.0f, -offsetZ });
+
+		m_textureCoords.push_back({ 0.0f, 0.0f });
+		m_textureCoords.push_back({ 0.0f, 1.0f });
+		m_textureCoords.push_back({ 1.0f, 1.0f });
+		m_textureCoords.push_back({ 1.0f, 1.0f });
+		m_textureCoords.push_back({ 1.0f, 0.0f });
+		m_textureCoords.push_back({ 0.0f, 0.0f });
+
+		Index count = 0;
+		for (int x = 0; x < xTesselation; x++)
 		{
-			for (size_t it = 0; it < m_positions.size(); it++)
+			for (int z = 0; z < zTesselation; z++)
 			{
-				basic.m_uv = m_textureCoords[it];
-				basic.m_position = m_positions[it];
+				for (size_t it = 0; it < m_positions.size(); it++)
+				{
+					basic.m_uv = m_textureCoords[it];
+					basic.m_position = m_positions[it];
 
-				basic.m_position.x += (float)x * xUnits;
-				basic.m_position.z += (float)z * zUnits;
+					basic.m_position.x += (float)x * xUnits;
+					basic.m_position.z += (float)z * zUnits;
 
-				data->m_vertices.push_back(basic);
-				data->m_indices.push_back(count++);
+					data->m_vertices.push_back(basic);
+					data->m_indices.push_back(count++);
+				}
 			}
 		}
-	}
 
-	return SaveMesh(data);
+		return SaveMesh(data);
+	}
+	return -1;
 }
 
 void Engine::MeshLoader::Clear()
@@ -119,7 +123,7 @@ void Engine::MeshLoader::Clear()
 	m_keyNames.clear();
 }
 
-void Engine::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
+void Engine::MeshLoader::GrabMeshData(int id, std::shared_ptr<Mesh> & ptr)
 {
 	if (m_modelLibrary.size() > id && id >= 0)
 		ptr = m_modelLibrary.at(id);
@@ -127,9 +131,9 @@ void Engine::MeshLoader::GrabMeshData(MeshID id, std::shared_ptr<Mesh> & ptr)
 		ptr = m_default;
 }
 
-Engine::MeshID Engine::MeshLoader::CreateMesh(const std::string filename)
+int Engine::MeshLoader::CreateMesh(const std::string filename)
 {
-	MeshID result = -1;
+	int result = -1;
 	BMImporter io;
 	MeshData meshdata;
 	if (io.Import(filename, meshdata))
@@ -167,7 +171,7 @@ Engine::MeshID Engine::MeshLoader::CreateMesh(const std::string filename)
 			}
 			else
 			{
-				data->m_bUsingVertexColors = true;
+				data->m_creationFlags = CREATION_TYPE_NO_UV;
 				newVertex.m_color.x = v.m_color.x;
 				newVertex.m_color.y = v.m_color.y;
 				newVertex.m_color.z = v.m_color.z;
@@ -181,18 +185,18 @@ Engine::MeshID Engine::MeshLoader::CreateMesh(const std::string filename)
 	return result;
 }
 
-Engine::MeshID Engine::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
+int Engine::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
 {
-	MeshID result = -1;
+	int result = -1;
 	size_t models = m_modelLibrary.size();
 
-	result = (MeshID)models;
+	result = (int)models;
 	m_modelLibrary.push_back(mesh);
 
 	return result;
 }
 
-bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID & result)
+bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, int result)
 {
 	result = -1;
 	if (!filepath.empty())
@@ -208,7 +212,7 @@ bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, MeshID &
 	return false;
 }
 
-bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, MeshID & result)
+bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, int result)
 {
 	result = -1;
 	if (!filepath.empty())
@@ -222,4 +226,11 @@ bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, MeshID & 
 	}
 
 	return false;
+}
+
+bool Engine::MeshLoader::CheckInit()
+{
+	if (!m_bIsInit)
+		OpenDialog(L"MeshLoader Error!", L"Attempted to load a mesh before initialization. \nDo not load a mesh before App's resume function.");
+	return m_bIsInit;
 }
