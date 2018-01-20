@@ -159,6 +159,8 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BrushManager.cpp" />
     <ClCompile Include="BufferLibrary.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -194,6 +196,8 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)$(Platform)\$(Configuration)\Include\$(Pr
     <ClCompile Include="WindowsAdditionals.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="Animator.h" />
     <ClInclude Include="BrushManager.h" />
     <ClInclude Include="BufferLibrary.h" />
     <ClInclude Include="Camera.h" />

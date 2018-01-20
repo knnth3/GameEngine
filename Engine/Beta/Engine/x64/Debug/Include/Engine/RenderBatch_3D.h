@@ -10,16 +10,19 @@
 //Macros
 #define FLAG_SIZE 4
 #define MAX_INSTANCES 500
+#define MAX_JOINTS 20
 
 namespace Engine
 {
 	struct PBInfo
 	{
-		uint32_t flags[FLAG_SIZE];
 		glm::mat4 view;
 		glm::mat4 projection;
 		glm::vec4 camera;
 		PerInstanceInfo instances[MAX_INSTANCES];
+		uint32_t flags[FLAG_SIZE];
+		glm::mat4 jointTransform[MAX_JOINTS];
+
 	};
 
 	class RenderBatch_3D
@@ -33,10 +36,10 @@ namespace Engine
 		void ProcessScene();
 		const std::shared_ptr<TextureLibrary>& GetTextureLibrary();
 	private:
-		void ProcessObjects(Batch & batch);
+		void LoadBatchInfo(Batch & batch);
 
 		//Rendering
-		void ProcessObject_3DTriangles(BatchInfo & info);
+		void RenderBatch(BatchInfo & info);
 
 		bool FillBuffers();
 		void CreateShaders();

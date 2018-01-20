@@ -227,8 +227,7 @@ glm::vec4 Engine::Model::GetTextureBounds()const
 
 void Engine::Model::Rotate(float & original, const float & amount)
 {
-
-	original += ammount;
+	original += amount;
 
 	if (original > ANGLE_2PI)
 		original -= ANGLE_2PI;

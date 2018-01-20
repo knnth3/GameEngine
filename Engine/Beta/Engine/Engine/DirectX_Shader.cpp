@@ -174,6 +174,7 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDesc
 	for (size_t index = 0; index < VertexInfo::NumElements(); index++)
 	{
 		size_t bytes = VertexInfo::SizeOf(index);
+		DType type = VertexInfo::TypeOf(index);
 		const std::string* name = VertexInfo::NameOf(index);
 		D3D11_INPUT_ELEMENT_DESC desc = {};
 		desc.AlignedByteOffset = byteOffset;
@@ -183,25 +184,61 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDesc
 		desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		desc.InstanceDataStepRate = 0;
 
-		switch (bytes)
+		switch (type)
 		{
-		case 4:
-			desc.Format = DXGI_FORMAT_R32_FLOAT;
+		case Engine::DType::FLOAT:
+			switch (bytes)
+			{
+			case 4:
+				desc.Format = DXGI_FORMAT_R32_FLOAT;
+				break;
+			case 8:
+				desc.Format = DXGI_FORMAT_R32G32_FLOAT;
+				break;
+			case 12:
+				desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+				break;
+			case 16:
+				desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				break;
+			default:
+				OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Element is not 4 byte aligned.") +
+					std::wstring(L"\nBytes: ") + std::to_wstring(bytes) +
+					std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
+				throw std::exception();
+				break;
+			}
 			break;
-		case 8:
-			desc.Format = DXGI_FORMAT_R32G32_FLOAT;
-			break;
-		case 12:
-			desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-			break;
-		case 16:
-			desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case Engine::DType::UINT:
+			switch (bytes)
+			{
+			case 4:
+				desc.Format = DXGI_FORMAT_R32_UINT;
+				break;
+			case 8:
+				desc.Format = DXGI_FORMAT_R32G32_UINT;
+				break;
+			case 12:
+				desc.Format = DXGI_FORMAT_R32G32B32_UINT;
+				break;
+			case 16:
+				desc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+				break;
+			default:
+				OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Element is not 4 byte aligned.") +
+					std::wstring(L"\nBytes: ") + std::to_wstring(bytes) +
+					std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
+				throw std::exception();
+				break;
+			}
 			break;
 		default:
-			OpenDialog(L"Vertex Layout Set-up failed!", To_wstr(std::string("Element is not 4 byte aligned.\nOwner: ") + *name).c_str());
+			OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Invald data type.") +
+				std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
 			throw std::exception();
 			break;
 		}
+
 		layout.push_back(desc);
 		byteOffset += (UINT)bytes;
 	}

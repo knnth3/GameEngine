@@ -11,21 +11,23 @@ namespace Engine
 		CREATION_TYPE_NO_UV = 1
 	};
 
-	class Mesh
+	struct Joint
+	{
+		uint32_t Index;
+		std::string Name;
+		std::vector<const Joint*> Children;
+	};
+
+	struct Mesh
 	{
 	public:
 		Mesh();
-		void GetBuffers(std::vector<Vertex>& verts, std::vector<uint32_t>& indices) const;
-		size_t GetVertices(std::vector<Vertex>& verts);
-		size_t GetIndices(std::vector<Index>& indices);
-		uint32_t GetIndexCount();
 
-		int m_creationFlags;
-		float m_height;
-		std::vector<Vertex> m_vertices;
-		std::vector<Index> m_indices;
+		int CreationFlags;
+		float ModelHeight;
+		Joint ParentJoint;
+		std::vector<Vertex> Vertices;
+		std::vector<Index> Indices;
 	};
-
-
 
 }

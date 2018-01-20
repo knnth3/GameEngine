@@ -1,8 +1,16 @@
 #pragma once
 #include "DllSettings.h"
+#include <tuple>
+
+#define MAX_JOINTS_PER_VERTEX 3
 
 namespace Engine
 {
+	enum class DType
+	{
+		FLOAT,
+		UINT
+	};
 
 	struct Vertex
 	{
@@ -13,6 +21,8 @@ namespace Engine
 		glm::vec3 m_tangent;
 		glm::vec3 m_binormal;
 		glm::vec3 m_color;
+		uint32_t m_jointIDs[MAX_JOINTS_PER_VERTEX];
+		float m_jointWeights[MAX_JOINTS_PER_VERTEX];
 	};
 
 	struct vertex_info_init
@@ -27,21 +37,12 @@ namespace Engine
 		static size_t NumElements();
 		static const std::string* NameOf(size_t index);
 		static size_t SizeOf(size_t index);
+		static DType TypeOf(size_t index);
 
 	private:
-		template<typename T>
-		static void Add(const std::string& name);
+		static void Add(const std::string& name, int size, DType type);
 
-		static std::vector<std::pair<size_t, std::string>> m_vertex_info;
+		static std::vector<std::tuple<size_t, std::string, DType>> m_vertex_info;
 		static vertex_info_init init;
 	};
-
-	template<typename T>
-	inline void VertexInfo::Add(const std::string& name)
-	{
-		std::pair<size_t, std::string> new_pair;
-		new_pair.first = sizeof(T);
-		new_pair.second = name;
-		m_vertex_info.push_back(new_pair);
-	}
 }

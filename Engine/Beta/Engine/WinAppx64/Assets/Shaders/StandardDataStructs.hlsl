@@ -1,6 +1,5 @@
 
-
-
+#define MAX_JOINTS_PER_VERTEX 3
 struct Instance
 {
     float4x4 worldMatrix;
@@ -10,11 +9,13 @@ struct Instance
 
 struct Vertex
 {
-	float4 position : POSITION;
-	float2 uv : TEXCOORD;
-	float4 normal : NORMAL;
-	float4 tangent : TANGENT;
-	float4 binormal : BINORMAL;
-	float4 color : COLOR;
-	uint instanceID : SV_InstanceID;
+    float4 position : POSITION;
+    float2 uv : TEXCOORD;
+    float4 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+    float3 color : COLOR;
+    uint3 jointIDs : JOINT_ID;
+    float3 jointWeights : JOINT_WEIGHT;
+    uint instanceID : SV_InstanceID;
 };

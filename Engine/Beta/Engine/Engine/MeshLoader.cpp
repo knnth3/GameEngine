@@ -105,8 +105,8 @@ int Engine::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation
 					basic.m_position.x += (float)x * xUnits;
 					basic.m_position.z += (float)z * zUnits;
 
-					data->m_vertices.push_back(basic);
-					data->m_indices.push_back(count++);
+					data->Vertices.push_back(basic);
+					data->Indices.push_back(count++);
 				}
 			}
 		}
@@ -141,7 +141,7 @@ int Engine::MeshLoader::CreateMesh(const std::string filename)
 		auto data = std::make_shared<Mesh>();
 		for (auto i : meshdata.m_indices)
 		{
-			data->m_indices.push_back(Index(i));
+			data->Indices.push_back(Index(i));
 		}
 
 		for (auto v : meshdata.m_vertices)
@@ -171,13 +171,13 @@ int Engine::MeshLoader::CreateMesh(const std::string filename)
 			}
 			else
 			{
-				data->m_creationFlags = CREATION_TYPE_NO_UV;
+				data->CreationFlags = CREATION_TYPE_NO_UV;
 				newVertex.m_color.x = v.m_color.x;
 				newVertex.m_color.y = v.m_color.y;
 				newVertex.m_color.z = v.m_color.z;
 			}
 
-			data->m_vertices.push_back(newVertex);
+			data->Vertices.push_back(newVertex);
 		}
 
 		result = SaveMesh(data);

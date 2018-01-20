@@ -2,14 +2,15 @@
 
 
 #define MAX_INSTANCES 500
+#define FLAG_SIZE 4
 
 cbuffer ConstBuffer
 {
-	bool4 flags;
-	float4x4 viewMatrix;
-	float4x4 projectionMatrix;
+    float4x4 viewMatrix;
+    float4x4 projectionMatrix;
     float4 camera;
-	Instance instances[MAX_INSTANCES];
+    Instance instances[MAX_INSTANCES];
+    uint flags[FLAG_SIZE];
 };
 
 struct VSOutput

@@ -77,8 +77,8 @@ void Engine::VertexManager::CreateNewBatch(int mesh, const std::string& texture,
 	MeshLoader::GrabMeshData(mesh, data);
 	size_t originalVertSize = m_vertices.size();
 	size_t originalIndexSize = m_indices.size();
-	data->GetVertices(m_vertices);
-	data->GetIndices(newIndices);
+	m_vertices.insert(m_vertices.end(), data->Vertices.begin(), data->Vertices.end());
+	newIndices.insert(newIndices.end(), data->Indices.begin(), data->Indices.end());
 
 	for (size_t i = 0; i < newIndices.size(); i++)
 	{
@@ -93,7 +93,7 @@ void Engine::VertexManager::CreateNewBatch(int mesh, const std::string& texture,
 	newBatch.info.InstanceCount = 0;
 	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
 
-	if (data->m_creationFlags & CREATION_TYPE_NO_UV)
+	if (data->CreationFlags & CREATION_TYPE_NO_UV)
 		newBatch.info.UsingVertexColors = true;
 	else
 		newBatch.info.UsingVertexColors = false;

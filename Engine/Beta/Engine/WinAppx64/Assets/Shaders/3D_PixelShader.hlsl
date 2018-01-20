@@ -5,7 +5,7 @@ struct VSOutput
 {
     float4 position : SV_POSITION;
     float3 worldPos : POSITION;
-    float3 normal : NORMAL;
+    float4 normal : NORMAL;
     float2 uv : TEXCOORD;
     float4 color : COLOR;
     float3 diffuse : COLOR01;
@@ -19,22 +19,21 @@ struct VSOutput
 
 float4 main(VSOutput input) : SV_TARGET
 {
-    float3 lightColor = float3(0.0f, 0.0f, 1.0f);
-	//tex.w = 1.0f;
-	float3 lightPos = float3(0.0f, 500.0f, 0.0f);
-	float3 lightVec = normalize(lightPos - input.worldPos);
-	float brightness = saturate(dot(input.normal, lightVec));
-	float4 ambient = float4(0.1f, 0.1f, 0.1f, 0.0f);
-    float4 color = float4(input.diffuse * lightColor * brightness, 1.0f) + ambient;
+    float3 lightVec = float3(0.0f, 1.0f, 0.0f);
+    float brightness = saturate(dot(lightVec, input.normal.xyz));
+    float4 ambient = float4(0.05f, 0.05f, 0.05f, 0.0f);
+    float4 color = float4(input.diffuse * brightness, 1.0f);
 
-    float4 baseColor = color * input.color;
+    color = color * input.color;
 
     if(input.hasUV)
     {
         float4 tex = ObjTexture[0].Sample(ObjSamplerState, input.uv);
-        baseColor = baseColor * tex;
+        color = color * tex;
 
     }
 
-    return baseColor;
+    color = color + ambient;
+    return color;
+
 }

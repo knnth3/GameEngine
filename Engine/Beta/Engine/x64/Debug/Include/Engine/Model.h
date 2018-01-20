@@ -71,7 +71,7 @@ namespace Engine
 		__engine_decl virtual glm::vec4 GetTextureBounds()const;
 
 	private:
-		void Rotate(float& original, const float& ammount);
+		void Rotate(float& original, const float& amount);
 		glm::mat4 GetRotationMatrix(glm::vec3 rotation)const;
 
 		bool m_bUseViewMatrix;

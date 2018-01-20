@@ -69,7 +69,8 @@ void Engine::RenderBatch_3D::ProcessScene()
 		//Draw each batch
 		for (auto batch : batchLib)
 		{
-			ProcessObjects(batch);
+			LoadBatchInfo(batch);
+			RenderBatch(batch.info);
 		}
 	}
 }
@@ -79,7 +80,7 @@ const std::shared_ptr<Engine::TextureLibrary>& Engine::RenderBatch_3D::GetTextur
 	return m_textureLib;
 }
 
-void Engine::RenderBatch_3D::ProcessObjects(Batch & batch)
+void Engine::RenderBatch_3D::LoadBatchInfo(Batch & batch)
 {
 	//Fill Constant buffer with instance data
 	PBInfo batchInfo;
@@ -97,11 +98,12 @@ void Engine::RenderBatch_3D::ProcessObjects(Batch & batch)
 		throw std::exception();
 
 	buffer->UpdateBuffer(&batchInfo, sizeof(batchInfo));
+
+	//Reset counter since this is the last update call
 	m_bufferLib.ResetBufferRefCount();
-	ProcessObject_3DTriangles(batch.info);
 }
 
-void Engine::RenderBatch_3D::ProcessObject_3DTriangles(BatchInfo& info)
+void Engine::RenderBatch_3D::RenderBatch(BatchInfo& info)
 {
 	//Set the relevant raster state active(if not already set)
 	if (m_bWireframe)
@@ -174,6 +176,7 @@ void Engine::RenderBatch_3D::CreateShaders()
 
 void Engine::RenderBatch_3D::CreateConstBuffers()
 {
+	//Instance buffer
 	D3D11_BUFFER_DESC cbbd = { 0 };
 	cbbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbbd.ByteWidth = sizeof(PBInfo);
