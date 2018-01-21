@@ -12,6 +12,9 @@ namespace Engine
 		UINT
 	};
 
+	//Holds the information of a single vertex.
+	//If changed, make sure to update VertexInfo as well 
+	//with the new/deleted members in cpp.
 	struct Vertex
 	{
 		Vertex();

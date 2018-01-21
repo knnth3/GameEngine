@@ -39,6 +39,7 @@
       <Filter>FBX SDK</Filter>
     </ClCompile>
     <ClCompile Include="HomePage.xaml.cpp" />
+    <ClCompile Include="Settings.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -55,6 +56,7 @@
       <Filter>Basics</Filter>
     </ClInclude>
     <ClInclude Include="HomePage.xaml.h" />
+    <ClInclude Include="Settings.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -97,7 +99,7 @@
     <None Include="models\model.tmp">
       <Filter>models</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)../..//build/native/bin/x64\Assimp64.dll" />
+    <None Include="$(MSBuildThisFileDirectory)../..//build/native/bin/Win32\Assimp32.dll" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Styles\Styles.xaml">

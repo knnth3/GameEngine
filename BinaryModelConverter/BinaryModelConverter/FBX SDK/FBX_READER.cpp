@@ -46,7 +46,7 @@ bool FBX_READER::LoadModel(Windows::Storage::StorageFile^ file, MeshData& mesh, 
 	FbxNode* lRootNode = lScene->GetRootNode();
 	if (lRootNode) {
 		for (int i = 0; i < lRootNode->GetChildCount(); i++)
-			PrintNode(lRootNode->GetChild(i), meshes);
+			ReadNode(lRootNode->GetChild(i), meshes);
 	}
 
 	lSdkManager->Destroy();
@@ -84,17 +84,16 @@ bool FBX_READER::SaveNewMesh(Windows::Storage::StorageFile^ file, MeshData mesh)
 	return false;
 }
 
-void FBX_READER::PrintNode(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes)const
+void FBX_READER::ReadNode(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes)const
 {
 	const char* nodeName = pNode->GetName();
 	FbxDouble3 translation = pNode->LclTranslation.Get();
 	FbxDouble3 rotation = pNode->LclRotation.Get();
 	FbxDouble3 scaling = pNode->LclScaling.Get();
 
-	// Print the node's attributes.
+	// Read the node's attributes.
 	for (int i = 0; i < pNode->GetNodeAttributeCount(); i++)
 	{
-		//PrintAttribute(pNode->GetNodeAttributeByIndex(i));
 		auto attrib = pNode->GetNodeAttributeByIndex(i);
 		auto name = attrib->GetName();
 		auto type = attrib->GetAttributeType();
@@ -130,9 +129,9 @@ void FBX_READER::PrintNode(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshe
 		}
 	}
 
-	// Recursively print the children.
+	// Recursively read the children.
 	for (int j = 0; j < pNode->GetChildCount(); j++)
-		PrintNode(pNode->GetChild(j), meshes);
+		ReadNode(pNode->GetChild(j), meshes);
 
 	printf("\n");
 }

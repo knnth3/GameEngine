@@ -13,7 +13,7 @@ private:
 
 	void AddNewVertex(MeshData& data, VertexData vertex)const;
 	void ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, Vector3<float>& outNormal)const;
-	void PrintNode(fbxsdk::FbxNode* pNode, std::vector<MeshData>& meshes)const;
+	void ReadNode(fbxsdk::FbxNode* pNode, std::vector<MeshData>& meshes)const;
 	std::string to_str(std::wstring original)const;
 	std::wstring to_wstr(std::string original)const;
 
