@@ -46,7 +46,11 @@ bool FBX_READER::LoadModel(Windows::Storage::StorageFile^ file, MeshData& mesh, 
 	FbxNode* lRootNode = lScene->GetRootNode();
 	if (lRootNode) {
 		for (int i = 0; i < lRootNode->GetChildCount(); i++)
-			ReadNode(lRootNode->GetChild(i), meshes);
+		{
+			Skeleton skeleton;
+			GetMesh(lRootNode->GetChild(i), meshes);
+			GetSkeleton(lRootNode->GetChild(i), skeleton.ParentJoint);
+		}
 	}
 
 	lSdkManager->Destroy();
@@ -84,7 +88,7 @@ bool FBX_READER::SaveNewMesh(Windows::Storage::StorageFile^ file, MeshData mesh)
 	return false;
 }
 
-void FBX_READER::ReadNode(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes)const
+void FBX_READER::GetMesh(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes)const
 {
 	const char* nodeName = pNode->GetName();
 	FbxDouble3 translation = pNode->LclTranslation.Get();
@@ -131,9 +135,24 @@ void FBX_READER::ReadNode(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes
 
 	// Recursively read the children.
 	for (int j = 0; j < pNode->GetChildCount(); j++)
-		ReadNode(pNode->GetChild(j), meshes);
+		GetMesh(pNode->GetChild(j), meshes);
 
 	printf("\n");
+}
+
+void FBX_READER::GetSkeleton(fbxsdk::FbxNode* pNode, Joint& skeleton)const
+{
+	auto childCount = pNode->GetChildCount();
+	if (pNode->GetNodeAttribute() && pNode->GetNodeAttribute()->GetAttributeType() && pNode->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton)
+	{
+		skeleton.Name = pNode->GetName();
+	}
+	for (int childIndex = 0; childIndex < childCount; ++childIndex)
+	{
+		Joint child;
+		GetSkeleton(pNode->GetChild(childIndex), child);
+		skeleton.Children.push_back(child);
+	}
 }
 
 std::string FBX_READER::to_str(std::wstring original)const

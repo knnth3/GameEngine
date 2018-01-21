@@ -69,6 +69,17 @@ struct VertexData
 	Vector3<float> m_binormal;
 };
 
+struct Joint
+{
+	std::string Name;
+	std::vector<Joint> Children;
+};
+
+struct Skeleton
+{
+	Joint ParentJoint;
+};
+
 struct MeshData
 {
 	MeshData()

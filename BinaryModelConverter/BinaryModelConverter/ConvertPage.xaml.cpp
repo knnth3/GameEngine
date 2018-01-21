@@ -115,6 +115,8 @@ void ConvertPage::PickAFileButton_Click(Object^ sender, RoutedEventArgs^ e)
 	openPicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
 	openPicker->FileTypeFilter->Append(".obj");
 	openPicker->FileTypeFilter->Append(".3ds");
+	openPicker->FileTypeFilter->Append(".fbx");
+	openPicker->FileTypeFilter->Append(".dae");
 
 	create_task(openPicker->PickSingleFileAsync()).then([this](StorageFile^ file)
 	{

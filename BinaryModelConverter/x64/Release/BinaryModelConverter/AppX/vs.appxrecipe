@@ -78,11 +78,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.exe">
       <PackagePath>BinaryModelConverter.exe</PackagePath>
-      <Modified>2018-01-21T05:18:02.739</Modified>
+      <Modified>2018-01-21T05:59:17.462</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.pdb">
       <PackagePath>BinaryModelConverter.pdb</PackagePath>
-      <Modified>2018-01-21T05:18:02.764</Modified>
+      <Modified>2018-01-21T05:59:17.482</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\BinaryModelConverter.winmd">
       <PackagePath>BinaryModelConverter.winmd</PackagePath>
@@ -103,7 +103,7 @@
     <AppxPackagedFile Include="D:\Users\Kenneth\Documents\GitHub\Game_Engine\BinaryModelConverter\x64\Release\BinaryModelConverter\ilc\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2018-01-21T05:18:04.020</Modified>
+      <Modified>2018-01-21T05:59:17.952</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>
