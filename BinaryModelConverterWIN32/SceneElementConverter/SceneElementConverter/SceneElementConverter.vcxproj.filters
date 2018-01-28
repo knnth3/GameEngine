@@ -21,18 +21,18 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FBX_READER.cpp">
+    <ClCompile Include="FBXReader.cpp">
       <Filter>Source Files\FBX reader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FBX_READER.h">
-      <Filter>Source Files\FBX reader</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BinImporter.h">
+    <ClInclude Include="include\DataTypes.h">
       <Filter>Source Files\Include</Filter>
     </ClInclude>
-    <ClInclude Include="include\DataTypes.h">
+    <ClInclude Include="FBXReader.h">
+      <Filter>Source Files\FBX reader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SEStream.h">
       <Filter>Source Files\Include</Filter>
     </ClInclude>
   </ItemGroup>

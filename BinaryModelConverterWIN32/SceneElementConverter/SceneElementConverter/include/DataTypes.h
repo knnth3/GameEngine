@@ -80,33 +80,41 @@ struct VertexData
 {
 	VertexData()
 	{
-		m_bHasTangents = false;
-		m_position = Vector3<float>(0.0f);
-		m_uv = Vector3<float>(0.0f);
-		m_normal = Vector3<float>(0.0f);
-		m_tangent = Vector3<float>(0.0f);
-		m_binormal = Vector3<float>(0.0f);
-		m_color = Vector3<float>(1.0f);
+		bHasTangents = false;
+		Position = Vector3<float>(0.0f);
+		UV = Vector3<float>(0.0f);
+		Normal = Vector3<float>(0.0f);
+		Tangent = Vector3<float>(0.0f);
+		Binormal = Vector3<float>(0.0f);
+		Color = Vector3<float>(1.0f);
+		
+		for (int x = 0; x < MAX_VERTEX_JOINT_BLENDS; x++)
+		{
+			BlendInfo[x] = {};
+		}
 	}
 
 	bool AddBlendInfo(JointData data)
 	{
-		if (m_blendInfo.size() < MAX_VERTEX_JOINT_BLENDS)
+		for (int x = 0; x < MAX_VERTEX_JOINT_BLENDS; x++)
 		{
-			m_blendInfo.push_back(data);
-			return true;
+			if (BlendInfo[x].Weight == 0.0f)
+			{
+				BlendInfo[x] = data;
+				return true;
+			}
 		}
 		return false;
 	}
 
 	bool operator==(const VertexData& v)
 	{
-		auto pos = this->m_position == v.m_position;
-		auto normals = this->m_normal == v.m_normal;
-		auto tangents = this->m_tangent == v.m_tangent;
-		auto bitangents = this->m_binormal == v.m_binormal;
-		auto textureCoords = this->m_uv == v.m_uv;
-		auto colors = this->m_color == v.m_color;
+		auto pos = this->Position == v.Position;
+		auto normals = this->Normal == v.Normal;
+		auto tangents = this->Tangent == v.Tangent;
+		auto bitangents = this->Binormal == v.Binormal;
+		auto textureCoords = this->UV == v.UV;
+		auto colors = this->Color == v.Color;
 
 		if (pos && normals && tangents && bitangents && textureCoords && colors)
 		{
@@ -115,37 +123,37 @@ struct VertexData
 		return false;
 	}
 
-	bool m_bHasTangents;
-	Vector3<float> m_position;
-	Vector3<float> m_uv;
-	Vector3<float> m_color;
-	Vector3<float> m_normal;
-	Vector3<float> m_tangent;
-	Vector3<float> m_binormal;
-	std::vector<JointData> m_blendInfo;
+	bool bHasTangents;
+	Vector3<float> Position;
+	Vector3<float> UV;
+	Vector3<float> Color;
+	Vector3<float> Normal;
+	Vector3<float> Tangent;
+	Vector3<float> Binormal;
+	JointData BlendInfo[MAX_VERTEX_JOINT_BLENDS];
 };
 
 struct MeshData
 {
 	bool operator==(const MeshData& data)
 	{
-		if (m_vertices.size() != data.m_vertices.size())
+		if (Vertices.size() != data.Vertices.size())
 			return false;
 
-		if (m_indices.size() != data.m_indices.size())
+		if (Indices.size() != data.Indices.size())
 			return false;
 
-		for (int it = 0; it < m_vertices.size(); it++)
+		for (int it = 0; it < Vertices.size(); it++)
 		{
-			if (!(this->m_vertices[it] == data.m_vertices[it]))
+			if (!(this->Vertices[it] == data.Vertices[it]))
 			{
 				return false;
 			}
 		}
 
-		for (int it = 0; it < this->m_indices.size(); it++)
+		for (int it = 0; it < this->Indices.size(); it++)
 		{
-			if (!(this->m_indices[it] == data.m_indices[it]))
+			if (!(this->Indices[it] == data.Indices[it]))
 			{
 				return false;
 			}
@@ -154,7 +162,8 @@ struct MeshData
 		return true;
 	}
 
-	std::vector<unsigned int> m_indices;
-	std::vector<VertexData> m_vertices;
-	std::vector<bool> m_indexedIDs;
+	std::string Name;
+	std::vector<unsigned int> Indices;
+	std::vector<VertexData> Vertices;
+	std::vector<bool> IndexedIDs;
 };

@@ -1,16 +1,14 @@
-#include "FBX_READER.h"
+#include "FBXReader.h"
 #include <iostream>
 
 using namespace std;
 
-bool FBX_READER::LoadModel(const std::string& file, MeshData& mesh, const std::string& ext, std::string& error)const
+bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error)const
 {
 	FbxManager* lSdkManager = FbxManager::Create();
 	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
 	lSdkManager->SetIOSettings(ios);
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
-
-	//Try to load real file 
 	if (!lImporter->Initialize(file.c_str(), -1, lSdkManager->GetIOSettings()))
 	{
 		error = std::string(lImporter->GetStatus().GetErrorString());
@@ -23,108 +21,118 @@ bool FBX_READER::LoadModel(const std::string& file, MeshData& mesh, const std::s
 
 	// The file is imported, so get rid of the importer.
 	lImporter->Destroy();
-	std::vector<MeshData> meshes;
 	FbxAxisSystem::DirectX.ConvertScene(lScene);
 	FbxNode* lRootNode = lScene->GetRootNode();
+	fbxsdk::FbxNode * meshNode = nullptr;
+
 	if (lRootNode) {
-		for (int i = 0; i < lRootNode->GetChildCount(); i++)
+		int childCount = lRootNode->GetChildCount();
+		for (int i = 0; i < childCount; i++)
 		{
-			Skeleton skeleton;
-			GetMesh(lRootNode->GetChild(i), meshes);
-			GetSkeleton(lRootNode->GetChild(i), skeleton);
+			GetChildInfo(lRootNode->GetChild(i), meshNode, meshArr, skeletonArr, true);
 		}
 	}
 
 	lSdkManager->Destroy();
-	if (meshes.empty())
-		return false;
-
-	mesh = meshes[0];
-	return true;
+	return (!meshArr.empty() || !skeletonArr.empty());
 }
 
-bool FBX_READER::SaveNewMesh(const std::string& file, MeshData mesh)const
+void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, bool parent)const
 {
-	if (!file.empty())
+	Skeleton skeleton;
+	MeshData mesh;
+
+	int attribCount = pNode->GetNodeAttributeCount();
+	for (int i = 0; i < attribCount; i++)
 	{
-		int indexCount = (int)mesh.m_indices.size();
-		int vertexCount = (int)mesh.m_vertices.size();
+		auto attrib = pNode->GetNodeAttributeByIndex(i);
+		auto type = attrib->GetAttributeType();
 
-		// Create the buffer
-		int offset = 0;
-		int arrSize = (sizeof(int) * 2) + (sizeof(unsigned int) * indexCount) + (sizeof(VertexData) * vertexCount);
-		std::vector<unsigned char> arr;
+		switch (type)
+		{
+		case FbxNodeAttribute::eMesh:
+			GetMesh(pNode, mesh);
+			if (!mesh.Vertices.empty())
+			{
+				meshNode = pNode;
+				meshArr.push_back(mesh);
+			}
+			break;
 
-		//Wite to temp buffer
-		arr.insert(arr.end(), (char*)&indexCount, (char*)&indexCount + sizeof(int));
-		arr.insert(arr.end(), (char*)&vertexCount, (char*)&vertexCount + sizeof(int));
-
-		for (int i = 0; i < indexCount; i++)
-			arr.insert(arr.end(), (char*)&mesh.m_indices[i], (char*)&mesh.m_indices[i] + sizeof(unsigned int));
-
-		for (int i = 0; i < vertexCount; i++)
-			arr.insert(arr.end(), (char*)&mesh.m_vertices[i], (char*)&mesh.m_vertices[i] + sizeof(VertexData));
-
-		// Write bytes to a file using a buffer
-		return true;
+		case FbxNodeAttribute::eSkeleton:
+			if (meshNode)
+			{
+				skeleton.SkinName = meshNode->GetName();
+				GetSkeleton(pNode, skeleton);
+				if (!skeleton.Joints.empty())
+				{
+					auto& currMesh = meshArr.back();
+					GetSkinWeightData(meshNode, currMesh, skeleton);
+					skeletonArr.push_back(skeleton);
+				}
+			}
+			return;
+		}
 	}
-	return false;
+
+	int childCount = pNode->GetChildCount();
+	for (int j = 0; j < childCount; j++)
+	{
+		auto* childNode = pNode->GetChild(j);
+		GetChildInfo(childNode, meshNode, meshArr, skeletonArr);
+	}
 }
 
-void FBX_READER::GetMesh(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes)const
+void FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, Skeleton& skeleton)const
+{
+	Joint child;
+	child.Name = pNode->GetName();
+	skeleton.Joints.push_back(child);
+
+	auto childCount = pNode->GetChildCount();
+	for (int childIndex = 0; childIndex < childCount; ++childIndex)
+	{
+		GetSkeleton(pNode->GetChild(childIndex), skeleton);
+	}
+}
+
+void FBXReader::GetMesh(fbxsdk::FbxNode * pNode, MeshData& mesh)const
 {
 	const char* nodeName = pNode->GetName();
 	FbxDouble3 translation = pNode->LclTranslation.Get();
 	FbxDouble3 rotation = pNode->LclRotation.Get();
 	FbxDouble3 scaling = pNode->LclScaling.Get();
 
-	// Read the node's attributes.
-	for (int i = 0; i < pNode->GetNodeAttributeCount(); i++)
+	auto fbxMesh = pNode->GetMesh();
+	if (fbxMesh)
 	{
-		auto attrib = pNode->GetNodeAttributeByIndex(i);
-		auto name = attrib->GetName();
-		auto type = attrib->GetAttributeType();
-		if (type == FbxNodeAttribute::eMesh)
+		mesh.Name = pNode->GetName();
+		if (fbxMesh->IsTriangleMesh())
 		{
-			auto mesh = pNode->GetMesh();
-			if (mesh)
+			mesh.Vertices.resize(fbxMesh->GetControlPointsCount());
+			mesh.IndexedIDs.resize(fbxMesh->GetControlPointsCount(), false);
+			int vertexCount = 0;
+			for (int pIndex = 0; pIndex < fbxMesh->GetPolygonCount(); pIndex++)
 			{
-				if (mesh->IsTriangleMesh())
+				for (int vIndex = 0; vIndex < 3; vIndex++)
 				{
-					MeshData meshData;
-					meshData.m_vertices.resize(mesh->GetControlPointsCount());
-					meshData.m_indexedIDs.resize(mesh->GetControlPointsCount(), false);
-					int vertexCount = 0;
-					for (int pIndex = 0; pIndex < mesh->GetPolygonCount(); pIndex++)
-					{
-						for (int vIndex = 0; vIndex < 3; vIndex++)
-						{
-							VertexData vertex;
-							int ctrlPointIndex = mesh->GetPolygonVertex(pIndex, vIndex);
-							auto pos = mesh->GetControlPointAt(ctrlPointIndex);
-							vertex.m_position.x = static_cast<float>(pos.mData[0]);
-							vertex.m_position.y = static_cast<float>(pos.mData[1]);
-							vertex.m_position.z = static_cast<float>(pos.mData[2]);
+					VertexData vertex;
+					int ctrlPointIndex = fbxMesh->GetPolygonVertex(pIndex, vIndex);
+					auto pos = fbxMesh->GetControlPointAt(ctrlPointIndex);
+					vertex.Position.x = static_cast<float>(pos.mData[0]);
+					vertex.Position.y = static_cast<float>(pos.mData[1]);
+					vertex.Position.z = static_cast<float>(pos.mData[2]);
 
-							ReadNormal(mesh, ctrlPointIndex, vertexCount, vertex.m_normal);
-							AddNewVertex(meshData, vertex, ctrlPointIndex);
-							vertexCount++;
-						}
-					}
-					meshes.push_back(meshData);
+					ReadNormal(fbxMesh, ctrlPointIndex, vertexCount, vertex.Normal);
+					AddNewVertex(mesh, vertex, ctrlPointIndex);
+					vertexCount++;
 				}
 			}
 		}
 	}
-
-	// Recursively read the children.
-	for (int j = 0; j < pNode->GetChildCount(); j++)
-		GetMesh(pNode->GetChild(j), meshes);
-
-	printf("\n");
 }
 
-void FBX_READER::GetVertexSkeletonInfo(fbxsdk::FbxNode * pNode, std::vector<MeshData>& meshes, Skeleton& skeleton)
+void FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshData& mesh, Skeleton& skeleton)const
 {
 	FbxMesh* currMesh = pNode->GetMesh();
 	unsigned int numOfDeformers = currMesh->GetDeformerCount();
@@ -133,7 +141,7 @@ void FBX_READER::GetVertexSkeletonInfo(fbxsdk::FbxNode * pNode, std::vector<Mesh
 	// If you are using Maya for your models, 99% this is just an
 	// identity matrix
 	// But I am taking it into account anyways......
-	FbxAMatrix geometryTransform = FBX_READER::GetGeometryTransformation(pNode);
+	FbxAMatrix geometryTransform = FBXReader::GetGeometryTransformation(pNode);
 
 	// A deformer is a FBX thing, which contains some clusters
 	// A cluster contains a link, which is basically a joint
@@ -169,17 +177,17 @@ void FBX_READER::GetVertexSkeletonInfo(fbxsdk::FbxNode * pNode, std::vector<Mesh
 			globalBindposeInverseMatrix = transformLinkMatrix.Inverse() * transformMatrix * geometryTransform;
 
 			// Update the information in mSkeleton 
-			//skeleton.Joints[currJointIndex].GlobalBindPoseInverse = globalBindposeInverseMatrix;
+			skeleton.Joints[currJointIndex].GlobalBindPoseInverse = FBXToMatrix4f(globalBindposeInverseMatrix);
 
 			// Associate each joint with the control points it affects
 			unsigned int numOfIndices = currCluster->GetControlPointIndicesCount();
 			for (unsigned int i = 0; i < numOfIndices; ++i)
 			{
-				JointData blendFactor;
+				JointData blendFactor = {};
 				blendFactor.ID = currJointIndex;
 				blendFactor.Weight = (float)currCluster->GetControlPointWeights()[i];
 				int vertexIndex = currCluster->GetControlPointIndices()[i];
-				meshes[0].m_vertices[vertexIndex].AddBlendInfo(blendFactor);
+				mesh.Vertices[vertexIndex].AddBlendInfo(blendFactor);
 			}
 
 			// Get animation information
@@ -207,22 +215,7 @@ void FBX_READER::GetVertexSkeletonInfo(fbxsdk::FbxNode * pNode, std::vector<Mesh
 	}
 }
 
-void FBX_READER::GetSkeleton(fbxsdk::FbxNode* pNode, Skeleton& skeleton)const
-{
-	auto childCount = pNode->GetChildCount();
-	if (pNode->GetNodeAttribute() && pNode->GetNodeAttribute()->GetAttributeType() && pNode->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton)
-	{
-		Joint child;
-		child.Name = pNode->GetName();
-		skeleton.Joints.push_back(child);
-	}
-	for (int childIndex = 0; childIndex < childCount; ++childIndex)
-	{
-		GetSkeleton(pNode->GetChild(childIndex), skeleton);
-	}
-}
-
-int FBX_READER::FindJointIndexUsingName(Skeleton & skeleton, const std::string & name) const
+int FBXReader::FindJointIndexUsingName(Skeleton & skeleton, const std::string & name) const
 {
 	for (int index = 0; index < skeleton.Joints.size(); index++)
 	{
@@ -234,7 +227,7 @@ int FBX_READER::FindJointIndexUsingName(Skeleton & skeleton, const std::string &
 	return -1;
 }
 
-FbxAMatrix FBX_READER::GetGeometryTransformation(FbxNode* inNode)const
+FbxAMatrix FBXReader::GetGeometryTransformation(FbxNode* inNode)const
 {
 	if (!inNode)
 	{
@@ -248,43 +241,26 @@ FbxAMatrix FBX_READER::GetGeometryTransformation(FbxNode* inNode)const
 	return FbxAMatrix(lT, lR, lS);
 }
 
-std::string FBX_READER::to_str(std::wstring original)const
-{
-	std::string convert;
-	convert.insert(convert.begin(), original.begin(), original.end());
-	return convert;
-}
-
-std::wstring FBX_READER::to_wstr(std::string original)const
-{
-	std::wstring convert;
-	convert.insert(convert.begin(), original.begin(), original.end());
-	return convert;
-}
-
-void FBX_READER::AddNewVertex(MeshData& data, VertexData vertex, int FBXIndex) const
+void FBXReader::AddNewVertex(MeshData& data, VertexData vertex, int FBXIndex) const
 {
 	//Assumes the vertex array and the ID array have been
 	//resized to fit the incoming vertices
+
 	bool newVert = true;
-	if (data.m_vertices.size() > FBXIndex)
+	if (data.IndexedIDs[FBXIndex])
 	{
-		if (data.m_indexedIDs[FBXIndex])
-		{
-			newVert = false;
-			data.m_indices.push_back(FBXIndex);
-		}
+		newVert = false;
+		data.Indices.push_back(FBXIndex);
 	}
 	if (newVert)
 	{
-		int newIndex = (int)data.m_vertices.size();
-		data.m_indices.push_back(newIndex);
-		data.m_indexedIDs[FBXIndex] = true;
-		data.m_vertices[FBXIndex] = vertex;
+		data.Indices.push_back(FBXIndex);
+		data.IndexedIDs[FBXIndex] = true;
+		data.Vertices[FBXIndex] = vertex;
 	}
 }
 
-void FBX_READER::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, Vector3<float>& outNormal)const
+void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, Vector3<float>& outNormal)const
 {
 	if (inMesh->GetElementNormalCount() < 1)
 	{
@@ -338,4 +314,17 @@ void FBX_READER::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexC
 		}
 		break;
 	}
+}
+
+Matrix4f FBXToMatrix4f(const fbxsdk::FbxAMatrix & matrix)
+{
+	Matrix4f retVal;
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0; y < 4; y++)
+		{
+			retVal.Properties[x][y] = (float)matrix.Get(x, y);
+		}
+	}
+	return retVal;
 }
