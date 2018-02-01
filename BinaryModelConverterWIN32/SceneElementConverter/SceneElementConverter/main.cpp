@@ -2,19 +2,27 @@
 #include "include\SEStream.h"
 #include <iostream>
 
+
+#define ORIGINAL_FILE "C:/Users/Kenneth/Music/Cube.obj"
+#define NEW_FILE "C:/Users/Kenneth/Music/Cube.sef"
+
 using namespace std;
 
 bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr);
 bool TestSEFReadProgram(MeshData & mesh, Skeleton & skeleton);
-bool TestSEFWriteProgram(const MeshData& mesh, const Skeleton& skeleton);
+bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton);
 
 int main()
 {
 	string ch;
 	vector<MeshData> meshArr;
 	vector<Skeleton> skeletonArr;
-	if(TestFBXReadProgram(meshArr, skeletonArr))
-		TestSEFWriteProgram(meshArr[0], skeletonArr[0]);
+	if (TestFBXReadProgram(meshArr, skeletonArr))
+	{
+		MeshData* m = (meshArr.empty()) ? nullptr : &meshArr[0];
+		Skeleton* s = (skeletonArr.empty()) ? nullptr : &skeletonArr[0];
+		TestSEFWriteProgram(m,s);
+	}
 
 	//Read .sef
 	MeshData readMesh;
@@ -30,7 +38,7 @@ bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr
 {
 	FBXReader IO;
 	string error;
-	if (!IO.ReadFile("C:/Users/Kenneth/Music/model.fbx", meshArr, skeletonArr, error))
+	if (!IO.ReadFile(ORIGINAL_FILE, meshArr, skeletonArr, error))
 	{
 		cout << error << endl;
 		return false;
@@ -46,7 +54,7 @@ bool TestSEFReadProgram(MeshData& mesh, Skeleton& skeleton)
 	bool result = false;
 	try
 	{
-		fileIO.ReadFile("C:/Users/Kenneth/Music/model.sef", &mesh, &skeleton);
+		fileIO.ReadFile(NEW_FILE, &mesh, &skeleton);
 		cout << "File read success from SEStream!" << endl;
 		result = true;
 	}
@@ -57,13 +65,13 @@ bool TestSEFReadProgram(MeshData& mesh, Skeleton& skeleton)
 	return result;
 }
 
-bool TestSEFWriteProgram(const MeshData & mesh, const Skeleton & skeleton)
+bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton)
 {
 	SEStream fileIO;
 	bool result = false;
 	try
 	{
-		fileIO.WriteFile("C:/Users/Kenneth/Music/model.sef", &mesh, &skeleton);
+		fileIO.WriteFile(NEW_FILE, mesh, skeleton);
 		cout << "File write success from SEStream!" << endl;
 		result = true;
 	}

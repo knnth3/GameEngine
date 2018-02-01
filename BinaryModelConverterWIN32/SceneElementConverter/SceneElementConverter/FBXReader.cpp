@@ -117,13 +117,15 @@ void FBXReader::GetMesh(fbxsdk::FbxNode * pNode, MeshData& mesh)const
 				for (int vIndex = 0; vIndex < 3; vIndex++)
 				{
 					VertexData vertex;
+					//Control Points represent only the positional aspect ov a Vertex
+					//In a cube, a Control Point can represent 3 Vertices (a vertex for each face)
 					int ctrlPointIndex = fbxMesh->GetPolygonVertex(pIndex, vIndex);
 					auto pos = fbxMesh->GetControlPointAt(ctrlPointIndex);
 					vertex.Position.x = static_cast<float>(pos.mData[0]);
 					vertex.Position.y = static_cast<float>(pos.mData[1]);
 					vertex.Position.z = static_cast<float>(pos.mData[2]);
 
-					ReadNormal(fbxMesh, ctrlPointIndex, vertexCount, vertex.Normal);
+					ReadVertexInfo(fbxMesh, ctrlPointIndex, vertexCount, vertex);
 					AddNewVertex(mesh, vertex, ctrlPointIndex);
 					vertexCount++;
 				}
@@ -260,13 +262,19 @@ void FBXReader::AddNewVertex(MeshData& data, VertexData vertex, int FBXIndex) co
 	}
 }
 
-void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, Vector3<float>& outNormal)const
+void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, VertexData& outVertex)const
 {
 	if (inMesh->GetElementNormalCount() < 1)
 	{
 		throw std::exception("Invalid Normal Number");
 	}
 	FbxGeometryElementNormal* vertexNormal = inMesh->GetElementNormal(0);
+	FbxGeometryElementVertexColor* vertexColor = inMesh->GetElementVertexColor(0);
+	FbxGeometryElementUV* vertexUV = inMesh->GetElementUV(0);
+
+	auto& outNormal = outVertex.Normal;
+	auto& outColor = outVertex.Color;
+	auto& outUV = outVertex.UV;
 	switch (vertexNormal->GetMappingMode())
 	{
 	case FbxGeometryElement::eByControlPoint:
@@ -277,6 +285,20 @@ void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCo
 			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
 			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
 			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[2]);
+
+			if (vertexColor)
+			{
+				outColor.x = static_cast<float>(vertexColor->GetDirectArray().GetAt(inCtrlPointIndex).mRed);
+				outColor.y = static_cast<float>(vertexColor->GetDirectArray().GetAt(inCtrlPointIndex).mGreen);
+				outColor.z = static_cast<float>(vertexColor->GetDirectArray().GetAt(inCtrlPointIndex).mBlue);
+			}
+
+			if (vertexUV)
+			{
+				outVertex.bHasUV = true;
+				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
+				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
+			}
 		}
 		break;
 		case FbxGeometryElement::eIndexToDirect:
@@ -285,6 +307,20 @@ void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCo
 			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[0]);
 			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[1]);
 			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[2]);
+
+			if (vertexColor)
+			{
+				outColor.x = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mRed);
+				outColor.y = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mGreen);
+				outColor.z = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mBlue);
+			}
+
+			if (vertexUV)
+			{
+				outVertex.bHasUV = true;
+				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[0]);
+				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[1]);
+			}
 		}
 		break;
 		default:
@@ -299,6 +335,20 @@ void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCo
 			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
 			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
 			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+
+			if (vertexColor)
+			{
+				outColor.x = static_cast<float>(vertexColor->GetDirectArray().GetAt(inVertexCounter).mRed);
+				outColor.y = static_cast<float>(vertexColor->GetDirectArray().GetAt(inVertexCounter).mGreen);
+				outColor.z = static_cast<float>(vertexColor->GetDirectArray().GetAt(inVertexCounter).mBlue);
+			}
+
+			if (vertexUV)
+			{
+				outVertex.bHasUV = true;
+				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(inVertexCounter).mData[0]);
+				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(inVertexCounter).mData[1]);
+			}
 		}
 		break;
 		case FbxGeometryElement::eIndexToDirect:
@@ -307,6 +357,20 @@ void FBXReader::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCo
 			outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[0]);
 			outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[1]);
 			outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[2]);
+
+			if (vertexColor)
+			{
+				outColor.x = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mRed);
+				outColor.y = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mGreen);
+				outColor.z = static_cast<float>(vertexColor->GetDirectArray().GetAt(index).mBlue);
+			}
+
+			if (vertexUV)
+			{
+				outVertex.bHasUV = true;
+				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[0]);
+				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[1]);
+			}
 		}
 		break;
 		default:

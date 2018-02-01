@@ -15,7 +15,7 @@ private:
 	void GetMesh(fbxsdk::FbxNode* pNode, MeshData& mesh)const;
 
 	void AddNewVertex(MeshData& data, VertexData vertex, int FBXIndex)const;
-	void ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, Vector3<float>& outNormal)const;
+	void ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, VertexData& outVertex)const;
 	void GetSkinWeightData(fbxsdk::FbxNode* pNode, MeshData& mesh, Skeleton& skeleton)const;
 	int FindJointIndexUsingName(Skeleton& skeleton, const std::string& name)const;
 	FbxAMatrix GetGeometryTransformation(FbxNode * inNode) const;

@@ -24,7 +24,7 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	std::string texture = "Assets/textures/Default/grass.jpg";
 	std::string vs = "Assets/Shaders/3D_VertexShader.hlsl";
 	std::string ps = "Assets/Shaders/3D_PixelShader.hlsl";
-	std::string mesh = "Assets/Models/Cube.bin";
+	std::string mesh = "Assets/Models/Cube.sef";
 
 	if (!m_textureLib->Initialize(texture))
 		return false;
@@ -38,8 +38,10 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	if (!m_rssLib.Initialize())
 		return false;
 
+	if (!MeshLoader::Initialize(mesh))
+		return false;
+
 	m_bufferLib.GetVertexBuffer()->SetStride(sizeof(Vertex));
-	MeshLoader::Initialize(mesh);
 
 	CreateShaders();
 	CreateConstBuffers();

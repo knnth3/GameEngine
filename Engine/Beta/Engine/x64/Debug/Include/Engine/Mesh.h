@@ -15,6 +15,8 @@ namespace Engine
 	{
 		uint32_t Index;
 		std::string Name;
+		glm::mat4 LocalTransform;
+		glm::mat4 ModelTransform;
 		std::vector<const Joint*> Children;
 	};
 

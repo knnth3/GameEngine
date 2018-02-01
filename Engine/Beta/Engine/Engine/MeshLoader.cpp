@@ -1,9 +1,8 @@
 #include "MeshLoader.h"
 #include "WindowsAdditionals.h"
-#include <iostream>
-#include <fstream>
 #include <sys/stat.h>
-#include <BinImporter\BinImporter.h>
+//#include <BinImporter\BinImporter.h>
+#include <SEF\SEStream.h>
 
 
 using namespace Engine;
@@ -16,7 +15,7 @@ std::map<std::string, int> Engine::MeshLoader::m_keyNames;
 
 bool Engine::MeshLoader::Initialize(const std::string& defaultMesh)
 {
-	auto id = CreateMesh("Assets/Models/Cube.bin");
+	auto id = CreateMesh(defaultMesh);
 	if (id == -1)
 		return false;
 
@@ -134,47 +133,48 @@ void Engine::MeshLoader::GrabMeshData(int id, std::shared_ptr<Mesh> & ptr)
 int Engine::MeshLoader::CreateMesh(const std::string filename)
 {
 	int result = -1;
-	BMImporter io;
+	SEStream io;
 	MeshData meshdata;
-	if (io.Import(filename, meshdata))
+	Skeleton skeldata;
+	if (io.ReadFile(filename, &meshdata, &skeldata))
 	{
 		auto data = std::make_shared<Mesh>();
-		for (auto i : meshdata.m_indices)
+		for (auto i : meshdata.Indices)
 		{
 			data->Indices.push_back(Index(i));
 		}
 
-		for (auto v : meshdata.m_vertices)
+		for (auto v : meshdata.Vertices)
 		{
 			Vertex newVertex;
 
-			newVertex.m_position.x = v.m_position.x;
-			newVertex.m_position.y = v.m_position.y;
-			newVertex.m_position.z = v.m_position.z;
+			newVertex.m_position.x = v.Position.x;
+			newVertex.m_position.y = v.Position.y;
+			newVertex.m_position.z = v.Position.z;
 
-			newVertex.m_normal.x = v.m_normal.x;
-			newVertex.m_normal.y = v.m_normal.y;
-			newVertex.m_normal.z = v.m_normal.z;
+			newVertex.m_normal.x = v.Normal.x;
+			newVertex.m_normal.y = v.Normal.y;
+			newVertex.m_normal.z = v.Normal.z;
 
-			if (v.m_bHasTangents)
+			if (v.bHasUV)
 			{
-				newVertex.m_uv.x = v.m_uv.x;
-				newVertex.m_uv.y = v.m_uv.y;
+				newVertex.m_uv.x = v.UV.x;
+				newVertex.m_uv.y = v.UV.y;
 
-				newVertex.m_tangent.x = v.m_tangent.x;
-				newVertex.m_tangent.y = v.m_tangent.y;
-				newVertex.m_tangent.z = v.m_tangent.z;
+				newVertex.m_tangent.x = v.Tangent.x;
+				newVertex.m_tangent.y = v.Tangent.y;
+				newVertex.m_tangent.z = v.Tangent.z;
 
-				newVertex.m_binormal.x = v.m_binormal.x;
-				newVertex.m_binormal.y = v.m_binormal.y;
-				newVertex.m_binormal.z = v.m_binormal.z;
+				newVertex.m_binormal.x = v.Binormal.x;
+				newVertex.m_binormal.y = v.Binormal.y;
+				newVertex.m_binormal.z = v.Binormal.z;
 			}
 			else
 			{
 				data->CreationFlags = CREATION_TYPE_NO_UV;
-				newVertex.m_color.x = v.m_color.x;
-				newVertex.m_color.y = v.m_color.y;
-				newVertex.m_color.z = v.m_color.z;
+				newVertex.m_color.x = v.Color.x;
+				newVertex.m_color.y = v.Color.y;
+				newVertex.m_color.z = v.Color.z;
 			}
 
 			data->Vertices.push_back(newVertex);

@@ -99,7 +99,7 @@ void WindowApp::Resume()
 	graphics->SetSkybox(sb);
 
 	//int mesh = MeshLoader::CreatePlane(100, 100, 10, 10);
-	int mesh = MeshLoader::LoadModel("Assets/models/body_robe_bronze_common.bin");
+	int mesh = MeshLoader::LoadModel("Assets/models/model.sef");
 	m_model.SetMesh(mesh);
 	m_model.Scale(100, 100, 100);
 }
