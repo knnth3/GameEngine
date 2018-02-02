@@ -25,10 +25,10 @@ bool Engine::MeshLoader::Initialize(const std::string& defaultMesh)
 	return true;
 }
 
-int Engine::MeshLoader::LoadModel(const std::string filename)
+int Engine::MeshLoader::LoadModel(const std::string& filename)
 {
 	int result = -1;
-	if (CheckInit())
+	if (CheckInit(filename))
 	{
 		struct stat results;
 		if (!stat(filename.c_str(), &results) == 0)
@@ -47,7 +47,7 @@ int Engine::MeshLoader::LoadModel(const std::string filename)
 	return result;
 }
 
-int Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string uniqueName)
+int Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::vector<Index>& indices, const std::string& uniqueName)
 {
 	int result = -1;
 	//if(!IsKeyNameQuerried(uniqueName, result))
@@ -62,7 +62,7 @@ int Engine::MeshLoader::LoadModel(const std::vector<Vertex>& verts, const std::v
 
 int Engine::MeshLoader::CreatePlane(float xUnits, float zUnits, int xTesselation, int zTesselation)
 {
-	if (CheckInit())
+	if (CheckInit("Plane Create Method"))
 	{
 		auto data = std::make_shared<Mesh>();
 
@@ -130,7 +130,7 @@ void Engine::MeshLoader::GrabMeshData(int id, std::shared_ptr<Mesh> & ptr)
 		ptr = m_default;
 }
 
-int Engine::MeshLoader::CreateMesh(const std::string filename)
+int Engine::MeshLoader::CreateMesh(const std::string& filename)
 {
 	int result = -1;
 	SEStream io;
@@ -196,7 +196,7 @@ int Engine::MeshLoader::SaveMesh(const std::shared_ptr<Mesh>& mesh)
 	return result;
 }
 
-bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, int result)
+bool Engine::MeshLoader::IsFilepathQuerried(const std::string& filepath, int result)
 {
 	result = -1;
 	if (!filepath.empty())
@@ -212,7 +212,7 @@ bool Engine::MeshLoader::IsFilepathQuerried(const std::string filepath, int resu
 	return false;
 }
 
-bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, int result)
+bool Engine::MeshLoader::IsKeyNameQuerried(const std::string& filepath, int result)
 {
 	result = -1;
 	if (!filepath.empty())
@@ -228,9 +228,14 @@ bool Engine::MeshLoader::IsKeyNameQuerried(const std::string filepath, int resul
 	return false;
 }
 
-bool Engine::MeshLoader::CheckInit()
+bool Engine::MeshLoader::CheckInit(const std::string& filename)
 {
+	wstring error;
 	if (!m_bIsInit)
-		OpenDialog(L"MeshLoader Error!", L"Attempted to load a mesh before initialization. \nDo not load a mesh before App's resume function.");
+	{
+		error = L"Attempted to load a mesh before initialization. \nDo not load a mesh before App's resume function.";
+		error += L"\nFile: " + To_wstr(filename);
+		OpenDialog(L"MeshLoader Error!", error.c_str());
+	}
 	return m_bIsInit;
 }

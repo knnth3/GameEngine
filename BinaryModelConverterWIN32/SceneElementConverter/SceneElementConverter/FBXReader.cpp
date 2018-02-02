@@ -24,24 +24,29 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 	FbxAxisSystem::DirectX.ConvertScene(lScene);
 	FbxNode* lRootNode = lScene->GetRootNode();
 	fbxsdk::FbxNode * meshNode = nullptr;
-
+	std::vector<MeshTempData> tempArr;
 	if (lRootNode) {
 		int childCount = lRootNode->GetChildCount();
+
 		for (int i = 0; i < childCount; i++)
 		{
-			GetChildInfo(lRootNode->GetChild(i), meshNode, meshArr, skeletonArr, true);
+			GetChildInfo(lRootNode->GetChild(i), meshNode, tempArr, skeletonArr, true);
 		}
+	}
+
+	//Convert Temp data to MeshData
+	for (const auto& temp : tempArr)
+	{
+		meshArr.push_back({});
+		ExtractMeshDataFromTemp(temp, meshArr.back());
 	}
 
 	lSdkManager->Destroy();
 	return (!meshArr.empty() || !skeletonArr.empty());
 }
 
-void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, bool parent)const
+void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode, std::vector<MeshTempData>& meshArr, std::vector<Skeleton>& skeletonArr, bool parent)const
 {
-	Skeleton skeleton;
-	MeshData mesh;
-
 	int attribCount = pNode->GetNodeAttributeCount();
 	for (int i = 0; i < attribCount; i++)
 	{
@@ -51,27 +56,34 @@ void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode
 		switch (type)
 		{
 		case FbxNodeAttribute::eMesh:
-			GetMesh(pNode, mesh);
-			if (!mesh.Vertices.empty())
+		{
+			MeshTempData mesh = {};
+			ReadVertexInfo(pNode, mesh);
+			if (mesh.Size != 0)
 			{
 				meshNode = pNode;
 				meshArr.push_back(mesh);
 			}
-			break;
+		}
+		break;
 
 		case FbxNodeAttribute::eSkeleton:
+		{
 			if (meshNode)
 			{
+				Skeleton skeleton = {};
 				skeleton.SkinName = meshNode->GetName();
 				GetSkeleton(pNode, skeleton);
 				if (!skeleton.Joints.empty())
 				{
-					auto& currMesh = meshArr.back();
+					auto* currMesh = FindMeshByName(skeleton.SkinName, meshArr);
 					GetSkinWeightData(meshNode, currMesh, skeleton);
 					skeletonArr.push_back(skeleton);
 				}
 			}
-			return;
+		}
+		return;
+
 		}
 	}
 
@@ -85,7 +97,7 @@ void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode
 
 void FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, Skeleton& skeleton)const
 {
-	Joint child;
+	Joint child = {};
 	child.Name = pNode->GetName();
 	skeleton.Joints.push_back(child);
 
@@ -96,7 +108,7 @@ void FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, Skeleton& skeleton)const
 	}
 }
 
-void FBXReader::GetMesh(fbxsdk::FbxNode * pNode, MeshData& mesh)const
+void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
 {
 	const char* nodeName = pNode->GetName();
 	FbxDouble3 translation = pNode->LclTranslation.Get();
@@ -109,14 +121,12 @@ void FBXReader::GetMesh(fbxsdk::FbxNode * pNode, MeshData& mesh)const
 		mesh.Name = pNode->GetName();
 		if (fbxMesh->IsTriangleMesh())
 		{
-			mesh.Vertices.resize(fbxMesh->GetControlPointsCount());
-			mesh.IndexedIDs.resize(fbxMesh->GetControlPointsCount(), false);
 			int vertexCount = 0;
 			for (int pIndex = 0; pIndex < fbxMesh->GetPolygonCount(); pIndex++)
 			{
 				for (int vIndex = 0; vIndex < 3; vIndex++)
 				{
-					VertexData vertex;
+					VertexData vertex = InitVertexData();
 					//Control Points represent only the positional aspect ov a Vertex
 					//In a cube, a Control Point can represent 3 Vertices (a vertex for each face)
 					int ctrlPointIndex = fbxMesh->GetPolygonVertex(pIndex, vIndex);
@@ -134,8 +144,11 @@ void FBXReader::GetMesh(fbxsdk::FbxNode * pNode, MeshData& mesh)const
 	}
 }
 
-void FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshData& mesh, Skeleton& skeleton)const
+bool FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshTempData* mesh, Skeleton& skeleton)const
 {
+	if (!mesh)
+		return false;
+
 	FbxMesh* currMesh = pNode->GetMesh();
 	unsigned int numOfDeformers = currMesh->GetDeformerCount();
 	// This geometry transform is something I cannot understand
@@ -167,7 +180,7 @@ void FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshData& mesh, Skele
 			if (currJointIndex == -1)
 			{
 				throw std::exception();
-				return;
+				return false;
 			}
 
 			FbxAMatrix transformMatrix;
@@ -188,8 +201,17 @@ void FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshData& mesh, Skele
 				JointData blendFactor = {};
 				blendFactor.ID = currJointIndex;
 				blendFactor.Weight = (float)currCluster->GetControlPointWeights()[i];
-				int vertexIndex = currCluster->GetControlPointIndices()[i];
-				mesh.Vertices[vertexIndex].AddBlendInfo(blendFactor);
+				int FBXIndex = currCluster->GetControlPointIndices()[i];
+
+				//Add the blend factor to each vertex located at the given position index (FBXIndex)
+				auto fbxIndexList = mesh->Library.find(FBXIndex);
+				if (fbxIndexList != mesh->Library.end())
+				{
+					for (auto& vertex : fbxIndexList->second)
+					{
+						vertex.second.AddBlendInfo(blendFactor);
+					}
+				}
 			}
 
 			// Get animation information
@@ -215,6 +237,7 @@ void FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshData& mesh, Skele
 			//}
 		}
 	}
+	return true;
 }
 
 int FBXReader::FindJointIndexUsingName(Skeleton & skeleton, const std::string & name) const
@@ -243,22 +266,43 @@ FbxAMatrix FBXReader::GetGeometryTransformation(FbxNode* inNode)const
 	return FbxAMatrix(lT, lR, lS);
 }
 
-void FBXReader::AddNewVertex(MeshData& data, VertexData vertex, int FBXIndex) const
+void FBXReader::AddNewVertex(MeshTempData& data, const VertexData& vertex, int FBXIndex) const
 {
-	//Assumes the vertex array and the ID array have been
-	//resized to fit the incoming vertices
+	//FBXIndex refers to the position aspect of the vertex only!
 
-	bool newVert = true;
-	if (data.IndexedIDs[FBXIndex])
+	int ID = -1;
+
+	//If the index has been recorded else create and add new 
+	auto fbxIndexList = data.Library.find(FBXIndex);
+	if (fbxIndexList != data.Library.end())
 	{
-		newVert = false;
-		data.Indices.push_back(FBXIndex);
+		//Check each vertex element to see if it has been added
+		//Record ID if found
+		for (const auto& v : fbxIndexList->second)
+		{
+			if (IsEqual(v.second, vertex))
+			{
+				ID = v.first;
+				data.Index.push_back(ID);
+				break;
+			}
+		}
+		//If not found, create and add the new vertex
+		if (ID == -1)
+		{
+			ID = data.Size++;
+			auto entry = std::make_pair(ID, vertex);
+			fbxIndexList->second.push_back(entry);
+			data.Index.push_back(ID);
+		}
 	}
-	if (newVert)
+	else
 	{
-		data.Indices.push_back(FBXIndex);
-		data.IndexedIDs[FBXIndex] = true;
-		data.Vertices[FBXIndex] = vertex;
+		ID = data.Size++;
+		auto entry = std::make_pair(ID, vertex);
+		data.Library.emplace(FBXIndex, std::vector<std::pair<int, VertexData>>());
+		data.Library[FBXIndex].push_back(entry);
+		data.Index.push_back(ID);
 	}
 }
 
@@ -380,9 +424,35 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 	}
 }
 
+inline void ExtractMeshDataFromTemp(const MeshTempData & temp, MeshData & data)
+{
+	data.Name = temp.Name;
+	data.Indices = temp.Index;
+	data.Vertices.resize(temp.Size);
+	for (const auto& posList : temp.Library)
+	{
+		for (const auto& vertex : posList.second)
+		{
+			data.Vertices[vertex.first] = vertex.second;
+		}
+	}
+}
+
+inline MeshTempData* FindMeshByName(const std::string & name, std::vector<MeshTempData>& meshArr)
+{
+	for (auto it = meshArr.begin(); it != meshArr.end(); ++it)
+	{
+		if (it->Name == name)
+		{
+			return &(*it);
+		}
+	}
+	return nullptr;
+}
+
 Matrix4f FBXToMatrix4f(const fbxsdk::FbxAMatrix & matrix)
 {
-	Matrix4f retVal;
+	Matrix4f retVal = {};
 	for (int x = 0; x < 4; x++)
 	{
 		for (int y = 0; y < 4; y++)

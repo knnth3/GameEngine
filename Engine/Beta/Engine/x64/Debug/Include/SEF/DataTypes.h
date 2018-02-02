@@ -6,27 +6,6 @@
 template <typename T>
 struct Vector3
 {
-	Vector3()
-	{
-		x = 0;
-		y = 0;
-		z = 0;
-	}
-	Vector3(T value)
-	{
-		x = value;
-		y = value;
-		z = value;
-	}
-	bool operator==(const Vector3<T>& v)
-	{
-		if (this->x == v.x && this->y == v.y && this->z == v.z)
-		{
-			return true;
-		}
-		return false;
-	}
-
 	T x;
 	T y;
 	T z;
@@ -34,27 +13,6 @@ struct Vector3
 
 struct Matrix4f
 {
-	//Identity matrix
-	Matrix4f()
-	{
-		int count = 0;
-		for (auto x = 0; x < 4; x++)
-		{
-			for (auto y = 0; y < 4; y++)
-			{
-				if (count % 5 == 0)
-				{
-					Properties[x][y] = 1.0f;
-				}
-				else
-				{
-					Properties[x][y] = 0.0f;
-				}
-				count++;
-			}
-		}
-	}
-
 	float Properties[4][4];
 };
 
@@ -78,22 +36,6 @@ struct JointData
 
 struct VertexData
 {
-	VertexData()
-	{
-		bHasUV = false;
-		Position = Vector3<float>(0.0f);
-		UV = Vector3<float>(0.0f);
-		Normal = Vector3<float>(0.0f);
-		Tangent = Vector3<float>(0.0f);
-		Binormal = Vector3<float>(0.0f);
-		Color = Vector3<float>(1.0f);
-		
-		for (int x = 0; x < MAX_VERTEX_JOINT_BLENDS; x++)
-		{
-			BlendInfo[x] = {};
-		}
-	}
-
 	bool AddBlendInfo(JointData data)
 	{
 		for (int x = 0; x < MAX_VERTEX_JOINT_BLENDS; x++)
@@ -103,22 +45,6 @@ struct VertexData
 				BlendInfo[x] = data;
 				return true;
 			}
-		}
-		return false;
-	}
-
-	bool operator==(const VertexData& v)
-	{
-		auto pos = this->Position == v.Position;
-		auto normals = this->Normal == v.Normal;
-		auto tangents = this->Tangent == v.Tangent;
-		auto bitangents = this->Binormal == v.Binormal;
-		auto textureCoords = this->UV == v.UV;
-		auto colors = this->Color == v.Color;
-
-		if (pos && normals && tangents && bitangents && textureCoords && colors)
-		{
-			return true;
 		}
 		return false;
 	}
@@ -135,35 +61,119 @@ struct VertexData
 
 struct MeshData
 {
-	bool operator==(const MeshData& data)
-	{
-		if (Vertices.size() != data.Vertices.size())
-			return false;
-
-		if (Indices.size() != data.Indices.size())
-			return false;
-
-		for (int it = 0; it < Vertices.size(); it++)
-		{
-			if (!(this->Vertices[it] == data.Vertices[it]))
-			{
-				return false;
-			}
-		}
-
-		for (int it = 0; it < this->Indices.size(); it++)
-		{
-			if (!(this->Indices[it] == data.Indices[it]))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	std::string Name;
 	std::vector<unsigned int> Indices;
 	std::vector<VertexData> Vertices;
-	std::vector<bool> IndexedIDs;
 };
+
+template<typename T>
+inline Vector3<T> InitVector3(const T& x, const T& y, const T& z)
+{
+	Vector3<T> retVal = {};
+	retVal.x = x;
+	retVal.y = y;
+	retVal.z = z;
+
+	return retVal;
+
+
+}
+
+inline Matrix4f IdentityMatrix4f()
+{
+	Matrix4f retVal = {};
+	int count = 0;
+	for (auto x = 0; x < 4; x++)
+	{
+		for (auto y = 0; y < 4; y++)
+		{
+			if (count % 5 == 0)
+			{
+				retVal.Properties[x][y] = 1.0f;
+			}
+			else
+			{
+				retVal.Properties[x][y] = 0.0f;
+			}
+			count++;
+		}
+	}
+	return retVal;
+}
+
+inline VertexData InitVertexData()
+{
+	VertexData retVal = {};
+	retVal.bHasUV = false;
+	retVal.Position = {};
+	retVal.UV = {};
+	retVal.Normal = {};
+	retVal.Tangent = {};
+	retVal.Binormal = {};
+	retVal.Color = {};
+
+	for (int x = 0; x < MAX_VERTEX_JOINT_BLENDS; x++)
+	{
+		retVal.BlendInfo[x] = {};
+	}
+	return retVal;
+}
+
+template<typename T>
+inline const bool IsEqual(const Vector3<T>& one, const Vector3<T>& two)
+{
+	bool result = true;
+
+	if (one.x != two.x)
+		result = false;
+	else if (one.y != two.y)
+		result = false;
+	else if (one.z != two.z)
+		result = false;
+
+	return result;
+}
+
+inline const bool IsEqual(const VertexData & one, const VertexData & two)
+{
+	bool UVs          = IsEqual(one.UV, two.UV);
+	bool colors       = IsEqual(one.Color, two.Color);
+	bool normals      = IsEqual(one.Normal, two.Normal);
+	bool position     = IsEqual(one.Position, two.Position);
+	bool tangents     = IsEqual(one.Tangent, two.Tangent);
+	bool bitangents   = IsEqual(one.Binormal, two.Binormal);
+
+	if (position && normals && tangents && bitangents && UVs && colors)
+	{
+		return true;
+	}
+	return false;
+}
+
+inline const bool IsEqual(const MeshData & one, const MeshData & two)
+{
+	if (one.Vertices.size() != two.Vertices.size())
+		return false;
+
+	if (one.Indices.size() != two.Indices.size())
+		return false;
+
+	for (int it = 0; it < one.Vertices.size(); it++)
+	{
+		if (!IsEqual(one.Vertices[it], two.Vertices[it]))
+		{
+			return false;
+		}
+	}
+
+	for (int it = 0; it < one.Indices.size(); it++)
+	{
+		if (one.Indices[it] != two.Indices[it])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+

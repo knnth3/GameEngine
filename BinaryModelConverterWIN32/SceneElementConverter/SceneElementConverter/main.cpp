@@ -3,8 +3,8 @@
 #include <iostream>
 
 
-#define ORIGINAL_FILE "C:/Users/Kenneth/Music/Cube.obj"
-#define NEW_FILE "C:/Users/Kenneth/Music/Cube.sef"
+#define ORIGINAL_FILE "C:/Users/Kenneth/Music/model.fbx"
+#define NEW_FILE "C:/Users/Kenneth/Music/model.sef"
 
 using namespace std;
 
