@@ -11,13 +11,25 @@ namespace Engine
 		CREATION_TYPE_NO_UV = 1
 	};
 
-	struct Joint
+	class JointNode
 	{
-		uint32_t Index;
-		std::string Name;
-		glm::mat4 LocalTransform;
-		glm::mat4 ModelTransform;
-		std::vector<const Joint*> Children;
+	public:
+		JointNode();
+		JointNode(int index, const std::string& name, glm::mat4 inverseBindTransform);
+		int GetIndex()const;
+		std::string GetName()const;
+		glm::mat4 GetInverseBindTransform()const;
+		glm::mat4 GetAnimationTransform()const;
+		void SetAnimationTransform(glm::mat4 matrix);
+
+		std::vector<JointNode> Children;
+
+	private:
+
+		int m_index;
+		std::string m_name;
+		glm::mat4 m_inverseBindTransform;
+		glm::mat4 m_animationTransform;
 	};
 
 	struct Mesh
@@ -27,7 +39,7 @@ namespace Engine
 
 		int CreationFlags;
 		float ModelHeight;
-		Joint ParentJoint;
+		JointNode ParentJoint;
 		std::vector<Vertex> Vertices;
 		std::vector<Index> Indices;
 	};

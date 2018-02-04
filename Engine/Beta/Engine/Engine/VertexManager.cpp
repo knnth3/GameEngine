@@ -9,23 +9,19 @@ Engine::VertexManager::VertexManager(const uint16_t maxInstances):
 
 void Engine::VertexManager::AddModel(const Model& model)
 {
-	int mesh = model.GetMesh();
-	std::string texture = model.GetTexture();
-	int style = model.GetDrawStyle();
-
-	auto tuple = std::make_tuple(mesh, texture, style);
+	int uniqueID = model.GetObjectID();
 
 	//If batch doesn't exit, make a new one
-	if (m_BatchCache.find(tuple) == m_BatchCache.end())
+	if (m_BatchCache.find(uniqueID) == m_BatchCache.end())
 	{
 		m_bNewBatch = true;
-		CreateNewBatch(mesh, texture, style);
+		CreateNewBatch(model);
 	}
 
-	else if (m_BatchCache[tuple].info.InstanceCount < m_maxInstances)
+	if (m_BatchCache[uniqueID].Info.InstanceCount < m_maxInstances)
 	{
 		//increment instance count
-		m_BatchCache[tuple].info.InstanceCount++;
+		m_BatchCache[uniqueID].Info.InstanceCount++;
 
 		//Fill out the per-instace info
 		PerInstanceInfo info;
@@ -34,7 +30,7 @@ void Engine::VertexManager::AddModel(const Model& model)
 		info.world = glm::transpose(model.GetModelMatrix());
 
 		//Push back info into currnet batch's vector
-		m_BatchCache[tuple].data.push_back(info);
+		m_BatchCache[uniqueID].Data.push_back(info);
 	}
 }
 
@@ -64,13 +60,17 @@ void Engine::VertexManager::GetBatchData(std::vector<Batch>& batch)
 	for (auto& pair : m_BatchCache)
 	{
 		batch.push_back(pair.second);
-		pair.second.info.InstanceCount = 0;
-		pair.second.data.clear();
+		pair.second.Info.InstanceCount = 0;
+		pair.second.Data.clear();
 	}
 }
 
-void Engine::VertexManager::CreateNewBatch(int mesh, const std::string& texture, int style)
+void Engine::VertexManager::CreateNewBatch(const Model& model)
 {
+	int mesh = model.GetMesh();
+	std::string texture = model.GetTexture();
+	int style = model.GetDrawStyle();
+
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;
 	std::vector<Index> newIndices;
@@ -87,17 +87,20 @@ void Engine::VertexManager::CreateNewBatch(int mesh, const std::string& texture,
 
 	//Save batch info
 	Batch newBatch;
-	newBatch.info.Texture = texture;
-	newBatch.info.Style = style;
-	newBatch.info.IndexCountPerInstance = (uint32_t)newIndices.size();
-	newBatch.info.InstanceCount = 0;
-	newBatch.info.StartIndexLocation = (uint32_t)originalIndexSize;
+	newBatch.Info.Texture = texture;
+	newBatch.Info.Style = style;
+	newBatch.Info.IndexCountPerInstance = (uint32_t)newIndices.size();
+	newBatch.Info.InstanceCount = 0;
+	newBatch.Info.StartIndexLocation = (uint32_t)originalIndexSize;
 
 	if (data->CreationFlags & CREATION_TYPE_NO_UV)
-		newBatch.info.UsingVertexColors = true;
+		newBatch.Info.UsingVertexColors = true;
 	else
-		newBatch.info.UsingVertexColors = false;
+		newBatch.Info.UsingVertexColors = false;
+
+	//Animation Data
+	newBatch.JointTransforms = model.GetTransforms();
 
 	//Create new batch
-	m_BatchCache[std::make_tuple(mesh, texture, style)] = newBatch;
+	m_BatchCache[model.GetObjectID()] = newBatch;
 }

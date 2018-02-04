@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Include">
       <UniqueIdentifier>{d49437af-c67b-4488-9d83-dbddd041f89e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Assimp Reader">
+      <UniqueIdentifier>{0f6f3505-0374-4afa-b22c-039d3f4dac7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +27,7 @@
     <ClCompile Include="FBXReader.cpp">
       <Filter>Source Files\FBX reader</Filter>
     </ClCompile>
+    <ClCompile Include="AssimpReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\DataTypes.h">
@@ -35,5 +39,12 @@
     <ClInclude Include="include\SEStream.h">
       <Filter>Source Files\Include</Filter>
     </ClInclude>
+    <ClInclude Include="AssimpReader.h" />
+    <ClInclude Include="include\Animation.h">
+      <Filter>Source Files\Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

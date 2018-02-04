@@ -2,8 +2,9 @@
 #include <iostream>
 
 using namespace std;
+using namespace SEF;
 
-bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error)const
+bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error)
 {
 	FbxManager* lSdkManager = FbxManager::Create();
 	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
@@ -18,7 +19,7 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 
 	// Import the contents of the file into the scene.
 	lImporter->Import(lScene);
-
+	m_FBXScene = lScene;
 	// The file is imported, so get rid of the importer.
 	lImporter->Destroy();
 	FbxAxisSystem::DirectX.ConvertScene(lScene);
@@ -41,6 +42,7 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 		ExtractMeshDataFromTemp(temp, meshArr.back());
 	}
 
+	m_FBXScene = nullptr;
 	lSdkManager->Destroy();
 	return (!meshArr.empty() || !skeletonArr.empty());
 }
@@ -69,17 +71,14 @@ void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode
 
 		case FbxNodeAttribute::eSkeleton:
 		{
-			if (meshNode)
+			Skeleton skeleton = {};
+			GetSkeleton(pNode, skeleton.Joints);
+			if (!skeleton.Joints.empty() && meshNode)
 			{
-				Skeleton skeleton = {};
 				skeleton.SkinName = meshNode->GetName();
-				GetSkeleton(pNode, skeleton);
-				if (!skeleton.Joints.empty())
-				{
-					auto* currMesh = FindMeshByName(skeleton.SkinName, meshArr);
-					GetSkinWeightData(meshNode, currMesh, skeleton);
-					skeletonArr.push_back(skeleton);
-				}
+				auto* currMesh = FindMeshByName(skeleton.SkinName, meshArr);
+				GetSkinWeightData(meshNode, currMesh, skeleton);
+				skeletonArr.push_back(skeleton);
 			}
 		}
 		return;
@@ -95,17 +94,21 @@ void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode
 	}
 }
 
-void FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, Skeleton& skeleton)const
+uint32_t FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, std::vector<SEF::Joint>& joints)const
 {
-	Joint child = {};
-	child.Name = pNode->GetName();
-	skeleton.Joints.push_back(child);
+	Joint current = {};
+	uint32_t currentIndex = (uint32_t)joints.size();
 
-	auto childCount = pNode->GetChildCount();
-	for (int childIndex = 0; childIndex < childCount; ++childIndex)
+	current.Name = pNode->GetName();
+	joints.push_back(current);
+
+	for (int index = 0; index < pNode->GetChildCount(); ++index)
 	{
-		GetSkeleton(pNode->GetChild(childIndex), skeleton);
+		uint32_t childIndex = GetSkeleton(pNode->GetChild(index), joints);
+		joints[currentIndex].Children.push_back(childIndex);
 	}
+
+	return currentIndex;
 }
 
 void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
@@ -122,11 +125,12 @@ void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
 		if (fbxMesh->IsTriangleMesh())
 		{
 			int vertexCount = 0;
+			fbxMesh->GenerateTangentsDataForAllUVSets(true);
 			for (int pIndex = 0; pIndex < fbxMesh->GetPolygonCount(); pIndex++)
 			{
 				for (int vIndex = 0; vIndex < 3; vIndex++)
 				{
-					VertexData vertex = InitVertexData();
+					VertexData vertex = {};
 					//Control Points represent only the positional aspect ov a Vertex
 					//In a cube, a Control Point can represent 3 Vertices (a vertex for each face)
 					int ctrlPointIndex = fbxMesh->GetPolygonVertex(pIndex, vIndex);
@@ -209,32 +213,10 @@ bool FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshTempData* mesh, S
 				{
 					for (auto& vertex : fbxIndexList->second)
 					{
-						vertex.second.AddBlendInfo(blendFactor);
+						AddBlendInfo(vertex.second, blendFactor);
 					}
 				}
 			}
-
-			// Get animation information
-			// Now only supports one take
-			//FbxAnimStack* currAnimStack = mFBXScene->GetSrcObject(0);
-			//FbxString animStackName = currAnimStack->GetName();
-			//mAnimationName = animStackName.Buffer();
-			//FbxTakeInfo* takeInfo = mFBXScene->GetTakeInfo(animStackName);
-			//FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
-			//FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
-			//mAnimationLength = end.GetFrameCount(FbxTime::eFrames24) - start.GetFrameCount(FbxTime::eFrames24) + 1;
-			//Keyframe** currAnim = &skeleton.mJoints[currJointIndex].mAnimation;
-
-			//for (FbxLongLong i = start.GetFrameCount(FbxTime::eFrames24); i <= end.GetFrameCount(FbxTime::eFrames24); ++i)
-			//{
-			//	FbxTime currTime;
-			//	currTime.SetFrame(i, FbxTime::eFrames24);
-			//	*currAnim = new Keyframe();
-			//	(*currAnim)->mFrameNum = i;
-			//	FbxAMatrix currentTransformOffset = pNode->EvaluateGlobalTransform(currTime) * geometryTransform;
-			//	(*currAnim)->mGlobalTransform = currentTransformOffset.Inverse() * currCluster->GetLink()->EvaluateGlobalTransform(currTime);
-			//	currAnim = &((*currAnim)->mNext);
-			//}
 		}
 	}
 	return true;
@@ -312,13 +294,18 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 	{
 		throw std::exception("Invalid Normal Number");
 	}
+
 	FbxGeometryElementNormal* vertexNormal = inMesh->GetElementNormal(0);
 	FbxGeometryElementVertexColor* vertexColor = inMesh->GetElementVertexColor(0);
 	FbxGeometryElementUV* vertexUV = inMesh->GetElementUV(0);
+	FbxGeometryElementTangent* vertexTangent = inMesh->GetElementTangent(0);
+	FbxGeometryElementBinormal* vertexBinormal = inMesh->GetElementBinormal(0);
 
 	auto& outNormal = outVertex.Normal;
-	auto& outColor = outVertex.Color;
+	auto& outColor = outVertex.Color = InitVector3(1.0f, 1.0f, 1.0f);
 	auto& outUV = outVertex.UV;
+	auto& outTangent = outVertex.Tangent;
+	auto& outBinormal = outVertex.Binormal;
 	switch (vertexNormal->GetMappingMode())
 	{
 	case FbxGeometryElement::eByControlPoint:
@@ -343,6 +330,20 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
 				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
 			}
+
+			if (vertexTangent)
+			{
+				outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
+				outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
+				outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inCtrlPointIndex).mData[2]);
+			}
+
+			if (vertexBinormal)
+			{
+				outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
+				outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
+				outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[2]);
+			}
 		}
 		break;
 		case FbxGeometryElement::eIndexToDirect:
@@ -364,6 +365,20 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 				outVertex.bHasUV = true;
 				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[0]);
 				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[1]);
+			}
+
+			if (vertexTangent)
+			{
+				outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[0]);
+				outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[1]);
+				outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[2]);
+			}
+
+			if (vertexBinormal)
+			{
+				outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[0]);
+				outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[1]);
+				outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[2]);
 			}
 		}
 		break;
@@ -393,6 +408,20 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(inVertexCounter).mData[0]);
 				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(inVertexCounter).mData[1]);
 			}
+
+			if (vertexTangent)
+			{
+				outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[0]);
+				outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[1]);
+				outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+			}
+
+			if (vertexBinormal)
+			{
+				outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
+				outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
+				outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+			}
 		}
 		break;
 		case FbxGeometryElement::eIndexToDirect:
@@ -414,6 +443,20 @@ void FBXReader::ReadVertexInfo(FbxMesh* inMesh, int inCtrlPointIndex, int inVert
 				outVertex.bHasUV = true;
 				outUV.x = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[0]);
 				outUV.y = static_cast<float>(vertexUV->GetDirectArray().GetAt(index).mData[1]);
+			}
+
+			if (vertexTangent)
+			{
+				outTangent.x = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[0]);
+				outTangent.y = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[1]);
+				outTangent.z = static_cast<float>(vertexTangent->GetDirectArray().GetAt(index).mData[2]);
+			}
+
+			if (vertexBinormal)
+			{
+				outBinormal.x = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[0]);
+				outBinormal.y = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[1]);
+				outBinormal.z = static_cast<float>(vertexBinormal->GetDirectArray().GetAt(index).mData[2]);
 			}
 		}
 		break;

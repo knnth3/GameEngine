@@ -21,10 +21,10 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	if(!m_camera)
 		return false;
 
-	std::string texture = "Assets/textures/Default/grass.jpg";
-	std::string vs = "Assets/Shaders/3D_VertexShader.hlsl";
-	std::string ps = "Assets/Shaders/3D_PixelShader.hlsl";
-	std::string mesh = "Assets/Models/Cube.sef";
+	std::string mesh    = "Assets/Models/cube.sef";
+	std::string texture = "Assets/textures/Default/white.png";
+	std::string vs      = "Assets/Shaders/3D_VertexShader.hlsl";
+	std::string ps      = "Assets/Shaders/3D_PixelShader.hlsl";
 
 	if (!m_textureLib->Initialize(texture))
 		return false;
@@ -59,6 +59,11 @@ void Engine::RenderBatch_3D::Wireframe(bool value)
 	m_bWireframe = value;
 }
 
+void Engine::RenderBatch_3D::ToggleWireframe()
+{
+	m_bWireframe = !m_bWireframe;
+}
+
 void Engine::RenderBatch_3D::ProcessScene()
 {
 	//Get info
@@ -72,7 +77,7 @@ void Engine::RenderBatch_3D::ProcessScene()
 		for (auto batch : batchLib)
 		{
 			LoadBatchInfo(batch);
-			RenderBatch(batch.info);
+			RenderBatch(batch.Info);
 		}
 	}
 }
@@ -90,10 +95,17 @@ void Engine::RenderBatch_3D::LoadBatchInfo(Batch & batch)
 	batchInfo.view = glm::transpose(m_camera->GetViewMatrix());
 	batchInfo.projection = glm::transpose(m_camera->Get3DProjectionMatrix());
 	batchInfo.camera = glm::vec4(m_camera->GetFocusPoint(),1.0f);
-	batchInfo.flags[0] = batch.info.UsingVertexColors;
+	batchInfo.flags[0] = batch.Info.UsingVertexColors;
+	if (batch.JointTransforms)
+	{
+		for (int index = 0; index < batch.JointTransforms->size(); index++)
+		{
+			batchInfo.jointTransform[index] = batch.JointTransforms->at(index);
+		}
+	}
 
-	for (size_t index = 0; index < batch.data.size(); index++)
-		batchInfo.instances[index] = batch.data[index];
+	for (size_t index = 0; index < batch.Data.size(); index++)
+		batchInfo.instances[index] = batch.Data[index];
 
 	auto buffer = m_bufferLib.GetBuffer("BatchInfo");
 	if (!buffer)

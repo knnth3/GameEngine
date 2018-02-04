@@ -66,11 +66,16 @@ bool Engine::DirectX_Texture::LoadTexture(LPCWSTR filepath, ComPtr<ID3D11ShaderR
 	wchar_t ext[_MAX_EXT];
 	wchar_t fname[_MAX_FNAME];
 	_wsplitpath_s(filepath, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
-	ScratchImage srcImage;
-	TexMetadata info;
+	ScratchImage srcImage = {};
+	TexMetadata info = {};
 	if (_wcsicmp(ext, L".dds") == 0)
 	{
 		hr = LoadFromDDSFile(filepath, DDS_FLAGS_NONE, &info, srcImage);
+		result = CheckSuccess(hr, filepath);
+	}
+	else if (_wcsicmp(ext, L".hdr") == 0)
+	{
+		hr = LoadFromHDRFile(filepath, nullptr, srcImage);
 		result = CheckSuccess(hr, filepath);
 	}
 	else

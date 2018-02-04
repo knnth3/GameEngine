@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "MeshLoader.h"
 #include <glm\gtx\transform.hpp>
 
 #define ANGLE_2PI (float)M_PI * 2.0f
@@ -37,10 +38,10 @@ Engine::Model::Model():
 {
 }
 
-Engine::Model::Model(int mesh)
+Engine::Model::Model(int meshID)
 {
-	IDManager::AssignID(m_uniqueID);
-	m_mesh            = mesh;
+	IDManager::AssignID(m_objectID);
+	m_meshID            = meshID;
 	m_texture         = "";
 	m_drawStyle       = DRAW_STYLE_NORMAL;
 	m_bUseViewMatrix  = true;
@@ -51,11 +52,13 @@ Engine::Model::Model(int mesh)
 	m_world_rotation  = { 0.0f, 0.0f, 0.0f };
 	m_color           = { 1.0f, 1.0f, 1.0f, 1.0f };
 	m_textureBounds   = { 1.0f, 1.0f, 0.0f, 0.0f };
+
+	InitializeAnimator();
 }
 
 Engine::Model::~Model()
 {
-	IDManager::RemoveID(m_uniqueID);
+	IDManager::RemoveID(m_objectID);
 }
 
 void Engine::Model::SetTexture(const std::string& textureName)
@@ -65,7 +68,8 @@ void Engine::Model::SetTexture(const std::string& textureName)
 
 void Engine::Model::SetMesh(int ID)
 {
-	m_mesh = ID;
+	m_meshID = ID;
+	InitializeAnimator();
 }
 
 void Engine::Model::SetDrawStyle(int style)
@@ -80,12 +84,17 @@ std::string Engine::Model::GetTexture()const
 
 int Engine::Model::GetMesh()const
 {
-	return m_mesh;
+	return m_meshID;
 }
 
-int Engine::Model::GetUniqueID()const
+const Engine::AnimTransformPtr Engine::Model::GetTransforms() const
 {
-	return m_uniqueID;
+	return m_animator.GetTransforms();
+}
+
+int Engine::Model::GetObjectID()const
+{
+	return m_objectID;
 }
 
 int Engine::Model::GetDrawStyle()const
@@ -256,4 +265,14 @@ glm::mat4 Engine::Model::GetRotationMatrix(glm::vec3 rotation) const
 	}
 
 	return matrix;
+}
+
+void Engine::Model::InitializeAnimator()
+{
+	if (m_meshID != -1)
+	{
+		std::shared_ptr<Mesh> mesh;
+		MeshLoader::GrabMeshData(m_meshID, mesh);
+		m_animator.LoadMesh(mesh);
+	}
 }

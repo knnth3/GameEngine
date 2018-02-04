@@ -2,7 +2,7 @@
 #include "DllSettings.h"
 #include <tuple>
 
-#define MAX_JOINTS_PER_VERTEX 3
+#define MAX_JOINTS_PER_VERTEX 4
 
 namespace Engine
 {

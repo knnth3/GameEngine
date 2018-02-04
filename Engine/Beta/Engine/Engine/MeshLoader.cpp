@@ -133,12 +133,19 @@ void Engine::MeshLoader::GrabMeshData(int id, std::shared_ptr<Mesh> & ptr)
 int Engine::MeshLoader::CreateMesh(const std::string& filename)
 {
 	int result = -1;
-	SEStream io;
-	MeshData meshdata;
-	Skeleton skeldata;
-	if (io.ReadFile(filename, &meshdata, &skeldata))
+	SEF::SEStream io;
+	SEF::MeshData meshdata = {};
+	SEF::Skeleton skeldata = {};
+	SEF::Animation animation;
+	if (io.ReadFile(filename, &meshdata, &skeldata, &animation))
 	{
 		auto data = std::make_shared<Mesh>();
+
+		if (!skeldata.Joints.empty())
+		{
+			LoadJoints(data->ParentJoint, skeldata, 0);
+		}
+
 		for (auto i : meshdata.Indices)
 		{
 			data->Indices.push_back(Index(i));
@@ -156,6 +163,20 @@ int Engine::MeshLoader::CreateMesh(const std::string& filename)
 			newVertex.m_normal.y = v.Normal.y;
 			newVertex.m_normal.z = v.Normal.z;
 
+			newVertex.m_color.x = v.Color.x;
+			newVertex.m_color.y = v.Color.y;
+			newVertex.m_color.z = v.Color.z;
+
+			newVertex.m_jointIDs[0] = v.BlendInfo.x.ID;
+			newVertex.m_jointIDs[1] = v.BlendInfo.y.ID;
+			newVertex.m_jointIDs[2] = v.BlendInfo.z.ID;
+			newVertex.m_jointIDs[3] = v.BlendInfo.w.ID;
+
+			newVertex.m_jointWeights[0] = v.BlendInfo.x.Weight;
+			newVertex.m_jointWeights[1] = v.BlendInfo.y.Weight;
+			newVertex.m_jointWeights[2] = v.BlendInfo.z.Weight;
+			newVertex.m_jointWeights[3] = v.BlendInfo.w.Weight;
+
 			if (v.bHasUV)
 			{
 				newVertex.m_uv.x = v.UV.x;
@@ -172,9 +193,6 @@ int Engine::MeshLoader::CreateMesh(const std::string& filename)
 			else
 			{
 				data->CreationFlags = CREATION_TYPE_NO_UV;
-				newVertex.m_color.x = v.Color.x;
-				newVertex.m_color.y = v.Color.y;
-				newVertex.m_color.z = v.Color.z;
 			}
 
 			data->Vertices.push_back(newVertex);
@@ -238,4 +256,23 @@ bool Engine::MeshLoader::CheckInit(const std::string& filename)
 		OpenDialog(L"MeshLoader Error!", error.c_str());
 	}
 	return m_bIsInit;
+}
+
+void Engine::MeshLoader::LoadJoints(JointNode & joint, SEF::Skeleton & skel, int index)
+{
+	glm::mat4 gbpiMat;
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0; y < 4; y++)
+		{
+			gbpiMat[x][y] = skel.Joints.at(index).GlobalBindPoseInverse.Properties[y][x];
+		}
+	}
+	joint = JointNode(index, skel.Joints.at(index).Name, gbpiMat);
+
+	for (const auto& cindex : skel.Joints.at(index).Children)
+	{
+		joint.Children.emplace_back();
+		LoadJoints(joint.Children.back(), skel, cindex);
+	}
 }

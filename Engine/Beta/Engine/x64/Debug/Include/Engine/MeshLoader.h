@@ -2,10 +2,16 @@
 #include "DllSettings.h"
 #include "Mesh.h"
 
+namespace SEF
+{
+	struct Skeleton;
+}
+
 namespace Engine
 {
 	//-Class used to create mesh objects
 	//-Models can be loaded in with the provided functions
+
 	class MeshLoader
 	{
 	public:
@@ -24,6 +30,7 @@ namespace Engine
 		static bool IsFilepathQuerried(const std::string& filepath, int result);
 		static bool IsKeyNameQuerried(const std::string& filepath, int result);
 		static bool CheckInit(const std::string& filename);
+		static void LoadJoints(JointNode& joint, SEF::Skeleton& skel, int index);
 
 		static bool m_bIsInit;
 		static std::shared_ptr<Mesh> m_default;

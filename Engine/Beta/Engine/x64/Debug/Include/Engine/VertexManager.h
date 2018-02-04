@@ -25,8 +25,9 @@ namespace Engine
 
 	struct Batch
 	{
-		BatchInfo info;
-		std::vector<PerInstanceInfo> data;
+		BatchInfo Info;
+		std::vector<PerInstanceInfo> Data;
+		AnimTransformPtr JointTransforms;
 	};
 
 
@@ -44,13 +45,13 @@ namespace Engine
 
 
 	private:
-		void CreateNewBatch(int mesh, const std::string& texture, int style);
+		void CreateNewBatch(const Model& model);
 
 		bool m_bNewBatch;
 		const uint16_t m_maxInstances;
 		std::vector<Vertex> m_vertices;
 		std::vector<Index> m_indices;
-		std::map<std::tuple<int, std::string, int>, Batch> m_BatchCache;
+		std::map<int, Batch> m_BatchCache;
 	};
 
 

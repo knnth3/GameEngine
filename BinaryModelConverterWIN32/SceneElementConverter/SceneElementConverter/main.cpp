@@ -1,33 +1,42 @@
 #include "FBXReader.h"
 #include "include\SEStream.h"
 #include <iostream>
+#include "AssimpReader.h"
 
 
-#define ORIGINAL_FILE "C:/Users/Kenneth/Music/model.fbx"
-#define NEW_FILE "C:/Users/Kenneth/Music/model.sef"
+#define ORIGINAL_FILE "C:/Users/Kenneth/Music/cube.obj"
+#define ANIMATION_FILE "C:/Users/Kenneth/Music/walk_anim.dae"
+#define NEW_FILE "C:/Users/Kenneth/Music/cube.sef"
 
 using namespace std;
+using namespace SEF;
 
 bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr);
-bool TestSEFReadProgram(MeshData & mesh, Skeleton & skeleton);
-bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton);
+bool TestSEFReadProgram(MeshData & mesh, Skeleton & skeleton, Animation* animation);
+bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton, const Animation* animation = nullptr);
 
 int main()
 {
 	string ch;
+
+	//AssimpReader io;
+	//Animation writeAnimation;
+	//cout << "Read Animation File: "<< io.ImportAnimation(ANIMATION_FILE, writeAnimation) << endl;
+
 	vector<MeshData> meshArr;
 	vector<Skeleton> skeletonArr;
 	if (TestFBXReadProgram(meshArr, skeletonArr))
 	{
-		MeshData* m = (meshArr.empty()) ? nullptr : &meshArr[0];
-		Skeleton* s = (skeletonArr.empty()) ? nullptr : &skeletonArr[0];
-		TestSEFWriteProgram(m,s);
+		MeshData* writeMesh = (meshArr.empty()) ? nullptr : &meshArr[0];
+		Skeleton* writeSkeleton = (skeletonArr.empty()) ? nullptr : &skeletonArr[0];
+		TestSEFWriteProgram(writeMesh,writeSkeleton);
 	}
 
 	//Read .sef
 	MeshData readMesh;
 	Skeleton readSkeleton;
-	TestSEFReadProgram(readMesh, readSkeleton);
+	Animation readAnimation;
+	TestSEFReadProgram(readMesh, readSkeleton, &readAnimation);
 
 	printf("Press enter key to exit...\n");
 	getline(cin, ch);
@@ -48,13 +57,13 @@ bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr
 	return true;
 }
 
-bool TestSEFReadProgram(MeshData& mesh, Skeleton& skeleton)
+bool TestSEFReadProgram(MeshData& mesh, Skeleton& skeleton, Animation* animation)
 {
 	SEStream fileIO;
 	bool result = false;
 	try
 	{
-		fileIO.ReadFile(NEW_FILE, &mesh, &skeleton);
+		fileIO.ReadFile(NEW_FILE, &mesh, &skeleton, animation);
 		cout << "File read success from SEStream!" << endl;
 		result = true;
 	}
@@ -65,12 +74,15 @@ bool TestSEFReadProgram(MeshData& mesh, Skeleton& skeleton)
 	return result;
 }
 
-bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton)
+bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton, const Animation* animation)
 {
 	SEStream fileIO;
 	bool result = false;
 	try
 	{
+		if (animation)
+			fileIO.AddAnimation(*animation);
+
 		fileIO.WriteFile(NEW_FILE, mesh, skeleton);
 		cout << "File write success from SEStream!" << endl;
 		result = true;

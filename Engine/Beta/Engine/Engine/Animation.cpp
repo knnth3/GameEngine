@@ -1,18 +1,96 @@
 #include "Animation.h"
-
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace Engine;
 
-Engine::Animation::Animation()
+Engine::Animation::Animation():
+	m_length(0.0f)
 {
 }
 
-Engine::Animation::Animation(std::vector<KeyFrame> keyframes)
+Engine::Animation::Animation(const std::shared_ptr<KeyFrame>& first, float length) :
+	m_length(length)
 {
-	m_keyframes = keyframes;
+	m_current = first;
 }
 
-KeyFrame Engine::Animation::GetKeyFrame(int index)
+const std::shared_ptr<KeyFrame> Engine::Animation::GetCurrent()
 {
-	return m_keyframes[index];
+	return m_current;
+}
+
+float Engine::Animation::GetLength()
+{
+	return m_length;
+}
+
+void Engine::Animation::Advance()
+{
+	m_current = m_current->GetNext();
+}
+
+void Engine::Animation::Reverse()
+{
+	m_current = m_current->GetPrev();
+}
+
+Engine::JointTransform::JointTransform()
+{
+
+}
+
+Engine::JointTransform::JointTransform(glm::vec3 position, glm::quat rotation)
+{
+	m_position = position;
+	m_rotation = rotation;
+}
+
+JointTransform Engine::JointTransform::Interpolate(const JointTransform & other, float progression)
+{
+	glm::vec3 pos = glm::mix(m_position, other.m_position, progression);
+	glm::quat rot = glm::mix(m_rotation, other.m_rotation, progression);
+
+	return JointTransform(pos, rot);
+}
+
+glm::mat4 Engine::JointTransform::GetLocalTransform()
+{
+	glm::mat4 retVal;
+	retVal = glm::translate(retVal, m_position);
+	retVal = retVal * glm::toMat4(m_rotation);
+	return retVal;
+}
+
+Engine::KeyFrame::KeyFrame(const std::map<std::string, JointTransform>& transforms, 
+	std::shared_ptr<KeyFrame> previous, std::shared_ptr<KeyFrame> next, float timestamp):
+	m_transforms(transforms),
+	m_previous(previous),
+	m_next(next),
+	m_timestamp(timestamp)
+{
+}
+
+JointTransform Engine::KeyFrame::GetTransform(const std::string & name) const
+{
+	return m_transforms.at(name);
+}
+
+void Engine::KeyFrame::GetAllTransforms(std::map<std::string, JointTransform>& map) const
+{
+	map = m_transforms;
+}
+
+const float Engine::KeyFrame::GetTimestamp()const
+{
+	return m_timestamp;
+}
+
+const std::shared_ptr<KeyFrame> Engine::KeyFrame::GetNext()const
+{
+	return m_next;
+}
+
+const std::shared_ptr<KeyFrame> Engine::KeyFrame::GetPrev()const
+{
+	return m_previous;
 }

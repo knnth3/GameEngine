@@ -1,5 +1,5 @@
 #pragma once
-#include "Mesh.h"
+#include "Animator.h"
 
 
 typedef std::shared_ptr<glm::vec3> vec3_ptr;
@@ -30,7 +30,7 @@ namespace Engine
 		//Constructors, destructors, and final functions
 
 		__engine_decl Model();
-		__engine_decl Model(int mesh);
+		__engine_decl Model(int meshID);
 		__engine_decl ~Model();
 		__engine_decl virtual void UseViewMatrix(bool val) final;
 		__engine_decl virtual bool IsUsingViewMatrix() final;
@@ -59,8 +59,8 @@ namespace Engine
 		__engine_decl virtual void SetTextureBounds(float length, float width, float xoffset, float yoffset);
 
 		//Get Functions
-
-		__engine_decl virtual int GetUniqueID()const final;
+		__engine_decl virtual const AnimTransformPtr GetTransforms()const final;
+		__engine_decl virtual int GetObjectID()const final;
 		__engine_decl virtual int GetDrawStyle()const final;
 		__engine_decl virtual std::string GetTexture()const final;
 		__engine_decl virtual int GetMesh()const final;
@@ -73,10 +73,11 @@ namespace Engine
 	private:
 		void Rotate(float& original, const float& amount);
 		glm::mat4 GetRotationMatrix(glm::vec3 rotation)const;
+		void InitializeAnimator();
 
 		bool m_bUseViewMatrix;
-		int m_uniqueID;
-		int m_mesh;
+		int m_objectID;
+		int m_meshID;
 		int m_drawStyle;
 		std::string m_texture;
 		glm::mat4 m_scaleMatrix;
@@ -86,5 +87,6 @@ namespace Engine
 		glm::vec3 m_scale;
 		glm::vec4 m_color;
 		glm::vec4 m_textureBounds;
+		Animator m_animator;
 	};
 }

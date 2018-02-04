@@ -48,11 +48,11 @@ void WindowApp::Update()
 	m_cube2.SetPosition(camera->GetPosition());
 
 	//Rotation
-	float speed = 2.45f;
+	float acceleration = 2.45f;
 	float seconds = (float)timer->elapsed() / 1000.0f;
-	float rotation = speed * seconds;
-	m_cube1.RotateRelative(0.0f, rotation, 0.0f);
-	m_model.RotateRelative(0.0f, rotation, 0.0f);
+	float velocity = acceleration * seconds;
+	m_cube1.RotateRelative(0.0f, velocity, 0.0f);
+	//m_model.RotateRelative(0.0f, rotation, 0.0f);
 
 	//Mouse
 	auto input = WindowResources::GetInput()->GetMouse();
@@ -62,23 +62,35 @@ void WindowApp::Update()
 	auto keyboard = WindowResources::GetInput()->GetKeyboard();
 	if (keyboard->ButtonDown('W'))
 	{
-		camera->Rotate(rotation, 0.0f, 0.0f);
+		camera->Rotate(velocity, 0.0f, 0.0f);
 	}
 	if (keyboard->ButtonDown('S'))
 	{
-		camera->Rotate(-rotation, 0.0f, 0.0f);
+		camera->Rotate(-velocity, 0.0f, 0.0f);
 	}
 	if (keyboard->ButtonDown('A'))
 	{
-		camera->Rotate(0.0f, rotation, 0.0f);
+		camera->Rotate(0.0f, velocity, 0.0f);
 	}
 	if (keyboard->ButtonDown('D'))
 	{
-		camera->Rotate(0.0f, -rotation, 0.0f);
+		camera->Rotate(0.0f, -velocity, 0.0f);
+	}
+	if (keyboard->ButtonDown('Q'))
+	{
+		camera->Zoom(velocity * 100.0f);
+	}
+	if (keyboard->ButtonDown('E'))
+	{
+		camera->Zoom(-velocity * 100.0f);
 	}
 	if (keyboard->ButtonPressed('P'))
 	{
 		ToggleFullscreen();
+	}
+	if (keyboard->ButtonPressed('L'))
+	{
+		WindowResources::GetGraphics()->ToggleWireframe();
 	}
 }
 
@@ -93,13 +105,14 @@ void WindowApp::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
 void WindowApp::Resume()
 {
 	auto graphics = WindowResources::GetGraphics();
+	graphics->GetCamera()->EnforceBounds(false);
 	t = graphics->GetVideoCardInfo().at(0).name;
 	Skybox sb;
 	sb.path = "Assets/textures/Default/cubemap.dds";
 	graphics->SetSkybox(sb);
 
 	//int mesh = MeshLoader::CreatePlane(100, 100, 10, 10);
-	int mesh = MeshLoader::LoadModel("Assets/models/model.sef");
+	int mesh = MeshLoader::LoadModel("Assets/models/body_leather_bronze_epic.sef");
 	m_model.SetMesh(mesh);
 	m_model.Scale(100, 100, 100);
 }

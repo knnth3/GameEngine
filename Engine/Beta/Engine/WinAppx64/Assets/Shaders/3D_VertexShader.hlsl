@@ -2,30 +2,26 @@
 
 #define MAX_INSTANCES 500
 #define FLAG_SIZE 4
-#define MAX_JOINTS 20
+#define MAX_JOINTS 60
+#define MAX_WEIGHTS 4
 
 cbuffer ConstBuffer
 {
 	float4x4 viewMatrix;
 	float4x4 projectionMatrix;
     float4 camera;
+    float4x4 jointTransforms[MAX_JOINTS];
 	Instance instances[MAX_INSTANCES];
     uint flags[FLAG_SIZE];
 };
 
 struct VSOutput
 {
-	float4 position : SV_POSITION;
-	float3 worldPos : POSITION;
-	float4 normal : NORMAL;
-	float2 uv : TEXCOORD;
+    float4 position : SV_POSITION;
+    float4 normal : NORMAL;
+    float2 uv : TEXCOORD;
     float4 color : COLOR;
-	float3 diffuse : COLOR01;
-	float metallic : COLOR02;
-	float roughness : COLOR03;
-	float3 tangent : TANGENT;
-	float3 binormal : BINORMAL;
-    float4 camera : CAMERA;
+    float3 diffuse : COLOR01;
     bool hasUV : FLAGS;
 };
 
@@ -33,26 +29,40 @@ VSOutput main(Vertex input)
 {
 	VSOutput output;
 
-	output.roughness = input.normal.w;
+    //Move position of vertex to currentPose
+    float4 finalLocalPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 finalLocalNormal = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float totalWeight = input.jointWeights[0] + input.jointWeights[1] + input.jointWeights[2] + input.jointWeights[3];
+    if (totalWeight == 0.0f)
+    {
+        finalLocalPos = input.position;
+        finalLocalNormal = float4(input.normal.xyz, 0.0f);
 
-	output.position = mul(input.position, instances[input.instanceID].worldMatrix);
-	output.worldPos = output.position.xyz;
+    }
+    else
+    {
+        for (int x = 0; x < MAX_WEIGHTS; x++)
+        {
+        //Position
+            float4x4 jointTransform = jointTransforms[input.jointIDs[x]];
+            float4 posePosition = mul(input.position, jointTransform);
+            finalLocalPos += (posePosition * input.jointWeights[x]);
+
+        //Normal
+            float4 poseNormal = mul(float4(input.normal.xyz, 0.0f), jointTransform);
+            finalLocalNormal += (poseNormal * input.jointWeights[x]);
+
+        }
+    }
+
+    output.position = mul(finalLocalPos, instances[input.instanceID].worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
-    output.normal = float4(input.normal.xyz, 0.0f);
-    output.normal = mul(output.normal, instances[input.instanceID].worldMatrix);
+    output.normal = mul(finalLocalNormal, instances[input.instanceID].worldMatrix);
     //output.normal = mul(output.normal, viewMatrix);
     //output.normal = mul(output.normal, projectionMatrix);
 	output.normal = normalize(output.normal);
-
-	output.tangent = mul(input.tangent.xyz, (float3x3)instances[input.instanceID].worldMatrix);
-	output.tangent = normalize(output.tangent);
-
-	output.binormal = mul(input.binormal.xyz, (float3x3)instances[input.instanceID].worldMatrix);
-	output.binormal = normalize(output.binormal);
-
-	output.metallic = instances[input.instanceID].diffuse.w;
 	output.uv = input.uv;
 	output.diffuse = instances[input.instanceID].diffuse.xyz;
 
@@ -62,8 +72,6 @@ VSOutput main(Vertex input)
         output.hasUV = true;
     else
         output.hasUV = false;
-
-    output.camera = camera;
 
 	return output;
 }

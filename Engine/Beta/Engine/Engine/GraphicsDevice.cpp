@@ -10,7 +10,7 @@ Engine::GraphicsDevice::GraphicsDevice() :
 Engine::GraphicsDevice::GraphicsDevice(const CameraSettings s_camera)
 {
 	m_camera = std::shared_ptr<Camera>(new Camera(s_camera));
-	m_clearColor = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_clearColor = glm::vec3(0.2f, 0.2f, 0.2f);
 }
 
 Engine::GraphicsDevice::~GraphicsDevice()
@@ -154,6 +154,12 @@ void Engine::GraphicsDevice::Wireframe(bool val)
 {
 	if(ENABLE_3D_RENDERING)
 		m_renderBatch_3D->Wireframe(val);
+}
+
+void Engine::GraphicsDevice::ToggleWireframe()
+{
+	if (ENABLE_3D_RENDERING)
+		m_renderBatch_3D->ToggleWireframe();
 }
 
 void Engine::GraphicsDevice::Reset()

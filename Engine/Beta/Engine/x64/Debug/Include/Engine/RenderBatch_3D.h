@@ -10,7 +10,6 @@
 //Macros
 #define FLAG_SIZE 4
 #define MAX_INSTANCES 500
-#define MAX_JOINTS 20
 
 namespace Engine
 {
@@ -19,10 +18,9 @@ namespace Engine
 		glm::mat4 view;
 		glm::mat4 projection;
 		glm::vec4 camera;
+		glm::mat4 jointTransform[MAX_JOINTS];
 		PerInstanceInfo instances[MAX_INSTANCES];
 		uint32_t flags[FLAG_SIZE];
-		glm::mat4 jointTransform[MAX_JOINTS];
-
 	};
 
 	class RenderBatch_3D
@@ -33,6 +31,7 @@ namespace Engine
 		bool Initialize(std::shared_ptr<Camera>& camera);
 		void Draw(const Model& model);
 		void Wireframe(bool value);
+		void ToggleWireframe();
 		void ProcessScene();
 		const std::shared_ptr<TextureLibrary>& GetTextureLibrary();
 	private:
