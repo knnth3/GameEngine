@@ -117,12 +117,13 @@ void WindowApp::Resume()
 	graphics->SetSkybox(sb);
 
 	//int mesh = MeshLoader::CreatePlane(100, 100, 10, 10);
-	int mesh = MeshLoader::LoadModel("Assets/models/body_leather_bronze_epic.sef");
-	int mesh2 = MeshLoader::LoadModel("Assets/models/head.sef");
+	int mesh = MeshLoader::LoadModel("Assets/models/body_plate_silver_epic_rest1.sef");
+	int mesh2 = MeshLoader::LoadModel("Assets/models/head1.sef");
 	m_model.SetMesh(mesh);
 	m_model.SetSecondaryMesh(mesh2);
 	m_model.Scale(100, 100, 100);
 	m_model.ToggleAnimation();
+	//m_model.SetColor(2.0f, 0.44f, 0.0f);
 }
 
 void WindowApp::Suspend()

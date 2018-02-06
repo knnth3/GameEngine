@@ -81,22 +81,13 @@ void Engine::VertexManager::CreateNewBatch(const Model& model)
 	MeshLoader::GrabMeshData(secondaryMesh, data);
 	int indexOffset = 0;
 	int vertexOffset = 0;
-	int testValue1 = 0;
-	int testValue2 = 0;
-	int testValue3 = 0;
 	if (data)
 	{
 		for (auto& vert : data->Vertices)
 		{
-			if (vert.m_jointIDs[0] == 29 || vert.m_jointIDs[0] == 30)
-			{
-				vert.m_jointIDs[0] = 29;
-			}
-			if (vert.m_jointIDs[1] == 29 || vert.m_jointIDs[1] == 30)
-			{
-				vert.m_jointIDs[1] = 29;
-			}
-			vert.m_position.y += 2.0f;
+			vert.m_position *= 0.6f;
+			vert.m_position.y += 1.95f;
+			vert.m_position.z -= 0.1f;
 		}
 		m_vertices.insert(m_vertices.end(), data->Vertices.begin(), data->Vertices.end());
 		newIndices.insert(newIndices.end(), data->Indices.begin(), data->Indices.end());
@@ -104,11 +95,8 @@ void Engine::VertexManager::CreateNewBatch(const Model& model)
 		{
 			m_indices.push_back((Index)originalVertSize + newIndices[i]);
 		}
-		vertexOffset = data->Vertices.size();
-		indexOffset = data->Indices.size();
-		testValue1 = data->Indices.at(newIndices.size()-1);
-		testValue2 = data->Indices.at(newIndices.size()-2);
-		testValue3 = data->Indices.at(newIndices.size()-3);
+		vertexOffset = (int)data->Vertices.size();
+		indexOffset = (int)data->Indices.size();
 	}
 
 	data = nullptr;

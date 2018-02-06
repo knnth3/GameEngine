@@ -7,7 +7,7 @@ using namespace SEF;
 bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error, bool attatchment, int startBoneIndexCount)
 {
 	m_bAttatchment = attatchment;
-	m_boneIndexOffset = startBoneIndexCount;
+	m_attatchmentSkelIndex = startBoneIndexCount;
 	FbxManager* lSdkManager = FbxManager::Create();
 	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
 	lSdkManager->SetIOSettings(ios);
@@ -22,6 +22,8 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 	// Import the contents of the file into the scene.
 	lImporter->Import(lScene);
 	m_FBXScene = lScene;
+	FbxGeometryConverter converter(lSdkManager);
+	bool value = converter.Triangulate(m_FBXScene, true);
 	// The file is imported, so get rid of the importer.
 	lImporter->Destroy();
 	FbxAxisSystem::DirectX.ConvertScene(lScene);
@@ -59,10 +61,11 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 
 	m_FBXScene = nullptr;
 	lSdkManager->Destroy();
+	error.insert(error.begin(), m_error.begin(), m_error.end());
 	return (!meshArr.empty() || !skeletonArr.empty());
 }
 
-void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode, std::vector<MeshTempData>& meshArr, std::vector<Skeleton>& skeletonArr, bool parent)const
+void FBXReader::GetChildInfo(fbxsdk::FbxNode * pNode, fbxsdk::FbxNode*& meshNode, std::vector<MeshTempData>& meshArr, std::vector<Skeleton>& skeletonArr, bool parent)
 {
 	int attribCount = pNode->GetNodeAttributeCount();
 	for (int i = 0; i < attribCount; i++)
@@ -126,7 +129,7 @@ uint32_t FBXReader::GetSkeleton(fbxsdk::FbxNode* pNode, std::vector<SEF::Joint>&
 	return currentIndex;
 }
 
-void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
+void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)
 {
 	const char* nodeName = pNode->GetName();
 	FbxDouble3 translation = pNode->LclTranslation.Get();
@@ -137,11 +140,12 @@ void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
 	if (fbxMesh)
 	{
 		mesh.Name = pNode->GetName();
-		if (fbxMesh->IsTriangleMesh())
+		if(fbxMesh->IsTriangleMesh())
 		{
 			int vertexCount = 0;
 			fbxMesh->GenerateTangentsDataForAllUVSets(true);
-			for (int pIndex = 0; pIndex < fbxMesh->GetPolygonCount(); pIndex++)
+			int pCount = fbxMesh->GetPolygonCount();
+			for (int pIndex = 0; pIndex < pCount; pIndex++)
 			{
 				for (int vIndex = 0; vIndex < 3; vIndex++)
 				{
@@ -159,6 +163,10 @@ void FBXReader::ReadVertexInfo(fbxsdk::FbxNode * pNode, MeshTempData& mesh)const
 					vertexCount++;
 				}
 			}
+		}
+		else
+		{
+			m_error = "FBXRead Error: Mesh is not triangulated.";
 		}
 	}
 }
@@ -222,12 +230,6 @@ bool FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshTempData* mesh, S
 				blendFactor.Weight = (float)currCluster->GetControlPointWeights()[i];
 				int FBXIndex = currCluster->GetControlPointIndices()[i];
 
-				//Increment index if this is addon
-				if (m_bAttatchment)
-				{
-					blendFactor.ID += m_boneIndexOffset;
-				}
-
 				//Add the blend factor to each vertex located at the given position index (FBXIndex)
 				auto fbxIndexList = mesh->Library.find(FBXIndex);
 				if (fbxIndexList != mesh->Library.end())
@@ -268,6 +270,28 @@ FbxAMatrix FBXReader::GetGeometryTransformation(FbxNode* inNode)const
 
 	return FbxAMatrix(lT, lR, lS);
 }
+
+void FBXReader::ExtractMeshDataFromTemp(const MeshTempData & temp, SEF::MeshData & data)
+{
+	data.Name = temp.Name;
+	data.Indices = temp.Index;
+	data.Vertices.resize(temp.Size);
+	for (const auto& posList : temp.Library)
+	{
+		for (const auto& vertex : posList.second)
+		{
+			data.Vertices[vertex.first] = vertex.second;
+
+			if (m_bAttatchment)
+			{
+				data.Vertices[vertex.first].BlendInfo.x.ID = m_attatchmentSkelIndex;
+				data.Vertices[vertex.first].BlendInfo.x.Weight = 1.0f;
+			}
+
+		}
+	}
+}
+
 
 void FBXReader::AddNewVertex(MeshTempData& data, const VertexData& vertex, int FBXIndex) const
 {

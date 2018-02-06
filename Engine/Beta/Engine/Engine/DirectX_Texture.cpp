@@ -73,11 +73,6 @@ bool Engine::DirectX_Texture::LoadTexture(LPCWSTR filepath, ComPtr<ID3D11ShaderR
 		hr = LoadFromDDSFile(filepath, DDS_FLAGS_NONE, &info, srcImage);
 		result = CheckSuccess(hr, filepath);
 	}
-	else if (_wcsicmp(ext, L".hdr") == 0)
-	{
-		hr = LoadFromHDRFile(filepath, nullptr, srcImage);
-		result = CheckSuccess(hr, filepath);
-	}
 	else
 	{
 		hr = LoadFromWICFile(filepath, WIC_FLAGS_FILTER_LINEAR, nullptr, srcImage);

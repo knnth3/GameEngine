@@ -96,8 +96,10 @@ void Engine::Camera::Zoom(float x)
 {
 	float maxZoomOut = 700.0f;
 	float maxZoomIn = 300.0f;
-
-	m_active.m_distanceFromObject += x;
+	if(x > 0)
+		m_active.m_distanceFromObject += (x*x);
+	else
+		m_active.m_distanceFromObject -= (x*x);
 
 	if (m_bUsingBounds)
 	{

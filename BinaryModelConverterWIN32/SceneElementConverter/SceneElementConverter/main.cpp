@@ -4,14 +4,16 @@
 #include "AssimpReader.h"
 
 
-#define ORIGINAL_FILE "C:/Users/Kenneth/Music/head1.fbx"
-#define ANIMATION_FILE "C:/Users/Kenneth/Music/walk_anim.dae"
-#define NEW_FILE "C:/Users/Kenneth/Music/head1.sef"
+#define ORIGINAL_FILE "C:/Users/Kenneth/3D Objects/body_plate_silver_epic.fbx"
+#define ANIMATION_FILE "C:/Users/Kenneth/3D Objects/ss_biped@unarmed_idle_01.dae"
+#define NEW_FILE "C:/Users/Kenneth/3D Objects/body_plate_silver_epic.sef"
+#define IS_ADDON false
+#define ADDON_SKELETON_BONE_INDEX 29
 
 using namespace std;
 using namespace SEF;
 
-bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndexOffset);
+bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndex);
 bool TestSEFReadProgram(MeshData & mesh, Skeleton & skeleton, Animation* animation);
 bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton, const Animation* animation = nullptr);
 
@@ -19,17 +21,17 @@ int main()
 {
 	string ch;
 
-	//AssimpReader io;
-	//Animation writeAnimation;
-	//cout << "Read Animation File: "<< io.ImportAnimation(ANIMATION_FILE, writeAnimation) << endl;
+	AssimpReader io;
+	Animation writeAnimation;
+	cout << "Read Animation File: "<< io.ImportAnimation(ANIMATION_FILE, writeAnimation) << endl;
 
 	vector<MeshData> meshArr;
 	vector<Skeleton> skeletonArr;
-	if (TestFBXReadProgram(meshArr, skeletonArr, true, 29))
+	if (TestFBXReadProgram(meshArr, skeletonArr, IS_ADDON, ADDON_SKELETON_BONE_INDEX))
 	{
 		MeshData* writeMesh = (meshArr.empty()) ? nullptr : &meshArr[0];
 		Skeleton* writeSkeleton = (skeletonArr.empty()) ? nullptr : &skeletonArr[0];
-		TestSEFWriteProgram(writeMesh,nullptr, nullptr);
+		TestSEFWriteProgram(writeMesh, writeSkeleton, &writeAnimation);
 	}
 
 	//Read .sef
@@ -43,11 +45,11 @@ int main()
 	return 0;
 }
 
-bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndexOffset)
+bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndex)
 {
 	FBXReader IO;
 	string error;
-	if (!IO.ReadFile(ORIGINAL_FILE, meshArr, skeletonArr, error, attatchment, skelIndexOffset))
+	if (!IO.ReadFile(ORIGINAL_FILE, meshArr, skeletonArr, error, attatchment, skelIndex))
 	{
 		cout << error << endl;
 		return false;

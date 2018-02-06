@@ -23,6 +23,7 @@ struct VSOutput
     float4 color : COLOR;
     float3 diffuse : COLOR01;
     bool hasUV : FLAGS;
+    bool hasColor : FLAGS02;
 };
 
 VSOutput main(Vertex input)
@@ -72,6 +73,8 @@ VSOutput main(Vertex input)
         output.hasUV = true;
     else
         output.hasUV = false;
+
+    output.hasColor = !(output.diffuse.x == 1.0f && output.diffuse.y == 1.0f && output.diffuse.z == 1.0f);
 
 	return output;
 }
