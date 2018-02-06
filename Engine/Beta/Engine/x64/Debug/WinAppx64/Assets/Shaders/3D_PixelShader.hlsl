@@ -4,16 +4,10 @@ SamplerState ObjSamplerState;
 struct VSOutput
 {
     float4 position : SV_POSITION;
-    float3 worldPos : POSITION;
     float4 normal : NORMAL;
     float2 uv : TEXCOORD;
     float4 color : COLOR;
     float3 diffuse : COLOR01;
-    float metallic : COLOR02;
-    float roughness : COLOR03;
-    float3 tangent : TANGENT;
-    float3 binormal : BINORMAL;
-    float4 camera : CAMERA;
     bool hasUV : FLAGS;
 };
 
@@ -30,7 +24,6 @@ float4 main(VSOutput input) : SV_TARGET
     {
         float4 tex = ObjTexture[0].Sample(ObjSamplerState, input.uv);
         color = color * tex;
-
     }
 
     color = color + ambient;

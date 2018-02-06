@@ -1,7 +1,7 @@
 #include "StandardDataStructs.hlsl"
 
-
 #define MAX_INSTANCES 500
+#define MAX_JOINTS 60
 #define FLAG_SIZE 4
 
 cbuffer ConstBuffer
@@ -9,6 +9,7 @@ cbuffer ConstBuffer
     float4x4 viewMatrix;
     float4x4 projectionMatrix;
     float4 camera;
+    float4x4 jointTransforms[MAX_JOINTS];
     Instance instances[MAX_INSTANCES];
     uint flags[FLAG_SIZE];
 };
