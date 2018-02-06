@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 //#include <BinImporter\BinImporter.h>
 #include <SEF\SEStream.h>
+#include "Animation.h"
 
 
 using namespace Engine;
@@ -126,8 +127,10 @@ void Engine::MeshLoader::GrabMeshData(int id, std::shared_ptr<Mesh> & ptr)
 {
 	if (m_modelLibrary.size() > id && id >= 0)
 		ptr = m_modelLibrary.at(id);
-	else
+	else if (id == -1)
 		ptr = m_default;
+	else
+		ptr = nullptr;
 }
 
 int Engine::MeshLoader::CreateMesh(const std::string& filename)
@@ -140,6 +143,62 @@ int Engine::MeshLoader::CreateMesh(const std::string& filename)
 	if (io.ReadFile(filename, &meshdata, &skeldata, &animation))
 	{
 		auto data = std::make_shared<Mesh>();
+
+		if (animation.JointCount())
+		{
+			std::shared_ptr<KeyFrame> m_first;
+			std::shared_ptr<KeyFrame> m_current;
+			std::vector<std::shared_ptr<KeyFrame>> m_keyframes;
+			auto jointNames = animation.JointNames();
+			std::map<std::string, JointTransform> transforms;
+			for (int keyIndex = 0; keyIndex < animation.TimeStampCount(); keyIndex++)
+			{
+				float time = 0.0f;
+				for (int index = 0; index < animation.JointCount(); index++)
+				{
+					auto& key = animation[index]->at(keyIndex);
+					glm::vec3 position;
+					position.x = key.Position.x;
+					position.y = key.Position.y;
+					position.z = key.Position.z;
+
+					glm::quat quaternion;
+					quaternion.x = key.Quartenion.x;
+					quaternion.y = key.Quartenion.y;
+					quaternion.z = key.Quartenion.z;
+					quaternion.w = key.Quartenion.w;
+
+					time = key.Timestamp;
+
+					std::pair<std::string, JointTransform> pair(jointNames[index], JointTransform(position, quaternion));
+					transforms.emplace(pair);
+				}
+				if (keyIndex == 0)
+				{
+					m_first = std::make_shared<KeyFrame>(transforms, nullptr, nullptr, time);
+					m_current = m_first;
+					transforms.clear();
+					m_keyframes.push_back(m_first);
+				}
+				else if (keyIndex == animation.TimeStampCount() - 1)
+				{
+					m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, m_first, time));
+					m_current = m_current->GetNext();
+					m_first->SetPrevious(m_current);
+					transforms.clear();
+					m_keyframes.push_back(m_current);
+				}
+				else
+				{
+					m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, nullptr, time));
+					m_current = m_current->GetNext();
+					transforms.clear();
+					m_keyframes.push_back(m_current);
+				}
+			}
+
+			data->Animations.emplace_back(m_keyframes, animation.GetDuration(), animation.TimeStampCount());
+		}
 
 		if (!skeldata.Joints.empty())
 		{
@@ -265,10 +324,11 @@ void Engine::MeshLoader::LoadJoints(JointNode & joint, SEF::Skeleton & skel, int
 	{
 		for (int y = 0; y < 4; y++)
 		{
-			gbpiMat[x][y] = skel.Joints.at(index).GlobalBindPoseInverse.Properties[y][x];
+			gbpiMat[x][y] = skel.Joints.at(index).GlobalBindPoseInverse.Properties[x][y];
 		}
 	}
-	joint = JointNode(index, skel.Joints.at(index).Name, gbpiMat);
+	std::string name = skel.Joints.at(index).Name;
+	joint = JointNode(index, name, gbpiMat);
 
 	for (const auto& cindex : skel.Joints.at(index).Children)
 	{

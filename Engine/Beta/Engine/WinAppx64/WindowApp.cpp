@@ -49,8 +49,9 @@ void WindowApp::Update()
 
 	//Rotation
 	float acceleration = 2.45f;
-	float seconds = (float)timer->elapsed() / 1000.0f;
-	float velocity = acceleration * seconds;
+	double seconds = timer->elapsed() / 1000.0;
+	float velocity = float(acceleration * seconds);
+	m_model.Update(seconds);
 	m_cube1.RotateRelative(0.0f, velocity, 0.0f);
 	//m_model.RotateRelative(0.0f, rotation, 0.0f);
 
@@ -92,6 +93,10 @@ void WindowApp::Update()
 	{
 		WindowResources::GetGraphics()->ToggleWireframe();
 	}
+	if (keyboard->ButtonPressed('N'))
+	{
+		m_model.ToggleAnimation();
+	}
 }
 
 void WindowApp::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
@@ -113,8 +118,11 @@ void WindowApp::Resume()
 
 	//int mesh = MeshLoader::CreatePlane(100, 100, 10, 10);
 	int mesh = MeshLoader::LoadModel("Assets/models/body_leather_bronze_epic.sef");
+	int mesh2 = MeshLoader::LoadModel("Assets/models/head.sef");
 	m_model.SetMesh(mesh);
+	m_model.SetSecondaryMesh(mesh2);
 	m_model.Scale(100, 100, 100);
+	m_model.ToggleAnimation();
 }
 
 void WindowApp::Suspend()

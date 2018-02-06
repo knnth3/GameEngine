@@ -19,7 +19,7 @@ inline MeshTempData* FindMeshByName(const std::string& name, std::vector<MeshTem
 class FBXReader
 {
 public:
-	bool ReadFile(const std::string& file, std::vector<SEF::MeshData>& meshArr, std::vector<SEF::Skeleton>& skeletonArr, std::string& error);
+	bool ReadFile(const std::string& file, std::vector<SEF::MeshData>& meshArr, std::vector<SEF::Skeleton>& skeletonArr, std::string& error, bool attatchment = false, int startBoneIndexCount = 0);
 
 private:
 
@@ -33,7 +33,8 @@ private:
 	int FindJointIndexUsingName(SEF::Skeleton& skeleton, const std::string& name)const;
 	FbxAMatrix GetGeometryTransformation(FbxNode * inNode) const;
 
-
+	bool m_bAttatchment;
+	int m_boneIndexOffset;
 	FbxScene* m_FBXScene;
 };
 

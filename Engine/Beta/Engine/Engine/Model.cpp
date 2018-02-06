@@ -41,7 +41,8 @@ Engine::Model::Model():
 Engine::Model::Model(int meshID)
 {
 	IDManager::AssignID(m_objectID);
-	m_meshID            = meshID;
+	m_meshID          = meshID;
+	m_meshID2         = -2;
 	m_texture         = "";
 	m_drawStyle       = DRAW_STYLE_NORMAL;
 	m_bUseViewMatrix  = true;
@@ -72,6 +73,11 @@ void Engine::Model::SetMesh(int ID)
 	InitializeAnimator();
 }
 
+void Engine::Model::SetSecondaryMesh(int ID)
+{
+	m_meshID2 = ID;
+}
+
 void Engine::Model::SetDrawStyle(int style)
 {
 	m_drawStyle = style;
@@ -87,9 +93,17 @@ int Engine::Model::GetMesh()const
 	return m_meshID;
 }
 
+int Engine::Model::GetSecondaryMesh() const
+{
+	return m_meshID2;
+}
+
 const Engine::AnimTransformPtr Engine::Model::GetTransforms() const
 {
-	return m_animator.GetTransforms();
+	if (m_animator)
+		return m_animator->GetTransforms();
+	else
+		return nullptr;
 }
 
 int Engine::Model::GetObjectID()const
@@ -204,6 +218,18 @@ void Engine::Model::SetTextureBounds(float length, float width, float xoffset, f
 	m_textureBounds = { length, width, xoffset, yoffset };
 }
 
+void Engine::Model::Update(double elapsed)
+{
+	if(m_animator)
+		m_animator->Update(elapsed);
+}
+
+void Engine::Model::ToggleAnimation()
+{
+	if(m_animator)
+		m_animator->TogglePlay();
+}
+
 const vec3_ptr Engine::Model::GetPosition()const 
 {
 	return m_position;
@@ -273,6 +299,6 @@ void Engine::Model::InitializeAnimator()
 	{
 		std::shared_ptr<Mesh> mesh;
 		MeshLoader::GrabMeshData(m_meshID, mesh);
-		m_animator.LoadMesh(mesh);
+		m_animator = std::make_unique<Animator>(mesh);
 	}
 }

@@ -8,30 +8,40 @@ Engine::Animation::Animation():
 {
 }
 
-Engine::Animation::Animation(const std::shared_ptr<KeyFrame>& first, float length) :
+Engine::Animation::Animation(const std::vector<std::shared_ptr<KeyFrame>>& first, double length, int numKeyFrames) :
 	m_length(length)
 {
-	m_current = first;
+	m_KeyFrames = first;
+	m_interval = double(length / numKeyFrames);
 }
 
-const std::shared_ptr<KeyFrame> Engine::Animation::GetCurrent()
+void Engine::Animation::operator=(const Animation & anim)
 {
-	return m_current;
+	m_KeyFrames = anim.m_KeyFrames;
+	m_length = anim.GetLength();
+	m_interval = anim.GetInterval();
 }
 
-float Engine::Animation::GetLength()
+const std::shared_ptr<KeyFrame> Engine::Animation::Get(double timestamp)const
+{
+	for (int index = 0; index < m_KeyFrames.size() - 1; index++)
+	{
+		if (m_KeyFrames[index]->GetTimestamp() <= timestamp && m_KeyFrames[index + 1]->GetTimestamp() >= timestamp)
+		{
+			return m_KeyFrames[index];
+		}
+	}
+	return nullptr;
+}
+
+double Engine::Animation::GetLength()const
 {
 	return m_length;
 }
 
-void Engine::Animation::Advance()
+double Engine::Animation::GetInterval() const
 {
-	m_current = m_current->GetNext();
-}
-
-void Engine::Animation::Reverse()
-{
-	m_current = m_current->GetPrev();
+	return m_interval;
 }
 
 Engine::JointTransform::JointTransform()
@@ -48,7 +58,7 @@ Engine::JointTransform::JointTransform(glm::vec3 position, glm::quat rotation)
 JointTransform Engine::JointTransform::Interpolate(const JointTransform & other, float progression)
 {
 	glm::vec3 pos = glm::mix(m_position, other.m_position, progression);
-	glm::quat rot = glm::mix(m_rotation, other.m_rotation, progression);
+	glm::quat rot = glm::slerp(m_rotation, other.m_rotation, progression);
 
 	return JointTransform(pos, rot);
 }
@@ -93,4 +103,14 @@ const std::shared_ptr<KeyFrame> Engine::KeyFrame::GetNext()const
 const std::shared_ptr<KeyFrame> Engine::KeyFrame::GetPrev()const
 {
 	return m_previous;
+}
+
+void Engine::KeyFrame::SetNext(std::shared_ptr<KeyFrame>& next)
+{
+	m_next = next;
+}
+
+void Engine::KeyFrame::SetPrevious(std::shared_ptr<KeyFrame>& previous)
+{
+	m_previous = previous;
 }

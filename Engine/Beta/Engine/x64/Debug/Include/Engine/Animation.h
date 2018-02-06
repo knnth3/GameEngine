@@ -30,11 +30,14 @@ namespace Engine
 		const std::shared_ptr<KeyFrame> GetNext()const;
 		const std::shared_ptr<KeyFrame> GetPrev()const;
 
+		void SetNext(std::shared_ptr<KeyFrame>& next);
+		void SetPrevious(std::shared_ptr<KeyFrame>& previous);
+
 	private:
 		const float m_timestamp;
 		const std::map<std::string, JointTransform> m_transforms;
-		const std::shared_ptr<KeyFrame> m_previous;
-		const std::shared_ptr<KeyFrame> m_next;
+		std::shared_ptr<KeyFrame> m_previous;
+		std::shared_ptr<KeyFrame> m_next;
 	};
 
 	//Assumes time in seconds
@@ -42,15 +45,16 @@ namespace Engine
 	{
 	public:
 		Animation();
-		Animation(const std::shared_ptr<KeyFrame>& first, const float length);
-		const std::shared_ptr<KeyFrame> GetCurrent();
-		float GetLength();
-		void Advance();
-		void Reverse();
+		Animation(const std::vector<std::shared_ptr<KeyFrame>>& first, const double length, int numKeyFrames);
+		void operator=(const Animation& anim);
+		const std::shared_ptr<KeyFrame> Get(double timestamp)const;
+		double GetLength()const;
+		double GetInterval()const;
 
 	private:
-		const float m_length;
-		std::shared_ptr<KeyFrame> m_current;
+		double m_length;
+		double m_interval;
+		std::vector<std::shared_ptr<KeyFrame>> m_KeyFrames;
 	};
 
 }

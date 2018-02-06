@@ -4,8 +4,10 @@
 using namespace std;
 using namespace SEF;
 
-bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error)
+bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr, std::vector<Skeleton>& skeletonArr, std::string& error, bool attatchment, int startBoneIndexCount)
 {
+	m_bAttatchment = attatchment;
+	m_boneIndexOffset = startBoneIndexCount;
 	FbxManager* lSdkManager = FbxManager::Create();
 	FbxIOSettings *ios = FbxIOSettings::Create(lSdkManager, IOSROOT);
 	lSdkManager->SetIOSettings(ios);
@@ -32,6 +34,19 @@ bool FBXReader::ReadFile(const std::string& file, std::vector<MeshData>& meshArr
 		for (int i = 0; i < childCount; i++)
 		{
 			GetChildInfo(lRootNode->GetChild(i), meshNode, tempArr, skeletonArr, true);
+		}
+	}
+
+	//Remove ':' char from name and replace with '_'
+	for (auto& skel : skeletonArr)
+	{
+		for (auto& joints : skel.Joints)
+		{
+			for (auto& c : joints.Name)
+			{
+				if (c == ':')
+					c = '_';
+			}
 		}
 	}
 
@@ -206,6 +221,12 @@ bool FBXReader::GetSkinWeightData(fbxsdk::FbxNode * pNode, MeshTempData* mesh, S
 				blendFactor.ID = currJointIndex;
 				blendFactor.Weight = (float)currCluster->GetControlPointWeights()[i];
 				int FBXIndex = currCluster->GetControlPointIndices()[i];
+
+				//Increment index if this is addon
+				if (m_bAttatchment)
+				{
+					blendFactor.ID += m_boneIndexOffset;
+				}
 
 				//Add the blend factor to each vertex located at the given position index (FBXIndex)
 				auto fbxIndexList = mesh->Library.find(FBXIndex);

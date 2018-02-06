@@ -15,7 +15,7 @@ bool Engine::RSSLibrary::Initialize()
 	bool value = false;
 	D3D11_RASTERIZER_DESC desc = {};
 	desc.AntialiasedLineEnable = true;
-	desc.CullMode = D3D11_CULL_BACK;
+	desc.CullMode = D3D11_CULL_NONE;
 	desc.DepthBias = 0;
 	desc.DepthBiasClamp = 0.0f;
 	desc.DepthClipEnable = true;

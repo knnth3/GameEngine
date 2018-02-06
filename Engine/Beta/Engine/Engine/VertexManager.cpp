@@ -68,21 +68,59 @@ void Engine::VertexManager::GetBatchData(std::vector<Batch>& batch)
 void Engine::VertexManager::CreateNewBatch(const Model& model)
 {
 	int mesh = model.GetMesh();
+	int secondaryMesh = model.GetSecondaryMesh();
 	std::string texture = model.GetTexture();
 	int style = model.GetDrawStyle();
 
 	//Get Mesh data
 	std::shared_ptr<Mesh> data;
 	std::vector<Index> newIndices;
-	MeshLoader::GrabMeshData(mesh, data);
 	size_t originalVertSize = m_vertices.size();
 	size_t originalIndexSize = m_indices.size();
-	m_vertices.insert(m_vertices.end(), data->Vertices.begin(), data->Vertices.end());
-	newIndices.insert(newIndices.end(), data->Indices.begin(), data->Indices.end());
 
-	for (size_t i = 0; i < newIndices.size(); i++)
+	MeshLoader::GrabMeshData(secondaryMesh, data);
+	int indexOffset = 0;
+	int vertexOffset = 0;
+	int testValue1 = 0;
+	int testValue2 = 0;
+	int testValue3 = 0;
+	if (data)
 	{
-		m_indices.push_back((Index)originalVertSize + newIndices[i]);
+		for (auto& vert : data->Vertices)
+		{
+			if (vert.m_jointIDs[0] == 29 || vert.m_jointIDs[0] == 30)
+			{
+				vert.m_jointIDs[0] = 29;
+			}
+			if (vert.m_jointIDs[1] == 29 || vert.m_jointIDs[1] == 30)
+			{
+				vert.m_jointIDs[1] = 29;
+			}
+			vert.m_position.y += 2.0f;
+		}
+		m_vertices.insert(m_vertices.end(), data->Vertices.begin(), data->Vertices.end());
+		newIndices.insert(newIndices.end(), data->Indices.begin(), data->Indices.end());
+		for (size_t i = 0; i < newIndices.size(); i++)
+		{
+			m_indices.push_back((Index)originalVertSize + newIndices[i]);
+		}
+		vertexOffset = data->Vertices.size();
+		indexOffset = data->Indices.size();
+		testValue1 = data->Indices.at(newIndices.size()-1);
+		testValue2 = data->Indices.at(newIndices.size()-2);
+		testValue3 = data->Indices.at(newIndices.size()-3);
+	}
+
+	data = nullptr;
+	MeshLoader::GrabMeshData(mesh, data);
+	if (data)
+	{
+		m_vertices.insert(m_vertices.end(), data->Vertices.begin(), data->Vertices.end());
+		newIndices.insert(newIndices.end(), data->Indices.begin(), data->Indices.end());
+		for (size_t i = indexOffset; i < newIndices.size(); i++)
+		{
+			m_indices.push_back((Index)originalVertSize + vertexOffset + newIndices[i]);
+		}
 	}
 
 	//Save batch info

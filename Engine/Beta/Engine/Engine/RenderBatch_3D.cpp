@@ -100,7 +100,7 @@ void Engine::RenderBatch_3D::LoadBatchInfo(Batch & batch)
 	{
 		for (int index = 0; index < batch.JointTransforms->size(); index++)
 		{
-			batchInfo.jointTransform[index] = batch.JointTransforms->at(index);
+			batchInfo.jointTransform[index] = glm::transpose(batch.JointTransforms->at(index));
 		}
 	}
 

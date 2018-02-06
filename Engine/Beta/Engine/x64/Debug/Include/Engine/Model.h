@@ -39,6 +39,7 @@ namespace Engine
 
 		__engine_decl virtual void SetTexture(const std::string& textureName) final;
 		__engine_decl virtual void SetMesh(int ID) final;
+		__engine_decl virtual void SetSecondaryMesh(int ID) final;
 		__engine_decl virtual void SetDrawStyle(int style) final;
 		__engine_decl virtual void Scale(const float x, const float y, const float z);
 		__engine_decl virtual void Scale(glm::vec3 scale);
@@ -57,6 +58,8 @@ namespace Engine
 		__engine_decl virtual void SetColor(glm::vec4 color);
 		__engine_decl virtual void SetOpacity(float alpha);
 		__engine_decl virtual void SetTextureBounds(float length, float width, float xoffset, float yoffset);
+		__engine_decl virtual void Update(double elapsed);
+		__engine_decl virtual void ToggleAnimation();
 
 		//Get Functions
 		__engine_decl virtual const AnimTransformPtr GetTransforms()const final;
@@ -64,6 +67,7 @@ namespace Engine
 		__engine_decl virtual int GetDrawStyle()const final;
 		__engine_decl virtual std::string GetTexture()const final;
 		__engine_decl virtual int GetMesh()const final;
+		__engine_decl virtual int GetSecondaryMesh()const final;
 		__engine_decl virtual const vec3_ptr GetPosition()const;
 		__engine_decl virtual glm::vec3 GetScale()const;
 		__engine_decl virtual glm::mat4 GetModelMatrix()const;
@@ -78,6 +82,7 @@ namespace Engine
 		bool m_bUseViewMatrix;
 		int m_objectID;
 		int m_meshID;
+		int m_meshID2;
 		int m_drawStyle;
 		std::string m_texture;
 		glm::mat4 m_scaleMatrix;
@@ -87,6 +92,6 @@ namespace Engine
 		glm::vec3 m_scale;
 		glm::vec4 m_color;
 		glm::vec4 m_textureBounds;
-		Animator m_animator;
+		std::unique_ptr<Animator> m_animator;
 	};
 }

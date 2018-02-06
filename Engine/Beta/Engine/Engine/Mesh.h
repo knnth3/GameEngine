@@ -1,5 +1,6 @@
 #pragma once
 #include "Vertex.h"
+#include "Animation.h"
 
 namespace Engine
 {
@@ -42,6 +43,7 @@ namespace Engine
 		JointNode ParentJoint;
 		std::vector<Vertex> Vertices;
 		std::vector<Index> Indices;
+		std::vector<Animation> Animations;
 	};
 
 }

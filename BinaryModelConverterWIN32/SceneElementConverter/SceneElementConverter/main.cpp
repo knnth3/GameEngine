@@ -4,14 +4,14 @@
 #include "AssimpReader.h"
 
 
-#define ORIGINAL_FILE "C:/Users/Kenneth/Music/cube.obj"
+#define ORIGINAL_FILE "C:/Users/Kenneth/Music/head1.fbx"
 #define ANIMATION_FILE "C:/Users/Kenneth/Music/walk_anim.dae"
-#define NEW_FILE "C:/Users/Kenneth/Music/cube.sef"
+#define NEW_FILE "C:/Users/Kenneth/Music/head1.sef"
 
 using namespace std;
 using namespace SEF;
 
-bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr);
+bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndexOffset);
 bool TestSEFReadProgram(MeshData & mesh, Skeleton & skeleton, Animation* animation);
 bool TestSEFWriteProgram(const MeshData* mesh, const Skeleton* skeleton, const Animation* animation = nullptr);
 
@@ -25,11 +25,11 @@ int main()
 
 	vector<MeshData> meshArr;
 	vector<Skeleton> skeletonArr;
-	if (TestFBXReadProgram(meshArr, skeletonArr))
+	if (TestFBXReadProgram(meshArr, skeletonArr, true, 29))
 	{
 		MeshData* writeMesh = (meshArr.empty()) ? nullptr : &meshArr[0];
 		Skeleton* writeSkeleton = (skeletonArr.empty()) ? nullptr : &skeletonArr[0];
-		TestSEFWriteProgram(writeMesh,writeSkeleton);
+		TestSEFWriteProgram(writeMesh,nullptr, nullptr);
 	}
 
 	//Read .sef
@@ -43,11 +43,11 @@ int main()
 	return 0;
 }
 
-bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr)
+bool TestFBXReadProgram(vector<MeshData>& meshArr, vector<Skeleton>& skeletonArr, bool attatchment, int skelIndexOffset)
 {
 	FBXReader IO;
 	string error;
-	if (!IO.ReadFile(ORIGINAL_FILE, meshArr, skeletonArr, error))
+	if (!IO.ReadFile(ORIGINAL_FILE, meshArr, skeletonArr, error, attatchment, skelIndexOffset))
 	{
 		cout << error << endl;
 		return false;

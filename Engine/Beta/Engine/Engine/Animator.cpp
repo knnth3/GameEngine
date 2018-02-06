@@ -8,24 +8,25 @@ Engine::Animator::Animator()
 {
 	m_transforms = nullptr;
 	LoadMesh(nullptr);
+	m_bPause = false;
 }
 
 Engine::Animator::Animator(const std::shared_ptr<Mesh>& mesh)
 {
 	m_transforms = nullptr;
 	LoadMesh(mesh);
+	m_bPause = false;
 }
 
-void Engine::Animator::LoadAnimation(const std::shared_ptr<Animation>& anim)
+void Engine::Animator::LoadAnimation(const Animation& anim)
 {
 	m_animation = anim;
-	m_time = 0.0f;
+	m_time = 0.0;
 }
 
 void Engine::Animator::LoadMesh(const std::shared_ptr<Mesh>& mesh)
 {
-	m_time = 0.0f;
-	m_animation = nullptr;
+	m_time = 0.0;
 	if (mesh)
 	{
 		m_parentJoint = mesh->ParentJoint;
@@ -34,23 +35,35 @@ void Engine::Animator::LoadMesh(const std::shared_ptr<Mesh>& mesh)
 			m_transforms = std::make_shared<vector<glm::mat4>>();
 			m_transforms->resize(MAX_JOINTS);
 		}
+		if (!mesh->Animations.empty())
+		{
+			LoadAnimation(mesh->Animations.front());
+		}
 	}
 }
 
-void Engine::Animator::Update(const float elapsed)
+void Engine::Animator::Update(const double elapsed)
 {
-	if (m_animation)
+	if (!m_bPause)
 	{
-		std::map<std::string, glm::mat4> pose;
-		UpdateTime(elapsed);
-		GetNextPose(pose);
-		ApplyPose(pose, m_parentJoint, glm::mat4());
+		if (m_animation.GetLength())
+		{
+			std::map<std::string, glm::mat4> pose;
+			UpdateTime(elapsed);
+			GetNextPose(pose);
+			ApplyPose(pose, m_parentJoint, glm::mat4());
+		}
 	}
+}
+
+void Engine::Animator::TogglePlay()
+{
+	m_bPause = !m_bPause;
 }
 
 void Engine::Animator::Reset()
 {
-	m_time = 0.0f;
+	m_time = 0.0;
 }
 
 const AnimTransformPtr Engine::Animator::GetTransforms() const
@@ -58,45 +71,50 @@ const AnimTransformPtr Engine::Animator::GetTransforms() const
 	return m_transforms;
 }
 
-void Engine::Animator::UpdateTime(const float elapsed)
+void Engine::Animator::UpdateTime(const double elapsed)
 {
-	float animLength = m_animation->GetLength();
+	double animTime = m_animation.GetLength();
 	m_time += elapsed;
-	while (m_time > animLength)
+	if (m_time >= animTime)
 	{
-		m_time -= animLength;
+		m_time = fmod(m_time, animTime);
 	}
 }
 
 void Engine::Animator::GetNextPose(std::map<std::string, glm::mat4>& pose)
 {
 	std::map<std::string, JointTransform> lastPose;
-	m_animation->GetCurrent()->GetAllTransforms(lastPose);
-	float current = m_animation->GetCurrent()->GetTimestamp();
-	float next = m_animation->GetCurrent()->GetNext()->GetTimestamp();
-	float dTime = next - current;
-	float cTime = m_time - current;
-	float progression = cTime / dTime;
+	auto& current = m_animation.Get(m_time);
+	current->GetAllTransforms(lastPose);
+	double deltaTime = m_time - current->GetTimestamp();
+	double range = current->GetNext()->GetTimestamp() - current->GetTimestamp();
+	double progression = deltaTime / range;
+	progression = (progression < 1.0) ? progression : 1.0;
+	progression = (progression > 0.0) ? progression : 0.0;
 
 	for (const auto& joint : lastPose)
 	{
-		auto& current = m_animation->GetCurrent()->GetTransform(joint.first);
-		auto& next = m_animation->GetCurrent()->GetNext()->GetTransform(joint.first);
-		JointTransform interpolated = current.Interpolate(next, progression);
+		auto& prev = current->GetTransform(joint.first);
+		auto& next = current->GetNext()->GetTransform(joint.first);
+		JointTransform interpolated = prev.Interpolate(next, (float)progression);
 		pose.emplace(joint.first, interpolated.GetLocalTransform());
 	}
 }
 
 void Engine::Animator::ApplyPose(std::map<std::string, glm::mat4>& pose, JointNode& joint, const glm::mat4& parentTransform)
 {
-	glm::mat4 currentLocalTransform = pose.at(joint.GetName());
-	glm::mat4 currentTransform = parentTransform * currentLocalTransform;
-	for (auto& child : m_parentJoint.Children)
+	auto jointMatrix = pose.find(joint.GetName());
+	if (jointMatrix != pose.end())
 	{
-		ApplyPose(pose, child, currentTransform);
-	}
+		glm::mat4 currentLocalTransform = jointMatrix->second;
+		glm::mat4 currentTransform = parentTransform * currentLocalTransform;
+		for (auto& child : joint.Children)
+		{
+			ApplyPose(pose, child, currentTransform);
+		}
 
-	currentTransform = currentTransform * joint.GetInverseBindTransform();
-	joint.SetAnimationTransform(currentTransform);
-	m_transforms->at(joint.GetIndex()) = joint.GetAnimationTransform();
+		currentTransform = currentTransform * joint.GetInverseBindTransform();
+		joint.SetAnimationTransform(currentTransform);
+		m_transforms->at(joint.GetIndex()) = joint.GetAnimationTransform();
+	}
 }
