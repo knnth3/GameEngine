@@ -1,6 +1,9 @@
 #pragma once
 #include "WindowsAdditionals.h"
 
+#define COMPILED_SHADER_EXT ".cso"
+#define RAW_SHADER_EXT ".hlsl"
+
 namespace Engine
 {
 	//Handles the creation and usage of all shader structures
@@ -14,9 +17,9 @@ namespace Engine
 
 		//Must coincide with the default vertex layout.
 		//Include the StandardDataStructures.hlsl file to get current Vertex structure.
-		bool SetVertexShader(const std::string& vsPath);
-		bool SetPixelShader(const std::string& psPath);
-		bool SetGeometryShader(const std::string& gsPath);
+		bool SetVertexShader(const std::string& vsPath, std::string& retError = std::string());
+		bool SetPixelShader(const std::string& psPath, std::string& retError = std::string());
+		bool SetGeometryShader(const std::string& gsPath, std::string& retError = std::string());
 
 		bool HasVertexShader()const;
 		bool HasPixelShader()const;
@@ -29,8 +32,10 @@ namespace Engine
 		void ClearVertexShader();
 		void ClearPixelShader();
 		void ClearGeometryShader();
-		std::vector<D3D11_INPUT_ELEMENT_DESC> GetInputLayoutDescFromVertexLayout();
+		std::vector<D3D11_INPUT_ELEMENT_DESC> GetInputLayoutDescFromVertexLayout(std::string& retError);
 		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, Microsoft::WRL::ComPtr<ID3DBlob>& blob, std::string* error = nullptr);
+		int ReadBytes(const std::string& name, std::string& bytes);
+		bool IsCompiled(const std::string& filepath);
 
 		std::string m_vsPath;
 		std::string m_psPath;

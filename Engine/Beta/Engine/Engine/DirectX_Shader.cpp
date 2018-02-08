@@ -1,5 +1,8 @@
 #include "DirectX_Shader.h"
 #include "Vertex.h"
+#include <string>
+#include <fstream>
+#include <sstream>
 
 using namespace Microsoft::WRL;
 
@@ -29,34 +32,61 @@ bool Engine::DirectX_Shader::SetAsActive()
 	return false;
 }
 
-bool Engine::DirectX_Shader::SetVertexShader(const std::string & vsPath)
+bool Engine::DirectX_Shader::SetVertexShader(const std::string & vsPath, std::string& retError)
 {
 	HRESULT result;
-	ComPtr<ID3DBlob> vsBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> vertexlayout = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexshader = nullptr;
-	std::string error;
-	auto vLayout = GetInputLayoutDescFromVertexLayout();
-	result = CompileShader(To_wstr(vsPath).c_str(), "main", "vs_5_0", vsBlob, &error);
-	if (FAILED(result))
-	{
-		OpenDialog(L"Load Error!", To_wstr(std::string("Could not open file: ") + vsPath + "\n\nOutput:\n" + error).c_str());
+	auto vLayout = GetInputLayoutDescFromVertexLayout(retError);
+	if (vLayout.empty())
 		return false;
-	}
 
-	result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &vertexshader);
-	if (FAILED(result))
+	if (IsCompiled(vsPath))
 	{
-		OpenDialog(L"CreateVertexShader failed!", To_wstr(std::string("Owner: ") + vsPath).c_str());
-		return false;
+		std::string bytes;
+		int size = ReadBytes(vsPath.c_str(), bytes);
+		if (!size)
+		{
+			retError += "Failed to open " + vsPath + "\n";
+			return false;
+		}
+		result = m_device->CreateVertexShader((void*)bytes.c_str(), size, NULL, &vertexshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create vertex shader from bytecode for file at "+ vsPath + "\n";
+			return false;
+		}
+		result = m_device->CreateInputLayout(vLayout.data(), (uint32_t)vLayout.size(), (void*)bytes.c_str(), size, &vertexlayout);
+		if (FAILED(result))
+		{
+			retError += "CreatInputLayout failed for file at " + vsPath + "\n";
+			return false;
+		}
+		bytes = nullptr;
 	}
-
-	result = m_device->CreateInputLayout(vLayout.data(), (uint32_t)vLayout.size(), vsBlob->GetBufferPointer(),
-		vsBlob->GetBufferSize(), &vertexlayout);
-	if (FAILED(result))
+	else
 	{
-		OpenDialog(L"CreatInputLayout failed!", To_wstr(std::string("Owner: ") + vsPath).c_str());
-		return false;
+		std::string error;
+		ComPtr<ID3DBlob> vsBlob = nullptr;
+		result = CompileShader(To_wstr(vsPath).c_str(), "main", "vs_5_0", vsBlob, &error);
+		if (FAILED(result))
+		{
+			retError += "Failed to open " + vsPath + "\n" + error + "\n";
+			return false;
+		}
+		result = m_device->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, &vertexshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create vertex shader from bytecode for file at " + vsPath + "\n";
+			return false;
+		}
+		result = m_device->CreateInputLayout(vLayout.data(), (uint32_t)vLayout.size(), vsBlob->GetBufferPointer(),
+			vsBlob->GetBufferSize(), &vertexlayout);
+		if (FAILED(result))
+		{
+			retError += "CreatInputLayout failed for file at " + vsPath + "\n";
+			return false;
+		}
 	}
 
 	ClearVertexShader();
@@ -66,24 +96,45 @@ bool Engine::DirectX_Shader::SetVertexShader(const std::string & vsPath)
 	return true;
 }
 
-bool Engine::DirectX_Shader::SetPixelShader(const std::string & psPath)
+bool Engine::DirectX_Shader::SetPixelShader(const std::string & psPath, std::string& retError)
 {
 	HRESULT result;
-	ComPtr<ID3DBlob> psBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelshader = nullptr;
-	std::string error;
-	result = CompileShader(To_wstr(psPath).c_str(), "main", "ps_5_0", psBlob, &error);
-	if (FAILED(result))
-	{
-		OpenDialog(L"Load Error!", To_wstr(std::string("Could not open file: ") + psPath + "\n\nOutput:\n" + error).c_str());
-		return false;
-	}
 
-	result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &pixelshader);
-	if (FAILED(result))
+	if (IsCompiled(psPath))
 	{
-		OpenDialog(L"CreatePixelShader failed!", To_wstr(std::string("Owner: ") + psPath).c_str());
-		return false;
+		std::string bytes;
+		int size = ReadBytes(psPath.c_str(), bytes);
+		if (!size)
+		{
+			retError += "Failed to open " + psPath + "\n";
+			return false;
+		}
+		result = m_device->CreatePixelShader((void*)bytes.c_str(), size, NULL, &pixelshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create pixel shader from bytecode for file at " + psPath + "\n";
+			return false;
+		}
+		bytes = nullptr;
+	}
+	else
+	{
+		std::string error;
+		ComPtr<ID3DBlob> psBlob = nullptr;
+		result = CompileShader(To_wstr(psPath).c_str(), "main", "ps_5_0", psBlob, &error);
+		if (FAILED(result))
+		{
+			retError += "Failed to open " + psPath + "\n" + error + "\n";
+			return false;
+		}
+
+		result = m_device->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), NULL, &pixelshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create pixel shader from bytecode for file at " + psPath + "\n";
+			return false;
+		}
 	}
 
 	ClearPixelShader();
@@ -92,24 +143,45 @@ bool Engine::DirectX_Shader::SetPixelShader(const std::string & psPath)
 	return true;
 }
 
-bool Engine::DirectX_Shader::SetGeometryShader(const std::string & gsPath)
+bool Engine::DirectX_Shader::SetGeometryShader(const std::string & gsPath, std::string& retError)
 {
 	HRESULT result;
-	ComPtr<ID3DBlob> gsBlob = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryshader = nullptr;
-	std::string error;
-	result = CompileShader(To_wstr(gsPath).c_str(), "main", "ps_5_0", gsBlob, &error);
-	if (FAILED(result))
-	{
-		OpenDialog(L"Load Error!", To_wstr(std::string("Could not open file: ") + gsPath + "\n\nOutput:\n" + error).c_str());
-		return false;
-	}
 
-	result = m_device->CreateGeometryShader(gsBlob->GetBufferPointer(), gsBlob->GetBufferSize(), NULL, &geometryshader);
-	if (FAILED(result))
+	if (IsCompiled(gsPath))
 	{
-		OpenDialog(L"CreateGeometryShader failed!", To_wstr(std::string("Owner: ") + gsPath).c_str());
-		return false;
+		std::string bytes;
+		int size = ReadBytes(gsPath.c_str(), bytes);
+		if (!size)
+		{
+			retError += "Failed to open " + gsPath + "\n";
+			return false;
+		}
+		result = m_device->CreateGeometryShader((void*)bytes.c_str(), size, NULL, &geometryshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create geometry shader from bytecode for file at " + gsPath + "\n";
+			return false;
+		}
+		bytes = nullptr;
+	}
+	else
+	{
+		std::string error;
+		ComPtr<ID3DBlob> gsBlob = nullptr;
+		result = CompileShader(To_wstr(gsPath).c_str(), "main", "ps_5_0", gsBlob, &error);
+		if (FAILED(result))
+		{
+			retError += "Failed to open " + gsPath + "\n" + error + "\n";
+			return false;
+		}
+
+		result = m_device->CreateGeometryShader(gsBlob->GetBufferPointer(), gsBlob->GetBufferSize(), NULL, &geometryshader);
+		if (FAILED(result))
+		{
+			retError += "Could not create geometry shader from bytecode for file at " + gsPath + "\n";
+			return false;
+		}
 	}
 
 	ClearGeometryShader();
@@ -167,7 +239,7 @@ void Engine::DirectX_Shader::ClearGeometryShader()
 	m_gsPath.clear();
 }
 
-std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDescFromVertexLayout()
+std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDescFromVertexLayout(std::string& retError)
 {
 	std::vector<D3D11_INPUT_ELEMENT_DESC> layout;
 	UINT byteOffset = 0;
@@ -202,9 +274,8 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDesc
 				desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 				break;
 			default:
-				OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Element is not 4 byte aligned.") +
-					std::wstring(L"\nBytes: ") + std::to_wstring(bytes) +
-					std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
+				retError += "Vertex Layout Set-up failed! Element is not 4 byte aligned.\nBytes : " 
+					+ std::to_string(bytes) + " read for " + *name;
 				throw std::exception();
 				break;
 			}
@@ -225,16 +296,14 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> Engine::DirectX_Shader::GetInputLayoutDesc
 				desc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
 				break;
 			default:
-				OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Element is not 4 byte aligned.") +
-					std::wstring(L"\nBytes: ") + std::to_wstring(bytes) +
-					std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
+				retError += "Vertex Layout Set-up failed! Element is not 4 byte aligned.\nBytes : "
+					+ std::to_string(bytes) + " read for " + *name;
 				throw std::exception();
 				break;
 			}
 			break;
 		default:
-			OpenDialog(L"Vertex Layout Set-up failed!", (std::wstring(L"Invald data type.") +
-				std::wstring(L"\nOwner: ") + To_wstr(*name)).c_str());
+			retError += "Vertex Layout Set-up failed! Invald data type given.";
 			throw std::exception();
 			break;
 		}
@@ -273,4 +342,26 @@ HRESULT Engine::DirectX_Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint
 
 	blob = shaderBlob;
 	return hr;
+}
+
+int Engine::DirectX_Shader::ReadBytes(const std::string& name, std::string& bytes)
+{
+	bytes.clear();
+	std::ifstream input(name);
+	if (input)
+	{
+		std::ostringstream strStream;
+		strStream << input.rdbuf();
+		bytes = strStream.str();
+	}
+	return bytes.size();
+}
+
+bool Engine::DirectX_Shader::IsCompiled(const std::string & filepath)
+{
+	std::string ext = filepath.substr(filepath.find_last_of('.'), std::string::npos);
+	if (!ext.compare(COMPILED_SHADER_EXT))
+		return true;
+
+	return false;
 }

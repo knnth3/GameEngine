@@ -41,8 +41,8 @@ namespace Engine
 		void RenderBatch(BatchInfo & info);
 
 		bool FillBuffers();
-		void CreateShaders();
-		void CreateConstBuffers();
+		bool CreateShaders(std::string& error);
+		bool CreateConstBuffers();
 		bool CreateRSSStates();
 
 		//New API

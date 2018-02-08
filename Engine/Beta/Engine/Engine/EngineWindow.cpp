@@ -246,7 +246,12 @@ bool Engine::GraphicsWindow::InitGraphics()
 		return false;
 
 	m_graphics = std::make_shared<GraphicsDevice>();
-	m_graphics->Initialize(m_hwnd, m_size);
+	if (!m_graphics->Initialize(m_hwnd, m_size))
+	{
+		m_graphics = nullptr;
+		CoUninitialize();
+		return false;
+	}
 
 	m_timer = std::make_shared<Timer>();
 	m_input = std::make_shared<Input>();

@@ -12,5 +12,4 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_ HINSTANCE hPrevInstance, _In
 		val = window.Run();
 	}
 	return val;
-
 }

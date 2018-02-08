@@ -8,7 +8,7 @@ using namespace Engine;
 WindowApp::WindowApp(std::string appName, float width, float height):
 	GraphicsWindow(appName, width, height)
 {
-	m_cube1.Scale(20, 20, 20);
+	m_cube1.Scale(100, 100, 100);
 	//m_cube1.SetColor(0.0f, 0.0f, 1.0f);
 
 	m_cube2.Scale(10000, 10000, 10000);
@@ -52,7 +52,7 @@ void WindowApp::Update()
 	double seconds = timer->elapsed() / 1000.0;
 	float velocity = float(acceleration * seconds);
 	m_model.Update(seconds);
-	m_cube1.RotateRelative(0.0f, velocity, 0.0f);
+	//m_cube1.RotateRelative(0.0f, velocity, 0.0f);
 	//m_model.RotateRelative(0.0f, rotation, 0.0f);
 
 	//Mouse
@@ -101,9 +101,9 @@ void WindowApp::Update()
 
 void WindowApp::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
 {
+	graphics->Draw(m_model);
 	graphics->Draw(m_cube1);
 	graphics->Draw(m_cube2);
-	graphics->Draw(m_model);
 	graphics->Draw(t);
 }
 
@@ -123,6 +123,8 @@ void WindowApp::Resume()
 	m_model.SetSecondaryMesh(mesh2);
 	m_model.Scale(100, 100, 100);
 	m_model.ToggleAnimation();
+	m_cube1 = m_model;
+	m_cube1.SetPosition(300, 0, 0);
 	//m_model.SetColor(2.0f, 0.44f, 0.0f);
 }
 

@@ -74,6 +74,9 @@ namespace Engine
 		__engine_decl virtual glm::vec4 GetColor()const;
 		__engine_decl virtual glm::vec4 GetTextureBounds()const;
 
+		//Operator overloads
+		__engine_decl void operator=(Model& m);
+
 	private:
 		void Rotate(float& original, const float& amount);
 		glm::mat4 GetRotationMatrix(glm::vec3 rotation)const;
@@ -92,6 +95,6 @@ namespace Engine
 		glm::vec3 m_scale;
 		glm::vec4 m_color;
 		glm::vec4 m_textureBounds;
-		std::unique_ptr<Animator> m_animator;
+		std::shared_ptr<Animator> m_animator;
 	};
 }

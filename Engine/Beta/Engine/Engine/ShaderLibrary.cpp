@@ -9,24 +9,38 @@ ShaderLibrary::ShaderLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * cont
 	m_activeShader = "";
 }
 
-bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::string& defaultPsPath)
+bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::string& defaultPsPath, 
+	std::string* error, const std::string& fallbackVsPath, const std::string& fallbackPsPath)
 {
+	bool result = true;
 	m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	auto ref = m_shaders.Emplace(m_device, m_context);
 	auto shader = m_shaders.At(ref);
+	std::string errorStr;
 	if (shader)
 	{
-		if (!shader->SetVertexShader(defaultVsPath))
-			return false;
+		if (!shader->SetVertexShader(defaultVsPath, errorStr))
+		{
+			result = shader->SetVertexShader(fallbackVsPath, errorStr);
+		}
 
-		if (!shader->SetPixelShader(defaultPsPath))
-			return false;
+		if (result)
+		{
+			if (!shader->SetPixelShader(defaultPsPath, errorStr))
+			{
+				result = shader->SetPixelShader(fallbackPsPath, errorStr);
+			}
+		}
 
-		shader->SetAsActive();
-		return true;
+		if(result)
+			shader->SetAsActive();
+	}
+	if (error && result)
+	{
+		error->insert(error->begin(), errorStr.begin(), errorStr.end());
 	}
 
-	return false;
+	return result;
 }
 
 const std::shared_ptr<DirectX_Shader> Engine::ShaderLibrary::GetShader(const std::string & uniqueName)

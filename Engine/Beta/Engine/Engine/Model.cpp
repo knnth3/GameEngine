@@ -260,6 +260,15 @@ glm::vec4 Engine::Model::GetTextureBounds()const
 	return m_textureBounds;
 }
 
+void Engine::Model::operator=(Model & m)
+{
+	IDManager::RemoveID(m_objectID);
+	m_objectID = m.m_objectID;
+	m_meshID = m.m_meshID;
+	m_meshID2 = m.m_meshID2;
+	m_animator = m.m_animator;
+}
+
 void Engine::Model::Rotate(float & original, const float & amount)
 {
 	original += amount;
@@ -299,6 +308,6 @@ void Engine::Model::InitializeAnimator()
 	{
 		std::shared_ptr<Mesh> mesh;
 		MeshLoader::GrabMeshData(m_meshID, mesh);
-		m_animator = std::make_unique<Animator>(mesh);
+		m_animator = std::make_shared<Animator>(mesh);
 	}
 }

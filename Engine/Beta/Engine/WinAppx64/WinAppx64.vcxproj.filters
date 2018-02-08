@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{35e2d7fb-32fd-4be9-b23d-0a60fcbbdb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{c7d71617-4e77-4d22-a73b-ffc684147b4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{a1f26601-65a6-4343-b95e-79e468b3150c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -28,26 +37,62 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\StandardDataStructs.hlsl">
-      <Filter>Resource Files</Filter>
+    <FxCompile Include="Assets\Shaders\3D_Color_PixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\3D_Color_VertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\3D_PixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\3D_VertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\Skybox_PixelShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\Skybox_VertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Shaders\StandardDataStructs.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\body_plate_silver_epic_rest1.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\Skybox_VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\body_plate_silver_epic_rest2.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\Skybox_PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\cube.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\3D_VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\head1.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\3D_PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\head2.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\3D_Color_PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\helm_lightskin_global_hood.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
-    <None Include="Assets\Shaders\3D_Color_VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
+    <None Include="Assets\Models\model.sef">
+      <Filter>Resource Files\Models</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\textures\Default\cubemap.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\Default\grass.jpg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\Default\white.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

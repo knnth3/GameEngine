@@ -23,30 +23,52 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 
 	std::string mesh    = "Assets/Models/cube.sef";
 	std::string texture = "Assets/textures/Default/white.png";
-	std::string vs      = "Assets/Shaders/3D_VertexShader.hlsl";
-	std::string ps      = "Assets/Shaders/3D_PixelShader.hlsl";
+	std::string vs      = "Assets/Shaders/3D_VertexShader.cso";
+	std::string ps      = "Assets/Shaders/3D_PixelShader.cso";
+	std::string vsFallback = "Assets/Shaders/3D_VertexShader.hlsl";
+	std::string psFallback = "Assets/Shaders/3D_PixelShader.hlsl";
+	std::string error;
+	try
+	{
+		//Shaders
+		if (!m_shaderLib.Initialize(vs, ps, &error, vsFallback, psFallback))
+			throw std::runtime_error(error);
 
-	if (!m_textureLib->Initialize(texture))
+		if (!CreateShaders(error))
+			throw std::runtime_error(error);
+
+		//Textures
+		if(!m_textureLib->Initialize(texture))
+			throw std::runtime_error("Texture library could not initialize.");
+
+		//Buffers
+		if (!m_bufferLib.Initialize())
+			throw std::runtime_error("Buffer Library could not initialze.");
+
+		m_bufferLib.GetVertexBuffer()->SetStride(sizeof(Vertex));
+
+		if(!CreateConstBuffers())
+			throw std::runtime_error("Could not create constant buffers.");
+
+		//Rasterization states
+		if(!m_rssLib.Initialize())
+			throw std::runtime_error("RSS library could not initialize.");
+
+		if(!CreateRSSStates())
+			throw std::runtime_error("RSS states not created");
+
+		//Mesh loader
+		if(!MeshLoader::Initialize(mesh))
+			throw std::runtime_error("MeshLoader initialization failed.");
+
+		return true;
+	}
+	catch (const std::runtime_error& e)
+	{
+		std::string message = e.what();
+		OpenDialog(L"Initialization of Graphics failed.", To_wstr(message).c_str());
 		return false;
-
-	if (!m_shaderLib.Initialize(vs, ps))
-		return false;
-
-	if (!m_bufferLib.Initialize())
-		return false;
-
-	if (!m_rssLib.Initialize())
-		return false;
-
-	if (!MeshLoader::Initialize(mesh))
-		return false;
-
-	m_bufferLib.GetVertexBuffer()->SetStride(sizeof(Vertex));
-
-	CreateShaders();
-	CreateConstBuffers();
-	CreateRSSStates();
-	return true;
+	}
 }
 
 void Engine::RenderBatch_3D::Draw(const Model & model)
@@ -177,19 +199,34 @@ bool Engine::RenderBatch_3D::FillBuffers()
 	return m_bFilled;
 }
 
-void Engine::RenderBatch_3D::CreateShaders()
+bool Engine::RenderBatch_3D::CreateShaders(std::string& error)
 {
+	bool result = false;
 	auto sbShader = m_shaderLib.CreateShader("CUBEMAP");
 	if (sbShader)
 	{
-		bool result;
-		result = sbShader->SetVertexShader("Assets/Shaders/Skybox_VertexShader.hlsl");
-		result = sbShader->SetPixelShader("Assets/Shaders/Skybox_PixelShader.hlsl");
+		result = sbShader->SetVertexShader("Assets/Shaders/Skybox_VertexShader.cso", error);
+		if (!result)
+		{
+			result = sbShader->SetVertexShader("Assets/Shaders/Skybox_VertexShader.hlsl", error);
+		}
+		if (result)
+		{
+			result = sbShader->SetPixelShader("Assets/Shaders/Skybox_PixelShader.cso", error);
+
+			if (!result)
+			{
+				result = sbShader->SetPixelShader("Assets/Shaders/Skybox_PixelShader.hlsl", error);
+			}
+		}
 	}
+
+	return result;
 }
 
-void Engine::RenderBatch_3D::CreateConstBuffers()
+bool Engine::RenderBatch_3D::CreateConstBuffers()
 {
+	bool result = false;
 	//Instance buffer
 	D3D11_BUFFER_DESC cbbd = { 0 };
 	cbbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -199,8 +236,11 @@ void Engine::RenderBatch_3D::CreateConstBuffers()
 	cbbd.MiscFlags = 0;
 	cbbd.StructureByteStride = 0;
 	auto buffer = m_bufferLib.CreateBuffer("BatchInfo", BUFFER_TYPE_CONSTANT, SHADER_TYPE_VERTEX);
-	if (!buffer->CreateBuffer(NULL, sizeof(PBInfo)))
-		throw std::exception();
+	if (buffer)
+	{
+		result = buffer->CreateBuffer(NULL, sizeof(PBInfo));
+	}
+	return result;
 }
 
 bool Engine::RenderBatch_3D::CreateRSSStates()

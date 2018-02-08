@@ -26,7 +26,7 @@ VSOutput main(Vertex input)
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
-    output.color = input.color;
+    output.color = float4(input.color, 1.0f);
 
 	return output;
 }

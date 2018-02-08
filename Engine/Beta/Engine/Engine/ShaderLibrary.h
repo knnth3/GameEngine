@@ -8,7 +8,8 @@ namespace Engine
 	{
 	public:
 		ShaderLibrary(ID3D11Device3 * device, ID3D11DeviceContext3 * context);
-		bool Initialize(const std::string& defaultVsPath, const std::string& defaultPsPath);
+		bool Initialize(const std::string& defaultVsPath, const std::string& defaultPsPath, 
+			std::string* error = nullptr, const std::string& fallbackVsPath = "", const std::string& fallbackPsPath = "");
 		const std::shared_ptr<DirectX_Shader> GetShader(const std::string& uniqueName);
 		const std::shared_ptr<DirectX_Shader> CreateShader(const std::string& uniqueName);
 		void DeleteShader(const std::string& uniqueName);

@@ -47,6 +47,7 @@ void Engine::GraphicsDevice::BeginScene()
 
 bool Engine::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
 {
+	bool result = true;
 	m_size = size;
 	m_deviceResources = std::make_unique<DeviceResources>();
 	m_deviceResources->SetHandleInfo(hwnd, m_size);
@@ -55,26 +56,31 @@ bool Engine::GraphicsDevice::Initialize(HWND hwnd, DisplaySize size)
 	auto factory_2D = m_deviceResources->GetD2DFactory();
 	auto context_2D = m_deviceResources->GetD2DDeviceContext();
 	auto wicFactory = m_deviceResources->GetWicImagingFactory();
-	TextStyleLib::Initialize(writeFactory);
-	bool result = false;
-	if (ENABLE_3D_RENDERING)
+
+	if (!TextStyleLib::Initialize(writeFactory))
+	{
+		OpenDialog(L"Text style library", L"Failed to initialize.");
+		result = false;
+	}
+	if (ENABLE_3D_RENDERING && result)
 	{
 		auto device_3D = m_deviceResources->GetD3DDevice();
 		auto context_3D = m_deviceResources->GetD3DDeviceContext();
-		//auto textureLoader = std::shared_ptr<TextureLoader>(new TextureLoader(device_3D, context_3D));
-		//m_renderBatch = std::unique_ptr<RenderBatch>(new RenderBatch(bufferManager, shaderManager, RSSManager, textureLoader));
-		//result = m_renderBatch->Initialize(m_camera);
 
 		m_renderBatch_3D = std::unique_ptr<RenderBatch_3D>(new RenderBatch_3D(device_3D, context_3D));
 		if (!m_renderBatch_3D->Initialize(m_camera))
-		{
-			OpenDialog(L"Graphics Error", L"3D render batch init failed!");
-			throw std::exception();
-		}
+			result = false;
+	}
+	if (result)
+	{
+		m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, context_2D, wicFactory));
+		m_renderBatch_2D->Initialize();
+	}
+	else
+	{
+		OpenDialog(L"Graphics Engine", L"Some essential assets failed to load. Requesting program exit.");
 	}
 
-	m_renderBatch_2D = std::unique_ptr<RenderBatch_2D>(new RenderBatch_2D(writeFactory, factory_2D, context_2D, wicFactory));
-	m_renderBatch_2D->Initialize();
 	return result;
 }
 
