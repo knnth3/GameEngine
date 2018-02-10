@@ -122,6 +122,50 @@ LRESULT Engine::GraphicsWindow::WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		PostQuitMessage(0);
 		break;
 
+	case WM_LBUTTONDOWN:
+		if (input)
+		{
+			auto mouse = input->GetMouse();
+			if (mouse)
+			{
+				mouse->SetButtonStatus(0, true);
+			}
+		}
+		break;
+
+	case WM_LBUTTONUP:
+		if (input)
+		{
+			auto mouse = input->GetMouse();
+			if (mouse)
+			{
+				mouse->SetButtonStatus(0, false);
+			}
+		}
+		break;
+
+	case WM_RBUTTONDOWN:
+		if (input)
+		{
+			auto mouse = input->GetMouse();
+			if (mouse)
+			{
+				mouse->SetButtonStatus(1, true);
+			}
+		}
+		break;
+
+	case WM_RBUTTONUP:
+		if (input)
+		{
+			auto mouse = input->GetMouse();
+			if (mouse)
+			{
+				mouse->SetButtonStatus(1, false);
+			}
+		}
+		break;
+
 	case WM_MOUSEMOVE:
 		if (input)
 		{

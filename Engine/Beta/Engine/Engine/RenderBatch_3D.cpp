@@ -27,15 +27,15 @@ bool Engine::RenderBatch_3D::Initialize(std::shared_ptr<Camera>& camera)
 	std::string ps      = "Assets/Shaders/3D_PixelShader.cso";
 	std::string vsFallback = "Assets/Shaders/3D_VertexShader.hlsl";
 	std::string psFallback = "Assets/Shaders/3D_PixelShader.hlsl";
-	std::string error;
 	try
 	{
+		std::string error;
 		//Shaders
 		if (!m_shaderLib.Initialize(vs, ps, &error, vsFallback, psFallback))
-			throw std::runtime_error(error);
+			throw std::runtime_error("Shader Library could not initialze.\n" + error);
 
 		if (!CreateShaders(error))
-			throw std::runtime_error(error);
+			throw std::runtime_error("Could not create nessesary shaders.\n" + error);
 
 		//Textures
 		if(!m_textureLib->Initialize(texture))

@@ -7,21 +7,58 @@ using namespace std;
 Engine::Animator::Animator()
 {
 	m_transforms = nullptr;
-	LoadMesh(nullptr);
 	m_bPause = false;
+	m_readyToChange = true;
+	m_next = nullptr;
+	m_currentAnimIndex = -1;
+	m_nextAnimIndex = -1;
+	LoadMesh(nullptr);
 }
 
 Engine::Animator::Animator(const std::shared_ptr<Mesh>& mesh)
 {
 	m_transforms = nullptr;
-	LoadMesh(mesh);
 	m_bPause = false;
+	m_readyToChange = true;
+	m_next = nullptr;
+	m_currentAnimIndex = -1;
+	m_nextAnimIndex = -1;
+	LoadMesh(mesh);
 }
 
-void Engine::Animator::LoadAnimation(const Animation& anim)
+bool Engine::Animator::SetAnimation(int index)
 {
-	m_animation = anim;
-	m_time = 0.0;
+	if (m_currentAnimIndex != index)
+	{
+		try
+		{
+ 			m_next = &m_mesh->Animations.at(index);
+			if (m_currentAnimIndex < 0)
+			{
+				m_animation = *m_next;
+				m_time = 0.0;
+				m_next = nullptr;
+				m_currentAnimIndex = index;
+			}
+			else if (!m_waitToFinish.at(m_currentAnimIndex))
+			{
+				m_animation = *m_next;
+				m_time = 0.0;
+				m_next = nullptr;
+				m_currentAnimIndex = index;
+			}
+			else
+			{
+				m_nextAnimIndex = index;
+			}
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 void Engine::Animator::LoadMesh(const std::shared_ptr<Mesh>& mesh)
@@ -29,21 +66,32 @@ void Engine::Animator::LoadMesh(const std::shared_ptr<Mesh>& mesh)
 	m_time = 0.0;
 	if (mesh)
 	{
+		m_mesh = mesh;
 		m_parentJoint = mesh->ParentJoint;
 		if (!m_transforms)
 		{
 			m_transforms = std::make_shared<vector<glm::mat4>>();
 			m_transforms->resize(MAX_JOINTS);
 		}
-		if (!mesh->Animations.empty())
+		if (!m_mesh->Animations.empty())
 		{
-			LoadAnimation(mesh->Animations.front());
+			m_waitToFinish.resize(m_mesh->Animations.size(), false);
+			m_time = 0.0;
+			m_readyToChange = true;
+			SetAnimation(0);
 		}
 	}
 }
 
 void Engine::Animator::Update(const double elapsed)
 {
+	if (m_next && m_readyToChange)
+	{
+		m_animation = *m_next;
+		m_currentAnimIndex = m_nextAnimIndex;
+		m_next = nullptr;
+		m_nextAnimIndex = -1;
+	}
 	if (!m_bPause)
 	{
 		if (m_animation.GetLength())
@@ -71,13 +119,25 @@ const AnimTransformPtr Engine::Animator::GetTransforms() const
 	return m_transforms;
 }
 
+int Engine::Animator::GetAnimationCount() const
+{
+	return (int)m_mesh->Animations.size();
+}
+
+void Engine::Animator::WaitToFinish(int index, bool value)
+{
+	m_waitToFinish.at(index) = value;
+}
+
 void Engine::Animator::UpdateTime(const double elapsed)
 {
 	double animTime = m_animation.GetLength();
 	m_time += elapsed;
+	m_readyToChange = false;
 	if (m_time >= animTime)
 	{
 		m_time = fmod(m_time, animTime);
+		m_readyToChange = true;
 	}
 }
 

@@ -230,6 +230,20 @@ void Engine::Model::ToggleAnimation()
 		m_animator->TogglePlay();
 }
 
+bool Engine::Model::SetAnimation(int index)
+{
+	if (m_animator)
+		return m_animator->SetAnimation(index);
+
+	return false;
+}
+
+void Engine::Model::SetAnimationDelay(int index, bool value)
+{
+	if (m_animator)
+		m_animator->WaitToFinish(index, value);
+}
+
 const vec3_ptr Engine::Model::GetPosition()const 
 {
 	return m_position;
@@ -258,6 +272,14 @@ glm::vec4 Engine::Model::GetColor()const
 glm::vec4 Engine::Model::GetTextureBounds()const
 {
 	return m_textureBounds;
+}
+
+int Engine::Model::GetNumAnimations() const
+{
+	if (m_animator)
+		return m_animator->GetAnimationCount();
+
+	return 0;
 }
 
 void Engine::Model::operator=(Model & m)

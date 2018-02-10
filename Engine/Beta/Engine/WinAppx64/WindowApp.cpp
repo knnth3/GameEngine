@@ -61,6 +61,24 @@ void WindowApp::Update()
 
 	//Keyboard
 	auto keyboard = WindowResources::GetInput()->GetKeyboard();
+	auto mouse = WindowResources::GetInput()->GetMouse();
+	mouse->AttatchCamera(camera);
+	if (keyboard->ButtonDown(' '))
+	{
+		m_model.SetAnimation(2);
+	}
+	else if (mouse->ButtonDown(0))
+	{
+		m_model.SetAnimation(1);
+		auto pos = mouse->Get3DPosition_2();
+		m_model.SetPosition(pos);
+		t = "Mouse button down";
+	}
+	else
+	{
+		m_model.SetAnimation(0);
+		t = "Mouse button up";
+	}
 	if (keyboard->ButtonDown('W'))
 	{
 		camera->Rotate(velocity, 0.0f, 0.0f);
@@ -117,7 +135,7 @@ void WindowApp::Resume()
 	graphics->SetSkybox(sb);
 
 	//int mesh = MeshLoader::CreatePlane(100, 100, 10, 10);
-	int mesh = MeshLoader::LoadModel("Assets/models/body_plate_silver_epic_rest1.sef");
+	int mesh = MeshLoader::LoadModel("Assets/models/body_plate_silver_epic.sef");
 	int mesh2 = MeshLoader::LoadModel("Assets/models/head1.sef");
 	m_model.SetMesh(mesh);
 	m_model.SetSecondaryMesh(mesh2);
@@ -125,6 +143,7 @@ void WindowApp::Resume()
 	m_model.ToggleAnimation();
 	m_cube1 = m_model;
 	m_cube1.SetPosition(300, 0, 0);
+	m_model.SetAnimationDelay(2, true);
 	//m_model.SetColor(2.0f, 0.44f, 0.0f);
 }
 

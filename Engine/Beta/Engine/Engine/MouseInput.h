@@ -10,7 +10,7 @@ namespace Engine
 		public InputDevice
 	{
 	public:
-		__engine_decl virtual glm::vec2 GetPositon()final;
+		__engine_decl virtual glm::vec2 GetPositon()const final;
 		__engine_decl virtual glm::vec3 Get3DPosition()final;
 		__engine_decl virtual glm::vec3 Get3DPosition_2()final;
 		__engine_decl virtual void AttatchCamera(std::shared_ptr<Engine::Camera>& camera)final;

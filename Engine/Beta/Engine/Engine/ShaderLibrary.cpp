@@ -21,6 +21,7 @@ bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::stri
 	{
 		if (!shader->SetVertexShader(defaultVsPath, errorStr))
 		{
+			errorStr += "\nTrying alternative:\n";
 			result = shader->SetVertexShader(fallbackVsPath, errorStr);
 		}
 
@@ -28,6 +29,7 @@ bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::stri
 		{
 			if (!shader->SetPixelShader(defaultPsPath, errorStr))
 			{
+				errorStr += "\nTrying alternative:\n";
 				result = shader->SetPixelShader(fallbackPsPath, errorStr);
 			}
 		}
@@ -35,9 +37,9 @@ bool ShaderLibrary::Initialize(const std::string& defaultVsPath, const std::stri
 		if(result)
 			shader->SetAsActive();
 	}
-	if (error && result)
+	if (error && !result)
 	{
-		error->insert(error->begin(), errorStr.begin(), errorStr.end());
+		*error = errorStr;
 	}
 
 	return result;

@@ -34,7 +34,7 @@ namespace Engine
 		void ClearGeometryShader();
 		std::vector<D3D11_INPUT_ELEMENT_DESC> GetInputLayoutDescFromVertexLayout(std::string& retError);
 		HRESULT CompileShader(LPCWSTR srcFile, LPCSTR entryPoint, LPCSTR profile, Microsoft::WRL::ComPtr<ID3DBlob>& blob, std::string* error = nullptr);
-		int ReadBytes(const std::string& name, std::string& bytes);
+		int ReadBytes(const std::string& name, std::vector<byte>& bytes);
 		bool IsCompiled(const std::string& filepath);
 
 		std::string m_vsPath;

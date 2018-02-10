@@ -60,6 +60,8 @@ namespace Engine
 		__engine_decl virtual void SetTextureBounds(float length, float width, float xoffset, float yoffset);
 		__engine_decl virtual void Update(double elapsed);
 		__engine_decl virtual void ToggleAnimation();
+		__engine_decl virtual bool SetAnimation(int index);
+		__engine_decl virtual void SetAnimationDelay(int index, bool value);
 
 		//Get Functions
 		__engine_decl virtual const AnimTransformPtr GetTransforms()const final;
@@ -73,6 +75,7 @@ namespace Engine
 		__engine_decl virtual glm::mat4 GetModelMatrix()const;
 		__engine_decl virtual glm::vec4 GetColor()const;
 		__engine_decl virtual glm::vec4 GetTextureBounds()const;
+		__engine_decl virtual int GetNumAnimations()const;
 
 		//Operator overloads
 		__engine_decl void operator=(Model& m);

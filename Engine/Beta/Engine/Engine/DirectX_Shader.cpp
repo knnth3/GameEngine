@@ -43,26 +43,27 @@ bool Engine::DirectX_Shader::SetVertexShader(const std::string & vsPath, std::st
 
 	if (IsCompiled(vsPath))
 	{
-		std::string bytes;
+		std::vector<byte> bytes;
 		int size = ReadBytes(vsPath.c_str(), bytes);
 		if (!size)
 		{
 			retError += "Failed to open " + vsPath + "\n";
 			return false;
 		}
-		result = m_device->CreateVertexShader((void*)bytes.c_str(), size, NULL, &vertexshader);
+		result = m_device->CreateVertexShader((void*)&bytes[0], size, NULL, &vertexshader);
 		if (FAILED(result))
 		{
-			retError += "Could not create vertex shader from bytecode for file at "+ vsPath + "\n";
+			_com_error err(result);
+			std::wstring errMsg = err.ErrorMessage();
+			retError += "Could not create vertex shader from bytecode for file at "+ vsPath + "\n" + To_str(errMsg) + "\n";
 			return false;
 		}
-		result = m_device->CreateInputLayout(vLayout.data(), (uint32_t)vLayout.size(), (void*)bytes.c_str(), size, &vertexlayout);
+		result = m_device->CreateInputLayout(vLayout.data(), (uint32_t)vLayout.size(), (void*)&bytes[0], size, &vertexlayout);
 		if (FAILED(result))
 		{
 			retError += "CreatInputLayout failed for file at " + vsPath + "\n";
 			return false;
 		}
-		bytes = nullptr;
 	}
 	else
 	{
@@ -103,20 +104,19 @@ bool Engine::DirectX_Shader::SetPixelShader(const std::string & psPath, std::str
 
 	if (IsCompiled(psPath))
 	{
-		std::string bytes;
+		std::vector<byte> bytes;
 		int size = ReadBytes(psPath.c_str(), bytes);
 		if (!size)
 		{
 			retError += "Failed to open " + psPath + "\n";
 			return false;
 		}
-		result = m_device->CreatePixelShader((void*)bytes.c_str(), size, NULL, &pixelshader);
+		result = m_device->CreatePixelShader((void*)&bytes[0], size, NULL, &pixelshader);
 		if (FAILED(result))
 		{
 			retError += "Could not create pixel shader from bytecode for file at " + psPath + "\n";
 			return false;
 		}
-		bytes = nullptr;
 	}
 	else
 	{
@@ -150,20 +150,19 @@ bool Engine::DirectX_Shader::SetGeometryShader(const std::string & gsPath, std::
 
 	if (IsCompiled(gsPath))
 	{
-		std::string bytes;
+		std::vector<byte> bytes;
 		int size = ReadBytes(gsPath.c_str(), bytes);
 		if (!size)
 		{
 			retError += "Failed to open " + gsPath + "\n";
 			return false;
 		}
-		result = m_device->CreateGeometryShader((void*)bytes.c_str(), size, NULL, &geometryshader);
+		result = m_device->CreateGeometryShader((void*)&bytes[0], size, NULL, &geometryshader);
 		if (FAILED(result))
 		{
 			retError += "Could not create geometry shader from bytecode for file at " + gsPath + "\n";
 			return false;
 		}
-		bytes = nullptr;
 	}
 	else
 	{
@@ -344,17 +343,23 @@ HRESULT Engine::DirectX_Shader::CompileShader(LPCWSTR srcFile, LPCSTR entryPoint
 	return hr;
 }
 
-int Engine::DirectX_Shader::ReadBytes(const std::string& name, std::string& bytes)
+int Engine::DirectX_Shader::ReadBytes(const std::string& name, std::vector<byte>& bytes)
 {
 	bytes.clear();
-	std::ifstream input(name);
-	if (input)
+	std::ifstream infile(name, std::ios::in | std::ios::binary);
+	if (infile)
 	{
-		std::ostringstream strStream;
-		strStream << input.rdbuf();
-		bytes = strStream.str();
+
+		//get length of file
+		infile.seekg(0, infile.end);
+		size_t length = infile.tellg();
+		infile.seekg(0, infile.beg);
+		bytes.resize(length, 0);
+
+		//read file
+		infile.read((char*)&bytes[0], length);
 	}
-	return bytes.size();
+	return (int)bytes.size();
 }
 
 bool Engine::DirectX_Shader::IsCompiled(const std::string & filepath)

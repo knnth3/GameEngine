@@ -139,65 +139,67 @@ int Engine::MeshLoader::CreateMesh(const std::string& filename)
 	SEF::SEStream io;
 	SEF::MeshData meshdata = {};
 	SEF::Skeleton skeldata = {};
-	SEF::Animation animation;
-	if (io.ReadFile(filename, &meshdata, &skeldata, &animation))
+	std::vector<SEF::Animation> anims;
+	if (io.ReadFile(filename, &meshdata, &skeldata, &anims))
 	{
 		auto data = std::make_shared<Mesh>();
-
-		if (animation.JointCount())
+		for (auto& animation : anims)
 		{
-			std::shared_ptr<KeyFrame> m_first;
-			std::shared_ptr<KeyFrame> m_current;
-			std::vector<std::shared_ptr<KeyFrame>> m_keyframes;
-			auto jointNames = animation.JointNames();
-			std::map<std::string, JointTransform> transforms;
-			for (int keyIndex = 0; keyIndex < animation.TimeStampCount(); keyIndex++)
+			if (animation.JointCount())
 			{
-				float time = 0.0f;
-				for (int index = 0; index < animation.JointCount(); index++)
+				std::shared_ptr<KeyFrame> m_first;
+				std::shared_ptr<KeyFrame> m_current;
+				std::vector<std::shared_ptr<KeyFrame>> m_keyframes;
+				auto jointNames = animation.JointNames();
+				std::map<std::string, JointTransform> transforms;
+				for (int keyIndex = 0; keyIndex < animation.TimeStampCount(); keyIndex++)
 				{
-					auto& key = animation[index]->at(keyIndex);
-					glm::vec3 position;
-					position.x = key.Position.x;
-					position.y = key.Position.y;
-					position.z = key.Position.z;
+					float time = 0.0f;
+					for (int index = 0; index < animation.JointCount(); index++)
+					{
+						auto& key = animation[index]->at(keyIndex);
+						glm::vec3 position;
+						position.x = key.Position.x;
+						position.y = key.Position.y;
+						position.z = key.Position.z;
 
-					glm::quat quaternion;
-					quaternion.x = key.Quartenion.x;
-					quaternion.y = key.Quartenion.y;
-					quaternion.z = key.Quartenion.z;
-					quaternion.w = key.Quartenion.w;
+						glm::quat quaternion;
+						quaternion.x = key.Quartenion.x;
+						quaternion.y = key.Quartenion.y;
+						quaternion.z = key.Quartenion.z;
+						quaternion.w = key.Quartenion.w;
 
-					time = key.Timestamp;
+						time = key.Timestamp;
 
-					std::pair<std::string, JointTransform> pair(jointNames[index], JointTransform(position, quaternion));
-					transforms.emplace(pair);
+						std::pair<std::string, JointTransform> pair(jointNames[index], JointTransform(position, quaternion));
+						transforms.emplace(pair);
+					}
+					if (keyIndex == 0)
+					{
+						m_first = std::make_shared<KeyFrame>(transforms, nullptr, nullptr, time);
+						m_current = m_first;
+						transforms.clear();
+						m_keyframes.push_back(m_first);
+					}
+					else if (keyIndex == animation.TimeStampCount() - 1)
+					{
+						m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, m_first, time));
+						m_current = m_current->GetNext();
+						m_first->SetPrevious(m_current);
+						transforms.clear();
+						m_keyframes.push_back(m_current);
+					}
+					else
+					{
+						m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, nullptr, time));
+						m_current = m_current->GetNext();
+						transforms.clear();
+						m_keyframes.push_back(m_current);
+					}
 				}
-				if (keyIndex == 0)
-				{
-					m_first = std::make_shared<KeyFrame>(transforms, nullptr, nullptr, time);
-					m_current = m_first;
-					transforms.clear();
-					m_keyframes.push_back(m_first);
-				}
-				else if (keyIndex == animation.TimeStampCount() - 1)
-				{
-					m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, m_first, time));
-					m_current = m_current->GetNext();
-					m_first->SetPrevious(m_current);
-					transforms.clear();
-					m_keyframes.push_back(m_current);
-				}
-				else
-				{
-					m_current->SetNext(std::make_shared<KeyFrame>(transforms, m_current, nullptr, time));
-					m_current = m_current->GetNext();
-					transforms.clear();
-					m_keyframes.push_back(m_current);
-				}
+
+				data->Animations.emplace_back(m_keyframes, animation.GetDuration(), animation.TimeStampCount());
 			}
-
-			data->Animations.emplace_back(m_keyframes, animation.GetDuration(), animation.TimeStampCount());
 		}
 
 		if (!skeldata.Joints.empty())

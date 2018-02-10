@@ -52,7 +52,7 @@ namespace SEF
 
 		void AddAnimation(const Animation& anim);
 		int WriteFile(const std::string& filename, const MeshData* mesh, const Skeleton* skeleton);
-		int ReadFile(const std::string& filename, MeshData* mesh, Skeleton* skeleton, Animation* animation)const;
+		int ReadFile(const std::string& filename, MeshData* mesh, Skeleton* skeleton, std::vector<Animation>* animation)const;
 
 	private:
 		std::queue<Animation> m_animations;
@@ -253,7 +253,7 @@ namespace SEF
 		return bytesWritten;
 	}
 
-	inline int SEStream::ReadFile(const std::string & filename, MeshData * mesh, Skeleton * skeleton, Animation* animation) const
+	inline int SEStream::ReadFile(const std::string & filename, MeshData * mesh, Skeleton * skeleton, std::vector<Animation>* animation) const
 	{
 		int bytesRead = 0;
 		std::string ext = GetExtension(filename);
@@ -262,7 +262,7 @@ namespace SEF
 			return false;
 		}
 
-		std::ifstream myFile(filename.c_str(), std::ios::out | std::ios::binary);
+		std::ifstream myFile(filename.c_str(), std::ios::in | std::ios::binary);
 		SEF_HEADER header;
 		try
 		{
@@ -354,14 +354,16 @@ namespace SEF
 				}
 			}
 
-			if (header.AnimCount && animation)
+			while (header.AnimCount && animation)
 			{
-				//header.AnimCount--;
+				header.AnimCount--;
+				animation->emplace_back();
+				auto& anim = animation->back();
 				SEF_ANIMATION_HEADER animInfo;
 				myFile.read((char*)&animInfo, sizeof(animInfo));
 				bytesRead += sizeof(animInfo);
 
-				animation->SetTimestampCount(animInfo.Timestamps);
+				anim.SetTimestampCount(animInfo.Timestamps);
 				std::vector<std::string> jointNames;
 				jointNames.resize(animInfo.Joints);
 				for (auto& name : jointNames)
@@ -386,7 +388,7 @@ namespace SEF
 						bytesRead += sizeof(key);
 					}
 
-					animation->AddCluster(jointNames[index], cluster);
+					anim.AddCluster(jointNames[index], cluster);
 				}
 			}
 

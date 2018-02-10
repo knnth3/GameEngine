@@ -4,9 +4,8 @@
 using namespace Engine;
 
 
-glm::vec2 Engine::MouseInput::GetPositon()
+glm::vec2 Engine::MouseInput::GetPositon()const
 {
-	std::lock_guard<std::mutex> lock(m_mouse_lock);
 	return m_position;
 }
 
