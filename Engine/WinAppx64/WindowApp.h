@@ -15,10 +15,8 @@ protected:
 
 private:
 
-	Engine::Text t;
+	Engine::Model m_skybox;
 	Engine::Model m_model;
-	Engine::Model m_cube1;
-	Engine::Model m_cube2;
 
 };
 

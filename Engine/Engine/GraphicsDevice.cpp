@@ -120,7 +120,7 @@ std::shared_ptr<Engine::TextureLibrary> Engine::GraphicsDevice::GetTextureLibrar
 	return m_renderBatch_3D->GetTextureLibrary();
 }
 
-void Engine::GraphicsDevice::Draw(Model& model)
+void Engine::GraphicsDevice::Draw(const Model& model)
 {
 	if(ENABLE_3D_RENDERING)
 		m_renderBatch_3D->Draw(model);

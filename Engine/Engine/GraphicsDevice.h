@@ -23,7 +23,7 @@ namespace Engine
 		__engine_decl virtual std::shared_ptr<Camera> GetCamera()final;
 		__engine_decl virtual std::shared_ptr<TextureLibrary> GetTextureLibrary()final;
 		__engine_decl virtual Engine::DisplaySize GetWindowDimensions()final;
-		__engine_decl virtual void Draw(Model& model)final;
+		__engine_decl virtual void Draw(const Model& model)final;
 		__engine_decl virtual void Draw(const Text& str);
 		__engine_decl virtual void Draw(const Square& sqr, bool background = false);
 		__engine_decl virtual void Draw(const Line& lne);

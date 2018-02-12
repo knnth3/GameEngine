@@ -19,8 +19,8 @@ Console::Console(int maxLogs, float width, float height):
 		m_messages[x] = new Text();
 		m_messages[x]->SetBounds(m_width, m_textHeight);
 	}
-	m_textureID = BrushManager::CreateNewBrush(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	m_background.SetDimensions(m_width, m_height);
+	m_textureID = BrushManager::CreateNewBrush(glm::vec4(0.0f, 0.0f, 0.0f, 0.3f));
+	m_background.SetDimensions(m_width, (m_textHeight * m_maxLogs) + m_textHeight);
 	m_background.SetBrush(m_textureID, BRUSH_TEXTURE_DEFAULT);
 }
 
@@ -84,7 +84,7 @@ void Engine::Console::SetDimensions(float width, float height)
 {
 	m_width = width;
 	m_height = height;
-	m_background.SetDimensions(width, height);
+	m_background.SetDimensions(width, (m_textHeight * m_maxLogs) + m_textHeight);
 }
 
 void Engine::Console::SetTextHeight(float value)
