@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>a22f9139-690a-4401-9d46-e9fc1688a859</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>909f7315-43e1-45aa-aefe-728559c973a4</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>0ced4935-f199-4209-85e2-0e1bf13895de</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="Common\DirectXHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClCompile Include="Common\DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Filter Include="Lower Level Application">
+      <UniqueIdentifier>{d475b585-9d9c-494d-a2c7-784f22022d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{aff5f862-5916-4dcf-925f-4933e08dfea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{eccd9a3c-52ef-4501-9a42-f7766d9a4d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{8cf6c27d-f122-4742-8ef9-52c4e5e8d7d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\Default">
+      <UniqueIdentifier>{bf46db7c-6fb1-48df-9a02-2b386683e2d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{85524c02-e5be-4904-866b-2645b3f89a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\CoreResources">
+      <UniqueIdentifier>{6bdb2fe4-112f-45bc-8a82-04f59cc3dae0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\MainMenu">
+      <UniqueIdentifier>{f5723e25-3ef8-445e-bd49-003ea2ba3d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\MainMenu">
+      <UniqueIdentifier>{dfb569ff-7cf4-44b8-bbfe-92731bce0e6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\GameState">
+      <UniqueIdentifier>{80a11c72-ca3e-42ec-876d-3275672fea7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Button">
+      <UniqueIdentifier>{68950191-6ea0-46a9-ae48-8d569c03c905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Scenes">
+      <UniqueIdentifier>{4026a367-8316-4eca-a42d-76ec7a8e2369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Map Editor">
+      <UniqueIdentifier>{5ca4c3e4-072b-48c6-a952-990f4cf1fdb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Actor">
+      <UniqueIdentifier>{add97c62-803b-4763-9a5b-5c3e83d08bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Effects">
+      <UniqueIdentifier>{a08e1a02-936a-4296-8b92-91ed292215b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\Basic_Character">
+      <UniqueIdentifier>{d54b42de-0ff1-4e96-b72b-af6e1b46def6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\PathFinder">
+      <UniqueIdentifier>{b2b20d0a-01f7-47e1-9ad7-0ce3f7001033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\Tileset">
+      <UniqueIdentifier>{2f6b6b42-a626-4ef5-8df8-8fbfdb65bb13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Testing Realm">
+      <UniqueIdentifier>{4f3b456d-1d4c-4f2b-8b19-ef651a481b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Actor\Character">
+      <UniqueIdentifier>{facbb5f9-ace1-441f-8d6b-d5793605b771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Actor\Item">
+      <UniqueIdentifier>{c1da0e87-898e-4301-9224-7b1fb7842eff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="App.cpp">
+      <Filter>Lower Level Application</Filter>
+    </ClCompile>
+    <ClCompile Include="RPG_Game1Main.cpp">
+      <Filter>Lower Level Application</Filter>
+    </ClCompile>
+    <ClCompile Include="RPG_Game_App.cpp" />
+    <ClCompile Include="Common\UWP_InputControlls.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GS_MainMenu.cpp">
+      <Filter>Core\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Button.cpp">
+      <Filter>Core\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GS_MapEditor.cpp">
+      <Filter>Core\Map Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GS_SceneManager.cpp">
+      <Filter>Core\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Core\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Effects\SpotLightDiffuse.cpp">
+      <Filter>Core\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
+      <Filter>Core\PathFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="GS_TestingRealm.cpp">
+      <Filter>Core\Testing Realm</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Character.cpp">
+      <Filter>Core\Actor\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Core\Actor\Item</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.h">
+      <Filter>Lower Level Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RPG_Game1Main.h">
+      <Filter>Lower Level Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RPG_Game_App.h" />
+    <ClInclude Include="Common\UWP_InputControlls.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GS_MainMenu.h">
+      <Filter>Core\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Button.h">
+      <Filter>Core\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GameState.h">
+      <Filter>Core\GameState</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GS_MapEditor.h">
+      <Filter>Core\Map Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GS_SceneManager.h">
+      <Filter>Core\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Core\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects\SpotLightDiffuse.h">
+      <Filter>Core\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>Core\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="GS_TestingRealm.h">
+      <Filter>Core\Testing Realm</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Character.h">
+      <Filter>Core\Actor\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Core\Actor\Item</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RPG_Game1_TemporaryKey.pfx" />
+    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <Filter>Content</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <Filter>Content</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Populace\Populace.dll">
+      <Filter>Content</Filter>
+    </None>
+    <None Include="Assets\textures\Default\diffuse.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\emissive.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\metallic.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\normal.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\roughness.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\MainMenu\background.jpg">
+      <Filter>Assets\Textures\MainMenu</Filter>
+    </None>
+    <None Include="Assets\textures\MainMenu\button_selected.png">
+      <Filter>Assets\Textures\MainMenu</Filter>
+    </None>
+    <None Include="Assets\textures\MainMenu\button_unselected.png">
+      <Filter>Assets\Textures\MainMenu</Filter>
+    </None>
+    <None Include="Assets\Shaders\3D Shader.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="Assets\textures\grass.jpg">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\heightmap.png">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\heightmap2.png">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\heightmap3.png">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\Basic_Character\base_sprite.png">
+      <Filter>Assets\Textures\Basic_Character</Filter>
+    </None>
+    <None Include="Assets\textures\Basic_Character\base_sprite_big.gif">
+      <Filter>Assets\Textures\Basic_Character</Filter>
+    </None>
+    <None Include="Assets\textures\light_tile.jpg">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\Tileset\spritesheet.png">
+      <Filter>Assets\Textures\Tileset</Filter>
+    </None>
+    <None Include="Assets\textures\Basic_Character\rpg_sprite_walk.png">
+      <Filter>Assets\Textures\Basic_Character</Filter>
+    </None>
+    <None Include="Assets\Models\Cube.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\Plane.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\textures\grid_tile.png">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\Models\body_robe_bronze_common.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\body_robe_gold_common.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\newcube.bin">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Shaders\vertex_color_shader.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+</Project>

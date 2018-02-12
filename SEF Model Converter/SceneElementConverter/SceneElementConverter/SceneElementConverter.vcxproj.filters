@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>
+      </Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\FBX reader">
+      <UniqueIdentifier>{15d4dd20-e499-4cde-aa4c-8fd97a844b42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Include">
+      <UniqueIdentifier>{d49437af-c67b-4488-9d83-dbddd041f89e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assimp Reader">
+      <UniqueIdentifier>{0f6f3505-0374-4afa-b22c-039d3f4dac7e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXReader.cpp">
+      <Filter>Source Files\FBX reader</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpReader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\DataTypes.h">
+      <Filter>Source Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXReader.h">
+      <Filter>Source Files\FBX reader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SEStream.h">
+      <Filter>Source Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpReader.h" />
+    <ClInclude Include="include\Animation.h">
+      <Filter>Source Files\Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

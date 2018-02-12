@@ -1,2 +1,0 @@
-MainPackage=D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\x64\Debug\TestGame_UWP\TestGame_UWP_1.0.0.0_x64_Debug.appx
-SymbolPackage=D:\Users\Kenneth\Documents\GitHub\Game_Engine\Engine\Beta\Engine_UWP\AppPackages\TestGame_UWP\TestGame_UWP_1.0.0.0_Debug_Test\TestGame_UWP_1.0.0.0_x64_Debug.appxsym

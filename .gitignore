@@ -49,4 +49,4 @@
 #Exceptions
 !/Engine/Beta/Engine/TestGame/Assets/**/*.obj
 !/Engine/Beta/Engine_UWP/TestGame_UWP/Assets/**/*.obj
-BinaryModelConverterWIN32/SceneElementConverter/SceneElementConverter/FBX/libfbxsdk-mtd.lib
+SEF Model Converter/SceneElementConverter/SceneElementConverter/FBX/libfbxsdk-mtd.lib

@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>a4051ef4-9495-4c43-98fb-b5789bf11540</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>94aa211d-a06c-4bc3-b1a2-1d6b450ba3df</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>252fe499-a5cb-44f7-9601-669a20e1d5b7</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="Common\DirectXHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClCompile Include="Common\DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{a215a48a-7d9d-4817-bc3d-c8335979a612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{5fc87b34-f7e3-4929-9abe-5724e0304d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\Default">
+      <UniqueIdentifier>{094295a5-d2c5-4d89-83a3-6454f5dc8210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shaders">
+      <UniqueIdentifier>{4e69e5d8-c06c-4cc0-8e2c-6997e96e3877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Dlls">
+      <UniqueIdentifier>{5c97f336-db72-4ca5-86a6-6b2948a623b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lower Level app">
+      <UniqueIdentifier>{12d4ceb2-7a5a-4a75-b36f-d350c2227802}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Common\InputController.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Lower Level app</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame_UWPMain.cpp">
+      <Filter>Lower Level app</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGame.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Common\InputController.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Lower Level app</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame_UWPMain.h">
+      <Filter>Lower Level app</Filter>
+    </ClInclude>
+    <ClInclude Include="TestGame.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestGame_UWP_TemporaryKey.pfx" />
+    <None Include="Assets\Shaders\2D Shader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </None>
+    <None Include="Assets\Shaders\3D Shader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </None>
+    <None Include="Assets\Models\Cube.obj">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\Sphere.obj">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\Sphere_smooth.obj">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\textures\white.dds">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\SpriteSheetx200.dds">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\image2.dds">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\image1.dds">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\grass.jpg">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\bg1.dds">
+      <Filter>Assets\Textures</Filter>
+    </None>
+    <None Include="Assets\textures\Default\roughness.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\normal.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\metallic.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\emissive.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="Assets\textures\Default\diffuse.png">
+      <Filter>Assets\Textures\Default</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Lime_Engine\Lime_Engine.dll">
+      <Filter>Content\Dlls</Filter>
+    </None>
+    <None Include="..\x64\Debug\Libraries\Graphics\Graphics.dll">
+      <Filter>Content\Dlls</Filter>
+    </None>
+  </ItemGroup>
+</Project>

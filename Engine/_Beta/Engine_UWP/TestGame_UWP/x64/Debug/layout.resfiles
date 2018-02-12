@@ -1,0 +1,25 @@
+Assets\LockScreenLogo.scale-200.png
+Assets\Models\Cube.obj
+Assets\Models\Sphere.obj
+Assets\Models\Sphere_smooth.obj
+Assets\Shaders\2D Shader.hlsl
+Assets\Shaders\3D Shader.hlsl
+Assets\SplashScreen.scale-200.png
+Assets\Square150x150Logo.scale-200.png
+Assets\Square44x44Logo.scale-200.png
+Assets\Square44x44Logo.targetsize-24_altform-unplated.png
+Assets\StoreLogo.png
+Assets\textures\bg1.dds
+Assets\textures\Default\diffuse.png
+Assets\textures\Default\emissive.png
+Assets\textures\Default\metallic.png
+Assets\textures\Default\normal.png
+Assets\textures\Default\roughness.png
+Assets\textures\grass.jpg
+Assets\textures\image1.dds
+Assets\textures\image2.dds
+Assets\textures\SpriteSheetx200.dds
+Assets\textures\white.dds
+Assets\Wide310x150Logo.scale-200.png
+Graphics.dll
+Lime_Engine.dll

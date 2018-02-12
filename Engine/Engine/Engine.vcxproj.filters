@@ -1,223 +1,349 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Render Batch">
-      <UniqueIdentifier>{a21ba7e6-aaf3-4bb5-87b5-fa12dc55dacd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vertex Library">
-      <UniqueIdentifier>{b63dc32a-c08f-4ec3-8515-ba082cdd6441}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Camera">
-      <UniqueIdentifier>{031929cf-dce7-4f41-aeef-789f7b4b3af1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Lime">
-      <UniqueIdentifier>{f948eed4-2dfb-4f81-a56f-e34adcdf32d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Models">
-      <UniqueIdentifier>{340c73a7-2500-4b91-9ba3-a0e30b6a5cd8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Windows API">
-      <UniqueIdentifier>{3675327c-78b8-4734-9fff-cc8b770431bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Text">
-      <UniqueIdentifier>{1780d32c-3dcd-4bf7-a1d4-01edba036cef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Input">
-      <UniqueIdentifier>{76460e56-f486-4a27-a9ee-1d35c3ff3ab3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Render Batch\Graphics API">
-      <UniqueIdentifier>{af876b83-ea20-4e21-8967-87d16cd56ab5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Render Batch\Graphics API\OpenGL">
-      <UniqueIdentifier>{68ed4ab2-7d2f-4187-ac61-1a27653444f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Render Batch\Graphics API\DirectX">
-      <UniqueIdentifier>{a33d26b3-24fe-4df9-b25f-a1b7e8540e93}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets">
+    <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Assets\Shaders">
-      <UniqueIdentifier>{3ed0eb13-5cb6-41e3-840f-e39faed6c029}</UniqueIdentifier>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{72aad90e-5f2c-4f25-b18d-8e855273ed2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Images">
-      <UniqueIdentifier>{e812adbb-7307-467d-adde-3d08a800fa6e}</UniqueIdentifier>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{d989a5ab-8df7-406a-918c-6fba22ea2c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data Structures">
+      <UniqueIdentifier>{48777fd4-d3ef-4273-81f4-536d81a37342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{08cf079d-d7d6-47d2-8fa6-ce6dee5a1b42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{3df9b52e-f6e5-4370-9069-d195d5832064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{4c320e19-b6fc-4a8c-aae9-3d9367ff0f8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{5e64c22e-00aa-47c2-9950-6929e48d6e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Timer">
+      <UniqueIdentifier>{63f90340-2317-4aca-86d8-2620b4de5b18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{b450475c-09e3-408d-9536-ba32fbde6644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Resources">
+      <UniqueIdentifier>{90d9eb20-66a8-448f-af6b-0fe8c83b77ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Loader">
+      <UniqueIdentifier>{370bbb6f-39e4-424f-8d71-fc877433df95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Model">
+      <UniqueIdentifier>{177960f9-b8ef-4672-8c19-dba279a98a67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Mesh">
+      <UniqueIdentifier>{021ac698-b756-4585-b996-091b4d5f72d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Vertex">
+      <UniqueIdentifier>{e0cde71f-3edd-4ba5-ace9-bb0b05ce8f32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Square">
+      <UniqueIdentifier>{9a362221-9d62-4b0f-98ba-8d2942d109cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Line">
+      <UniqueIdentifier>{a996b20a-dee8-483c-a922-12a0693c744e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Text">
+      <UniqueIdentifier>{8571ac80-7083-47e8-9d06-43f4304a7adc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input\Input Device">
+      <UniqueIdentifier>{e85c774c-88b9-4dfa-bcc5-7606c1cc7095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input\Mouse">
+      <UniqueIdentifier>{acf14245-a0ed-4687-bed3-dd5698847ef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data Structures\Library">
+      <UniqueIdentifier>{47486a2f-481a-4630-aa6b-c456a1c37721}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data Structures\Universal Map">
+      <UniqueIdentifier>{86fcbfbe-4293-43c2-b92e-8d7ec0cbca0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics">
+      <UniqueIdentifier>{fad6a476-cc3c-4531-b74b-055f1080de0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\2D Graphics">
+      <UniqueIdentifier>{6d3ca2cb-6137-4bac-8263-9c4b367f2aeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\2D Graphics\Brush">
+      <UniqueIdentifier>{2518f5c9-82c7-47e1-8910-2340c0da07f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\2D Graphics\RenderBatch">
+      <UniqueIdentifier>{42b131d3-2588-44db-922a-b73881403b29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\2D Graphics\Effect">
+      <UniqueIdentifier>{42b334b2-8598-4234-9c7f-5da3b1e8b2fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\Buffer">
+      <UniqueIdentifier>{a3810918-eab3-4f60-af16-2434ae22bf65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\Resources">
+      <UniqueIdentifier>{e3b037be-3245-40cf-9607-60f98be3a411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\RSS">
+      <UniqueIdentifier>{3661c6f8-d635-438e-abf8-0e27d0b09a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\Texture">
+      <UniqueIdentifier>{bf63756f-a58b-4ee6-ab9a-50070cab0513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\Shader">
+      <UniqueIdentifier>{afb12aa6-196b-4142-9785-85758d7f5349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\RenderBatch">
+      <UniqueIdentifier>{3b6edde0-996e-4233-a0b3-87df062324e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\3D Graphics\Vertex Manager">
+      <UniqueIdentifier>{274590c9-bf11-4a40-90b2-b4fd9b429408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Skybox">
+      <UniqueIdentifier>{a0b0915e-7b3b-4ddc-9db3-811db079d712}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Animator">
+      <UniqueIdentifier>{5a97ffa5-704f-4d89-b90e-e19682ad6bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Animator\Animation">
+      <UniqueIdentifier>{0b3f5d4d-c2da-4bba-9479-81026e712f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Console">
+      <UniqueIdentifier>{d45895ba-af3c-4c75-95ca-5cedb756e961}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp">
-      <Filter>Lime</Filter>
-    </ClCompile>
-    <ClCompile Include="Lime.cpp">
-      <Filter>Lime</Filter>
-    </ClCompile>
-    <ClCompile Include="Shared.cpp">
-      <Filter>Lime</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Camera</Filter>
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="DllSettings.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsAdditionals.cpp">
+      <Filter>Source Files\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowResources.cpp">
+      <Filter>Source Files\Window\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Models\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoader.cpp">
+      <Filter>Source Files\Models\Loader</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Models</Filter>
+      <Filter>Source Files\Models\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Model2D.cpp">
-      <Filter>Models</Filter>
+    <ClCompile Include="Shape_Square.cpp">
+      <Filter>Source Files\Models\Square</Filter>
     </ClCompile>
-    <ClCompile Include="Model3D.cpp">
-      <Filter>Models</Filter>
+    <ClCompile Include="Text.cpp">
+      <Filter>Source Files\Models\Text</Filter>
     </ClCompile>
-    <ClCompile Include="ModelLoader.cpp">
-      <Filter>Models</Filter>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Source Files\Models\Vertex</Filter>
     </ClCompile>
-    <ClCompile Include="TextController.cpp">
-      <Filter>Text</Filter>
+    <ClCompile Include="InputDevice.cpp">
+      <Filter>Source Files\Input\Input Device</Filter>
     </ClCompile>
-    <ClCompile Include="DX11BufferManager.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="MouseInput.cpp">
+      <Filter>Source Files\Input\Mouse</Filter>
     </ClCompile>
-    <ClCompile Include="DX11ConstantBuffer.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files\Models\Line</Filter>
     </ClCompile>
-    <ClCompile Include="DX11DepthStencilState.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="universal_map.cpp">
+      <Filter>Source Files\Data Structures\Universal Map</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Graphics.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="BrushManager.cpp">
+      <Filter>Source Files\Graphics\2D Graphics\Brush</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Shader.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="Effect_2D.cpp">
+      <Filter>Source Files\Graphics\2D Graphics\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="DX11Texture.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="RenderBatch_2D.cpp">
+      <Filter>Source Files\Graphics\2D Graphics\RenderBatch</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLGraphics.cpp">
-      <Filter>Render Batch\Graphics API\OpenGL</Filter>
+    <ClCompile Include="BufferLibrary.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderBatch.cpp">
-      <Filter>Render Batch</Filter>
+    <ClCompile Include="RSSLibrary.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClCompile Include="TextureLibrary.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="VertexLibrary.cpp">
-      <Filter>Vertex Library</Filter>
+    <ClCompile Include="ShaderLibrary.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Win32Window.cpp">
-      <Filter>Windows API</Filter>
+    <ClCompile Include="RenderBatch_3D.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\RenderBatch</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexManager.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineWindow.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXResources.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_RSS.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Buffer.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Shader.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_Texture.cpp">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source Files\Models\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Models\Animator\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Source Files\Console</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RenderBatch.h">
-      <Filter>Render Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexLibrary.h">
-      <Filter>Vertex Library</Filter>
+    <ClInclude Include="WindowsAdditionals.h">
+      <Filter>Source Files\Settings</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Camera</Filter>
+      <Filter>Source Files\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Lime.h">
-      <Filter>Lime</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Source Files\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="DllSettings.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXHelper.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowResources.h">
+      <Filter>Source Files\Window\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Source Files\Models\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\Models\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoader.h">
+      <Filter>Source Files\Models\Loader</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Models</Filter>
+      <Filter>Source Files\Models\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Model2D.h">
-      <Filter>Models</Filter>
+    <ClInclude Include="Shape_Square.h">
+      <Filter>Source Files\Models\Square</Filter>
     </ClInclude>
-    <ClInclude Include="Model3D.h">
-      <Filter>Models</Filter>
+    <ClInclude Include="Text.h">
+      <Filter>Source Files\Models\Text</Filter>
     </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Models</Filter>
+    <ClInclude Include="Vertex.h">
+      <Filter>Source Files\Models\Vertex</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsAdditionals.h">
-      <Filter>Windows API</Filter>
+    <ClInclude Include="InputDevice.h">
+      <Filter>Source Files\Input\Input Device</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Lime</Filter>
+    <ClInclude Include="MouseInput.h">
+      <Filter>Source Files\Input\Mouse</Filter>
     </ClInclude>
-    <ClInclude Include="Win32Window.h">
-      <Filter>Windows API</Filter>
+    <ClInclude Include="Library.h">
+      <Filter>Source Files\Data Structures\Library</Filter>
     </ClInclude>
-    <ClInclude Include="Shared.h">
-      <Filter>Lime</Filter>
+    <ClInclude Include="universal_map.h">
+      <Filter>Source Files\Data Structures\Universal Map</Filter>
     </ClInclude>
-    <ClInclude Include="TextController.h">
-      <Filter>Text</Filter>
+    <ClInclude Include="universal_struct.h">
+      <Filter>Source Files\Data Structures\Universal Map</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Lime</Filter>
+    <ClInclude Include="BrushManager.h">
+      <Filter>Source Files\Graphics\2D Graphics\Brush</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Input</Filter>
+    <ClInclude Include="Effect_2D.h">
+      <Filter>Source Files\Graphics\2D Graphics\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="DX11BufferManager.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="RenderBatch_2D.h">
+      <Filter>Source Files\Graphics\2D Graphics\RenderBatch</Filter>
     </ClInclude>
-    <ClInclude Include="DX11ConstantBuffer.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="BufferLibrary.h">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="DX11DepthStencilState.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="RSSLibrary.h">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Graphics.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="TextureLibrary.h">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Shader.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="ShaderLibrary.h">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Texture.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="RenderBatch_3D.h">
+      <Filter>Source Files\Graphics\3D Graphics\RenderBatch</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLGraphics.h">
-      <Filter>Render Batch\Graphics API\OpenGL</Filter>
+    <ClInclude Include="VertexManager.h">
+      <Filter>Source Files\Graphics\3D Graphics\Vertex Manager</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Render Batch\Graphics API\DirectX</Filter>
+    <ClInclude Include="EngineWindow.h">
+      <Filter>Source Files\Window</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shaders\FontPixelShader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\FontVertexShader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\GeometryShader2D.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\PixelShader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\PixelShader_Line.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\PixelShader2D.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\VertexShader.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\VertexShader_Line.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="shaders\VertexShader2D.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Engine.rc">
-      <Filter>Assets</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ImageContentTask Include="textures\white.png">
-      <Filter>Assets\Images</Filter>
-    </ImageContentTask>
+    <ClInclude Include="GraphicsDevice.h">
+      <Filter>Source Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectXResources.h">
+      <Filter>Source Files\Graphics\3D Graphics\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_RSS.h">
+      <Filter>Source Files\Graphics\3D Graphics\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Buffer.h">
+      <Filter>Source Files\Graphics\3D Graphics\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Shader.h">
+      <Filter>Source Files\Graphics\3D Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_Texture.h">
+      <Filter>Source Files\Graphics\3D Graphics\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Source Files\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Source Files\Models\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Source Files\Models\Animator\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Source Files\Console</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
