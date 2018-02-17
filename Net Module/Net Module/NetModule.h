@@ -1,13 +1,7 @@
 #pragma once
 
-#include <iostream>
-
-//Typedefs
-typedef uint16_t Identification;
-
-
 //Export Macro
-#ifdef NetModule_EXPORTS
+#ifdef NETMODULE_EXPORTS
 #define NET_API __declspec(dllexport)
 #else
 #define NET_API __declspec(dllimport)
@@ -15,19 +9,19 @@ typedef uint16_t Identification;
 
 
 // platform detection
-#define PLATFORM_WINDOWS  1
-#define PLATFORM_MAC      2
-#define PLATFORM_UNIX     3
+#define NET_PLATFORM_WINDOWS  1
+#define NET_PLATFORM_MAC      2
+#define NET_PLATFORM_UNIX     3
 
 #if defined(_WIN32)
-#define PLATFORM PLATFORM_WINDOWS
+#define NET_PLATFORM NET_PLATFORM_WINDOWS
 #elif defined(__APPLE__)
-#define PLATFORM PLATFORM_MAC
+#define NET_PLATFORM NET_PLATFORM_MAC
 #else
-#define PLATFORM PLATFORM_UNIX
+#define NET_PLATFORM NET_PLATFORM_UNIX
 #endif
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if NET_PLATFORM == NET_PLATFORM_WINDOWS
 
 #include <winsock2.h>
 
@@ -40,7 +34,7 @@ typedef uint16_t Identification;
 
 #endif
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if NET_PLATFORM == NET_PLATFORM_WINDOWS
 #pragma comment( lib, "wsock32.lib" )
 #endif
 
@@ -49,7 +43,7 @@ typedef uint16_t Identification;
 
 inline bool InitializeSockets()
 {
-#if PLATFORM == PLATFORM_WINDOWS
+#if NET_PLATFORM == NET_PLATFORM_WINDOWS
 	WSADATA WsaData;
 	return WSAStartup(MAKEWORD(2, 2),
 		&WsaData)
@@ -61,12 +55,12 @@ inline bool InitializeSockets()
 
 inline void ShutdownSockets()
 {
-#if PLATFORM == PLATFORM_WINDOWS
+#if NET_PLATFORM == NET_PLATFORM_WINDOWS
 	WSACleanup();
 #endif
 }
 
 
 //Constants
-#define CLIENT_PORT 57232
+#define NET_PORT 57232
 #define CONNECTION_KEY (Identification)5274

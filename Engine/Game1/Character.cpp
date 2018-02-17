@@ -68,6 +68,11 @@ void Character::SetDestination(const glm::vec3 & position)
 	}
 }
 
+void Character::SetPosition(const glm::vec3 & position)
+{
+	m_model.SetPosition(position);
+}
+
 void Character::ToggleRun()
 {
 	m_bRunning = !m_bRunning;
@@ -89,6 +94,11 @@ const Engine::Model & Character::GetModel() const
 const std::string & Character::GetName() const
 {
 	return m_name;
+}
+
+const glm::vec3 & Character::GetPosition() const
+{
+	return *m_model.GetPosition();
 }
 
 void Character::SetAnimation()

@@ -5,18 +5,11 @@
 class GameState
 {
 public:
-	GameState();
-	~GameState();
+	virtual void Initialize() = 0;
+	virtual void Update(double elapsed) = 0;
+	virtual void HandleControlls(double elapsed, const std::shared_ptr<Engine::Input>& input, const std::shared_ptr<Engine::Camera>& camera) = 0;
+	virtual void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics) = 0;
+	virtual void Close() = 0;
 
-	void Initialize();
-	void Update(double elapsed);
-	void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics);
-	void Close();
-
-private:
-
-	std::unique_ptr<Character> m_user;
-	std::unique_ptr<Character> m_user2;
-	Engine::Model m_plane;
 };
 

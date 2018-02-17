@@ -5,9 +5,7 @@
 #include <mutex>
 #include "NetModule.h"
 #include "Basics.h"
-#include "IPAuthenticator.h"
 #include "Transciever.h"
-#include "Node.h"
 
 //Server program and fundamentals
 //Author: Eric Marquez
@@ -19,53 +17,28 @@
 
 namespace Net
 {
-	typedef std::map<Identification, PDQueue> DataBase;
-
 	class Server
 	{
 	public:
-		NET_API Server(int port);
-		NET_API bool Initialize();
-		NET_API Identification GetID(const char* name);
-		NET_API void Send(Identification ID, const char* data);
-		NET_API bool Recieve(Identification ID, char* data, uint32_t maxSize);
-		NET_API size_t GetNumOfUsers();
-		NET_API bool GetNewUsername(char* name, uint32_t size);
-		NET_API void Close();
+		NET_API Server(const std::string& password = "");
+		NET_API ~Server();
+		NET_API bool Open(uint16_t port);
+		NET_API void SetPassword(const std::string& password);
+		NET_API bool Send(const uint32_t& address, const std::string& data);
+		NET_API bool Send(const uint32_t& address, const ByteBuffer& data);
+		NET_API bool SendToAll(const ByteBuffer& data);
+		NET_API bool Recieve(const uint32_t& address, ByteBuffer& packet);
+		NET_API bool RecieveAll(std::vector<SimplePacket>& recieved);
+		NET_API bool GetNewLoginRequest(uint32_t& ID, std::string& username);
+		NET_API bool GetLogoutRequest(uint32_t& address);
+		NET_API void CloseConnection(uint32_t& address);
+		NET_API void CloseAllConnections();
 
 	private:
-		NET_API void Update();
-		NET_API void CreateNode(std::shared_ptr<Address>& address);
-		//Function used to Connect peer(Completely customizable)
-		//although nothing will be sent/recieved if a node is not created.
-		NET_API ConnectionType ConnectPeer(std::shared_ptr<Address>& address, ProgramData& packet);
-		NET_API Identification GenerateKey(Identification seed);
-		NET_API bool IsValid(Identification ID);
-		NET_API bool IsAddressQueried(std::shared_ptr<Address>& address);
-		NET_API void AddNewUsername(std::string name);
-		NET_API bool AccessNewUsernames(std::string& nameToChangeTo, std::string& nameToLookFor);
-		NET_API void Send(Identification ID, std::vector<byte> data);
 
-		std::vector<std::unique_ptr<Node>> m_ActiveNodes;
+		bool m_bIsInit;
+		std::string m_password;
 		std::unique_ptr<Transciever> m_transciever;
-		std::unique_ptr<IPAuthenticator> m_ConnectionTimers;
-		
-		// IDs of all connected mapped to username;
-		std::map<std::string, std::shared_ptr<Address>> m_connections;
-		std::vector<std::string> m_newUsernames;
-		
-		//Stores data sent from the program that is to be sent to given peer
-		std::shared_ptr<DataBase> m_database;
-		
-		//Stores packets that have been sent/recieved
-		std::shared_ptr<TDataBase> m_recievedDB;
-		TQueue m_sendingQueue;
-		
-		std::atomic<bool> m_closeThread;
-		std::future<void> m_asyncThread;
-		std::mutex m_Lock;
-		
-		bool m_isInit;
 	};
 
 

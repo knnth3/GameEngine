@@ -6,145 +6,122 @@ namespace Net
 {
 
 	using namespace std::placeholders;
+	using namespace std::chrono;
+	using clock = std::chrono::high_resolution_clock;
 
-	Client::Client(const char* address, unsigned short port)
+	Client::Client()
 	{
 		InitializeSockets();
-		m_ServerAddress = std::make_shared<Address>(address, port, 0);
-		m_Queue = std::make_shared<std::vector<std::queue<ProgramData>>>();
-		m_recievedDB = std::make_shared<TDataBase>();
-		m_sendingDB = std::make_shared<std::queue<EPacket>>();
-		m_Transciever = std::make_unique<Transciever>(CLIENT_PORT);
-		m_ClientNode = std::make_unique<Node>(m_Queue, nullptr, m_sendingDB, m_ServerAddress);
-
-#if PLATFORM == PLATFORM_WINDOWS
-
-		WCHAR buff[50];
-		DWORD size = 50;
-		GetComputerName(buff, &size);
-
-		std::wstring name = std::wstring(buff);
-		using convert_type = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_type, wchar_t> converter;
-		std::string computer_name = converter.to_bytes(name);
-		Login(computer_name);
-
-#elif PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
-
-		std::string computer_name = "Place_Holder";
-		Login(computer_name);
-
-#endif
-
-		m_isInit = false;
-		m_loggedIn = false;
+		m_bIsInit = false;
+		m_transciever = std::make_unique<Transciever>();
 	}
 
-
-	void Client::Close()
+	Client::~Client()
 	{
-		if (m_isInit)
+		if (m_bIsInit)
 		{
-			using namespace std::chrono_literals;
-			m_closeThread = true;
-			std::future_status status;
-			do
-			{
-				status = m_asyncThread.wait_for(0ms);
-			} while (status != std::future_status::ready);
-
-			m_Transciever->Close();
+			m_transciever->Close();
 			ShutdownSockets();
 		}
 	}
 
-	bool Client::Initialize()
+	bool Client::Initialize(const std::string & address, uint16_t port)
 	{
-		bool result = m_Transciever->Init(m_recievedDB, m_sendingDB);
-		if (result)
+		m_address = Address(address, port);
+		if (m_transciever->Initialize(port, true))
 		{
-			m_Transciever->SetConnectionFunc(std::bind(&Client::ConnectClient, this, _1, _2));
-			m_closeThread = false;
-			m_asyncThread = std::async(std::launch::async, &Client::Update, this);
-			m_isInit = true;
-		}
-		return result;
-	}
-
-	void Client::Update()
-	{
-		while (!m_closeThread)
-		{
-			m_Transciever->Update();
-			m_ClientNode->Update();
-		}
-	}
-
-	ConnectionType Client::ConnectClient(std::shared_ptr<Address>& address, ProgramData & data)
-	{
-		int result = 0;
-		if (!m_loggedIn)
-		{
-			if (data->at(0) == '!')
-			{
-				std::string recieved(data->begin() + 1, data->end());
-				printf("Client: %s\n", recieved.c_str());
-				m_loggedIn = true;
-				m_recievedDB->emplace(0, std::make_shared<std::queue<EPacket>>());
-				m_ClientNode->ConnectRecieveQueue(m_recievedDB->at(0));
-				return ConnectionType::NewConnect;
-			}
-			else
-			{
-				printf("Client: Unable to Connect!");
-				return ConnectionType::Failed;
-			}
-		}
-		return ConnectionType::Success;
-	}
-
-	void Client::Login(std::string username)
-	{
-		Identification key = htons(GenerateKey(CONNECTION_KEY));
-		std::string cmd = '!' + std::to_string(key) + "|" + username;
-		Send(cmd.c_str());
-	}
-
-	void Client::Send(const char* data)
-	{
-		std::string strdata(data);
-		edata info(strdata.begin(), strdata.end());
-		ProgramData packet = std::make_shared<edata>(info);
-		m_Queue->at(outqueue).push(packet);
-	}
-
-	bool Client::Recieve(char* data, uint32_t maxSize)
-	{
-		edata info;
-		if (!m_Queue->at(inqueue).empty())
-		{
-			ProgramData data = m_Queue->at(inqueue).front();
-			m_Queue->at(inqueue).pop();
-			info = *data.get();
-		}
-
-		std::string strdata(info.begin(), info.end());
-		uint32_t len = static_cast<uint32_t>(strdata.length());
-		if (strdata.empty())
-		{
-			return false;
-		}
-
-		if (maxSize >= len)
-		{
-			memcpy(data, strdata.c_str(), len);
+			m_bIsInit = true;
 			return true;
 		}
 		return false;
 	}
 
-	Identification Client::GenerateKey(Identification seed)
+	bool Client::Login(const std::string& username, const std::string& password, double timeout)
 	{
-		return ((((seed / 2) + 5724) % 100001) >> 8);
+		if (m_bIsInit)
+		{
+			if (IsStringValid(username) && IsStringValid(password))
+			{
+				clock::time_point start;
+
+				LoginPacket request;
+				request.Address = m_address.GetPackedIPv4();
+				request.Port = m_address.GetPort();
+				request.Username = username;
+				request.Password = password;
+				request.Answer = "";
+				m_transciever->SendLoginRequest(request);
+
+				start = clock::now();
+				while ((duration_cast<milliseconds>(clock::now() - start).count() <= timeout))
+				{
+					if (m_transciever->GetLoginRequest(request))
+					{
+						if (!request.Answer.compare("TRUE"))
+						{
+							return m_transciever->CreateNode(m_address.GetPackedIPv4(), m_address.GetPort(), "SERVER");
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
+
+	void Client::Logout()
+	{
+		m_transciever->SendLogoutRequest(m_address.GetPackedIPv4());
+	}
+
+	bool Client::Send(const std::string & data)
+	{
+		if (m_bIsInit)
+		{
+			ByteBuffer buffer(data.begin(), data.end());
+			m_transciever->Send(m_address.GetPackedIPv4(), buffer);
+			return true;
+		}
+		return false;
+	}
+
+	bool Client::Send(const ByteBuffer& data)
+	{
+		if (m_bIsInit)
+		{
+			m_transciever->Send(m_address.GetPackedIPv4(), data);
+			return true;
+		}
+		return false;
+	}
+
+	bool Client::Recieve(ByteBuffer& data)
+	{
+		if (m_bIsInit)
+		{
+			return m_transciever->Recieve(m_address.GetPackedIPv4(), data);
+		}
+		return false;
+	}
+
+	bool Client::GetLogoutRequest(uint32_t & address)
+	{
+		if (m_bIsInit)
+		{
+			return m_transciever->GetLogoutRequest(address);
+		}
+		return false;
+	}
+
+	bool Client::IsStringValid(const std::string & value)
+	{
+		bool bHasColon = value.find(':') == std::string::npos;
+		bool bHasSpace = value.find(' ') == std::string::npos;
+		bool bHasDash = value.find('-') == std::string::npos;
+
+		if (bHasColon && bHasSpace && bHasDash)
+			return true;
+
+		return false;
+	}
+
 }

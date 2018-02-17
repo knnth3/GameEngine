@@ -3,32 +3,36 @@
 
 namespace Net
 {
+	Address::Address()
+	{
+		Initialize(0, 0);
+	}
 
-
-	Address::Address(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned short port, Identification id)
+	Address::Address(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint16_t port)
 	{
 		unsigned int address = EncodeAddress(a, b, c, d);
-		init(address, port, id);
+		Initialize(address, port);
 	}
 
-	Address::Address(unsigned int address, unsigned short port, Identification id)
+	Address::Address(uint32_t address, uint16_t port)
 	{
-		init(address, port, id);
+		Initialize(address, port);
 	}
 
-	Address::Address(std::string address, unsigned short port, Identification id)
+	Address::Address(const std::string& ipv4, uint16_t port)
 	{
 		size_t pos = 0;
 		std::string breakpoint = ".";
 		//Loopback address by default fallback
 
-		std::vector<unsigned int> newAddr;
+		std::vector<uint32_t> newAddr;
 
 		std::string section;
+		std::string address = ipv4;
 		while ((pos = address.find(breakpoint)) != std::string::npos)
 		{
 			section = address.substr(0, pos);
-			unsigned int num = std::stoi(section);
+			uint32_t num = std::stoi(section);
 			newAddr.push_back(num);
 			address.erase(0, pos + breakpoint.length());
 		}
@@ -36,42 +40,22 @@ namespace Net
 
 		if (newAddr.size() != 4)
 		{
-			unsigned int address = EncodeAddress(127, 0, 0, 1);
-			init(address, port, id);
+			uint32_t address = EncodeAddress(127, 0, 0, 1);
+			Initialize(address, port);
 		}
 		else
 		{
-			unsigned int address = EncodeAddress(newAddr[0], newAddr[1], newAddr[2], newAddr[3]);
-			init(address, port, id);
+			uint32_t address = EncodeAddress(newAddr[0], newAddr[1], newAddr[2], newAddr[3]);
+			Initialize(address, port);
 		}
 	}
 
-	bool Address::AssignName(std::string name)
-	{
-		if (m_name.size() == 0)
-		{
-			m_name = name;
-			return true;
-		}
-		return false;
-	}
-
-	bool Address::AssignID(Identification id)
-	{
-		if (m_ID == 0)
-		{
-			m_ID = id;
-			return true;
-		}
-		return false;
-	}
-
-	unsigned int Address::GetAddress() const
+	uint32_t Address::GetPackedIPv4() const
 	{
 		return m_address;
 	}
 
-	std::string Address::GetAddressString() const
+	std::string Address::GetStringIPv4() const
 	{
 		int a = m_address >> 24;
 		int b = (m_address << 8) >> 24;
@@ -81,31 +65,25 @@ namespace Net
 		return addr;
 	}
 
-	unsigned short Address::GetPort() const
+	uint16_t Address::GetPort() const
 	{
 		return m_port;
 	}
 
-	Identification Address::GetID()
+	bool Address::Empty() const
 	{
-		return m_ID;
+		return (bool)m_address;
 	}
 
-	std::string Address::GetName()
-	{
-		return m_name;
-	}
-
-	unsigned int Address::EncodeAddress(unsigned int a, unsigned int b, unsigned int c, unsigned int d)
+	unsigned int Address::EncodeAddress(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
 	{
 		return (a << 24) | (b << 16) | (c << 8) | d;
 	}
 
-	void Address::init(unsigned int address, unsigned short port, Identification id)
+	void Address::Initialize(uint32_t address, uint16_t port)
 	{
 		m_address = address;
 		m_port = port;
-		m_ID = id;
 	}
 
 }

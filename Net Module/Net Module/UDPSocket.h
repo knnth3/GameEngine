@@ -16,8 +16,8 @@ namespace Net
 
 		NET_API bool Open(unsigned short port);
 		NET_API void Close();
-		NET_API int Send(const std::shared_ptr<Address>& destination, const void * data, int size);
-		NET_API int Receive(std::shared_ptr<Address>& sender, void * data, int max_size);
+		NET_API int Send(const Address& destination, const void * data, int size);
+		NET_API int Receive(Address& sender, void * data, int max_size);
 
 	private:
 

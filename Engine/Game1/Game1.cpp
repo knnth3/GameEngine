@@ -1,5 +1,7 @@
 #include "Game1.h"
 #include "Engine\MeshLoader.h"
+#include "GameServer.h"
+#include "GameClient.h"
 
 using namespace std;
 using namespace Engine;
@@ -10,6 +12,9 @@ Game1::Game1(std::string appName, float width, float height) :
 {
 	m_skybox.Scale(10000, 10000, 10000);
 	m_skybox.SetDrawStyle(DRAW_STYLE_CUBEMAP | DRAW_STYLE_CULL_FRONT);
+	m_gametype = GAMETYPE_RUNNING;
+
+	m_mainMenu.SetDimensions(width, height);
 }
 
 void Game1::Update()
@@ -21,13 +26,24 @@ void Game1::Update()
 	//Skybox
 	m_skybox.SetPosition(camera->GetPosition());
 	HandleBasicControls(elapsed);
-	m_gamestate->Update(elapsed);
+	SetUpGamestate();
+
+	if(m_gamestate)
+		m_gamestate->Update(elapsed);
 }
 
 void Game1::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
 {
 	graphics->Draw(m_skybox);
-	m_gamestate->Render(graphics);
+
+	if (m_gamestate)
+	{
+		m_gamestate->Render(graphics);
+	}
+	else
+	{
+		graphics->Draw(m_mainMenu);
+	}
 }
 
 void Game1::Resume()
@@ -39,70 +55,70 @@ void Game1::Resume()
 	Skybox sb;
 	sb.path = "Assets/textures/Default/cubemap.dds";
 	graphics->SetSkybox(sb);
-	m_gamestate = std::make_unique<GameState>();
-	m_gamestate->Initialize();
 
-	if (_DEBUG)
-	{
-		ToggleConsole();
-		auto console = WindowResources::GetConsole();
-		console->Log("This is the console. To open/close press 'N'.");
-		console->Log("Controls: WASD camera movement, QE zoom keys, 'L' toggles wireframe,");
-		console->Log("'P' toggles fullscreen.");
-	}
+	ToggleConsole();
+	auto console = WindowResources::GetConsole();
+	console->Log("This is the console. To open/close press 'N'.");
+	console->Log("Controls: WASD camera movement, QE zoom keys, 'L' toggles wireframe,");
+	console->Log("'P' toggles fullscreen.");
+
+	std::wstring error;
+	m_bgImageID = BrushManager::CreateNewImage("Assets/textures/MainMenu.png", error);
+	m_mainMenu.SetBrush(m_bgImageID, BRUSH_TEXTURE_IMAGE);
 }
 
 void Game1::Suspend()
 {
-	m_gamestate->Close();
+	if(m_gamestate)
+		m_gamestate->Close();
+
+	BrushManager::DeleteImage(m_bgImageID);
 }
 
 void Game1::HandleBasicControls(double elapsed)
 {
-	//Keyboard
-	auto keyboard = WindowResources::GetInput()->GetKeyboard();
-	auto mouse = WindowResources::GetInput()->GetMouse();
-	auto camera = WindowResources::GetGraphics()->GetCamera();
-
-	//Rotation
-	float acceleration = 2.45f;
-	double seconds = elapsed / 1000.0;
-	float velocity = float(acceleration * seconds);
-
-	if (keyboard->ButtonDown('W'))
-	{
-		camera->Rotate(velocity, 0.0f, 0.0f);
-	}
-	if (keyboard->ButtonDown('S'))
-	{
-		camera->Rotate(-velocity, 0.0f, 0.0f);
-	}
-	if (keyboard->ButtonDown('A'))
-	{
-		camera->Rotate(0.0f, velocity, 0.0f);
-	}
-	if (keyboard->ButtonDown('D'))
-	{
-		camera->Rotate(0.0f, -velocity, 0.0f);
-	}
-	if (keyboard->ButtonDown('Q'))
-	{
-		camera->Zoom(velocity * 100.0f);
-	}
-	if (keyboard->ButtonDown('E'))
-	{
-		camera->Zoom(-velocity * 100.0f);
-	}
-	if (keyboard->ButtonPressed('P'))
+	auto intput = WindowResources::GetInput();
+	if (intput->GetKeyboard()->ButtonPressed('P'))
 	{
 		ToggleFullscreen();
 	}
-	if (keyboard->ButtonPressed('L'))
+	if (intput->GetKeyboard()->ButtonPressed('L'))
 	{
 		WindowResources::GetGraphics()->ToggleWireframe();
 	}
-	if (keyboard->ButtonPressed('N'))
+	if (intput->GetKeyboard()->ButtonPressed('N'))
 	{
 		ToggleConsole();
+	}
+	if (intput->GetKeyboard()->ButtonPressed('Y'))
+	{
+		m_gametype = GAMETYPE_SERVER;
+	}
+	if (intput->GetKeyboard()->ButtonPressed('T'))
+	{
+		m_gametype = GAMETYPE_CLIENT;
+	}
+	if (m_gamestate)
+	{
+		m_gamestate->HandleControlls(elapsed, intput, WindowResources::GetGraphics()->GetCamera());
+	}
+}
+
+void Game1::SetUpGamestate()
+{
+	switch (m_gametype)
+	{
+	case Game1::GAMETYPE_SERVER:
+		m_gamestate = std::make_unique<GameServer>(1234);
+		m_gamestate->Initialize();
+		m_gametype = GAMETYPE_RUNNING;
+		break;
+	case Game1::GAMETYPE_CLIENT:
+		m_gamestate = std::make_unique<GameClient>("127.0.0.1", 1234);
+		m_gamestate->Initialize();
+		m_gametype = GAMETYPE_RUNNING;
+		break;
+	default:
+		break;
 	}
 }

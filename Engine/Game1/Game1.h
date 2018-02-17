@@ -15,9 +15,20 @@ protected:
 
 private:
 
-	void HandleBasicControls(double elapsed);
+	enum GameType
+	{
+		GAMETYPE_RUNNING,
+		GAMETYPE_SERVER,
+		GAMETYPE_CLIENT
+	};
 
+	void HandleBasicControls(double elapsed);
+	void SetUpGamestate();
+
+	int m_bgImageID;
+	GameType m_gametype;
 	Engine::Model m_skybox;
+	Engine::Square m_mainMenu;
 	std::unique_ptr<GameState> m_gamestate;
 };
 

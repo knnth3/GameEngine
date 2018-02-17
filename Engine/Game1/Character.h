@@ -17,11 +17,13 @@ public:
 
 	void SetInfo(const CharacterInfo& info);
 	void SetDestination(const glm::vec3& position);
+	void SetPosition(const glm::vec3& position);
 	void ToggleRun();
 	void Update(double elapsed);
 
 	const Engine::Model& GetModel()const;
 	const std::string& GetName()const;
+	const glm::vec3& GetPosition()const;
 
 private:
 	void SetAnimation();

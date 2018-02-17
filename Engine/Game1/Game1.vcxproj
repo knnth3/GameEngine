@@ -97,10 +97,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine/Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine/Engine.lib;NetModule/Net Module.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"</Command>
+      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"
+copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\NetModule\*.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,21 +151,25 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine/Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine/Engine.lib;NetModule/Net Module.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"</Command>
+      <Command>copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\Engine\*.dll" "$(OutputPath)"
+copy "$(SolutionDir)$(Platform)\$(Configuration)\Libraries\NetModule\*.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Game1.cpp" />
-    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GameClient.cpp" />
+    <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Game1.h" />
+    <ClInclude Include="GameClient.h" />
+    <ClInclude Include="GameServer.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

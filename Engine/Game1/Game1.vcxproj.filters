@@ -3,7 +3,8 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>
+      </Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -18,6 +19,12 @@
     <Filter Include="Source Files\Character">
       <UniqueIdentifier>{e8c6f58d-1aa7-4f71-9d57-370b3a8cc953}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Game State\Server">
+      <UniqueIdentifier>{a5e3acae-14c7-46bf-b7f3-64462c95dfb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game State\Client">
+      <UniqueIdentifier>{5df5900b-a975-4cbe-b9d5-18a3bd0a3a35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -26,11 +33,14 @@
     <ClCompile Include="Game1.cpp">
       <Filter>Source Files\Main Game Window</Filter>
     </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files\Game State</Filter>
-    </ClCompile>
     <ClCompile Include="Character.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClient.cpp">
+      <Filter>Source Files\Game State\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="GameServer.cpp">
+      <Filter>Source Files\Game State\Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -40,8 +50,18 @@
     <ClInclude Include="GameState.h">
       <Filter>Source Files\Game State</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Character.h" />
+    <ClInclude Include="Character.h">
+      <Filter>Source Files\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClient.h">
+      <Filter>Source Files\Game State\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="GameServer.h">
+      <Filter>Source Files\Game State\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Game1.rc">

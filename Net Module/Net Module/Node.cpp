@@ -2,171 +2,75 @@
 
 namespace Net
 {
-
-	Node::Node(PDQueue& dataQueue, TQueue recieve, TQueue send, AddressPtr& addr)
+	Node::Node(const Address& address, const std::string& name)
 	{
-		m_connectionAddress = addr;
-		if (m_connectionAddress == nullptr)
-			printf("Node created for Connection -nullptr-\n");
-		else
-			printf("Node created successfully!\n");
-
-		m_dataQueue = dataQueue;
-		if (m_dataQueue == nullptr)
-			printf("Node did not attach to server data queue!\n");
-		else
-		{
-			m_dataQueue->resize(2);
-		}
-		m_sendingQueue = send;
-		m_recievingQueue = recieve;
+		m_address = address;
+		m_name = name;
 	}
 
-	void Node::Update()
+	void Node::AddSendPacket(const std::shared_ptr<NetPacket> & data)
 	{
-		RecievePacket();
-		SendPacket();
+		std::lock_guard<std::mutex> lock(m_lock);
+		m_sending.push(data);
 	}
 
-	bool Node::SendPacket()
+	void Node::AddRecievedPacket(const std::shared_ptr<NetPacket> & data)
 	{
-		std::bitset<8> result = IsNodeValid();
-		bool statement1 = result.count() <= 1 && result[Error::RecieveQueueNull] == true;
-		bool statement2 = result.none();
-		if (statement1 || statement2)
+		std::lock_guard<std::mutex> lock(m_lock);
+		m_recieved.push(data);
+	}
+
+	bool Node::GetNextSendingPacket(std::shared_ptr<NetPacket>& data)
+	{
+		std::lock_guard<std::mutex> lock(m_lock);
+		if (!m_sending.empty())
 		{
-			//Grab the next packet (if any) and pops the result
-			bool empty = m_dataQueue->at(outqueue).empty();
-			if (!empty)
-			{
-				ProgramData data = m_dataQueue->at(outqueue).front();
-				m_dataQueue->at(outqueue).pop();
-
-				//Increments a counter to represent is most up-to-date packet
-				IncrementLocal();
-
-				//Pack data to be sent
-				EPacket packet(m_connectionAddress, m_LocalCSP, m_RemoteCSP);
-				packet.AddData(data->data(), static_cast<int>(data->size()));
-				packet.AddBitfield(m_RemoteAckData);
-
-				//Send Packet
-				m_sendingQueue->push(packet);
-
-				return true;
-			}
-
+			data = m_sending.front();
+			m_sending.pop();
+			return true;
 		}
+
 		return false;
 	}
 
-	bool Node::RecievePacket()
+	const std::string & Node::GetName() const
 	{
-		std::bitset<8> result = IsNodeValid();
-		bool statement1 = result.count() <= 1 && result[Error::SendingQueueNull] == true;
-		bool statement2 = result.none();
-		if (statement1 || statement2)
+		return m_name;
+	}
+
+	const Address & Node::GetAddress() const
+	{
+		return m_address;
+	}
+
+	bool Node::GetNextPacket(ByteBuffer& data)
+	{
+		std::lock_guard<std::mutex> lock(m_lock);
+		if (!m_recieved.empty())
 		{
-			if (!m_recievingQueue->empty())
+			auto packet = m_recieved.front();
+			m_recieved.pop();
+			if(packet)
 			{
-				//Grab next packet
-				EPacket packet = m_recievingQueue->front();
-				m_recievingQueue->pop();
-
-
-				//Log arrival
-				PollRecievedData(&packet);
-
-				//Extract data to and send to server
-				ProgramData data = packet.GetBuffer();
-				m_dataQueue->at(inqueue).push(data);
-				//std::string datatest(data->begin(), data->end());
-				//printf("%s: %s\n", m_connectionAddress->GetName().c_str(), datatest.c_str());
-				return true;
+				data = packet->data();
 			}
+			return !data.empty();
 		}
+
 		return false;
 	}
 
-	AckData Node::GetLocalPackageData() const
+	bool Node::SetNextPacket(const ByteBuffer & data)
 	{
-		return m_LocalAckData;
-	}
-
-	void Node::ConnectRecieveQueue(TQueue & recieve)
-	{
-		m_recievingQueue = recieve;
-	}
-
-	void Node::ConnectSendQueue(TQueue & send)
-	{
-		m_sendingQueue = send;
-	}
-
-	std::bitset<8> Node::IsNodeValid()
-	{
-		std::bitset<8> result = 0;
-		if (m_dataQueue == nullptr)
+		if (!data.empty())
 		{
-			if (m_connectionAddress == nullptr)
-			{
-				printf("A node is not valid! Ignoring its send/recieve request.\n");
-				result.set(UnknownInvalid);
-			}
-			printf("Node for ID#%i is not valid! Ignoring send/recieve request.\n", m_connectionAddress->GetID());
-			result.set(KnownInvalid);
-		}
-		if (m_sendingQueue == nullptr)
-		{
-			result.set(SendingQueueNull);
-		}
-		if (m_recievingQueue == nullptr)
-		{
-			result.set(RecieveQueueNull);
+			auto packet = std::make_shared<NetPacket>(m_address, m_LocalCSP, m_RemoteCSP);
+			packet->AddData(data);
+			std::lock_guard<std::mutex> lock(m_lock);
+			m_sending.push(packet);
+			return true;
 		}
 
-		return result;
+		return false;
 	}
-
-	void Node::IncrementLocal()
-	{
-		m_LocalCSP++;
-	}
-
-	void Node::PollRecievedData(EPacket* packet)
-	{
-		//Saves all the data recieved.
-		m_LocalAckData =
-		{
-			packet->GetAcknowledged(),
-			packet->GetBitfield(),
-		};
-
-		uint32_t sequence = packet->GetSequence();
-
-		//Updates the Remote CSP and the bitfield along with.
-		if (m_RemoteCSP < sequence)
-		{
-
-			if (m_RemoteCSP != 0)
-			{
-				int pos = (m_RemoteCSP - 1) % 32;
-				uint32_t bit = (uint32_t)pow(2, pos);
-				m_RemoteAckData <<= 1;
-				m_RemoteAckData |= bit;
-			}
-
-			m_RemoteCSP = sequence;
-		}
-		else
-		{
-			if (m_RemoteCSP != 0)
-			{
-				int pos = (sequence - 1) % 32;
-				uint32_t bit = (uint32_t)pow(2, pos);
-				m_RemoteAckData |= bit;
-			}
-		}
-	}
-
 }

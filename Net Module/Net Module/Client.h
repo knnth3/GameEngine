@@ -8,32 +8,28 @@
 
 namespace Net
 {
+	//Time is represented in ms
+	//For Login only, the characters ':', '-', and ' ' are reserved and function will return false if used.
 	class Client
 	{
 	public:
-		NET_API Client(const char* address, unsigned short port);
-		NET_API void Close();
-		NET_API bool Initialize();
-		NET_API void Send(const char* data);
-		NET_API bool Recieve(char* data, uint32_t maxSize);
-	private:
-		NET_API void Update();
-		NET_API ConnectionType ConnectClient(std::shared_ptr<Address>& address, ProgramData& data);
-		NET_API void Login(std::string s);
-		NET_API Identification GenerateKey(Identification seed);
+		NET_API Client();
+		NET_API ~Client();
+		NET_API bool Initialize(const std::string& address, uint16_t port);
+		NET_API bool Login(const std::string& username, const std::string& password = "", double timeout = 5000);
+		NET_API void Logout();
+		NET_API bool Send(const std::string& data);
+		NET_API bool Send(const ByteBuffer& data);
+		NET_API bool Recieve(ByteBuffer& data);
+		NET_API bool GetLogoutRequest(uint32_t& address);
 
-		PDQueue m_Queue;
-		TQueue m_sendingDB;
-		std::shared_ptr<TDataBase> m_recievedDB;
-		AddressPtr m_ServerAddress;
-		std::unique_ptr<Node> m_ClientNode;
-		std::unique_ptr<Transciever> m_Transciever;
-		
-		std::atomic<bool> m_closeThread;
-		std::future<void> m_asyncThread;
-		
-		bool m_loggedIn;
-		bool m_isInit;
+	private:
+
+		bool IsStringValid(const std::string& value);
+
+		bool m_bIsInit;
+		Address m_address;
+		std::unique_ptr<Transciever> m_transciever;
 	};
 
 

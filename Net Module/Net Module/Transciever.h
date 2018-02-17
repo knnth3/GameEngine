@@ -1,9 +1,10 @@
 #pragma once
 #include "UDPSocket.h"
-#include "EPacket.h"
 #include "Basics.h"
+#include "Node.h"
 #include <map>
 #include <functional>
+#include <future>
 
 //Author:Eric Marquez
 //+Transciever sends and recieves packets from the socket
@@ -13,52 +14,60 @@
 
 namespace Net
 {
+	typedef std::unique_ptr<UDPSocket> Socket;
 
-	enum class ConnectionType
+	struct SimplePacket
 	{
-		NewConnect,
-		Success,
-		Failed
+		uint32_t Address;
+		uint16_t Port;
+		ByteBuffer Buffer;
 	};
 
-	class Server;
+	struct LoginPacket
+	{
+		uint32_t Address;
+		uint16_t Port;
+		std::string Username;
+		std::string Password;
+		std::string Answer;
+	};
 
-	typedef std::unique_ptr<UDPSocket> Socket;
-	typedef std::shared_ptr<std::queue<EPacket>> TQueue;
-	typedef std::map<uint32_t, TQueue> TDataBase;
-	typedef std::function<ConnectionType(std::shared_ptr<Address>&, ProgramData)> AddFunc;
+	typedef std::queue<SimplePacket> SimplePacketQueue;
 
 	class Transciever
 	{
 	public:
 		//Simple interface where user only needs to deal with the update/close function.
 		//+SetConnectionFunc must be called(unless another way of opening a Node is available)
-		NET_API Transciever(unsigned short port);
-		NET_API bool Init(std::shared_ptr<TDataBase>& recievedDB, TQueue sending);
-		//Has to return an integer based off of result. Everything else will be ignored.
-		// 0 = failed
-		// 1 = success (new)
-		// 2 = success (established)
-		NET_API void SetConnectionFunc(AddFunc connectionFunc);
-		NET_API void Update();
-		NET_API void Close();
+		Transciever();
+		bool Initialize(unsigned short port, bool isClient = false);
+		void Send(const uint32_t& address, const ByteBuffer& buffer);
+		void SendToAll(const ByteBuffer& buffer);
+		bool Recieve(const uint32_t& address, ByteBuffer& buffer);
+		bool RecieveAll(std::vector<SimplePacket>& buffers);
+		void SendLoginRequest(const LoginPacket& packet);
+		bool GetLoginRequest(LoginPacket& packet);
+		void SendLogoutRequest(const uint32_t& address);
+		void SendLogoutRequestToAll();
+		bool GetLogoutRequest(uint32_t& address);
+		bool CreateNode(const uint32_t& address, const uint16_t port, const std::string& name);
+		void Close();
 
 	private:
-		NET_API void RecievePacket();
-		NET_API void SendPacket();
 
-		NET_API bool isValid();
-		NET_API std::shared_ptr<EPacket> GetPacket();
-		NET_API void PlacePacket(std::shared_ptr<Address>& addr, EPacket& packet);
-		NET_API ConnectionType ConnectPeer(std::shared_ptr<Address>& addr, ProgramData& packet);
+		void Thread_Update_Func();
+		void RecievePacket();
+		void SendPackets();
+		void PlacePacket(std::shared_ptr<NetPacket>& packet);
 
-		unsigned short m_port;
-		//Completely cusomizable "user connected" function
-		AddFunc m_ConnectionFunc;
+		bool m_bInit;
 		Socket m_socket;
-		std::shared_ptr<TDataBase> m_recievedDB;
-		TQueue m_sendingDB;
+		std::mutex m_lock;
+		SimplePacketQueue m_recvdLoginReqs;
+		SimplePacketQueue m_sendLoginReqs;
+		std::future<void> m_asyncThread;
+		std::atomic<bool> m_closeThread;
+		std::queue<uint32_t> m_logoutRequests;
+		std::map<uint32_t, std::unique_ptr<Node>> m_activeNodes;
 	};
-
-
 }

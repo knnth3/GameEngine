@@ -16,7 +16,6 @@ namespace Net
 		m_handle = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 		if (m_handle <= 0)
 		{
-			printf("failed to create socket\n");
 			return false;
 		}
 
@@ -29,12 +28,10 @@ namespace Net
 		int bound = bind(m_handle, (const sockaddr*)&address, sizeof(sockaddr_in));
 		if (bound < 0)
 		{
-			printf("failed to bind socket. There may be another instance active.\n");
 			return false;
 		}
-		printf("Listening on port %d\n", port);
 
-#if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
+#if NET_PLATFORM == NET_PLATFORM_MAC || NET_PLATFORM == NET_PLATFORM_UNIX
 
 		int nonBlocking = 1;
 		if (fcntl(m_handle,
@@ -42,18 +39,16 @@ namespace Net
 			O_NONBLOCK,
 			nonBlocking) == -1)
 		{
-			printf("failed to set non-blocking\n");
 			return false;
 		}
 
-#elif PLATFORM == PLATFORM_WINDOWS
+#elif NET_PLATFORM == NET_PLATFORM_WINDOWS
 
 		DWORD nonBlocking = 1;
 		if (ioctlsocket(m_handle,
 			FIONBIO,
 			&nonBlocking) != 0)
 		{
-			printf("failed to set non-blocking\n");
 			return false;
 		}
 
@@ -64,35 +59,34 @@ namespace Net
 
 	void UDPSocket::Close()
 	{
-#if PLATFORM == PLATFORM_MAC || PLATFORM == PLATFORM_UNIX
+#if NET_PLATFORM == NET_PLATFORM_MAC || NET_PLATFORM == NET_PLATFORM_UNIX
 		close(m_handle);
-#elif PLATFORM == PLATFORM_WINDOWS
+#elif NET_PLATFORM == NET_PLATFORM_WINDOWS
 		closesocket(m_handle);
 #endif
 	}
 
-	int UDPSocket::Send(const std::shared_ptr<Address>& destination, const void * data, int size)
+	int UDPSocket::Send(const Address& destination, const void * data, int size)
 	{
 		sockaddr_in address;
 		address.sin_family = AF_INET;
-		address.sin_addr.s_addr = htonl(destination->GetAddress());
-		address.sin_port = htons(destination->GetPort());
+		address.sin_addr.s_addr = htonl(destination.GetPackedIPv4());
+		address.sin_port = htons(destination.GetPort());
 
 		int sent_bytes = sendto(m_handle, (const char*)data, size, 0, (sockaddr*)&address, sizeof(sockaddr_in));
 
 		if (sent_bytes != size)
 		{
-			printf("failed to send packet\n");
 			return 0;
 		}
 
 		return sent_bytes;
 	}
 
-	int UDPSocket::Receive(std::shared_ptr<Address>& sender, void * data, int max_size)
+	int UDPSocket::Receive(Address& sender, void * data, int max_size)
 	{
 
-#if PLATFORM == PLATFORM_WINDOWS
+#if NET_PLATFORM == NET_PLATFORM_WINDOWS
 		typedef int socklen_t;
 #endif
 
@@ -105,7 +99,7 @@ namespace Net
 
 		unsigned short from_port = ntohs(from.sin_port);
 
-		sender = std::make_shared<Address>(from_address, from_port, 0);
+		sender = Address(from_address, from_port);
 
 		return bytes;
 	}

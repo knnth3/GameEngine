@@ -9,35 +9,23 @@ namespace Net
 	{
 	public:
 
-		NET_API Address(unsigned int a,
-				 	unsigned int b,
-				 	unsigned int c,
-				 	unsigned int d,
-				 	unsigned short port, 
-				 	Identification id);
-				 
-		NET_API Address(unsigned int address, unsigned short port, Identification id);
-		NET_API Address(std::string address, unsigned short port, Identification id);
-
-		NET_API bool AssignName(std::string name);
-		NET_API bool AssignID(Identification id);
-		NET_API unsigned int GetAddress() const;
-		NET_API std::string GetAddressString() const;
-		NET_API unsigned short GetPort() const;
-		NET_API Identification GetID();
-		NET_API std::string GetName();
+		NET_API Address();
+		NET_API Address(uint32_t a, uint32_t b, uint32_t c,
+			uint32_t d, uint16_t port);
+		NET_API Address(uint32_t ipv4, uint16_t port);
+		NET_API Address(const std::string& address, uint16_t port);
+		NET_API uint32_t GetPackedIPv4() const;
+		NET_API std::string GetStringIPv4() const;
+		NET_API uint16_t GetPort() const;
+		NET_API bool Empty()const;
 
 	private:
 
-		NET_API unsigned int EncodeAddress(unsigned int a,
-			unsigned int b,
-			unsigned int c,
-			unsigned int d);
-		NET_API void init(unsigned int address, unsigned short port, Identification id);
-		std::string m_name = "";
-		Identification m_ID = 0;
-		unsigned int m_address = 0;
-		unsigned short m_port = 0;
+		unsigned int EncodeAddress(uint32_t a, uint32_t b, uint32_t c, uint32_t d);
+		void Initialize(uint32_t address, uint16_t port);
+
+		uint32_t m_address = 0;
+		uint16_t m_port = 0;
 	};
 }
 
