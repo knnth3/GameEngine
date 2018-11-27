@@ -1,7 +1,7 @@
 # Game-Engine
-This project contains programs contains a game engine as well as complimentary dlls to make a multiplayer game.
-It's a very basic implementation that is work in progress.
-To test it out, clone and open the sln file in Visual Studios.
+This project contains a game engine as well as complimentary dlls to make a multiplayer game.
+It's a very basic implementation that has been loosely optimized but remains simple to use.
+To test it out, clone and open the sln file in Visual Studios 2017 on Windows 10 or higher.
 
 **Included in Root:**
 - Net Module that uses UDP sockets to allow multiplayer connections via server-peer connections.
