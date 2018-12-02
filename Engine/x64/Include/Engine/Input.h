@@ -4,19 +4,22 @@
 
 namespace Engine
 {
+	typedef std::shared_ptr<MouseInput> EMouse;
+	typedef std::shared_ptr<InputDevice> EKeyboard;
+
 	class Input
 	{
 	public:
 		__engine_decl Input();
-		__engine_decl void AttatchKeyboard(const std::shared_ptr<InputDevice>& device);
-		__engine_decl const std::shared_ptr<MouseInput>& GetMouse();
-		__engine_decl const std::shared_ptr<InputDevice>& GetKeyboard();
+		__engine_decl void AttatchKeyboard(const EKeyboard& device);
+		__engine_decl const EMouse& GetMouse();
+		__engine_decl const EKeyboard& GetKeyboard();
 		__engine_decl bool KeyDown(int Key)const;
 		__engine_decl bool KeyPressed(int Key)const;
 
 	private:
-		std::shared_ptr<MouseInput> m_mouse;
-		std::shared_ptr<InputDevice> m_keyboard;
+		EMouse m_mouse;
+		EKeyboard m_keyboard;
 	};
 }
 
