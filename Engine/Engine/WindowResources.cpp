@@ -69,7 +69,7 @@ bool Engine::WindowResources::InsertAddon(const std::string & key, const univers
 	return m_resources.Insert(key, obj);
 }
 
-std::shared_ptr<GraphicsDevice> Engine::WindowResources::GetGraphics()
+EGraphics Engine::WindowResources::GetGraphics()
 {
 	auto graphics = m_resources[m_reserved[GRAPHICS_INDEX]];
 	if(graphics)
@@ -78,7 +78,7 @@ std::shared_ptr<GraphicsDevice> Engine::WindowResources::GetGraphics()
 	return nullptr;
 }
 
-std::shared_ptr<Input> Engine::WindowResources::GetInput()
+EInput Engine::WindowResources::GetInput()
 {
 	auto input = m_resources[m_reserved[INPUT_INDEX]];
 	if (input)
@@ -87,7 +87,7 @@ std::shared_ptr<Input> Engine::WindowResources::GetInput()
 	return nullptr;
 }
 
-std::shared_ptr<Timer> Engine::WindowResources::GetTimer()
+ETimer Engine::WindowResources::GetTimer()
 {
 	auto timer = m_resources[m_reserved[TIMER_INDEX]];
 	if(timer)
@@ -96,7 +96,7 @@ std::shared_ptr<Timer> Engine::WindowResources::GetTimer()
 	return nullptr;
 }
 
-std::shared_ptr<Console> Engine::WindowResources::GetConsole()
+EConsole Engine::WindowResources::GetConsole()
 {
 	auto timer = m_resources[m_reserved[CONSOLE_INDEX]];
 	if (timer)

@@ -32,7 +32,7 @@ void Game1::Update()
 		m_gamestate->Update(elapsed);
 }
 
-void Game1::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
+void Game1::Render(const EGraphics& graphics)
 {
 	graphics->Draw(m_skybox);
 

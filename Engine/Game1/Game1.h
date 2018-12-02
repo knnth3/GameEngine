@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "Engine/Shape_Square.h"
 
 class Game1:
 	public Engine::GraphicsWindow
@@ -9,7 +10,7 @@ public:
 
 protected:
 	virtual void Update();
-	virtual void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics);
+	virtual void Render(const Engine::EGraphics& graphics);
 	virtual void Resume();
 	virtual void Suspend();
 

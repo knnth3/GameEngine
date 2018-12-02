@@ -4,6 +4,8 @@
 #include "RenderBatch_3D.h"
 namespace Engine
 {
+	typedef std::shared_ptr<Engine::Camera> ECamera;
+	typedef std::shared_ptr<TextureLibrary> ETextureLib;
 	class GraphicsDevice
 	{
 	public:
@@ -20,8 +22,8 @@ namespace Engine
 		__engine_decl virtual void Trim()final;
 
 		//Functionality
-		__engine_decl virtual std::shared_ptr<Camera> GetCamera()final;
-		__engine_decl virtual std::shared_ptr<TextureLibrary> GetTextureLibrary()final;
+		__engine_decl virtual ECamera GetCamera()final;
+		__engine_decl virtual ETextureLib GetTextureLibrary()final;
 		__engine_decl virtual Engine::DisplaySize GetWindowDimensions()final;
 		__engine_decl virtual void Draw(const Model& model)final;
 		__engine_decl virtual void Draw(const Text& str);

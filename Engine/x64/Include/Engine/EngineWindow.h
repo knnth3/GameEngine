@@ -5,13 +5,19 @@
 #include "WindowResources.h"
 #include <atomic>
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <Windows.h>
+
 namespace Engine
 {
 	/*This is an abstract class implementation that requires
 	certain functions to be provided by child class.
 	These include: 
 	-Update(void)
-	-Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
+	-Render(const EGraphics& graphics)
 	-Resume(void)
 	-Suspend(void)
 	Resume and Suspend functions act as start-up/shut-down functions.
@@ -40,7 +46,7 @@ namespace Engine
 
 		//Required
 		virtual void Update() = 0;
-		virtual void Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics) = 0;
+		virtual void Render(const EGraphics& graphics) = 0;
 		virtual void Resume() = 0;
 		virtual void Suspend() = 0;
 

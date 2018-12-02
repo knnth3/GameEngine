@@ -20,7 +20,7 @@ void WindowApp::Update()
 	m_model.Update(seconds);
 }
 
-void WindowApp::Render(const std::shared_ptr<Engine::GraphicsDevice>& graphics)
+void WindowApp::Render(const EGraphics& graphics)
 {
 	graphics->Draw(m_skybox);
 	graphics->Draw(m_model);

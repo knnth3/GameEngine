@@ -7,6 +7,10 @@
 
 namespace Engine
 {
+	typedef std::shared_ptr<Engine::GraphicsDevice> EGraphics;
+	typedef std::shared_ptr<Input> EInput;
+	typedef std::shared_ptr<Timer> ETimer;
+	typedef std::shared_ptr<Console> EConsole;
 	/*Holds all data/objects relevant to the active window.
 	Data is stored as universal_structs and must be cast to use.
 	Because objets passed to this interface become "global", ensure that they are thread safe!
@@ -25,10 +29,10 @@ namespace Engine
 		__engine_decl static void SetConsole(const universal_struct& console);
 		__engine_decl static void RemoveAddon(const std::string& key);
 		__engine_decl static bool InsertAddon(const std::string& key, const universal_struct& obj);
-		__engine_decl static std::shared_ptr<GraphicsDevice> GetGraphics();
-		__engine_decl static std::shared_ptr<Input> GetInput();
-		__engine_decl static std::shared_ptr<Timer> GetTimer();
-		__engine_decl static std::shared_ptr<Console> GetConsole();
+		__engine_decl static EGraphics GetGraphics();
+		__engine_decl static EInput GetInput();
+		__engine_decl static ETimer GetTimer();
+		__engine_decl static EConsole GetConsole();
 		__engine_decl static const universal_struct* GetAddon(const std::string& key);
 		__engine_decl static std::vector<std::string> GetKeyList();
 
