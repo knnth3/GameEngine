@@ -6,6 +6,7 @@ namespace Engine
 
 	/*Implementation of a skybox used by the GraphicsDevice for 3D rendering
 	Requires a sigle texture for cubemap
+	To create new cubemaps (.dds) use DXTex Tool provided by Microsoft
 	Image view:
 	1: -x
 	2: +z

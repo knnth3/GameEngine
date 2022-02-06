@@ -2,7 +2,7 @@
 #include "GameState.h"
 #include "Engine/Shape_Square.h"
 
-class Game1:
+class Game1 :
 	public Engine::GraphicsWindow
 {
 public:
@@ -16,15 +16,15 @@ protected:
 
 private:
 
-	enum GameType
+	enum class GameType
 	{
-		GAMETYPE_RUNNING,
-		GAMETYPE_SERVER,
-		GAMETYPE_CLIENT
+		RUNNING,
+		SERVER,
+		CLIENT
 	};
 
 	void HandleBasicControls(double elapsed);
-	void SetUpGamestate();
+	void UpdateGamestate();
 
 	int m_bgImageID;
 	GameType m_gametype;
